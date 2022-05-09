@@ -1,0 +1,39 @@
+{
+    "env": {
+        "browser": true,
+        "es2021": true,
+        "jest/globals": true
+    },
+    "extends": [
+        "plugin:react/recommended",
+        "standard",
+        "plugin:testing-library/react",
+        "plugin:jest-dom/recommended"
+    ],
+    "parserOptions": {
+        "ecmaFeatures": {
+            "jsx": true
+        },
+        "ecmaVersion": "latest",
+        "sourceType": "module"
+    },
+    "plugins": [
+        "react",
+        "testing-library",
+        "jest",
+        "jest-dom"
+    ],
+    "rules": {
+        "testing-library/no-render-in-setup": "warn",
+        "testing-library/no-wait-for-empty-callback": "warn",
+        "testing-library/prefer-explicit-assert": "warn",
+        "testing-library/prefer-presence-queries": "warn",
+        "testing-library/prefer-screen-queries": "warn",
+        "testing-library/prefer-wait-for": "warn",
+        "jest/no-disabled-tests": "warn",
+        "jest/no-focused-tests": "warn",
+        "jest/no-identical-title": "warn",
+        "jest/prefer-to-have-length": "warn",
+        "jest/valid-expect": "warn"
+    }
+}
