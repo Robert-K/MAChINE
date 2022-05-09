@@ -1,3 +1,7 @@
+# Commit Message Etiquette
+
+Start commit messages with ADD, FIX, UPT or DEL corresponding to change.
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
