@@ -1,6 +1,6 @@
 # Commit Message Etiquette
 
-Start commit messages with ADD, FIX, UPT or DEL corresponding to change.
+Start commit messages with ADD, FIX, UPD or DEL corresponding to change.
 
 # Getting Started with Create React App
 
