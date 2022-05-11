@@ -1,10 +1,13 @@
 import React from 'react'
+import { Button } from 'react-bootstrap'
 import logo from './logo.svg'
 import './App.css'
 import api from './api.js'
 
 function App () {
-  api.getUserGreeting('James')
+  // api.getUserGreeting('James')
+  const [buttonText, setButtonText] = React.useState('Next')
+  const changeText = (text) => setButtonText(text)
   return (
     <div className="App">
       <header className="App-header">
@@ -20,6 +23,8 @@ function App () {
         >
           Learn React
         </a>
+        <Button onClick={ () => api.getUserGreeting('Woo').then((data) => changeText(data)) }>{ buttonText }</Button>
+        <Button onClick={ () => changeText('Next')}>{ 'Reset'}</Button>
       </header>
     </div>
   )

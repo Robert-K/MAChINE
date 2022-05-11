@@ -19,9 +19,10 @@ export default {
     })
   },
 
-  getUserGreeting (user) {
+  async getUserGreeting (user) {
     return api.post('/home/', { user }).then((response) => {
-      console.log(response.data)
+      // console.log(response.data)
+      return response.data
     })
   }
 }
