@@ -1,8 +1,9 @@
 import React from 'react'
-import { Button } from 'react-bootstrap'
 import logo from './logo.svg'
 import './App.css'
 import api from './api.js'
+import Button from 'react-bootstrap/Button'
+import 'bootstrap/dist/css/bootstrap.min.css'
 
 function App () {
   // api.getUserGreeting('James')
@@ -23,8 +24,8 @@ function App () {
         >
           Learn React
         </a>
-        <Button onClick={ () => api.getUserGreeting('Woo').then((data) => changeText(data)) }>{ buttonText }</Button>
-        <Button onClick={ () => changeText('Next')}>{ 'Reset'}</Button>
+        <Button onClick={ () => api.getUserGreeting('Woo').then((data) => changeText(data)) } size={'lg'} className='my-3'>{ buttonText }</Button>
+        <Button variant={'outline-info'} onClick={ () => changeText('Next')}>{ 'Reset'}</Button>
       </header>
     </div>
   )
