@@ -4,6 +4,7 @@ import './App.css'
 import api from './api.js'
 import Button from 'react-bootstrap/Button'
 import 'bootstrap/dist/css/bootstrap.min.css'
+import 'bootswatch/dist/vapor/bootstrap.min.css'
 
 function App () {
   // api.getUserGreeting('James')
