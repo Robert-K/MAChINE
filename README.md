@@ -2,6 +2,28 @@
 
 Start commit messages with ADD, FIX, UPD or DEL corresponding to change.
 
+---
+
+# Setup steps:
+
+## Prettier (code auto formatter)
+
+- Install Prettier plugin in PyCharm
+
+![Setup Screenshot](https://kosro.de/share/pycharm64_E1pXeQIHlS.png)
+
+- be on the latest commit
+- select prettier package in IDE settings
+
+![Setup Screenshot](https://kosro.de/share/pycharm64_22kMqdUPaq.png)
+
+- ?
+- profit.
+
+---
+
+# React Default README
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
@@ -72,3 +94,5 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+![Important Infographic](https://media.giphy.com/media/Ju7l5y9osyymQ/giphy.gif)
