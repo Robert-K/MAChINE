@@ -15,7 +15,9 @@ function App() {
     <div className="App">
       <SidebarMenu>
         <SidebarMenu.Header>
-          <SidebarMenu.Brand>{/* Your brand icon */}</SidebarMenu.Brand>
+          <SidebarMenu.Brand>
+            <h1>MAChINE</h1>
+          </SidebarMenu.Brand>
           <SidebarMenu.Toggle />
         </SidebarMenu.Header>
       </SidebarMenu>
