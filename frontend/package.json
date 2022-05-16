@@ -42,14 +42,17 @@
   },
   "devDependencies": {
     "eslint": "^8.15.0",
+    "eslint-config-prettier": "^8.5.0",
     "eslint-config-standard": "^17.0.0",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-jest": "^26.1.5",
     "eslint-plugin-jest-dom": "^4.0.1",
     "eslint-plugin-n": "^15.2.0",
+    "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-promise": "^6.0.0",
     "eslint-plugin-react": "^7.29.4",
     "eslint-plugin-testing-library": "^5.4.0",
-    "prettier": "2.6.2"
+    "prettier": "2.6.2",
+    "prettier-eslint": "^15.0.0"
   }
 }

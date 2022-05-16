@@ -8,7 +8,8 @@
         "plugin:react/recommended",
         "standard",
         "plugin:testing-library/react",
-        "plugin:jest-dom/recommended"
+        "plugin:jest-dom/recommended",
+        "plugin:prettier/recommended"
     ],
     "parserOptions": {
         "ecmaFeatures": {
@@ -21,7 +22,8 @@
         "react",
         "testing-library",
         "jest",
-        "jest-dom"
+        "jest-dom",
+        "prettier"
     ],
     "rules": {
         "testing-library/no-render-in-setup": "warn",
@@ -34,6 +36,7 @@
         "jest/no-focused-tests": "warn",
         "jest/no-identical-title": "warn",
         "jest/prefer-to-have-length": "warn",
-        "jest/valid-expect": "warn"
+        "jest/valid-expect": "warn",
+        "prettier/prettier": "error"
     }
 }
