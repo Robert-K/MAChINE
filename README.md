@@ -95,4 +95,4 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
 
-![Important Infographic](https://media.giphy.com/media/Ju7l5y9osyymQ/giphy.gif)
+![Important Infographic](https://kosro.de/share/rickroll-roll.gif)
