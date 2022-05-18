@@ -2,6 +2,7 @@ import React from 'react'
 import api from './api.js'
 import { Button, ButtonGroup } from 'react-bootstrap'
 import PropTypes from 'prop-types'
+
 class ScoreComp extends React.Component {
   constructor(props) {
     super(props)
@@ -83,7 +84,9 @@ class ScoreComp extends React.Component {
     )
   }
 }
+
 ScoreComp.propTypes = {
   sendTextToParent: PropTypes.func.isRequired,
 }
+
 export default ScoreComp
