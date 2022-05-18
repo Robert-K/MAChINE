@@ -15,17 +15,24 @@ export default {
       })
   },
 
-  getUserScore(user) {
+  setUserScore(user, score) {
     return api
-      .get(serverAddress + '/user/score', { data: { user } })
+      .post('/users/' + user + '/score/', { score })
       .then((response) => {
         console.log(response.data)
       })
   },
 
+  async getUserScore(user) {
+    return api.get('/users/' + user + '/score/').then((response) => {
+      console.log(response.data)
+      return response.data
+    })
+  },
+
   async getUserGreeting(user) {
-    return api.post('/home/', { user }).then((response) => {
-      // console.log(response.data)
+    return api.get('/users/' + user + '/greeting/').then((response) => {
+      console.log(response.data)
       return response.data
     })
   },

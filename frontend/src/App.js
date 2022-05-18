@@ -1,16 +1,17 @@
 import React from 'react'
 import logo from './logo.svg'
 import './App.css'
-import api from './api.js'
 import SidebarMenu from 'react-bootstrap-sidebar-menu'
-import Button from 'react-bootstrap/Button'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootswatch/dist/vapor/bootstrap.min.css'
+import Score from './ScoreComponent.js'
 
 function App() {
   // api.getUserGreeting('James')
-  const [buttonText, setButtonText] = React.useState('Next')
-  const changeText = (text) => setButtonText(text)
+  const [displayText, setDisplayText] = React.useState('Initial')
+  const receiveText = (receivedText) => {
+    setDisplayText(receivedText)
+  }
   return (
     <div className="App">
       <SidebarMenu>
@@ -32,20 +33,10 @@ function App() {
           target="_blank"
           rel="noopener noreferrer"
         >
-          Learn React
+          {displayText}
         </a>
-        <Button
-          onClick={() =>
-            api.getUserGreeting('Woo').then((data) => changeText(data))
-          }
-          size={'lg'}
-          className="my-3"
-        >
-          {buttonText}
-        </Button>
-        <Button variant={'outline-info'} onClick={() => changeText('Next')}>
-          {'Reset'}
-        </Button>
+        <br></br>
+        <Score sendTextToParent={receiveText} />
       </header>
     </div>
   )
