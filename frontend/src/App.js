@@ -11,6 +11,8 @@ import {
   Button,
 } from 'react-bootstrap'
 import Score from './ScoreComponent.js'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faCoffee } from '@fortawesome/free-solid-svg-icons'
 
 function App() {
   // api.getUserGreeting('James')
@@ -56,7 +58,13 @@ function App() {
                 </NavDropdown.Item>
               </NavDropdown>
             </Nav>
-            <Form className="d-flex">
+            <Nav>
+              <Nav.Link href="#coffee">
+                <FontAwesomeIcon icon={faCoffee} className="me-2" />
+                Coffee
+              </Nav.Link>
+            </Nav>
+            <Form className="d-flex ms-3">
               <FormControl
                 type="search"
                 placeholder="Search"
