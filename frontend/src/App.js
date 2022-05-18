@@ -2,7 +2,15 @@ import React from 'react'
 import logo from './logo.svg'
 import './App.css'
 import 'bootswatch/dist/vapor/bootstrap.min.css'
-import { Navbar, Container, NavDropdown, Nav } from 'react-bootstrap'
+import {
+  Navbar,
+  Container,
+  NavDropdown,
+  Nav,
+  Form,
+  FormControl,
+  Button,
+} from 'react-bootstrap'
 import Score from './ScoreComponent.js'
 
 function App() {
@@ -20,7 +28,16 @@ function App() {
         bg="primary"
       >
         <Container fluid>
-          <Navbar.Brand href="#home">MAChINE</Navbar.Brand>
+          <Navbar.Brand href="#home">
+            <img
+              src={logo}
+              width="30"
+              height="30"
+              alt="logo"
+              className="mx-3"
+            />
+            MAChINE
+          </Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="me-auto">
@@ -40,6 +57,15 @@ function App() {
                 </NavDropdown.Item>
               </NavDropdown>
             </Nav>
+            <Form className="d-flex">
+              <FormControl
+                type="search"
+                placeholder="Search"
+                className="me-2"
+                aria-label="Search"
+              />
+              <Button variant="outline-success">Search</Button>
+            </Form>
           </Navbar.Collapse>
         </Container>
       </Navbar>
