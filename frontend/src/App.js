@@ -1,7 +1,6 @@
 import React from 'react'
 import logo from './logo.svg'
 import './App.scss'
-import 'bootswatch/dist/vapor/bootstrap.min.css'
 import {
   Navbar,
   Container,
