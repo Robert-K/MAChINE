@@ -20,6 +20,10 @@ Start commit messages with ADD, FIX, UPD or DEL corresponding to change.
 - ?
 - profit.
 
+## Quotes instead of curly brackets in JSX
+
+![Setup Screenshot](https://kosro.de/share/pycharm64_a4RaM450ss.png)
+
 ---
 
 # React Default README
