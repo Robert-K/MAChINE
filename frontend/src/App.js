@@ -1,4 +1,5 @@
 import React from 'react'
+import Scoreboards from './routes/Scoreboards.js'
 import './App.scss'
 import Topbar from './components/Topbar'
 import Start from './routes/Start.js'
@@ -16,7 +17,7 @@ function App() {
           <Route path="/molecule" element={<Start />}></Route>
           <Route path="/dataset" element={<Start />}></Route>
           <Route path="/train" element={<Start />}></Route>
-          <Route path="/results" element={<div />}></Route>
+          <Route path="/results" element={<Scoreboards />}></Route>
         </Routes>
       </BrowserRouter>
     </div>
