@@ -1,5 +1,5 @@
 import React from 'react'
-import { Table } from 'react-bootstrap'
+import { TableStyle } from '../styles/table.styled'
 
 export default function bestMolecules() {
   const moleculeArray = [
@@ -9,7 +9,7 @@ export default function bestMolecules() {
   ]
   return (
     <>
-      <Table bordered hover>
+      <TableStyle bordered hover>
         <thead>
           <tr>
             <th>Place</th>
@@ -19,7 +19,7 @@ export default function bestMolecules() {
           </tr>
         </thead>
         <tbody>{moleculeArray.map(renderMolecule)}</tbody>
-      </Table>
+      </TableStyle>
     </>
   )
 }

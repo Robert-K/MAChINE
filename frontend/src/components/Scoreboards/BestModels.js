@@ -1,5 +1,5 @@
 import React from 'react'
-import { Table } from 'react-bootstrap'
+import { TableStyle } from '../styles/table.styled'
 
 export default function bestModels() {
   const modelArray = [
@@ -8,19 +8,17 @@ export default function bestModels() {
     { name: 'Model C', accuracy: 80, epochs: 7 },
   ]
   return (
-    <>
-      <Table bordered hover>
-        <thead>
-          <tr>
-            <th>Place</th>
-            <th>Name</th>
-            <th>Accuracy</th>
-            <th>Epochs</th>
-          </tr>
-        </thead>
-        <tbody>{modelArray.map(renderModel)}</tbody>
-      </Table>
-    </>
+    <TableStyle bordered hover>
+      <thead>
+        <tr>
+          <th>Place</th>
+          <th>Name</th>
+          <th>Accuracy</th>
+          <th>Epochs</th>
+        </tr>
+      </thead>
+      <tbody>{modelArray.map(renderModel)}</tbody>
+    </TableStyle>
   )
 }
 
