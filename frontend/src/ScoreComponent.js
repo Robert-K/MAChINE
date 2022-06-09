@@ -1,6 +1,5 @@
 import React from 'react'
 import api from './api.js'
-import { Button, ButtonGroup } from 'react-bootstrap'
 import PropTypes from 'prop-types'
 
 class ScoreComp extends React.Component {
@@ -45,7 +44,7 @@ class ScoreComp extends React.Component {
             value={this.state.score}
             onChange={(e) => this.handleFormChange(e)}
           ></input>
-          <Button
+          <button
             onClick={() =>
               api
                 .getUserGreeting(this.state.name)
@@ -55,10 +54,10 @@ class ScoreComp extends React.Component {
             className="mb-2"
           >
             {'Get Greeting'}
-          </Button>
+          </button>
         </form>
-        <ButtonGroup>
-          <Button
+        <div>
+          <button
             onClick={() =>
               api
                 .getUserScore(this.state.name)
@@ -70,16 +69,16 @@ class ScoreComp extends React.Component {
             className="my-3"
           >
             Get Score
-          </Button>
-          <Button
+          </button>
+          <button
             variant={'outline-info'}
             onClick={() => api.setUserScore(this.state.name, this.state.score)}
             size={'lg'}
             className="my-3"
           >
             {'Set ' + this.state.name + ' Score to ' + this.state.score}
-          </Button>
-        </ButtonGroup>
+          </button>
+        </div>
       </div>
     )
   }
