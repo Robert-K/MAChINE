@@ -4,6 +4,7 @@ import './App.scss'
 import Menu from './components/Menu'
 import Start from './routes/Start.js'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import Swagger from './routes/Swagger'
 
 function App() {
   // api.getUserGreeting('James')
@@ -18,6 +19,7 @@ function App() {
           <Route path="/models" element={<Start />}></Route>
           <Route path="/molecules" element={<Start />}></Route>
           <Route path="/results" element={<Scoreboards />}></Route>
+          <Route path="/swagger" element={<Swagger />}></Route>
         </Routes>
       </BrowserRouter>
     </div>
