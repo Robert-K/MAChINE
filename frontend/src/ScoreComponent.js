@@ -1,6 +1,7 @@
 import React from 'react'
 import api from './api.js'
 import PropTypes from 'prop-types'
+import Button from '@mui/material/Button'
 
 class ScoreComp extends React.Component {
   constructor(props) {
@@ -44,7 +45,8 @@ class ScoreComp extends React.Component {
             value={this.state.score}
             onChange={(e) => this.handleFormChange(e)}
           ></input>
-          <button
+          <Button
+            variant="contained"
             onClick={() =>
               api
                 .getUserGreeting(this.state.name)
@@ -54,10 +56,11 @@ class ScoreComp extends React.Component {
             className="mb-2"
           >
             {'Get Greeting'}
-          </button>
+          </Button>
         </form>
         <div>
-          <button
+          <Button
+            variant="contained"
             onClick={() =>
               api
                 .getUserScore(this.state.name)
@@ -69,15 +72,16 @@ class ScoreComp extends React.Component {
             className="my-3"
           >
             Get Score
-          </button>
-          <button
-            variant={'outline-info'}
+          </Button>
+          <Button
+            variant="contained"
+            // variant={'outline-info'}
             onClick={() => api.setUserScore(this.state.name, this.state.score)}
             size={'lg'}
             className="my-3"
           >
             {'Set ' + this.state.name + ' Score to ' + this.state.score}
-          </button>
+          </Button>
         </div>
       </div>
     )

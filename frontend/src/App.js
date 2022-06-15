@@ -6,6 +6,8 @@ import Start from './routes/Start.js'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import Swagger from './routes/Swagger'
 
+import '@fontsource/roboto'
+
 function App() {
   // api.getUserGreeting('James')
 
