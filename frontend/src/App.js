@@ -1,12 +1,12 @@
 import React from 'react'
 import Scoreboards from './routes/Scoreboards.js'
 import './App.scss'
-import Menu from './components/Menu'
 import Start from './routes/Start.js'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import Swagger from './routes/Swagger'
 
 import '@fontsource/roboto'
+import Navbar from './components/Navbar'
 
 function App() {
   // api.getUserGreeting('James')
@@ -14,7 +14,7 @@ function App() {
   return (
     <div className="App">
       <BrowserRouter>
-        <Menu />
+        <Navbar />
         <Routes>
           <Route path="/" element={<Start />}></Route>
           <Route path="/home" element={<Start />}></Route>
