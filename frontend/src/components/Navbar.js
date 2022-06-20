@@ -4,7 +4,7 @@ import React from 'react'
 
 export default function Navbar() {
   return (
-    <AppBar color="primary">
+    <AppBar color="primary" position="sticky">
       <Toolbar>
         <Link
           component={RouterLink}
