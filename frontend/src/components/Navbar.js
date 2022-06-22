@@ -1,47 +1,25 @@
-import { AppBar, Link, Toolbar } from '@mui/material'
-import { Link as RouterLink } from 'react-router-dom'
+import { AppBar, Toolbar } from '@mui/material'
+import { NavLink } from 'react-router-dom'
 import React from 'react'
+import logo from '../logo.svg'
 
 export default function Navbar() {
   return (
     <AppBar color="primary" position="sticky">
       <Toolbar>
-        <Link
-          component={RouterLink}
-          to="/home"
-          color="inherit"
-          underline="none"
-          paddingRight="10px"
-        >
-          Home
-        </Link>
-        <Link
-          component={RouterLink}
-          to="/models"
-          color="inherit"
-          underline="none"
-          paddingRight="10px"
-        >
-          Models
-        </Link>
-        <Link
-          component={RouterLink}
-          to="/molecules"
-          color="inherit"
-          underline="none"
-          paddingRight="10px"
-        >
-          Molecules
-        </Link>
-        <Link
-          component={RouterLink}
-          to="/results"
-          color="inherit"
-          underline="none"
-        >
-          Scoreboards
-        </Link>
+        <img src={logo} height="30px" mx="2" />
+        <NavLink to="/home">Home</NavLink>
+        <NavLink to="/models">Models</NavLink>
+        <NavLink to="/molecules">Molecules</NavLink>
+        <NavLink to="/results">Scoreboards</NavLink>
       </Toolbar>
+      <style jsx>{`
+        a {
+          color: white;
+          text-decoration: none;
+          padding-left: 10px;
+        }
+      `}</style>
     </AppBar>
   )
 }
