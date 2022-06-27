@@ -19,6 +19,9 @@ export default function Navbar() {
           text-decoration: none;
           padding-left: 10px;
         }
+        a.active {
+          font-weight: bold;
+        }
       `}</style>
     </AppBar>
   )
