@@ -1,3 +1,4 @@
+// Model training process
 class Fitting {
   constructor(name, datasetID, epochs, accuracy) {
     // Name of fitting
