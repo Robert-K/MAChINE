@@ -89,7 +89,7 @@ function moleculeView() {
     <Card>
       <CardContent>
         <Box
-          sx={{ background: 'black', width: '100%', height: '600px', mb: 5 }}
+          sx={{ background: 'black', width: '100%', height: '600px', mb: 2 }}
         ></Box>
         <Grid container spacing={2}>
           <Grid item>
