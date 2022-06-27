@@ -1,107 +1,121 @@
 import React from 'react'
-
-// TODO: widen tables. Why is 100% width only half?
-
-import styled from 'styled-components'
-
-const Table = styled.table`
-  table {
-    width: 100%;
-    border-spacing: 0;
-    border: 1px solid white;
-  }
-  th {
-    background: plum;
-    border-bottom: 3px solid white;
-    color: white;
-    font-weight: bold;
-  }
-  td {
-    width: 30%;
-    color: white;
-  }
-  th,
-  td {
-    padding: 1em;
-    text-align: center;
-    :last-child {
-      border-right: 0;
-    }
-    :first-child {
-      width: 10%;
-    }
-  }
-`
+import {
+  Box,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Typography,
+} from '@mui/material'
 
 export default function scoreboards() {
   return (
     <div align="center">
-      {bestModels()}
-      {bestMolecules()}
+      <Box sx={{ m: 5 }}>
+        <Typography>Best Models</Typography>
+        {bestModels()}
+        <Typography sx={{ mt: 5 }}>Best Molecules</Typography>
+        {bestMolecules()}
+      </Box>
     </div>
   )
 }
 
+const modelColumns = [
+  { id: 'place', label: 'Place', align: 'center' },
+  { id: 'name', label: 'Name', align: 'center' },
+  { id: 'accuracy', label: 'Accuracy', align: 'center' },
+  { id: 'epochs', label: 'Epochs', align: 'center' },
+]
+
+const moleculeColumns = [
+  { id: 'place', label: 'Place', align: 'center' },
+  { id: 'name', label: 'Name', align: 'center' },
+  { id: 'toxicity', label: 'Toxicity', align: 'center' },
+  { id: 'conductivity', label: 'Conductivity', align: 'center' },
+]
+
+function createModelData(place, name, accuracy, epochs) {
+  return { place, name, accuracy, epochs }
+}
+
+function createMoleculeData(place, name, toxicity, conductivity) {
+  return { place, name, toxicity, conductivity }
+}
+
+const modelRows = [createModelData(1, 'ModelTest', 100, 20)]
+
+const moleculeRows = [createMoleculeData(1, 'MoleculeTest', 200, 10)]
+
 function bestModels() {
-  const modelArray = [
-    { name: 'Model A', accuracy: 80, epochs: 7 },
-    { name: 'Model B', accuracy: 80, epochs: 7 },
-    { name: 'Model C', accuracy: 80, epochs: 7 },
-  ]
   return (
-    <Table bordered hover>
-      <thead>
-        <tr>
-          <th>Place</th>
-          <th>Name</th>
-          <th>Accuracy</th>
-          <th>Epochs</th>
-        </tr>
-      </thead>
-      <tbody>{modelArray.map(renderModel)}</tbody>
-    </Table>
+    <Paper>
+      <TableContainer sx={{ maxHeight: 250 }}>
+        <Table stickyHeader aria-label="sticky table">
+          <TableHead>
+            <TableRow>
+              {modelColumns.map((column) => (
+                <TableCell key={column.id} align={column.align}>
+                  {column.label}
+                </TableCell>
+              ))}
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {modelRows.map((row) => {
+              return (
+                <TableRow hover role="checkbox" key={row.name}>
+                  {modelColumns.map((column) => {
+                    return (
+                      <TableCell key={column.id} align={column.align}>
+                        {row[column.id]}
+                      </TableCell>
+                    )
+                  })}
+                </TableRow>
+              )
+            })}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </Paper>
   )
 }
 
 function bestMolecules() {
-  const moleculeArray = [
-    { name: 'Ethane', toxicity: 7, conductivity: 9 },
-    { name: 'Methane', toxicity: 13, conductivity: 2 },
-    { name: 'Propane', toxicity: 8, conductivity: 1 },
-  ]
   return (
-    <Table bordered hover>
-      <thead>
-        <tr>
-          <th>Place</th>
-          <th>Name</th>
-          <th>Toxicity</th>
-          <th>Conductivity</th>
-        </tr>
-      </thead>
-      <tbody>{moleculeArray.map(renderMolecule)}</tbody>
-    </Table>
-  )
-}
-
-function renderMolecule(molecule, index) {
-  return (
-    <tr key={index}>
-      <td>{index + 1}</td>
-      <td>{molecule.name}</td>
-      <td>{molecule.toxicity}</td>
-      <td>{molecule.conductivity}</td>
-    </tr>
-  )
-}
-
-function renderModel(model, index) {
-  return (
-    <tr key={index}>
-      <td>{index + 1}</td>
-      <td>{model.name}</td>
-      <td>{model.accuracy}</td>
-      <td>{model.epochs}</td>
-    </tr>
+    <Paper>
+      <TableContainer sx={{ maxHeight: 250 }}>
+        <Table stickyHeader aria-label="sticky table">
+          <TableHead>
+            <TableRow>
+              {moleculeColumns.map((column) => (
+                <TableCell key={column.id} align={column.align}>
+                  {column.label}
+                </TableCell>
+              ))}
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {moleculeRows.map((row) => {
+              return (
+                <TableRow hover role="checkbox" key={row.name}>
+                  {moleculeColumns.map((column) => {
+                    return (
+                      <TableCell key={column.id} align={column.align}>
+                        {row[column.id]}
+                      </TableCell>
+                    )
+                  })}
+                </TableRow>
+              )
+            })}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </Paper>
   )
 }
