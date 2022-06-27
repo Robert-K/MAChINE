@@ -9,6 +9,7 @@ import '@fontsource/roboto'
 import Navbar from './components/Navbar'
 import { createTheme, ThemeProvider } from '@mui/material'
 import { red } from '@mui/material/colors'
+import Molecules from './routes/Molecules'
 
 const theme = createTheme({
   palette: {
@@ -30,7 +31,7 @@ function App() {
             <Route path="/" element={<Start />}></Route>
             <Route path="/home" element={<Start />}></Route>
             <Route path="/models" element={<Start />}></Route>
-            <Route path="/molecules" element={<Start />}></Route>
+            <Route path="/molecules" element={<Molecules />}></Route>
             <Route path="/results" element={<Scoreboards />}></Route>
             <Route path="/swagger" element={<Swagger />}></Route>
           </Routes>
