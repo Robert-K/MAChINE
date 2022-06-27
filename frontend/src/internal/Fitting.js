@@ -1,10 +1,10 @@
 class Fitting {
   constructor(name, datasetID, epochs, accuracy) {
-    // Name of Fitting
+    // Name of fitting
     this.name = name
-    // Dataset Identifier
+    // Dataset identifier
     this.datasetID = datasetID
-    // Amount of Epochs Model was trained for
+    // Amount of epochs model was trained for
     this.epochs = epochs
     // Accuracy of fitting
     this.accuracy = accuracy
