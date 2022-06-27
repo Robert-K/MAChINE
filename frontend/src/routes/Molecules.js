@@ -13,45 +13,28 @@ import {
   TextField,
 } from '@mui/material'
 import Button from '@mui/material/Button'
+import stringToColor from '../utils'
 
 export default function Molecules() {
   return (
     <Box sx={{ m: 5 }}>
       <Grid container spacing={2}>
         <Grid item md={3}>
-          {moleculeSelection()}
+          {MoleculeSelection()}
         </Grid>
         <Grid item md={9}>
-          {moleculeView()}
+          {MoleculeView()}
         </Grid>
       </Grid>
     </Box>
   )
 }
 
-function moleculeSelection() {
+function MoleculeSelection() {
   const [selectedIndex, setSelectedIndex] = React.useState(1)
 
   const handleListItemClick = (event, index) => {
     setSelectedIndex(index)
-  }
-
-  function stringToColor(string) {
-    let hash = 0
-    let i
-
-    for (i = 0; i < string.length; i += 1) {
-      hash = string.charCodeAt(i) + ((hash << 5) - hash)
-    }
-
-    let color = '#'
-
-    for (i = 0; i < 3; i += 1) {
-      const value = (hash >> (i * 8)) & 0xff
-      color += `00${value.toString(16)}`.slice(-2)
-    }
-
-    return color
   }
 
   return (
@@ -84,7 +67,7 @@ function moleculeSelection() {
   )
 }
 
-function moleculeView() {
+function MoleculeView() {
   return (
     <Card>
       <CardContent>
