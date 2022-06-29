@@ -3,7 +3,6 @@ import Scoreboards from './routes/Scoreboards.js'
 import './App.scss'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import Swagger from './routes/Swagger'
-
 import '@fontsource/roboto'
 import Navbar from './components/Navbar'
 import { createTheme, ThemeProvider } from '@mui/material'
@@ -20,8 +19,6 @@ const theme = createTheme({
 })
 
 function App() {
-  // api.getUserGreeting('James')
-
   return (
     <div className="App">
       <ThemeProvider theme={theme}>
