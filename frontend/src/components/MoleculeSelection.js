@@ -42,7 +42,7 @@ function MoleculeSelection(props) {
   return (
     <Card>
       <CardContent>
-        <List>
+        <List sx={{ height: '612px', maxHeight: '612px', overflow: 'auto' }}>
           {props.molecules.map((molecule) => (
             <ListItemButton
               key={molecule.smiles}

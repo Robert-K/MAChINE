@@ -42,6 +42,9 @@ function DetailsPopper(props) {
           },
         ]}
         className={props.waited ? 'popper-anim' : 'popper'}
+        sx={{
+          zIndex: 2,
+        }}
       >
         <div>
           <Card
@@ -91,6 +94,7 @@ function PopperArrow(props) {
         sx={{
           borderTop: 1,
           borderLeft: 1,
+          borderRadius: 1,
           top: `calc(50% - ${props.height / 2}px)`,
           transform: 'skew(-45deg)',
           height: props.height / 2,
@@ -103,6 +107,7 @@ function PopperArrow(props) {
         sx={{
           borderBottom: 1,
           borderLeft: 1,
+          borderRadius: 1,
           top: 'calc(50% - 1px)',
           transform: 'skew(45deg)',
           height: props.height / 2,
@@ -116,9 +121,10 @@ function PopperArrow(props) {
           borderRight: 1,
           borderBottom: 1,
           borderTop: 1,
-          top: `calc(50% - ${props.height / 2}px)`,
+          borderRadius: 1,
           borderTopLeftRadius: 0,
           borderBottomLeftRadius: 0,
+          top: `calc(50% - ${props.height / 2}px)`,
           height: props.height - 2,
           left: -props.length,
           width: props.width + props.length,
@@ -131,7 +137,6 @@ function PopperArrow(props) {
           background-color: white;
           content: "";
           display: block;
-          border-radius: 3px;
           border-color: #c42525;
         }
       `}</style>
