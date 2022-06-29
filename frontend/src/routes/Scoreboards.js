@@ -11,14 +11,14 @@ import {
   Typography,
 } from '@mui/material'
 
-export default function scoreboards() {
+export default function Scoreboards() {
   return (
     <div align="center">
       <Box sx={{ m: 5 }}>
         <Typography>Best Models</Typography>
-        {bestModels()}
+        {table(modelColumns, modelRows)}
         <Typography sx={{ mt: 5 }}>Best Molecules</Typography>
-        {bestMolecules()}
+        {table(moleculeColumns, moleculeRows)}
       </Box>
     </div>
   )
@@ -50,14 +50,14 @@ const modelRows = [createModelData(1, 'ModelTest', 100, 20)]
 
 const moleculeRows = [createMoleculeData(1, 'MoleculeTest', 200, 10)]
 
-function bestModels() {
+function table(tableColumns, tableRows) {
   return (
     <Paper>
       <TableContainer sx={{ maxHeight: 250 }}>
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
             <TableRow>
-              {modelColumns.map((column) => (
+              {tableColumns.map((column) => (
                 <TableCell key={column.id} align={column.align}>
                   {column.label}
                 </TableCell>
@@ -65,45 +65,10 @@ function bestModels() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {modelRows.map((row) => {
+            {tableRows.map((row) => {
               return (
                 <TableRow hover role="checkbox" key={row.name}>
-                  {modelColumns.map((column) => {
-                    return (
-                      <TableCell key={column.id} align={column.align}>
-                        {row[column.id]}
-                      </TableCell>
-                    )
-                  })}
-                </TableRow>
-              )
-            })}
-          </TableBody>
-        </Table>
-      </TableContainer>
-    </Paper>
-  )
-}
-
-function bestMolecules() {
-  return (
-    <Paper>
-      <TableContainer sx={{ maxHeight: 250 }}>
-        <Table stickyHeader aria-label="sticky table">
-          <TableHead>
-            <TableRow>
-              {moleculeColumns.map((column) => (
-                <TableCell key={column.id} align={column.align}>
-                  {column.label}
-                </TableCell>
-              ))}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {moleculeRows.map((row) => {
-              return (
-                <TableRow hover role="checkbox" key={row.name}>
-                  {moleculeColumns.map((column) => {
+                  {tableColumns.map((column) => {
                     return (
                       <TableCell key={column.id} align={column.align}>
                         {row[column.id]}
