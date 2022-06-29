@@ -8,7 +8,7 @@ export default function Navbar() {
     <AppBar color="primary" position="sticky">
       <Toolbar>
         <img src={logo} height="30px" mx="2" />
-        <NavLink to="/home">Home</NavLink>
+        <NavLink to="/">Home</NavLink>
         <NavLink to="/models">Models</NavLink>
         <NavLink to="/molecules">Molecules</NavLink>
         <NavLink to="/results">Scoreboards</NavLink>
