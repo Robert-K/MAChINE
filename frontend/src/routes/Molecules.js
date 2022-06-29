@@ -28,7 +28,7 @@ export default function Molecules() {
       new MoleculeAnalysis('tt', {
         test: 1,
         other_test: 12512512,
-        other_other_test: "yes but maybe not it's quite weird tbh",
+        other_other_test: `yes but maybe not it's quite weird tbh`,
         smells_good: false,
         light: 'no',
       }),
