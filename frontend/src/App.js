@@ -4,12 +4,13 @@ import './App.scss'
 import Start from './routes/Start.js'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import Swagger from './routes/Swagger'
-
 import '@fontsource/roboto'
 import Navbar from './components/Navbar'
 import { createTheme, ThemeProvider } from '@mui/material'
 import { red } from '@mui/material/colors'
 import Molecules from './routes/Molecules'
+import Models from './routes/Models'
+import BaseModels from './routes/BaseModels'
 
 const theme = createTheme({
   palette: {
@@ -30,10 +31,11 @@ function App() {
           <Routes>
             <Route path="/" element={<Start />}></Route>
             <Route path="/home" element={<Start />}></Route>
-            <Route path="/models" element={<Start />}></Route>
+            <Route path="/models" element={<Models />}></Route>
             <Route path="/molecules" element={<Molecules />}></Route>
             <Route path="/results" element={<Scoreboards />}></Route>
             <Route path="/swagger" element={<Swagger />}></Route>
+            <Route path="/basemodels" element={<BaseModels />}></Route>
           </Routes>
         </BrowserRouter>
       </ThemeProvider>
