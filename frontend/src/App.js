@@ -21,8 +21,6 @@ const theme = createTheme({
 })
 
 function App() {
-  // api.getUserGreeting('James')
-
   return (
     <div className="App">
       <ThemeProvider theme={theme}>

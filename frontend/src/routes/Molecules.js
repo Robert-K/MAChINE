@@ -2,13 +2,46 @@ import React from 'react'
 import { Card, CardContent, Grid, Box, TextField } from '@mui/material'
 import Button from '@mui/material/Button'
 import MoleculeSelection from '../components/MoleculeSelection'
+import Molecule from '../internal/Molecule'
+import MoleculeAnalysis from '../internal/MoleculeAnalysis'
 
 export default function Molecules() {
+  const testMolecules = [
+    new Molecule('aa', 'aa', [
+      new MoleculeAnalysis('aa', { toxicity: 5000 }),
+      new MoleculeAnalysis('gg', { power_level: 500, noble_gas: false }),
+    ]),
+    new Molecule('aaa', 'aawfa', [
+      new MoleculeAnalysis('aa', { toxicity: 500 }),
+      new MoleculeAnalysis('gg', { power_level: 500, noble_gas: false }),
+    ]),
+    new Molecule('aaaa', 'afawfa', [
+      new MoleculeAnalysis('aa', { toxicity: 11616 }),
+      new MoleculeAnalysis('gg', { power_level: 4, noble_gas: true }),
+    ]),
+    new Molecule('aaaaaa', 'aawfawfawfa', [
+      new MoleculeAnalysis('aa', { toxicity: 124 }),
+      new MoleculeAnalysis('gg', {
+        power_level: 1,
+        noble_gas: false,
+      }),
+      new MoleculeAnalysis('tt', {
+        test: 1,
+        other_test: 12512512,
+        other_other_test: "yes but maybe not it's quite weird tbh",
+        smells_good: false,
+        light: 'no',
+      }),
+    ]),
+    new Molecule('gg', 'gg', [
+      new MoleculeAnalysis('gg', { power_level: 9001 }),
+    ]),
+  ]
   return (
     <Box sx={{ m: 5 }}>
       <Grid container spacing={2}>
         <Grid item md={3}>
-          {MoleculeSelection()}
+          {<MoleculeSelection molecules={testMolecules}></MoleculeSelection>}
         </Grid>
         <Grid item md={9}>
           {MoleculeView()}

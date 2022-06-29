@@ -11,36 +11,73 @@ import {
 } from '@mui/material'
 import stringToColor from '../utils'
 import Button from '@mui/material/Button'
+import PropTypes from 'prop-types'
+import DetailsPopper from './DetailsPopper'
+import MoleculeInfo from './MoleculeInfo'
 
-export default function MoleculeSelection() {
-  const [selectedIndex, setSelectedIndex] = React.useState(1)
+function MoleculeSelection(props) {
+  const [selectedIndex, setSelectedIndex] = React.useState('a')
+  const [open, setOpen] = React.useState(false)
+  const [waited, setWaited] = React.useState(false)
+  const [content, setContent] = React.useState(<h1>Placeholder</h1>)
+  const [anchor, setAnchor] = React.useState(null)
+
+  const handlePopper = (target, content, show) => {
+    setContent(content)
+    setAnchor(target)
+    setOpen(show)
+    setWaited(false)
+    if (show) {
+      setTimeout(() => {
+        setWaited(true)
+      }, 150)
+    }
+  }
 
   const handleListItemClick = (event, index) => {
     setSelectedIndex(index)
+    handlePopper(null, <div />, false)
   }
 
   return (
     <Card>
       <CardContent>
         <List>
-          {[1, 2, 3, 4, 5, 6, 7, 8].map((index) => (
+          {props.molecules.map((molecule) => (
             <ListItemButton
-              key={index}
-              onClick={(event) => handleListItemClick(event, index)}
-              selected={index === selectedIndex}
+              key={molecule.smiles}
+              onDoubleClick={(event) =>
+                handleListItemClick(event, molecule.smiles)
+              }
+              onClick={(event) =>
+                handlePopper(
+                  event.currentTarget,
+                  <MoleculeInfo molecule={molecule}></MoleculeInfo>,
+                  event.currentTarget !== anchor || !open
+                )
+              }
+              selected={selectedIndex === molecule.smiles}
             >
               <ListItemAvatar>
-                <Avatar sx={{ bgcolor: stringToColor(index + 'peter') }}>
-                  <p>M{index}</p>
+                <Avatar
+                  sx={{ bgcolor: stringToColor(`${molecule.name} peter`) }}
+                >
+                  <p>{molecule.name}</p>
                 </Avatar>
               </ListItemAvatar>
               <ListItemText
-                primary="Hello, I am Molecule"
-                secondary="This is a molecule, select it!"
+                primary={`Hello, I am ${molecule.name}`}
+                secondary={`This is a molecule, select it! ${molecule.smiles}`}
               />
             </ListItemButton>
           ))}
         </List>
+        <DetailsPopper
+          anchor={anchor}
+          open={open}
+          content={content}
+          waited={waited}
+        />
       </CardContent>
       <CardActions>
         <Button>Add a molecule</Button>
@@ -48,3 +85,9 @@ export default function MoleculeSelection() {
     </Card>
   )
 }
+
+MoleculeSelection.propTypes = {
+  molecules: PropTypes.array.isRequired,
+}
+
+export default MoleculeSelection
