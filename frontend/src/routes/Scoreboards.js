@@ -10,8 +10,10 @@ import {
   TableRow,
   Typography,
 } from '@mui/material'
+import api from '../api'
 
 export default function Scoreboards() {
+  prepareContent()
   return (
     <div align="center">
       <Box sx={{ mx: 5, mb: 5, mt: 2 }}>
@@ -49,6 +51,11 @@ function createMoleculeData(place, name, toxicity, conductivity) {
 const modelRows = [createModelData(1, 'ModelTest', 100, 20)]
 
 const moleculeRows = [createMoleculeData(1, 'MoleculeTest', 200, 10)]
+
+function prepareContent() {
+  api.getModelInfo()
+  api.getMoleculeInfo()
+}
 
 function table(tableColumns, tableRows) {
   return (
