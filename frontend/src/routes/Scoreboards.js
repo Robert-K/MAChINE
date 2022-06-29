@@ -14,10 +14,10 @@ import {
 export default function Scoreboards() {
   return (
     <div align="center">
-      <Box sx={{ m: 5 }}>
-        <Typography>Best Models</Typography>
+      <Box sx={{ mx: 5, mb: 5, mt: 2 }}>
+        <Typography sx={{ fontSize: 20 }}>Best Models</Typography>
         {table(modelColumns, modelRows)}
-        <Typography sx={{ mt: 5 }}>Best Molecules</Typography>
+        <Typography sx={{ mt: 5, fontSize: 20 }}>Best Molecules</Typography>
         {table(moleculeColumns, moleculeRows)}
       </Box>
     </div>
