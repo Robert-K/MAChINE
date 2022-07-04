@@ -1,5 +1,6 @@
 import React from 'react'
 import Scoreboards from './routes/Scoreboards.js'
+import Models from './routes/Models'
 import './App.scss'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import Swagger from './routes/Swagger'
@@ -27,7 +28,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />}></Route>
             <Route path="/home" element={<Home />}></Route>
-            <Route path="/models" element={<Home />}></Route>
+            <Route path="/models" element={<Models />}></Route>
             <Route path="/molecules" element={<Molecules />}></Route>
             <Route path="/results" element={<Scoreboards />}></Route>
             <Route path="/swagger" element={<Swagger />}></Route>
