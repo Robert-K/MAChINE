@@ -22,7 +22,7 @@ export default function Navbar(props) {
           </NavLink>
         )}
       </Toolbar>
-      <style jsx>{`
+      <style jsx="true">{`
         a {
           color: white;
           text-decoration: none;
