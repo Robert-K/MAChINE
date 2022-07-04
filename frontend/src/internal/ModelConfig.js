@@ -20,37 +20,5 @@ class ModelConfig {
   addFitting(dataset, epochs, accuracy) {
     this.fittings.push(new Fitting(this, dataset, epochs, accuracy))
   }
-
-  get name() {
-    return this.name
-  }
-
-  set name(value) {
-    this.name = value
-  }
-
-  get baseModel() {
-    return this.baseModel
-  }
-
-  set baseModel(value) {
-    this.baseModel = value
-  }
-
-  get parameters() {
-    return this.parameters
-  }
-
-  set parameters(value) {
-    this.parameters = value
-  }
-
-  get fittings() {
-    return this.fittings
-  }
-
-  set fittings(value) {
-    this.fittings = value
-  }
 }
 export default ModelConfig
