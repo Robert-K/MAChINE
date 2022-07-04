@@ -1,14 +1,14 @@
 import React, { useState } from 'react'
-import Scoreboards from './routes/Scoreboards.js'
-import Models from './routes/Models'
+import ScoreboardsPage from './routes/ScoreboardsPage.js'
+import ModelsPage from './routes/ModelsPage'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
-import Swagger from './routes/Swagger'
+import SwaggerPage from './routes/SwaggerPage'
 import '@fontsource/roboto'
 import Navbar from './components/Navbar'
 import { createTheme, CssBaseline, ThemeProvider } from '@mui/material'
 import { red } from '@mui/material/colors'
-import Home from './routes/Home'
-import Molecules from './routes/Molecules'
+import HomePage from './routes/HomePage'
+import MoleculesPage from './routes/MoleculesPage'
 
 const themeLight = createTheme({
   palette: {
@@ -37,12 +37,12 @@ function App() {
         <BrowserRouter>
           <Navbar />
           <Routes>
-            <Route path="/" element={<Home />}></Route>
-            <Route path="/home" element={<Home />}></Route>
-            <Route path="/models" element={<Models />}></Route>
-            <Route path="/molecules" element={<Molecules />}></Route>
-            <Route path="/results" element={<Scoreboards />}></Route>
-            <Route path="/swagger" element={<Swagger />}></Route>
+            <Route path="/" element={<HomePage />}></Route>
+            <Route path="/home" element={<HomePage />}></Route>
+            <Route path="/models" element={<ModelsPage />}></Route>
+            <Route path="/molecules" element={<MoleculesPage />}></Route>
+            <Route path="/results" element={<ScoreboardsPage />}></Route>
+            <Route path="/swagger" element={<SwaggerPage />}></Route>
           </Routes>
         </BrowserRouter>
       </ThemeProvider>

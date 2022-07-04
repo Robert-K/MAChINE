@@ -17,7 +17,7 @@ import DownloadIcon from '@mui/icons-material/Download'
 import InfoIcon from '@mui/icons-material/Info'
 import Button from '@mui/material/Button'
 
-export default function Home() {
+export default function HomePage() {
   const [selection, setSelection] = React.useState(null)
   return (
     <div className="Home" align="center">

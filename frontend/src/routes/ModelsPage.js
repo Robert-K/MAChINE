@@ -12,7 +12,7 @@ import {
 import Button from '@mui/material/Button'
 import ModelConfig from '../internal/ModelConfig'
 
-export default function Models() {
+export default function ModelsPage() {
   // TODO: enable child accessing state
   // const [selectedModelIndex, setSelectedModelID] = React.useState(0)
   return (

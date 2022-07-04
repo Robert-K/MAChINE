@@ -12,7 +12,7 @@ import {
 } from '@mui/material'
 import api from '../api'
 
-export default function Scoreboards() {
+export default function ScoreboardsPage() {
   prepareContent()
   return (
     <div align="center">

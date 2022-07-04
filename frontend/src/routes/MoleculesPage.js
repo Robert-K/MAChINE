@@ -5,7 +5,7 @@ import MoleculeSelection from '../components/MoleculeSelection'
 import Molecule from '../internal/Molecule'
 import MoleculeAnalysis from '../internal/MoleculeAnalysis'
 
-export default function Molecules() {
+export default function MoleculesPage() {
   const testMolecules = [
     new Molecule('aa', 'aa', [
       new MoleculeAnalysis('aa', { toxicity: 5000 }),
