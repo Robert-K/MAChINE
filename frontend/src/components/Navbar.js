@@ -1,7 +1,8 @@
-import { AppBar, Toolbar } from '@mui/material'
+import { AppBar, Box, Toolbar } from '@mui/material'
 import { NavLink } from 'react-router-dom'
 import React from 'react'
 import logo from '../logo.svg'
+import DarkModeButton from './DarkModeButton'
 
 export default function Navbar() {
   return (
@@ -12,6 +13,8 @@ export default function Navbar() {
         <NavLink to="/models">Models</NavLink>
         <NavLink to="/molecules">Molecules</NavLink>
         <NavLink to="/results">Scoreboards</NavLink>
+        <Box sx={{ flexGrow: 1 }}></Box>
+        <DarkModeButton />
       </Toolbar>
       <style jsx>{`
         a {

@@ -1,17 +1,16 @@
-import React from 'react'
+import React, { useState } from 'react'
 import Scoreboards from './routes/Scoreboards.js'
 import Models from './routes/Models'
-import './App.scss'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import Swagger from './routes/Swagger'
 import '@fontsource/roboto'
 import Navbar from './components/Navbar'
-import { createTheme, ThemeProvider } from '@mui/material'
+import { createTheme, CssBaseline, ThemeProvider } from '@mui/material'
 import { red } from '@mui/material/colors'
 import Home from './routes/Home'
 import Molecules from './routes/Molecules'
 
-const theme = createTheme({
+const themeLight = createTheme({
   palette: {
     primary: {
       main: red[500],
@@ -19,10 +18,22 @@ const theme = createTheme({
   },
 })
 
+const themeDark = createTheme({
+  palette: {
+    primary: {
+      main: red[500],
+    },
+    mode: 'dark',
+  },
+})
+
 function App() {
+  const [darkMode] = useState(false)
+
   return (
     <div className="App">
-      <ThemeProvider theme={theme}>
+      <ThemeProvider theme={darkMode ? themeDark : themeLight}>
+        <CssBaseline />
         <BrowserRouter>
           <Navbar />
           <Routes>
