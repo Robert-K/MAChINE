@@ -1,5 +1,3 @@
-import ModelType from '../components/ModelType'
-
 class BaseModel {
   constructor(name, id, type, taskType, compatibleDatasets) {
     // String, name for base model

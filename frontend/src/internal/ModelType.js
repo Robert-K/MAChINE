@@ -10,3 +10,5 @@ class ModelType {
     this.image = image
   }
 }
+
+export default ModelType

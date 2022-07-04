@@ -32,20 +32,20 @@ function BaseModelCard(props) {
         />
         <Box paddingX={1}>
           {/* Displays the base model's name */}
-          <Typography variant="h2" component="h2">
+          <Typography variant="h4" component="h3">
             {props.baseModel.name}
           </Typography>
         </Box>
-        <Box>
+        <Box paddingX={1}>
           {/* Displays the base model's type */}
           <Typography variant="subtitle1" component="h4">
             {props.baseModel.type.name}
           </Typography>
         </Box>
-        <Box>
+        <Box paddingX={1}>
           {/* Displays the base model's taskType (classifier or regression) */}
           <Typography variant="subtitle1" component="h4">
-            {props.baseModel.taskType}
+            Model task: {props.baseModel.taskType}
           </Typography>
         </Box>
       </Paper>
