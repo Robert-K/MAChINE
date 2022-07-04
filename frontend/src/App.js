@@ -9,6 +9,7 @@ import { createTheme, CssBaseline, ThemeProvider } from '@mui/material'
 import { red } from '@mui/material/colors'
 import HomePage from './routes/HomePage'
 import MoleculesPage from './routes/MoleculesPage'
+import StartPage from './routes/StartPage'
 
 const themeLight = createTheme({
   palette: {
@@ -28,6 +29,18 @@ const themeDark = createTheme({
 })
 
 function App() {
+  const [userName, setUserName] = React.useState('')
+  const login = (userName) => {
+    setUserName(userName)
+    /* Do things */
+  }
+  const logout = () => {
+    setUserName('')
+    /* Delete all Data */
+    /* Delete trained models */
+    /* Delete molecules */
+  }
+
   const [darkMode] = useState(false)
 
   return (
@@ -35,9 +48,12 @@ function App() {
       <ThemeProvider theme={darkMode ? themeDark : themeLight}>
         <CssBaseline />
         <BrowserRouter>
-          <Navbar />
+          <Navbar userName={userName} logoutFunction={logout} />
           <Routes>
-            <Route path="/" element={<HomePage />}></Route>
+            <Route
+              path="/"
+              element={<StartPage sendNameAway={login} />}
+            ></Route>
             <Route path="/home" element={<HomePage />}></Route>
             <Route path="/models" element={<ModelsPage />}></Route>
             <Route path="/molecules" element={<MoleculesPage />}></Route>

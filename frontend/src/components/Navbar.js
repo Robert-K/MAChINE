@@ -2,9 +2,10 @@ import { AppBar, Box, Toolbar } from '@mui/material'
 import { NavLink } from 'react-router-dom'
 import React from 'react'
 import logo from '../logo.svg'
+import PropTypes from 'prop-types'
 import DarkModeButton from './DarkModeButton'
 
-export default function Navbar() {
+export default function Navbar(props) {
   return (
     <AppBar color="primary" position="sticky">
       <Toolbar>
@@ -15,6 +16,11 @@ export default function Navbar() {
         <NavLink to="/results">Scoreboards</NavLink>
         <Box sx={{ flexGrow: 1 }}></Box>
         <DarkModeButton />
+        {!props.userName ? null : (
+          <NavLink key="logout" to="/" onClick={() => props.logoutFunction()}>
+            Not {props.userName}? Log out
+          </NavLink>
+        )}
       </Toolbar>
       <style jsx>{`
         a {
@@ -28,4 +34,9 @@ export default function Navbar() {
       `}</style>
     </AppBar>
   )
+}
+
+Navbar.propTypes = {
+  userName: PropTypes.string.isRequired,
+  logoutFunction: PropTypes.func.isRequired,
 }
