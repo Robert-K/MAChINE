@@ -11,46 +11,46 @@ class ModelConfig {
     // Identifier of base model
     // Object with config parameters. Unknown structure
     // Array of fittings
-    this._fittings = []
-    this._name = name
-    this._baseModel = baseModel
-    this._parameters = parameters
+    this.fittings = []
+    this.name = name
+    this.baseModel = baseModel
+    this.parameters = parameters
   }
 
   addFitting(dataset, epochs, accuracy) {
-    this._fittings.push(new Fitting(this, dataset, epochs, accuracy))
+    this.fittings.push(new Fitting(this, dataset, epochs, accuracy))
   }
 
   get name() {
-    return this._name
+    return this.name
   }
 
   set name(value) {
-    this._name = value
+    this.name = value
   }
 
   get baseModel() {
-    return this._baseModel
+    return this.baseModel
   }
 
   set baseModel(value) {
-    this._baseModel = value
+    this.baseModel = value
   }
 
   get parameters() {
-    return this._parameters
+    return this.parameters
   }
 
   set parameters(value) {
-    this._parameters = value
+    this.parameters = value
   }
 
   get fittings() {
-    return this._fittings
+    return this.fittings
   }
 
   set fittings(value) {
-    this._fittings = value
+    this.fittings = value
   }
 }
 export default ModelConfig
