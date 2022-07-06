@@ -3,8 +3,14 @@ import {
   Collapse,
   Divider,
   List,
-  ListItem,
   ListItemButton,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableRow,
+  Typography,
 } from '@mui/material'
 import React from 'react'
 
@@ -22,31 +28,49 @@ class Fitting {
 
   render() {
     const [open, setOpen] = React.useState(false)
+    const rows = [
+      createData('Epochs', this.epochs),
+      createData('Accuracy', this.accuracy),
+    ]
     return (
       <List>
-        {/* TODO: connect style to theme */}
         <style>{`
           .listKey {
             font-weight: bold;
-            color: red;
           }
         `}</style>
         <ListItemButton onClick={() => setOpen(!open)}>
-          <div className="listKey"> {this.dataset} </div>
+          <Typography className="listKey" sx={{ color: 'primary.main' }}>
+            {' '}
+            {this.dataset}{' '}
+          </Typography>
         </ListItemButton>
         <Collapse in={open}>
-          <List>
-            <ListItem>
-              <div className="listKey">Epochs: </div> {this.epochs}
-            </ListItem>
-            <ListItem>
-              <div className="listKey">Accuracy: </div> {this.accuracy}%
-            </ListItem>
-          </List>
+          <TableContainer component={Paper}>
+            <Table sx={{ minWidth: 500 }}>
+              <TableBody>
+                {rows.map((row) => (
+                  <TableRow key={row.property}>
+                    <TableCell component="th" scope="row">
+                      {row.property}
+                    </TableCell>
+                    <TableCell style={{ width: 160 }} align="right">
+                      {row.value}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
         </Collapse>
         <Divider />
       </List>
     )
   }
 }
+
+function createData(property, value) {
+  return { property, value }
+}
+
 export default Fitting

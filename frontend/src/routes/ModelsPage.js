@@ -4,7 +4,7 @@ import {
   Card,
   CardActions,
   CardContent,
-  Divider,
+  CardHeader,
   Grid,
   List,
   Typography,
@@ -23,6 +23,9 @@ export default function ModelsPage() {
         </Grid>
         <Grid item md={9}>
           {ModelDescription()}
+          {ModelDescription()}
+          {ModelDescription()}
+          {ModelDescription()}
         </Grid>
       </Grid>
     </Box>
@@ -40,10 +43,13 @@ function ModelDescription() {
   models[1].addFitting('dataset2b', 12, 78)
   // const selectedModelIndex = React.useState(0)
   return (
-    <Card>
+    <Card sx={{ m: 4, maxWidth: 700 }}>
+      <CardHeader
+        sx={{ backgroundColor: 'contrastbackground.main' }}
+        title={models[0].name}
+        align="center"
+      ></CardHeader>
       <CardContent>
-        <Typography variant="h5">{models[0].name}</Typography>
-        <Divider sx={{ mb: 2 }} />
         <Typography>Base Model: {models[0].baseModel}</Typography>
         <Typography>Trained on: </Typography>
         <List>{models[0].fittings.map((fitting) => fitting.render())}</List>

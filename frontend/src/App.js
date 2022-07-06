@@ -16,6 +16,9 @@ const themeLight = createTheme({
     primary: {
       main: red[500],
     },
+    contrastbackground: {
+      main: red[100],
+    },
   },
 })
 
