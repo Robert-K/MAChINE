@@ -1,4 +1,5 @@
 import Fitting from './Fitting'
+import ReactDOM from 'react'
 
 class ModelConfig {
   #name
@@ -18,7 +19,13 @@ class ModelConfig {
   }
 
   addFitting(dataset, epochs, accuracy) {
-    this.fittings.push(new Fitting(this, dataset, epochs, accuracy))
+    const fittingProps = {
+      model: this,
+      dataset,
+      epochs,
+      accuracy,
+    }
+    this.fittings.push(ReactDOM.createElement(Fitting, fittingProps, null))
   }
 }
 export default ModelConfig
