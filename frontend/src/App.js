@@ -11,6 +11,7 @@ import { red } from '@mui/material/colors'
 import Molecules from './routes/Molecules'
 import Models from './routes/Models'
 import BaseModels from './routes/BaseModels'
+import DatasetPage from './routes/DatasetPage'
 
 const theme = createTheme({
   palette: {
@@ -34,6 +35,7 @@ function App() {
             <Route path="/results" element={<Scoreboards />}></Route>
             <Route path="/swagger" element={<Swagger />}></Route>
             <Route path="/basemodels" element={<BaseModels />}></Route>
+            <Route path="/datasets" element={<DatasetPage />}></Route>
           </Routes>
         </BrowserRouter>
       </ThemeProvider>

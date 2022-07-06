@@ -20,6 +20,14 @@ export default function Models() {
               </Button>
             </CardActions>
           </Card>
+          <Card sx={{ mt: 5 }}>
+            <CardContent>Hello, this is a placeholder</CardContent>
+            <CardActions>
+              <Button component={Link} to="/datasets" variant="contained">
+                Select a Dataset!
+              </Button>
+            </CardActions>
+          </Card>
         </Grid>
       </Grid>
     </Box>
