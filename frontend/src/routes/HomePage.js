@@ -12,7 +12,6 @@ import {
   Stack,
   Typography,
 } from '@mui/material'
-import HelpIcon from '@mui/icons-material/Help'
 import DownloadIcon from '@mui/icons-material/Download'
 import InfoIcon from '@mui/icons-material/Info'
 import Button from '@mui/material/Button'
@@ -23,20 +22,14 @@ export default function HomePage() {
     <div className="Home" align="center">
       <Box
         sx={{
-          display: 'flex',
-          borderColor: 'primary',
-          /* border: 1, */
-          maxWidth: 500,
-          borderRadius: '20px',
-          p: 5,
+          maxWidth: 350,
+          p: 4,
         }}
       >
-        <Image src={logo} />
+        <Image sx={{ filter: 'invert(50%)' }} src={logo} />
       </Box>
-      <Stack direction="row" justifyContent="center" spacing={2}>
-        <IconButton aria-label="Help" onClick={() => setSelection('help')}>
-          <HelpIcon />
-        </IconButton>
+      <HelpPanel />
+      <Stack direction="row" justifyContent="center" spacing={4}>
         <IconButton
           aria-label="Result"
           onClick={() => setSelection('download')}
@@ -56,8 +49,6 @@ function SelectedPanel(props) {
   switch (props.selected) {
     case 'info':
       return InfoPanels()
-    case 'help':
-      return HelpPanel()
     case 'download':
       return DownloadPanel()
   }
@@ -66,11 +57,10 @@ function SelectedPanel(props) {
 function HelpPanel() {
   return (
     <Box sx={{ maxWidth: 600, m: 3 }}>
-      <Box sx={{ typography: 'title', fontWeight: 'bold' }}>
+      <Typography variant="h6" align="center" color="text.primary" paragraph>
         New here? Then learn here how to use this website:
-      </Box>
-      <Box>
-        {/* TODO */}
+      </Typography>
+      <Typography align="center" color="text.secondary" paragraph>
         Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
         tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
         veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
@@ -78,7 +68,7 @@ function HelpPanel() {
         velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint
         occaecat cupidatat non proident, sunt in culpa qui officia deserunt
         mollit anim id est laborum.
-      </Box>
+      </Typography>
     </Box>
   )
 }
