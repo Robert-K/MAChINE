@@ -47,7 +47,7 @@ export default function BaseModels() {
 
   return (
     <Container>
-      <Grid container spacing={4} marginTop={1} marginBottom={5}>
+      <Grid container spacing={4} marginTop={1} marginBottom={5} md={3}>
         {modelArray.map((baseModel) => (
           <BaseModelCard
             baseModel={baseModel}
@@ -95,7 +95,7 @@ const squirrelType = new ModelType(
   'squirrel_content.jpg'
 )
 const quokkaType = new ModelType(
-  'Quokkas sind Beuteltiere.',
+  'Quokkas sind Beutelbeutelbeutelbeuteltiere.',
   'quokka_content2.webp'
 )
 

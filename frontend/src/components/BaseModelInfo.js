@@ -12,13 +12,14 @@ import {
 } from '@mui/material'
 import ExpandLess from '@mui/icons-material/ExpandLess'
 import ExpandMore from '@mui/icons-material/ExpandMore'
+import Button from '@mui/material/Button'
 
 // todo margin is ugly atm, might wanna fix that
-// todo handle empty poppers, they look bad rn
 
 function BaseModelInfo(props) {
   return (
     <List sx={{ maxHeight: 400, maxWidth: 200, overflow: 'auto' }}>
+      <Button variant="contained">Configure this model</Button>
       {props.baseModel.compatibleDatasets.map((dataset, i, datasets) => {
         return (
           <React.Fragment
@@ -62,18 +63,17 @@ function DatasetInfo(props) {
           orientation="horizontal"
         >
           <List component="div" dense>
-            {Object.entries(props.dataset.labelDescriptors).map(
-              ([key, i, value]) => {
-                return (
-                  <ListItem
-                    sx={{ pl: 4 }}
-                    key={`${JSON.stringify(key)} ${i.toString()}`}
-                  >
-                    <ListItemText primary={`${key}`}></ListItemText>
-                  </ListItem>
-                )
-              }
-            )}
+            {props.dataset.labelDescriptors.map((labelDescriptor, i, value) => {
+              console.log(props.dataset.labelDescriptors)
+              return (
+                <ListItem
+                  sx={{ pl: 4 }}
+                  key={`${i.toString()} ${labelDescriptor}`}
+                >
+                  <ListItemText primary={labelDescriptor}></ListItemText>
+                </ListItem>
+              )
+            })}
           </List>
         </Collapse>
       </Collapse>

@@ -16,7 +16,7 @@ import CardContent from '@mui/material/CardContent'
 function BaseModelCard(props) {
   // ({ baseModel }) {
   return (
-    <Grid item xs={3}>
+    <Grid item xs={4} md={3}>
       {/* ^ The grid has a total width of  12. The xs defines how much of that width each component of the grid gets,
       and as such also how many elements each row of the grid can fit. If xs=3, then four elements can fit in one
        row of width 3*4=12 */}
