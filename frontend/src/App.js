@@ -7,11 +7,12 @@ import SwaggerPage from './routes/SwaggerPage'
 import '@fontsource/roboto'
 import Navbar from './components/Navbar'
 import { createTheme, CssBaseline, ThemeProvider } from '@mui/material'
-import { red } from '@mui/material/colors'
+import { blue, red } from '@mui/material/colors'
 import HomePage from './routes/HomePage'
 import MoleculesPage from './routes/MoleculesPage'
 import StartPage from './routes/StartPage'
 import TrainingPage from './routes/TrainingPage'
+import DarkModeButton from './components/DarkModeButton'
 
 const themeLight = createTheme({
   palette: {
@@ -27,15 +28,25 @@ const themeLight = createTheme({
 const themeDark = createTheme({
   palette: {
     primary: {
-      main: red[500],
+      main: blue[500],
     },
     mode: 'dark',
+  },
+  components: {
+    MuiAppBar: {
+      styleOverrides: {
+        colorPrimary: {
+          backgroundColor: blue[900],
+        },
+      },
+    },
   },
 })
 
 function App() {
   const [userName, setUserName] = React.useState('')
   const login = (userName) => {
+    logout()
     setUserName(userName)
     /* Do things */
   }
@@ -46,14 +57,21 @@ function App() {
     /* Delete molecules */
   }
 
-  const [darkMode] = useState(false)
+  const [darkMode, setDarkMode] = useState(false)
+  const changeDarkMode = (value) => {
+    setDarkMode(value)
+  }
 
   return (
     <div className="App">
       <ThemeProvider theme={darkMode ? themeDark : themeLight}>
         <CssBaseline />
         <BrowserRouter>
-          <Navbar userName={userName} logoutFunction={logout} />
+          <Navbar
+            userName={userName}
+            logoutFunction={logout}
+            darkModeButton={<DarkModeButton setModeFunction={changeDarkMode} />}
+          />
           <Routes>
             <Route
               path="/"
