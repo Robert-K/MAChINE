@@ -13,7 +13,7 @@ export default function Navbar() {
         <NavLink to="/molecules">Molecules</NavLink>
         <NavLink to="/results">Scoreboards</NavLink>
       </Toolbar>
-      <style jsx>{`
+      <style>{`
         a {
           color: white;
           text-decoration: none;

@@ -40,6 +40,10 @@ function DetailsPopper(props) {
               adaptive: false,
             },
           },
+          {
+            name: 'flip',
+            enabled: true,
+          },
         ]}
         className={props.waited ? 'popper-anim' : 'popper'}
         sx={{
