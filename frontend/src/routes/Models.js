@@ -15,7 +15,7 @@ export default function Models() {
           <Card>
             <CardContent>Hello, this is a placeholder</CardContent>
             <CardActions>
-              <Button component={Link} to="/basemodels" variant="contained">
+              <Button component={Link} to="/base-models" variant="contained">
                 Add a model!
               </Button>
             </CardActions>

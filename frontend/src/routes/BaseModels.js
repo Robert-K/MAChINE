@@ -104,6 +104,16 @@ const dataset1 = new Dataset('dataset1', 1, 200, [
   'Attribute1b',
   'Attribute1c',
 ])
+const dataset3 = new Dataset('dataset3', 1, 200, [
+  'Attribute3a',
+  'Attribute3b',
+  'Attribute3c',
+])
+const dataset4 = new Dataset('dataset4', 1, 200, [
+  'Attribute4a',
+  'Attribute4b',
+  'Attribute4c',
+])
 
 const dataset2 = new Dataset('dataset2', 2, 500, ['Attribute2a', 'Attribute2b'])
 
@@ -111,6 +121,8 @@ const modelA = new BaseModel('modelA', 0, zieselType, 'Regression', [dataset1])
 const modelB = new BaseModel('modelB', 1, squirrelType, 'Regression', [
   dataset1,
   dataset2,
+  dataset3,
+  dataset4,
 ])
 const modelC = new BaseModel('modelC', 2, zieselType, 'Classifier', [])
 const modelD = new BaseModel('modelD', 3, quokkaType, 'Regression', [])

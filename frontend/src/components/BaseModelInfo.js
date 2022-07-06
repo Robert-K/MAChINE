@@ -14,11 +14,9 @@ import ExpandLess from '@mui/icons-material/ExpandLess'
 import ExpandMore from '@mui/icons-material/ExpandMore'
 import Button from '@mui/material/Button'
 
-// todo margin is ugly atm, might wanna fix that
-
 function BaseModelInfo(props) {
   return (
-    <List sx={{ maxHeight: 400, maxWidth: 200, overflow: 'auto' }}>
+    <List sx={{ maxHeight: 400, maxWidth: 250, overflow: 'auto' }}>
       <Button variant="contained">Configure this model</Button>
       {props.baseModel.compatibleDatasets.map((dataset, i, datasets) => {
         return (

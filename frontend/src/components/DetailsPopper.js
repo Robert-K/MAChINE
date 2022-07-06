@@ -44,6 +44,12 @@ function DetailsPopper(props) {
             name: 'flip',
             enabled: true,
           },
+          {
+            name: 'preventOverflow',
+            options: {
+              padding: 80,
+            },
+          },
         ]}
         className={props.waited ? 'popper-anim' : 'popper'}
         sx={{
