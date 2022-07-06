@@ -47,7 +47,7 @@ export default function BaseModels() {
 
   return (
     <Container>
-      <Grid container spacing={4} marginTop={1} marginBottom={5} md={3}>
+      <Grid container spacing={4} marginTop={1} marginBottom={5}>
         {modelArray.map((baseModel) => (
           <BaseModelCard
             baseModel={baseModel}
