@@ -11,7 +11,7 @@ export default function Navbar(props) {
     <AppBar color="primary" position="sticky">
       <Toolbar>
         <img src={logo} height="30px" mx="2" />
-        {locationName === '/' ? null : (
+        {!(locationName !== '/' || props.userName) ? null : (
           <>
             {/* TODO: set to lead to '/home', on page reload go to '/' */}
             <NavLink to="/">Home</NavLink>
