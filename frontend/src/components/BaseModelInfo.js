@@ -13,6 +13,9 @@ import {
 import ExpandLess from '@mui/icons-material/ExpandLess'
 import ExpandMore from '@mui/icons-material/ExpandMore'
 
+// todo margin is ugly atm, might wanna fix that
+// todo handle empty poppers, they look bad rn
+
 function BaseModelInfo(props) {
   return (
     <List sx={{ maxHeight: 400, maxWidth: 200, overflow: 'auto' }}>

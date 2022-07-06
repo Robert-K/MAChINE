@@ -12,6 +12,8 @@ import Molecules from './routes/Molecules'
 import Models from './routes/Models'
 import BaseModels from './routes/BaseModels'
 
+// todo trainingssocket erstellen
+
 const theme = createTheme({
   palette: {
     primary: {
