@@ -1,8 +1,10 @@
-from flask import Flask
+from multiprocessing.reduction import _reduce_method_descriptor
+
+from flask import Flask, request
 from flask_cors import CORS
 from flask_restful import reqparse, abort, Api, Resource
 
-from backend import resulthandler
+from backend import storage_handler as sh
 
 app = Flask(__name__)
 CORS(app)
@@ -29,7 +31,7 @@ parser.add_argument('task')
 class Model(Resource):
     def get(self, model_id):
         abort_if_model_doesnt_exist(model_id)
-        return models[model_id]
+        return sh.get_model_config(model_id)
 
     def delete(self, model_id):
         abort_if_model_doesnt_exist(model_id)
@@ -59,18 +61,31 @@ class Models(Resource):
 
 class ModelList(Resource):
     def get(self):
-        return resulthandler.getmodels()
+        return sh.getmodels()
 
 
 class MoleculeList(Resource):
     def get(self):
-        return resulthandler.getmoleculs()
+        return sh.getmoleculs()
+
+
+class AddModelConfig(Resource):
+    def post(self):
+        json_data = request.get_json()
+        return sh.add_new_model_config(json_data['epochs'],
+                                       json_data['batch_size'],
+                                       json_data['verbose'],
+                                       json_data['num_layers'],
+                                       json_data['units_per_layer'],
+                                       json_data['fingerprint_size'],
+                                       json_data['label'])
 
 
 ##
 ## Actually setup the Api resource routing here
 ##
 api.add_resource(Models, '/models')
+api.add_resource(AddModelConfig, '/models/add')
 api.add_resource(ModelList, '/modellist')  # returns a list of all used models with parameters, used for scoreboard
 api.add_resource(MoleculeList,
                  '/moleculelist')  # returns a list of all used molecules with prpoerties, used for scorebooard
