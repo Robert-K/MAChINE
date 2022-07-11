@@ -1,9 +1,9 @@
 import React from 'react'
 import { Card, CardContent, Grid, Box, TextField } from '@mui/material'
 import Button from '@mui/material/Button'
-import MoleculeSelection from '../components/MoleculeSelection'
 import Molecule from '../internal/Molecule'
 import MoleculeAnalysis from '../internal/MoleculeAnalysis'
+import SelectionList from '../components/SelectionList'
 
 export default function MoleculesPage() {
   const testMolecules = [
@@ -41,7 +41,16 @@ export default function MoleculesPage() {
     <Box sx={{ m: 5 }}>
       <Grid container spacing={2}>
         <Grid item md={3}>
-          {<MoleculeSelection molecules={testMolecules}></MoleculeSelection>}
+          {
+            <SelectionList
+              elements={testMolecules}
+              elementType="molecule"
+              usePopper={true}
+              addFunc={() =>
+                console.log('Implement add molecule in molecules page')
+              }
+            ></SelectionList>
+          }
         </Grid>
         <Grid item md={9}>
           {MoleculeView()}
