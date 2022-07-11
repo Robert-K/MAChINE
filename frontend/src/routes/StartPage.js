@@ -6,6 +6,7 @@ import {
   Container,
   Stack,
   TextField,
+  useTheme,
 } from '@mui/material'
 import PropTypes from 'prop-types'
 import { useNavigate } from 'react-router-dom'
@@ -16,13 +17,19 @@ function StartPage(props) {
   const updateName = (text) => {
     setEnteredName(text)
   }
+  const submitName = () => {
+    props.sendNameAway(enteredName)
+    navigate('/home')
+  }
+
+  const theme = useTheme()
   return (
     <Box sx={{ m: 5 }}>
       <main>
         {/* Hero unit */}
         <Box
           sx={{
-            bgcolor: 'background.paper',
+            bgColor: theme.palette.background,
             pt: 8,
             pb: 6,
           }}
@@ -33,8 +40,8 @@ function StartPage(props) {
               borderRadius: 1,
               borderTop: 0,
               borderRight: 0,
-              borderColor: 'black',
               borderStyle: 'dashed',
+              borderColor: theme.palette.primary.main,
             }}
           >
             <Box>
@@ -52,7 +59,7 @@ function StartPage(props) {
                 variant="h8"
                 gutterBottom
                 align="center"
-                color="text.secondary"
+                color={theme.palette.primary.main}
               >
                 {`-It's neat-`}
               </Typography>
@@ -64,8 +71,8 @@ function StartPage(props) {
               >
                 {`How toxic is your favourite food additive?
                   Don't know? How about we find out!
-                  We're taking you on a journey through molecular science and AI, using innovative and new technology to find answers to the real questions,
-                  like "Is water poisonous?" or "Can I feed gold to my fish or will that kill him?"
+                  We're taking you on a journey through molecular science and AI, using innovative, new technology to find answers to the real questions,
+                  like "Is water a metal?" or "How flammable is my neighbour?"
                   Enter your name below and press the button to begin!
                 `}
               </Typography>
@@ -74,21 +81,22 @@ function StartPage(props) {
           <Stack
             sx={{ pt: 4 }}
             direction="row"
-            spacing={2}
+            spacing={4}
             justifyContent="center"
           >
             <TextField
               label="Name"
               value={enteredName}
               onChange={(e) => updateName(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && enteredName) submitName()
+              }}
+              inputProps={{ maxLength: 42 }}
             ></TextField>
             <Button
               disabled={!enteredName}
               variant="contained"
-              onClick={() => {
-                props.sendNameAway(enteredName)
-                navigate('/home')
-              }}
+              onClick={() => submitName()}
             >
               Start your journey!
             </Button>
