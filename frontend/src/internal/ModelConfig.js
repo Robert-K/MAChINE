@@ -25,18 +25,19 @@ class ModelConfig {
    * @param accuracy float between 0 and 100
    */
   addFitting(datasetID, epochs, accuracy) {
-    const fittingProps = {
-      id: `${this.name}${
-        !Array.isArray(this.fittings) || !this.fittings.length
-          ? 0
-          : this.fittings[this.fittings.length - 1].id + 1
-      }`,
-      modelID: this.id,
-      datasetID,
-      epochs,
-      accuracy,
-    }
-    this.fittings.push(new Fitting(fittingProps))
+    this.fittings.push(
+      new Fitting(
+        `${this.name}${
+          !Array.isArray(this.fittings) || !this.fittings.length
+            ? 0
+            : this.fittings[this.fittings.length - 1].id + 1
+        }`,
+        this.id,
+        datasetID,
+        epochs,
+        accuracy
+      )
+    )
     // TODO: initiate creation of backend equivalent
   }
 }
