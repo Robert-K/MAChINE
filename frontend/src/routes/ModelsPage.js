@@ -20,6 +20,7 @@ import SelectionList from '../components/SelectionList'
 import ExpandLess from '@mui/icons-material/ExpandLess'
 import ExpandMore from '@mui/icons-material/ExpandMore'
 import PropTypes from 'prop-types'
+import { Link } from 'react-router-dom'
 
 /**
  * Depicts a list of saved models and shows a description of the selected model on click
@@ -93,8 +94,9 @@ export default function ModelsPage() {
           </CardContent>
           <CardActions>
             <Grid container justifyContent="center">
-              {/* TODO: connect to data selection */}
-              <Button>Select Training Data</Button>
+              <Button component={Link} to="/datasets">
+                Select Training Data
+              </Button>
             </Grid>
           </CardActions>
         </Card>

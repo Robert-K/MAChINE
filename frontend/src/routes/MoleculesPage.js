@@ -4,6 +4,7 @@ import Button from '@mui/material/Button'
 import Molecule from '../internal/Molecule'
 import MoleculeAnalysis from '../internal/MoleculeAnalysis'
 import SelectionList from '../components/SelectionList'
+import { Link } from 'react-router-dom'
 
 export default function MoleculesPage() {
   const testMolecules = [
@@ -77,7 +78,13 @@ function MoleculeView() {
             </Button>
           </Grid>
           <Grid item>
-            <Button size="large" variant="outlined" sx={{ minHeight: 55 }}>
+            <Button
+              component={Link}
+              to="/trained-models"
+              size="large"
+              variant="outlined"
+              sx={{ minHeight: 55 }}
+            >
               Analyze!
             </Button>
           </Grid>
