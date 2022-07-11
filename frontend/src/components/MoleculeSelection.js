@@ -76,7 +76,8 @@ function MoleculeSelection(props) {
           anchor={anchor}
           open={open}
           content={content}
-          waited={waited}
+          animate={waited}
+          popperWidth={200}
         />
       </CardContent>
       <CardActions>

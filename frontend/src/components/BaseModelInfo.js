@@ -16,8 +16,10 @@ import Button from '@mui/material/Button'
 
 function BaseModelInfo(props) {
   return (
-    <List sx={{ maxHeight: 400, maxWidth: 250, overflow: 'auto' }}>
-      <Button variant="contained">Configure this model</Button>
+    <List sx={{ maxHeight: 400, overflow: 'auto' }}>
+      <Button fullWidth variant="contained">
+        Configure this model
+      </Button>
       {props.baseModel.compatibleDatasets.map((dataset, i, datasets) => {
         return (
           <React.Fragment

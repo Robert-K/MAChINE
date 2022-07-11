@@ -6,8 +6,8 @@ import { Link } from 'react-router-dom'
 
 export default function DatasetInfo(props) {
   return (
-    <List sx={{ maxHeight: 400, maxWidth: 200, overflow: 'auto' }}>
-      <Button component={Link} to="/training" variant="contained">
+    <List sx={{ maxHeight: 400, overflow: 'auto' }}>
+      <Button fullWidth component={Link} to="/training" variant="contained">
         Start Training!
       </Button>
       {props.dataset.labelDescriptors.map((descriptor, index) => {

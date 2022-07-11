@@ -39,7 +39,9 @@ export default function TrainedModels() {
             clickFunc={(event) => {
               handlePopper(
                 event.currentTarget,
-                <Button variant="contained">Choose this model</Button>,
+                <Button fullWidth variant="contained">
+                  Choose this model
+                </Button>,
                 event.currentTarget !== anchor || !open
               )
             }}
@@ -49,7 +51,7 @@ export default function TrainedModels() {
           anchor={anchor}
           open={open}
           content={content}
-          waited={waited}
+          animate={waited}
         />
       </Grid>
     </Container>

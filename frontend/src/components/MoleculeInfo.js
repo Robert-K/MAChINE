@@ -13,7 +13,7 @@ import ExpandMore from '@mui/icons-material/ExpandMore'
 
 export default function MoleculeInfo(props) {
   return (
-    <List sx={{ maxHeight: 400, maxWidth: 200, overflow: 'auto' }}>
+    <List sx={{ maxHeight: 400, overflow: 'auto' }}>
       {props.molecule.analyses.map((analysis, i, analyses) => {
         return (
           <React.Fragment
@@ -48,25 +48,17 @@ function AnalysisInfo(props) {
         unmountOnExit
         orientation="vertical"
       >
-        <Collapse
-          in={expand}
-          timeout="auto"
-          mountOnEnter
-          unmountOnExit
-          orientation="horizontal"
-        >
-          <List component="div" dense>
-            {Object.entries(props.analysis.results).map(([key, value]) => {
-              return (
-                <ListItem sx={{ pl: 4 }} key={key}>
-                  <ListItemText
-                    primary={`${key}:${value.toString()}`}
-                  ></ListItemText>
-                </ListItem>
-              )
-            })}
-          </List>
-        </Collapse>
+        <List component="div" dense>
+          {Object.entries(props.analysis.results).map(([key, value]) => {
+            return (
+              <ListItem sx={{ pl: 4 }} key={key}>
+                <ListItemText
+                  primary={`${key}:${value.toString()}`}
+                ></ListItemText>
+              </ListItem>
+            )
+          })}
+        </List>
       </Collapse>
     </React.Fragment>
   )

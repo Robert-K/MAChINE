@@ -56,7 +56,8 @@ export default function DatasetPage() {
           anchor={anchor}
           open={open}
           content={content}
-          waited={waited}
+          animate={waited}
+          popperWidth={200}
         />
       </Grid>
     </Container>

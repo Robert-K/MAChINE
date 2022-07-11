@@ -74,7 +74,7 @@ export default function BaseModelsPage() {
           anchor={anchor}
           open={open}
           content={content}
-          waited={waited}
+          animate={waited}
         />
       </Grid>
     </Container>

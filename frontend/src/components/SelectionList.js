@@ -106,7 +106,7 @@ export default function SelectionList({
           anchor={anchor}
           open={open}
           content={content}
-          waited={waited}
+          animate={waited}
         />
       </CardContent>
     </Card>
