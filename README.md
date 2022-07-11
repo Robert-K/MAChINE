@@ -26,6 +26,12 @@ Start commit messages with ADD, FIX, UPD or DEL corresponding to change.
 
 ---
 
+# Backend structure
+
+![Backend structure](https://kosro.de/share/pse-backend.png)
+
+---
+
 # React Default README
 
 # Getting Started with Create React App
