@@ -56,6 +56,7 @@ export default function TrainedModels() {
   )
 }
 
+// TODO: get fittings from models in model storage (where exactly is tbd)
 const fitting0 = new Fitting('fitting0', 0, 10, 100, 5)
 
 const fitting1 = new Fitting('fitting1', 1, 11, 1000, 100)
