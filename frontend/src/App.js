@@ -13,7 +13,7 @@ import MoleculesPage from './routes/MoleculesPage'
 import StartPage from './routes/StartPage'
 import TrainingPage from './routes/TrainingPage'
 import DarkModeButton from './components/DarkModeButton'
-import BaseModels from './routes/BaseModels'
+import BaseModelsPage from './routes/BaseModelsPage'
 import DatasetPage from './routes/DatasetPage'
 import TrainedModels from './routes/TrainedModels'
 
@@ -88,7 +88,7 @@ function App() {
             <Route path="/swagger" element={<SwaggerPage />}></Route>
             <Route path="/training" element={<TrainingPage />}></Route>
             <Route path="/trained-models" element={<TrainedModels />}></Route>
-            <Route path="/base-models" element={<BaseModels />}></Route>
+            <Route path="/base-models" element={<BaseModelsPage />}></Route>
             <Route path="/datasets" element={<DatasetPage />}></Route>
           </Routes>
         </BrowserRouter>

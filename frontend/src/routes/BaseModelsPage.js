@@ -20,7 +20,7 @@ import Dataset from '../internal/Dataset'
 // the card bigger when the popper is shown. Currently not implemented because
 // it was not deemed sufficiently important
 
-export default function BaseModels() {
+export default function BaseModelsPage() {
   /* TODO: Buncha duplicated code from MoleculeSelection. Might want to fix that at some point */
   // const [selectedIndex, setSelectedIndex] = React.useState('a')
   const [open, setOpen] = React.useState(false)
@@ -81,7 +81,7 @@ export default function BaseModels() {
   )
 }
 
-BaseModels.propTypes = {
+BaseModelsPage.propTypes = {
   baseModels: PropTypes.array,
 }
 
