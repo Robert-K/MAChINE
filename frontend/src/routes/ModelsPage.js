@@ -52,6 +52,9 @@ export default function ModelsPage() {
               elements={models}
               elementType="model"
               usePopper={false}
+              addFunc={() =>
+                console.log('Implement connection to base model selection')
+              }
             ></SelectionList>
           }
         </Grid>

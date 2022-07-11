@@ -21,6 +21,7 @@ import MoleculeInfo from './MoleculeInfo'
  * @param elements array of elements to be displayed
  * @param elementType string describing element type
  * @param usePopper boolean whether a descriptive popper should appear
+ * @param addFunc function to be called when using add button
  * @returns {JSX.Element}
  */
 export default function SelectionList({
@@ -28,6 +29,7 @@ export default function SelectionList({
   elements,
   elementType,
   usePopper,
+  addFunc,
 }) {
   const [selectedIndex, setSelectedIndex] = React.useState('none')
   const [open, setOpen] = React.useState(false)
@@ -69,8 +71,7 @@ export default function SelectionList({
     <Card>
       <CardContent>
         <CardActions>
-          {/* TODO: add prop with routing ref/func */}
-          <Button>Add a {elementType}</Button>
+          <Button onClick={addFunc()}>Add a {elementType}</Button>
         </CardActions>
         <List sx={{ height: '612px', maxHeight: '612px', overflow: 'auto' }}>
           {elements.map((element) => (
@@ -117,4 +118,5 @@ SelectionList.propTypes = {
   usePopper: PropTypes.bool.isRequired,
   elementType: PropTypes.string.isRequired,
   updateFunc: PropTypes.func,
+  addFunc: PropTypes.func.isRequired,
 }

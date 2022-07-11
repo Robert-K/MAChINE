@@ -46,6 +46,9 @@ export default function MoleculesPage() {
               elements={testMolecules}
               elementType="molecule"
               usePopper={true}
+              addFunc={() =>
+                console.log('Implement add molecule in molecules page')
+              }
             ></SelectionList>
           }
         </Grid>
