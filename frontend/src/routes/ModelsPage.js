@@ -13,6 +13,7 @@ import {
   ListItemButton,
   ListItemText,
   Typography,
+  useTheme,
 } from '@mui/material'
 import Button from '@mui/material/Button'
 import ModelConfig from '../internal/ModelConfig'
@@ -108,12 +109,6 @@ export default function ModelsPage() {
 function renderFittings(fittings) {
   return (
     <List>
-      <style>{`
-          .listKey {
-            font-weight: bold;
-            color: red;
-          }
-        `}</style>
       {fittings.map((fitting) => (
         <RenderFitting fitting={fitting} key={fitting.id}></RenderFitting>
       ))}
@@ -131,37 +126,43 @@ function RenderFitting(props) {
   const toggleOpen = () => {
     setOpen(!open)
   }
+  const theme = useTheme()
   return (
     <ListItem key={props.fitting.id}>
-      <ListItemButton onClick={() => toggleOpen()}>
-        {open ? <ExpandLess /> : <ExpandMore />}
-        <ListItemText
-          className="listKey"
-          primary={props.fitting.datasetID}
-        ></ListItemText>
-      </ListItemButton>
-      <Collapse
-        in={open}
-        timeout="auto"
-        mountOnEnter
-        unmountOnExit
-        orientation="vertical"
-      >
-        <List sx={{ pl: 4 }}>
-          <ListItem>
-            <ListItemText className="listKey" primary="Epochs: "></ListItemText>
-            {props.fitting.epochs}
-          </ListItem>
-          <ListItem>
-            <ListItemText
-              className="listKey"
-              primary="Accuracy:"
-            ></ListItemText>
-            {props.fitting.accuracy}%
-          </ListItem>
-        </List>
-      </Collapse>
-      <Divider />
+      <Box sx={{ width: 1 }}>
+        <ListItemButton onClick={() => toggleOpen()}>
+          {open ? <ExpandLess /> : <ExpandMore />}
+          <ListItemText
+            primary={props.fitting.datasetID}
+            sx={{ color: theme.palette.primary.main }}
+          ></ListItemText>
+        </ListItemButton>
+        <Collapse
+          in={open}
+          timeout="auto"
+          mountOnEnter
+          unmountOnExit
+          orientation="vertical"
+        >
+          <List sx={{ pl: 4 }}>
+            <ListItem>
+              <ListItemText
+                sx={{ color: theme.palette.primary.main }}
+                primary="Epochs: "
+              ></ListItemText>
+              {props.fitting.epochs}
+            </ListItem>
+            <ListItem>
+              <ListItemText
+                sx={{ color: theme.palette.primary.main }}
+                primary="Accuracy:"
+              ></ListItemText>
+              {props.fitting.accuracy}%
+            </ListItem>
+          </List>
+        </Collapse>
+        <Divider />
+      </Box>
     </ListItem>
   )
 }
