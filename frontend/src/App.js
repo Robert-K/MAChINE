@@ -12,6 +12,7 @@ import Molecules from './routes/Molecules'
 import Models from './routes/Models'
 import BaseModels from './routes/BaseModels'
 import DatasetPage from './routes/DatasetPage'
+import TrainedModels from './routes/TrainedModels'
 
 const theme = createTheme({
   palette: {
@@ -34,8 +35,9 @@ function App() {
             <Route path="/molecules" element={<Molecules />}></Route>
             <Route path="/results" element={<Scoreboards />}></Route>
             <Route path="/swagger" element={<Swagger />}></Route>
-            <Route path="/basemodels" element={<BaseModels />}></Route>
+            <Route path="/base-models" element={<BaseModels />}></Route>
             <Route path="/datasets" element={<DatasetPage />}></Route>
+            <Route path="/trained-models" element={<TrainedModels />}></Route>
           </Routes>
         </BrowserRouter>
       </ThemeProvider>

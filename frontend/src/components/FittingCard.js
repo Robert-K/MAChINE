@@ -22,6 +22,7 @@ function FittingCard(props) {
             </Box>
             <Box paddingX={1}>
               <Typography variant="subtitle1" component="h4">
+                {/* TODO Might want to display dataset's name instead. */}
                 Training dataset: {props.fitting.datasetID}
               </Typography>
             </Box>
