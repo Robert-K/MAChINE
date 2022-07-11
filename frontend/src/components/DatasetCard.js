@@ -1,6 +1,5 @@
 import React from 'react'
 import {
-  Box,
   Card,
   CardContent,
   CardMedia,
@@ -14,23 +13,25 @@ export default function DatasetCard(props) {
   return (
     <Grid item xs={4} md={3}>
       <Card sx={{ maxWidth: 260 }}>
-        <CardActionArea>
+        <CardActionArea
+          onDoubleClick={(e) => props.doubleClickFunc(e)}
+          onClick={(e) => {
+            props.clickFunc(e)
+          }}
+        >
           <CardMedia
             component="img"
             height="110"
             image="/dataset.jpg"
             alt="data picture"
           />
-          {/* TODO: Select an non-copyrighted image */}
+          {/* TODO: Select a non-copyrighted image */}
           <CardContent>
             <Typography gutterBottom component="div">
               {props.dataset.name} #{props.dataset.datasetID}
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              <Box>Size: {props.dataset.size}</Box>
-              {props.dataset.labelDescriptors.map((descriptor, index) => {
-                return <Box key={index}>{descriptor}</Box>
-              })}
+              Size: {props.dataset.size}
             </Typography>
           </CardContent>
         </CardActionArea>
@@ -41,4 +42,6 @@ export default function DatasetCard(props) {
 
 DatasetCard.propTypes = {
   dataset: PropTypes.object.isRequired,
+  doubleClickFunc: PropTypes.func.isRequired,
+  clickFunc: PropTypes.func.isRequired,
 }
