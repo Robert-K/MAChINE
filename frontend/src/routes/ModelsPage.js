@@ -18,14 +18,17 @@ import Button from '@mui/material/Button'
 import ModelConfig from '../internal/ModelConfig'
 import SelectionList from '../components/SelectionList'
 import CollapsibleMenu from '../components/testToggleState'
-// import PropTypes from 'prop-types'
 import ExpandLess from '@mui/icons-material/ExpandLess'
 import ExpandMore from '@mui/icons-material/ExpandMore'
 import PropTypes from 'prop-types'
 
+/**
+ * Depicts a list of saved models and shows a description of the selected model on click
+ */
 export default function ModelsPage() {
   const [selectedModel, setSelectedModel] = React.useState('')
 
+  // Model storage, TODO: to be replaced by data from backend, probably needs to be relocated
   const models = [
     new ModelConfig('1', 'Test Model1', '13', [3, 4, 5], []),
     new ModelConfig('2', 'Test Model2', '14', [5, 4, 5], []),
@@ -62,6 +65,7 @@ export default function ModelsPage() {
 
   function ModelDescription() {
     function getCurrentIndex() {
+      // finds selected model in model storage
       return models.findIndex((element) => element.name === selectedModel)
     }
 
@@ -77,18 +81,18 @@ export default function ModelsPage() {
         </Card>
       )
     } else {
+      const currentModel = models[getCurrentIndex()]
       return (
         <Card>
           <CardContent>
-            <CardHeader>{models[getCurrentIndex()].name}</CardHeader>
-            <Typography>
-              Base Model: {models[getCurrentIndex()].baseModel}
-            </Typography>
+            <CardHeader>{currentModel.name}</CardHeader>
+            <Typography>Base Model: {currentModel.baseModel}</Typography>
             <Typography>Trained on: </Typography>
-            {renderFittings(models[getCurrentIndex()].fittings)}
+            {renderFittings(currentModel.fittings)}
           </CardContent>
           <CardActions>
             <Grid container justifyContent="center">
+              {/* TODO: connect to data selection */}
               <Button>Select Training Data</Button>
             </Grid>
           </CardActions>
@@ -114,6 +118,11 @@ function renderFittings(fittings) {
   )
 }
 
+/**
+ * renders a fitting into a collapsable list
+ * @param props contains the fitting to be rendered
+ * @returns {JSX.Element}
+ */
 function RenderFitting(props) {
   const [open, setOpen] = React.useState(false)
   const toggleOpen = () => {
