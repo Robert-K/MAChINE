@@ -44,6 +44,7 @@ export default function MoleculesPage() {
           {
             <SelectionList
               elements={testMolecules}
+              elementType="molecule"
               usePopper={true}
             ></SelectionList>
           }
