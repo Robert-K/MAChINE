@@ -17,7 +17,6 @@ import {
 import Button from '@mui/material/Button'
 import ModelConfig from '../internal/ModelConfig'
 import SelectionList from '../components/SelectionList'
-import CollapsibleMenu from '../components/testToggleState'
 import ExpandLess from '@mui/icons-material/ExpandLess'
 import ExpandMore from '@mui/icons-material/ExpandMore'
 import PropTypes from 'prop-types'
@@ -60,7 +59,6 @@ export default function ModelsPage() {
         </Grid>
         <Grid item md={9}>
           {ModelDescription()}
-          <CollapsibleMenu></CollapsibleMenu>
         </Grid>
       </Grid>
     </Box>
