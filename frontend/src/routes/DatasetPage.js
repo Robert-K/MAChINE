@@ -7,7 +7,7 @@ import DetailsPopper from '../components/DetailsPopper'
 import DatasetInfo from '../components/DatasetInfo'
 
 export default function DatasetPage() {
-  /* Buncha duplicated code from MoleculeSelection. Might want to fix that at some point */
+  /* TODO: Buncha duplicated code from MoleculeSelection. Might want to fix that at some point */
   const [open, setOpen] = React.useState(false)
   const [waited, setWaited] = React.useState(false)
   const [content, setContent] = React.useState(<h1>Placeholder</h1>)
@@ -38,11 +38,9 @@ export default function DatasetPage() {
             dataset={dataset}
             key={dataset.datasetID}
             doubleClickFunc={(event) => {
-              console.log('double click timeee')
               handleListItemClick(event, dataset.name)
             }}
             clickFunc={(event) => {
-              console.log('all the single clickies')
               handlePopper(
                 event.currentTarget,
                 <DatasetInfo

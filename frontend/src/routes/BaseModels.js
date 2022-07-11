@@ -21,7 +21,7 @@ import Dataset from '../internal/Dataset'
 // it was not deemed sufficiently important
 
 export default function BaseModels() {
-  /* Buncha duplicated code from MoleculeSelection. Might want to fix that at some point */
+  /* TODO: Buncha duplicated code from MoleculeSelection. Might want to fix that at some point */
   // const [selectedIndex, setSelectedIndex] = React.useState('a')
   const [open, setOpen] = React.useState(false)
   const [waited, setWaited] = React.useState(false)
@@ -55,11 +55,9 @@ export default function BaseModels() {
             /* Der Index, der bei handleListItemClick als zweites Argument übergeben wird, bestimmt, was beim Auftauchen des Poppers gehighlighted wird.
             I think */
             doubleClickFunc={(event) => {
-              console.log('double click timeee')
               handleListItemClick(event, baseModel.name)
             }}
             clickFunc={(event) => {
-              console.log('all the single clickies')
               handlePopper(
                 event.currentTarget,
                 <BaseModelInfo
