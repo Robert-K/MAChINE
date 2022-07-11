@@ -1,5 +1,5 @@
 import React from 'react'
-import { Box, Popper, Card } from '@mui/material'
+import { Box, Popper, Card, useTheme } from '@mui/material'
 import PropTypes from 'prop-types'
 
 function DetailsPopper(props) {
@@ -7,7 +7,7 @@ function DetailsPopper(props) {
   const id = canBeOpen ? 'transition-popper' : undefined
   const [arrowRef, setArrowRef] = React.useState()
   const [, forceUpdate] = React.useReducer((x) => x + 1, 0)
-
+  const theme = useTheme()
   function handleClick() {
     forceUpdate()
   }
@@ -40,16 +40,6 @@ function DetailsPopper(props) {
               adaptive: false,
             },
           },
-          {
-            name: 'flip',
-            enabled: true,
-          },
-          {
-            name: 'preventOverflow',
-            options: {
-              padding: 80,
-            },
-          },
         ]}
         className={props.waited ? 'popper-anim' : 'popper'}
         sx={{
@@ -62,7 +52,7 @@ function DetailsPopper(props) {
               border: 1,
               p: 1,
               backgroundColor: 'background.paper',
-              borderColor: '#c42525',
+              borderColor: theme.palette.primary.main,
               borderRadius: 1,
               zIndex: 2,
             }}
@@ -81,6 +71,8 @@ function DetailsPopper(props) {
             ref={setArrowRef}
             sx={{
               zIndex: -1,
+              backgroundColor: 'background.paper',
+              borderColor: theme.palette.primary.main,
             }}
             className={props.waited ? 'popper-anim' : 'popper'}
           >
@@ -144,10 +136,10 @@ function PopperArrow(props) {
       <style>{`
         .arrow-base {
           position: absolute;
-          background-color: white;
+          background-color: inherit;
           content: "";
           display: block;
-          border-color: #c42525;
+          border-color: inherit;
         }
       `}</style>
     </>

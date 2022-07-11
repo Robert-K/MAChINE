@@ -1,13 +1,24 @@
+import Fitting from './Fitting'
+
 class ModelConfig {
-  constructor(name, baseID, parameters, fittings) {
+  #name
+  #baseModel
+  #parameters
+  #fittings
+
+  constructor(name, baseModel, parameters) {
     // Model name
-    this.name = name
     // Identifier of base model
-    this.baseID = baseID
     // Object with config parameters. Unknown structure
-    this.parameters = parameters
     // Array of fittings
-    this.fittings = fittings
+    this.fittings = []
+    this.name = name
+    this.baseModel = baseModel
+    this.parameters = parameters
+  }
+
+  addFitting(dataset, epochs, accuracy) {
+    this.fittings.push(new Fitting(this, dataset, epochs, accuracy))
   }
 }
 export default ModelConfig

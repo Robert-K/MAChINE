@@ -2,6 +2,8 @@ from flask import Flask
 from flask_cors import CORS
 from flask_restful import reqparse, abort, Api, Resource
 
+from backend import resulthandler
+
 app = Flask(__name__)
 CORS(app)
 api = Api(app)
@@ -43,7 +45,7 @@ class Model(Resource):
 
 # modelList
 # shows a list of all models, and lets you POST to add new tasks
-class ModelList(Resource):
+class Models(Resource):
     def get(self):
         return models
 
@@ -55,10 +57,23 @@ class ModelList(Resource):
         return models[model_id], 201
 
 
+class ModelList(Resource):
+    def get(self):
+        return resulthandler.getmodels()
+
+
+class MoleculeList(Resource):
+    def get(self):
+        return resulthandler.getmoleculs()
+
+
 ##
 ## Actually setup the Api resource routing here
 ##
-api.add_resource(ModelList, '/models')
+api.add_resource(Models, '/models')
+api.add_resource(ModelList, '/modellist')  # returns a list of all used models with parameters, used for scoreboard
+api.add_resource(MoleculeList,
+                 '/moleculelist')  # returns a list of all used molecules with prpoerties, used for scorebooard
 api.add_resource(Model, '/models/<model_id>')
 
 
