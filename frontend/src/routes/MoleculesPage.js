@@ -9,24 +9,24 @@ import { Link } from 'react-router-dom'
 export default function MoleculesPage() {
   const testMolecules = [
     new Molecule('aa', 'aa', [
-      new MoleculeAnalysis('aa', { toxicity: 5000 }),
-      new MoleculeAnalysis('gg', { power_level: 500, noble_gas: false }),
+      new MoleculeAnalysis('aa', 1, { toxicity: 5000 }),
+      new MoleculeAnalysis('gg', 0, { power_level: 500, noble_gas: false }),
     ]),
     new Molecule('aaa', 'aawfa', [
-      new MoleculeAnalysis('aa', { toxicity: 500 }),
-      new MoleculeAnalysis('gg', { power_level: 500, noble_gas: false }),
+      new MoleculeAnalysis('aa', 1, { toxicity: 500 }),
+      new MoleculeAnalysis('gg', 0, { power_level: 500, noble_gas: false }),
     ]),
     new Molecule('aaaa', 'afawfa', [
-      new MoleculeAnalysis('aa', { toxicity: 11616 }),
-      new MoleculeAnalysis('gg', { power_level: 4, noble_gas: true }),
+      new MoleculeAnalysis('aa', 1, { toxicity: 11616 }),
+      new MoleculeAnalysis('gg', 0, { power_level: 4, noble_gas: true }),
     ]),
     new Molecule('aaaaaa', 'aawfawfawfa', [
-      new MoleculeAnalysis('aa', { toxicity: 124 }),
-      new MoleculeAnalysis('gg', {
+      new MoleculeAnalysis('aa', 0, { toxicity: 124 }),
+      new MoleculeAnalysis('gg', 6, {
         power_level: 1,
         noble_gas: false,
       }),
-      new MoleculeAnalysis('tt', {
+      new MoleculeAnalysis('tt', 3, {
         test: 1,
         other_test: 12512512,
         other_other_test: `yes but maybe not it's quite weird tbh`,
@@ -35,7 +35,7 @@ export default function MoleculesPage() {
       }),
     ]),
     new Molecule('gg', 'gg', [
-      new MoleculeAnalysis('gg', { power_level: 9001 }),
+      new MoleculeAnalysis('gg', 5, { power_level: 9001 }),
     ]),
   ]
   return (

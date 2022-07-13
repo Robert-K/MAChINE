@@ -2,7 +2,7 @@ class Molecule {
   constructor(name, smiles, analyses) {
     // Molecule name
     this.name = name
-    // Molecule smiles code, binary vector
+    // Molecule smiles code, binary vector, unique(!)
     this.smiles = smiles
     // Array of molecule analyses (see MoleculeAnalysis.js)
     this.analyses = []

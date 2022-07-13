@@ -11,6 +11,7 @@ import PropTypes from 'prop-types'
 import ExpandLess from '@mui/icons-material/ExpandLess'
 import ExpandMore from '@mui/icons-material/ExpandMore'
 
+// TODO: Keys bei allen .map überprüfen & überarbeiten
 export default function MoleculeInfo(props) {
   return (
     <List sx={{ maxHeight: 400, overflow: 'auto' }}>
