@@ -24,7 +24,7 @@ def get_model_config(id):
     return models[id]
 
 
-def add_new_molecule(molecule):
+def add_molecule(molecule):
     id = len(molecules)
     molecules.insert(id, molecule)
     return id

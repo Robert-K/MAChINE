@@ -88,7 +88,7 @@ api.add_resource(Models, '/models')
 api.add_resource(AddModelConfig, '/models/add')
 api.add_resource(ModelList, '/modellist')  # returns a list of all used models with parameters, used for scoreboard
 api.add_resource(MoleculeList,
-                 '/moleculelist')  # returns a list of all used molecules with prpoerties, used for scorebooard
+                 '/moleculelist')  # returns a list of all used molecules with properties, used for scoreboard
 api.add_resource(Model, '/models/<model_id>')
 
 

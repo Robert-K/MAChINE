@@ -93,7 +93,7 @@ const squirrelType = new ModelType(
   'squirrel_content.jpg'
 )
 const quokkaType = new ModelType(
-  'Quokkas sind Beutelbeutelbeutelbeuteltiere.',
+  'Quokkas sind Beuteltiere.',
   'quokka_content2.webp'
 )
 
