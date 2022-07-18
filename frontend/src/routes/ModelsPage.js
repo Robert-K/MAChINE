@@ -34,10 +34,10 @@ export default function ModelsPage() {
     new ModelConfig('1', 'Test Model1', '13', [3, 4, 5], []),
     new ModelConfig('2', 'Test Model2', '14', [5, 4, 5], []),
   ]
-  models[0].addFitting('1a', 9, 70)
-  models[0].addFitting('1b', 10, 72)
-  models[1].addFitting('2a', 11, 75)
-  models[1].addFitting('2b', 12, 78)
+  models[0].addFitting('dataset1a', 9, 70)
+  models[0].addFitting('dataset1b', 10, 72)
+  models[1].addFitting('dataset2a', 11, 75)
+  models[1].addFitting('dataset2b', 12, 78)
 
   const updateSelection = (index) => {
     setSelectedModel(index)
