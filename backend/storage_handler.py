@@ -1,17 +1,54 @@
 from pathlib import Path
 import json
 import shutil
+import pickle
+
+# New StorageHandler is created on login, if user folder is present, load that folder, else create new
+# TODO: Delete folder on correct close of program/dereference of Handler. Problem: Scoreboard across different users
+
+user_data_path = 'storage\\user_data'
+datasets_path = 'storage\\data'
+
 
 class StorageHandler:
+
+    def __init__(self):
+        self.__analyze_datasets()
+        self.user_storage_handler = dict()
+        self.datasets_info = dict()
+        self.base_model_types = dict()
+
+    def __get_user_handler(self, user_id):
+        handler = self.user_storage_handler.get(user_id)
+        # TODO: Test, may lead to more errors than simply returning 'None'
+        return handler if handler is not None else UserDataStorageHandler('')
+
+    def __analyze_datasets(self):
+        for idx, dataset_path in enumerate(sorted((Path.cwd() / datasets_path).glob('*.pkl'))):
+            if dataset_path.exists():
+                self.datasets_info[idx] = self.__parse_dataset_info(dataset_path)
+
+    def __parse_dataset_info(self, dataset_path):
+        file = dataset_path.open('rb')
+        content = pickle.load(file)
+        file.close()
+        dataset = [json.loads(x) for x in content]
+        labels = dataset[0].get('y')
+        dataset_info = {'name': str(labels.keys),
+                        'size': len(dataset),
+                        'labelDescriptors': list(labels.keys()),
+                        'datasetPath': ''}
+        return dataset_info
+
+
+class UserDataStorageHandler:
     # TODO: Rework methods to match dictionaries (Iva defines the dictionaries)
 
     def __init__(self, user_id):
-        # self.models = []
-        self.molecules = {'aaa': {5: {'god_why': 'help', 'number': 42, 'true': False}}}
-        # self.fittings = []
-        # self.base_models = []
-        self.user_id = user_id
-        self.user_path = Path.cwd() / 'user_data' / self.user_id
+        # self.models = dict()
+        self.molecules = dict()  # TODO: remove {'aaa': {5: {'god_why': 'help', 'number': 42, 'true': False}}}
+        # self.fittings = dict()
+        self.user_path = Path.cwd() / user_data_path / user_id
         load_saved = self.user_path.exists()
         self.__build_folder_structure()
         if load_saved:  # reload last saved data
@@ -25,6 +62,10 @@ class StorageHandler:
             # self.__save_fittings_file()
 
         # self.datasets = self.__parse_datasets(Path.cwd() / 'data')
+
+    def __del__(self):
+        # self.__clean_files()
+        pass
 
     """
     def add_new_model_config(self, epochs, batch_size, verbose, num_layers, units_per_layer, fingerprint_size, label):
@@ -40,14 +81,12 @@ class StorageHandler:
 
     def add_new_molecule(self, smiles, analysis):
         self.molecules[smiles] = analysis
+        self.__save_file('molecules.json', self.molecules)
 
-    def get_molecule(self, molecule_id):
-        # TODO: this will crash
-        return self.molecules[molecule_id]
+    # May return None
+    def get_molecule(self, smiles):
+        return self.molecules.get(smiles)
 
-    def clear_data(self, user_id):
-        if self.user_id == user_id:
-            self.__clean_files()
 
     """
     def get_models(self):
@@ -70,11 +109,11 @@ class StorageHandler:
         return
 
     def __load_models(self):
-        loaded_models = []
+        loaded_models = dict()
         return loaded_models
         
     def __load_fittings(self):
-        loaded_fittings = []
+        loaded_fittings = dict()
         return loaded_fittings
 
     def __load_model_file(self):
@@ -84,28 +123,23 @@ class StorageHandler:
         pass
     """
 
-    def __save_molecules_file(self):
-        file_path = (self.user_path / 'molecules.json')
-        file = file_path.open('w')
-        json.dump(self.molecules, file)
-        pass
-
     def __load_file(self, filename):
-        array = []
+        content = dict()
         file_path = (self.user_path / filename)
         if file_path.exists():
             file = file_path.open('r')
             array = json.load(file)
-        return array
+            file.close()
+        return content
 
     def __save_file(self, filename, content):
         file_path = (self.user_path / filename)
         file = file_path.open('w')
         json.dump(content, file)
+        file.close()
 
     def __clean_files(self):
         shutil.rmtree(self.user_path)
 
     def __build_folder_structure(self):
         self.user_path.mkdir(parents=True, exist_ok=True)
-        pass
