@@ -1,10 +1,11 @@
 import pathlib
 from os.path import exists
 
+
 models = []
 molecules = []
 
-path = pathlib.path(__file__).parent.absolute()
+path = pathlib.Path(__file__).parent.absolute()
 
 
 def get_dataset_path(id):
@@ -14,10 +15,11 @@ def get_dataset_path(id):
     return
 
 
-def add_new_model_config(self, epochs, batch_size, verbose, num_layers, units_per_layer, fingerprint_size, label):
-    id = len(models)
-    models.insert({self, epochs, batch_size, verbose, num_layers, units_per_layer, fingerprint_size, label})
-    return id
+def add_new_model_config(epochs, batch_size, num_layers, units_per_layer, label):
+    modelconfig_id = len(models)
+    models.insert(modelconfig_id, {epochs, batch_size, num_layers, units_per_layer, label})
+    print('epochs: {e}, batch_size: {b}, numlayers: {num}, units per layer: {u}, label: {l}'.format(e=epochs, b=batch_size, num=num_layers, u=units_per_layer, l=label))
+    return modelconfig_id
 
 
 def get_model_config(id):

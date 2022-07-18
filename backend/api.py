@@ -72,13 +72,11 @@ class MoleculeList(Resource):
 class AddModelConfig(Resource):
     def post(self):
         json_data = request.get_json()
-        return sh.add_new_model_config(json_data['epochs'],
-                                       json_data['batch_size'],
-                                       json_data['verbose'],
-                                       json_data['num_layers'],
-                                       json_data['units_per_layer'],
-                                       json_data['fingerprint_size'],
-                                       json_data['label'])
+        return {"modelconfig_ID": sh.add_new_model_config(json_data['epochs']['epochs'],
+                                                          json_data['batch_size']['batchsize'],
+                                                          json_data['num_layers']['numlayers'],
+                                                          json_data['units_per_layer']['unitsperlayer'],
+                                                          json_data['label']['label'])}
 
 
 ##
@@ -93,7 +91,7 @@ api.add_resource(Model, '/models/<model_id>')
 
 
 def run(debug=True):
-    app.run(debug)
+    app.run()
 
 
 if __name__ == '__main__':

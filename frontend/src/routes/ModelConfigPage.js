@@ -24,6 +24,9 @@ export default function ModelConfigPage() {
   const handlelabelChange = (event7) => {
     setlabel(event7.target.value)
   }
+
+  const [answer, setanswer] = React.useState('Controlled')
+
   /* const modelconfig = {
     epochs: '1000',
     batch_size: '64',
@@ -98,17 +101,33 @@ export default function ModelConfigPage() {
             )
           }
           onClick={() =>
-            api.createNewModelConfig({
-              epochs: { epochs },
-              batch_size: { batchsize },
-              num_layers: { numlayers },
-              units_per_layer: { unitsperlayer },
-              label: { label },
-            })
+            api
+              .createNewModelConfig({
+                epochs: { epochs },
+                batch_size: { batchsize },
+                num_layers: { numlayers },
+                units_per_layer: { unitsperlayer },
+                label: { label },
+              })
+              .then((value) => {
+                setanswer(value.modelconfig_ID)
+              })
           }
         >
           Create Model Configuration
         </Button>
+        <Button variant="outlined" sx={{ m: 3 }} onClick={() => setanswer('')}>
+          reset Value
+        </Button>
+        <TextField
+          sx={{ m: 3 }}
+          label="Server Response (modelconfig_ID)"
+          id="result"
+          variant="filled"
+          disabled={true}
+          defaultValue=""
+          value={answer}
+        />
       </List>
     </div>
   )

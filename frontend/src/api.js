@@ -28,7 +28,7 @@ export default {
   },
 
   async createNewModelConfig(config) {
-    return api.get('/models/add', config).then((response) => {
+    return api.post('/models/add', config).then((response) => {
       return response.data
     })
   },
