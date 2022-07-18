@@ -90,13 +90,13 @@ function DownloadPanel() {
 function InfoPanels() {
   return (
     <Grid container spacing={2} justifyContent="center" sx={{ p: 3 }}>
-      <Grid item sx={8}>
+      <Grid item>
         <Card>
           <CardMedia
             component="img"
             height="230"
-            image="https://aimat.iti.kit.edu/img/AiMat_logo_blue_transparent_rdax_168x76.png"
-            alt="light green"
+            image="aimat_logo_purple.png"
+            alt="dark purple"
           />
           <CardContent>
             <Typography gutterBottom variant="h5" component="div">
@@ -123,12 +123,12 @@ function InfoPanels() {
           </CardActions>
         </Card>
       </Grid>
-      <Grid item sx={8}>
+      <Grid item>
         <Card>
           <CardMedia
             component="img"
             height="230"
-            image="https://yt3.ggpht.com/ytc/AKedOLRix_FfqEeSnt2jQ5mkymzvRAq9SQaZqulr3wGa=s88-c-k-c0x00ffffff-no-rj"
+            image="MsG_Logo_Flat.png"
             alt="lightgreen"
           />
           <CardContent>

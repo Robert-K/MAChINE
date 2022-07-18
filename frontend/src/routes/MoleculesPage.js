@@ -8,25 +8,34 @@ import { Link } from 'react-router-dom'
 
 export default function MoleculesPage() {
   const testMolecules = [
-    new Molecule('aa', 'aa', [
-      new MoleculeAnalysis('aa', 1, { toxicity: 5000 }),
-      new MoleculeAnalysis('gg', 0, { power_level: 500, noble_gas: false }),
+    new Molecule('molecule_1', 'molecule_1', [
+      new MoleculeAnalysis('my favourite model', 1, { toxicity: 5000 }),
+      new MoleculeAnalysis('second_model', 0, {
+        power_level: 500,
+        noble_gas: false,
+      }),
     ]),
-    new Molecule('aaa', 'aawfa', [
-      new MoleculeAnalysis('aa', 1, { toxicity: 500 }),
-      new MoleculeAnalysis('gg', 0, { power_level: 500, noble_gas: false }),
+    new Molecule('molecule_2', 'molecule_2', [
+      new MoleculeAnalysis('my favourite model', 1, { toxicity: 500 }),
+      new MoleculeAnalysis('second_model', 0, {
+        power_level: 500,
+        noble_gas: false,
+      }),
     ]),
-    new Molecule('aaaa', 'afawfa', [
-      new MoleculeAnalysis('aa', 1, { toxicity: 11616 }),
-      new MoleculeAnalysis('gg', 0, { power_level: 4, noble_gas: true }),
+    new Molecule('molecule_3', 'molecule_3', [
+      new MoleculeAnalysis('my favourite model', 1, { toxicity: 11616 }),
+      new MoleculeAnalysis('second_model', 0, {
+        power_level: 4,
+        noble_gas: true,
+      }),
     ]),
-    new Molecule('aaaaaa', 'aawfawfawfa', [
-      new MoleculeAnalysis('aa', 0, { toxicity: 124 }),
-      new MoleculeAnalysis('gg', 6, {
+    new Molecule('molecule_4', 'molecule_4', [
+      new MoleculeAnalysis('my favourite model', 0, { toxicity: 124 }),
+      new MoleculeAnalysis('second_model', 6, {
         power_level: 1,
         noble_gas: false,
       }),
-      new MoleculeAnalysis('tt', 3, {
+      new MoleculeAnalysis('third_model', 3, {
         test: 1,
         other_test: 12512512,
         other_other_test: `yes but maybe not it's quite weird tbh`,
@@ -34,8 +43,8 @@ export default function MoleculesPage() {
         light: 'no',
       }),
     ]),
-    new Molecule('gg', 'gg', [
-      new MoleculeAnalysis('gg', 5, { power_level: 9001 }),
+    new Molecule('Hydrogen-chloride', 'Cl', [
+      new MoleculeAnalysis('second_model', 5, { power_level: 9001 }),
     ]),
   ]
   return (
