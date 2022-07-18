@@ -1,3 +1,4 @@
+import re
 from pathlib import Path
 import json
 import shutil
@@ -69,30 +70,30 @@ class StorageHandler:
         self.get_or_add_user(user_id).add_new_molecule(smiles, analysis)
 
     def get_analyses(self, user_id, smiles):
-        self.get_or_add_user(user_id).get_analyses(smiles)
+        return self.get_or_add_user(user_id).get_analyses(smiles)
 
     def get_molecules(self, user_id):
-        self.get_or_add_user(user_id).get_molecules()
+        return self.get_or_add_user(user_id).get_molecules()
 
     # Models
     def add_model(self, user_id, model):
-        self.get_or_add_user(user_id).add_model(model)
+        return self.get_or_add_user(user_id).add_model(model)
 
     def get_model(self, user_id, model_id):
-        self.get_or_add_user(user_id).get_model(model_id)
+        return self.get_or_add_user(user_id).get_model(model_id)
 
     def get_models(self, user_id):
-        self.get_or_add_user(user_id).get_models()
+        return self.get_or_add_user(user_id).get_models()
 
     # Fittings
     def add_fitting(self, user_id, fitting):
-        self.get_or_add_user(user_id).add_fitting(fitting)
+        return self.get_or_add_user(user_id).add_fitting(fitting)
 
     def get_fitting(self, user_id, fitting_id):
-        self.get_or_add_user(user_id).get_fitting(fitting_id)
+        return self.get_or_add_user(user_id).get_fitting(fitting_id)
 
     def get_fittings(self, user_id):
-        self.get_or_add_user(user_id).get_fittings()
+        return self.get_or_add_user(user_id).get_fittings()
 
     # Private Methods
     def __analyze_datasets(self):
@@ -106,7 +107,7 @@ class StorageHandler:
         file.close()
         dataset = [json.loads(x) for x in content]
         labels = dataset[0].get('y')
-        dataset_info = {'name': str(labels.keys),
+        dataset_info = {'name': re.sub(r"(?<=\w)([A-Z])", r" \1", dataset_path.stem),
                         'size': len(dataset),
                         'labelDescriptors': list(labels.keys()),
                         'datasetPath': str(dataset_path.absolute())}
@@ -125,25 +126,44 @@ class UserDataStorageHandler:
     def __del__(self):
         self.__clean_files()
 
+    # Molecules
     def add_new_molecule(self, smiles, analysis):
         self.molecules[smiles] = analysis
         self.__save_file('molecules.json', self.molecules)
 
+    def get_analyses(self, smiles):
+        return self.molecules.get(smiles)
+
     def get_molecules(self):
         return self.molecules
 
-    def get_fittings(self):
-        return self.fittings
+    # Models
+    def add_models(self, model):
+        model_id = hash(model)
+        self.models[model_id] = model
+        self.__save_file('models.json', self.models)
+        return model_id
 
-    def get_analyses(self, smiles):
-        return self.molecules[smiles]
+    def get_model(self, model_id):
+        return self.models.get(model_id)
 
     def get_models(self):
         return self.models
 
-    def __get_model_name_from_fitting(self, fitting_id):
-        return self.models[self.fittings[fitting_id]["model_id"]]["name"]
+    # Fittings
+    def add_fitting(self, fitting):
+        fitting_id = hash(fitting)
+        self.fittings[fitting_id] = fitting
+        self.__save_file('fittings.json', self.fittings)
+        return fitting_id
 
+    def get_fitting(self, fitting_id):
+        return self.fittings.get(fitting_id)
+
+    def get_fittings(self):
+        return self.fittings
+
+    # Private Methods
     def __load_file(self, filename):
         content = dict()
         file_path = (self.user_path / filename)
