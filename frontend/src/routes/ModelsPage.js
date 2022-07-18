@@ -34,10 +34,10 @@ export default function ModelsPage() {
     new ModelConfig('1', 'Test Model1', '13', [3, 4, 5], []),
     new ModelConfig('2', 'Test Model2', '14', [5, 4, 5], []),
   ]
-  models[0].addFitting('dataset1a', 9, 70)
-  models[0].addFitting('dataset1b', 10, 72)
-  models[1].addFitting('dataset2a', 11, 75)
-  models[1].addFitting('dataset2b', 12, 78)
+  models[0].addFitting('dataset1a', 9, 20, 70)
+  models[0].addFitting('dataset1b', 10, 20, 72)
+  models[1].addFitting('dataset2a', 11, 30, 75)
+  models[1].addFitting('dataset2b', 12, 30, 78)
 
   const updateSelection = (index) => {
     setSelectedModel(index)
@@ -151,6 +151,13 @@ function RenderFitting(props) {
                 primary="Epochs: "
               ></ListItemText>
               {props.fitting.epochs}
+            </ListItem>
+            <ListItem>
+              <ListItemText
+                sx={{ color: theme.palette.primary.main }}
+                primary="Batch Size: "
+              ></ListItemText>
+              {props.fitting.batchSize}
             </ListItem>
             <ListItem>
               <ListItemText

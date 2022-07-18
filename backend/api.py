@@ -1,5 +1,3 @@
-from multiprocessing.reduction import _reduce_method_descriptor
-
 from flask import Flask, request
 from flask_cors import CORS
 from flask_restful import reqparse, abort, Api, Resource
@@ -61,29 +59,26 @@ class Models(Resource):
 
 class ModelList(Resource):
     def get(self):
-        return sh.getmodels()
+        return sh.get_models()
 
 
 class MoleculeList(Resource):
     def get(self):
-        return sh.getmoleculs()
+        return sh.get_molecules()
 
 
-class AddModelConfig(Resource):
+class AddModel(Resource):
     def post(self):
         json_data = request.get_json()
-        return {"modelconfig_ID": sh.add_new_model_config(json_data['epochs']['epochs'],
-                                                          json_data['batch_size']['batchsize'],
-                                                          json_data['num_layers']['numlayers'],
-                                                          json_data['units_per_layer']['unitsperlayer'],
-                                                          json_data['label']['label'])}
+        return {"modelconfig_ID": sh.add_new_model_config(json_data['num_layers']['numlayers'],
+                                                          json_data['units_per_layer']['unitsperlayer'])}
 
 
 ##
 ## Actually setup the Api resource routing here
 ##
 api.add_resource(Models, '/models')
-api.add_resource(AddModelConfig, '/models/add')
+api.add_resource(AddModel, '/models/add')
 api.add_resource(ModelList, '/modellist')  # returns a list of all used models with parameters, used for scoreboard
 api.add_resource(MoleculeList,
                  '/moleculelist')  # returns a list of all used molecules with properties, used for scoreboard

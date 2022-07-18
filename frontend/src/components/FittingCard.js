@@ -17,7 +17,7 @@ function FittingCard(props) {
           <CardContent>
             <Box paddingX={1}>
               <Typography variant="h4" component="h3">
-                {props.fitting.id}
+                {props.fitting.modelName}
               </Typography>
             </Box>
             <Box paddingX={1}>
@@ -29,6 +29,11 @@ function FittingCard(props) {
             <Box paddingX={1}>
               <Typography variant="subtitle1" component="h4">
                 Epochs: {props.fitting.epochs}
+              </Typography>
+            </Box>
+            <Box paddingX={1}>
+              <Typography variant="subtitle1" component="h4">
+                Epochs: {props.fitting.batchSize}
               </Typography>
             </Box>
             <Box paddingX={1}>

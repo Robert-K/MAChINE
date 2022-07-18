@@ -22,9 +22,10 @@ class ModelConfig {
    * generates fitting id using number of present fittings
    * @param datasetID string identifying the used dataset
    * @param epochs integer
+   * @param batchSize integer
    * @param accuracy float between 0 and 100
    */
-  addFitting(datasetID, epochs, accuracy) {
+  addFitting(datasetID, epochs, batchSize, accuracy) {
     this.fittings.push(
       new Fitting(
         `${this.name}${
@@ -33,8 +34,10 @@ class ModelConfig {
             : this.fittings[this.fittings.length - 1].id + 1
         }`,
         this.id,
+        this.name,
         datasetID,
         epochs,
+        batchSize,
         accuracy
       )
     )

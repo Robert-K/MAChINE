@@ -31,6 +31,7 @@ const modelColumns = [
   { id: 'name', label: 'Name', align: 'center' },
   { id: 'accuracy', label: 'Accuracy', align: 'center' },
   { id: 'epochs', label: 'Epochs', align: 'center' },
+  { id: 'batch size', label: 'Batch Size', align: 'center' },
 ]
 
 const moleculeColumns = [
@@ -40,15 +41,15 @@ const moleculeColumns = [
   { id: 'conductivity', label: 'Conductivity', align: 'center' },
 ]
 
-function createModelData(place, name, accuracy, epochs) {
-  return { place, name, accuracy, epochs }
+function createModelData(place, name, accuracy, epochs, batchSize) {
+  return { place, name, accuracy, epochs, batchSize }
 }
 
 function createMoleculeData(place, name, toxicity, conductivity) {
   return { place, name, toxicity, conductivity }
 }
 
-const modelRows = [createModelData(1, 'ModelTest', 100, 20)]
+const modelRows = [createModelData(1, 'ModelTest', 100, 20, 15)]
 
 const moleculeRows = [createMoleculeData(1, 'MoleculeTest', 200, 10)]
 
