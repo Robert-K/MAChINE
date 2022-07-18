@@ -21,7 +21,7 @@ import SelectionList from '../components/SelectionList'
 import ExpandLess from '@mui/icons-material/ExpandLess'
 import ExpandMore from '@mui/icons-material/ExpandMore'
 import PropTypes from 'prop-types'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 /**
  * Depicts a list of saved models and shows a description of the selected model on click
@@ -43,6 +43,8 @@ export default function ModelsPage() {
     setSelectedModel(index)
   }
 
+  const navigate = useNavigate()
+
   return (
     <Box sx={{ m: 5 }}>
       <Grid container spacing={2}>
@@ -53,9 +55,7 @@ export default function ModelsPage() {
               elements={models}
               elementType="model"
               usePopper={false}
-              addFunc={() =>
-                console.log('Implement connection to base model selection')
-              }
+              addFunc={() => navigate('/base-models')}
             ></SelectionList>
           }
         </Grid>

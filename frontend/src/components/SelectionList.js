@@ -71,7 +71,7 @@ export default function SelectionList({
     <Card>
       <CardContent>
         <CardActions>
-          <Button onClick={addFunc()}>Add a {elementType}</Button>
+          <Button onClick={() => addFunc()}>Add a {elementType}</Button>
         </CardActions>
         <List sx={{ height: '612px', maxHeight: '612px', overflow: 'auto' }}>
           {elements.map((element) => (
