@@ -20,10 +20,6 @@ export default function ModelConfigPage() {
   const handleunitsperlayerChange = (event5) => {
     setunitsperlayer(event5.target.value)
   }
-  const [fingerprint, setfingerprint] = React.useState(128)
-  const handlefingerprintChange = (event6) => {
-    setfingerprint(event6.target.value)
-  }
   const [label, setlabel] = React.useState('randomLabel.txt')
   const handlelabelChange = (event7) => {
     setlabel(event7.target.value)
@@ -79,15 +75,6 @@ export default function ModelConfigPage() {
         <TextField
           sx={{ m: 3 }}
           required
-          id="fingerprintSize"
-          label="Fingerprint Size"
-          type="number"
-          defaultValue={fingerprint}
-          onChange={handlefingerprintChange}
-        />
-        <TextField
-          sx={{ m: 3 }}
-          required
           id="label"
           label="label"
           defaultValue={label}
@@ -107,9 +94,7 @@ export default function ModelConfigPage() {
               numlayers >= 2 &&
               numlayers <= 20 &&
               unitsperlayer >= 50 &&
-              unitsperlayer <= 1024 &&
-              fingerprint >= 20 &&
-              fingerprint <= 512
+              unitsperlayer <= 1024
             )
           }
           onClick={() =>
@@ -118,7 +103,6 @@ export default function ModelConfigPage() {
               batch_size: { batchsize },
               num_layers: { numlayers },
               units_per_layer: { unitsperlayer },
-              fingerprint_size: { fingerprint },
               label: { label },
             })
           }

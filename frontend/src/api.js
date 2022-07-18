@@ -15,6 +15,26 @@ export default {
       })
   },
 
+  async getModelInfo() {
+    return api.get('/get/models').then((response) => {
+      return response.data
+    })
+  },
+
+  async getMoleculeInfo() {
+    return api.get('/get/molecules').then((response) => {
+      return response.data
+    })
+  },
+
+  async createNewModelConfig(config) {
+    return api.get('/models/add', config).then((response) => {
+      return response.data
+    })
+  },
+  /*
+
+
   setUserScore(user, score) {
     return api
       .post('/users/' + user + '/score/', { score })
@@ -36,16 +56,5 @@ export default {
       return response.data
     })
   },
-
-  async getModelInfo() {
-    return api.get('/get/models').then((response) => {
-      return response.data
-    })
-  },
-
-  async getMoleculeInfo() {
-    return api.get('/get/molecules').then((response) => {
-      return response.data
-    })
-  },
+*/
 }
