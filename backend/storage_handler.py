@@ -42,12 +42,14 @@ class StorageHandler:
 
 
 class UserDataStorageHandler:
-    # TODO: Rework methods to match dictionaries (Iva defines the dictionaries)
 
     def __init__(self, user_id):
-        # self.models = dict()
-        self.molecules = dict()  # TODO: remove {'aaa': {5: {'god_why': 'help', 'number': 42, 'true': False}}}
-        # self.fittings = dict()
+        self.models = {}
+        self.molecules = {'aaa': {5: {'god_why': 'help', 'number': 42, 'true': False}}} # TODO: delete test data
+        self.fittings = {}
+        self.base_models = {}
+        self.datasets = {}
+        self.user_id = user_id
         self.user_path = Path.cwd() / user_data_path / user_id
         load_saved = self.user_path.exists()
         self.__build_folder_structure()
@@ -67,30 +69,9 @@ class UserDataStorageHandler:
         # self.__clean_files()
         pass
 
-    """
-    def add_new_model_config(self, epochs, batch_size, verbose, num_layers, units_per_layer, fingerprint_size, label):
-        # TODO:
-        config_id = len(self.models)
-        self.models.insert()
-        return config_id
-
-    def get_model_config(self, model_id):
-        # TODO: this will crash, eventually
-        return self.models[model_id]
-    """
-
     def add_new_molecule(self, smiles, analysis):
         self.molecules[smiles] = analysis
         self.__save_file('molecules.json', self.molecules)
-
-    # May return None
-    def get_molecule(self, smiles):
-        return self.molecules.get(smiles)
-
-
-    """
-    def get_models(self):
-        return self.models
 
     def get_molecules(self):
         return self.molecules
@@ -98,30 +79,19 @@ class UserDataStorageHandler:
     def get_fittings(self):
         return self.fittings
 
-    def __get_dataset_path(self, dataset_id):
-        dataset_path = Path(f'{self.user_path}\\data{dataset_id}.pkl')
-        if dataset_path.exists:
-            return dataset_path
-        return
+    def get_model_name_from_fitting(self, fitting_id):
+        return self.models[self.fittings[fitting_id]["model_id"]]["name"]
 
-    def __load_dataset(self, dataset_id):
-        file = self.__get_dataset_path(dataset_id)
-        return
+    # @param molecule: smiles code
+    def get_analyses(self, molecule):
+        return self.molecules[molecule]
 
-    def __load_models(self):
-        loaded_models = dict()
-        return loaded_models
-        
-    def __load_fittings(self):
-        loaded_fittings = dict()
-        return loaded_fittings
+    def get_models(self):
+        return self.models
 
-    def __load_model_file(self):
-        pass
+    def get_datasets(self):
+        return self.datasets
 
-    def __save_model_file(self):
-        pass
-    """
 
     def __load_file(self, filename):
         content = dict()
