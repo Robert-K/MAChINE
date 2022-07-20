@@ -7,14 +7,6 @@ const api = axios.create({
 })
 
 export default {
-  deleteUser(userID) {
-    return api
-      .delete(`${serverAddress}/users/${userID}/delete`)
-      .then((response) => {
-        console.log(response.data)
-      })
-  },
-
   async getModelList(userID) {
     return api
       .get(`${serverAddress}/users/${userID}/models`)
@@ -59,9 +51,9 @@ export default {
       })
   },
 
-  async addMolecule(userID, molecule) {
+  async addMolecule(userID, molecule, name) {
     return api
-      .patch(`${serverAddress}/users/${userID}/molecules`, molecule)
+      .patch(`${serverAddress}/users/${userID}/molecules`, { molecule, name })
       .then((response) => {
         return response.data
       })
@@ -113,18 +105,4 @@ export default {
         return response.data
       })
   },
-  /*
-  TODO: to be implemented here
-   * get MoleculeList
-   * get ModelList
-   * get TrainedModels / get Fittings
-   * get Datasets
-   * get BaseModels
-   * patch addModelConfig
-   * patch addMolecule
-   * post login
-   * del logout
-   * post analyzeMolecule
-   * post trainModel
-   */
 }
