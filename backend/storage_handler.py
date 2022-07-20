@@ -45,7 +45,7 @@ class UserDataStorageHandler:
 
     def __init__(self, user_id):
         self.models = {}
-        self.molecules = {'aaa': {5: {'god_why': 'help', 'number': 42, 'true': False}}} # TODO: delete test data
+        self.molecules = {'aaa': {5: {'god_why': 'help', 'number': 42, 'true': False}}}  # TODO: delete test data
         self.fittings = {}
         self.base_models = {}
         self.datasets = {}
@@ -76,6 +76,9 @@ class UserDataStorageHandler:
     def get_molecules(self):
         return self.molecules
 
+    def get_fitting(self, fitting_id):
+        return self.fittings[fitting_id]
+
     def get_fittings(self):
         return self.fittings
 
@@ -91,7 +94,6 @@ class UserDataStorageHandler:
 
     def get_datasets(self):
         return self.datasets
-
 
     def __load_file(self, filename):
         content = dict()
