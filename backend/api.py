@@ -2,7 +2,9 @@ from flask import Flask
 from flask_cors import CORS
 from flask_restful import reqparse, Api, Resource
 
+from backend import analyzer as an
 from backend import storage_handler as sh
+from backend import trainer as tr
 
 app = Flask(__name__)
 CORS(app)
@@ -10,6 +12,13 @@ api = Api(app)
 
 parser = reqparse.RequestParser()
 parser.add_argument('task')
+parser.add_argument('datasetID')
+parser.add_argument('modelID')
+parser.add_argument('fingerprint')
+parser.add_argument('label')
+parser.add_argument('moleculeID')
+parser.add_argument('fittingID')
+
 
 
 # modelList
@@ -55,12 +64,14 @@ class BaseModels(Resource):
 
 class Analyze(Resource):
     def post(self, user_id):
-        pass  # TODO: Implement
+        args = parser.parse_args()
+        return an.analyze(user_id, args['fittingID'], args['moleculeID'])
 
 
 class Train(Resource):
     def post(self, user_id):
-        pass  # TODO: Implements
+        args = parser.parse_args()
+        return tr.train(user_id, args['datasetID'], args['modelID'], args['fingerprint'], args['label'])
 
 
 # Actually set up the Api resource routing here
