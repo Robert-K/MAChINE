@@ -28,121 +28,6 @@ _datasets_path = _storage_path / 'data'
 _base_models_path = _storage_path / 'models'
 
 
-# Goal: Never use file.open outside of storage handler
-# TODO: Test this boi
-class StorageHandler:
-
-    def __init__(self):
-        self.user_storage_handler = dict()
-        self.dataset_summaries = dict()
-        self.base_models = dict()
-        self.base_model_types = dict()
-        self.__analyze_datasets()
-        self.__analyze_base_models()
-
-    def add_user_handler(self, user_id):
-        if self.user_storage_handler.get(user_id) is None:
-            self.user_storage_handler[user_id] = UserDataStorageHandler(user_id)
-        return self.user_storage_handler.get(user_id)
-
-    def get_user_handler(self, user_id):
-        return self.user_storage_handler.get(user_id)
-
-    def delete_user_handler(self, user_id):
-        self.user_storage_handler.pop(user_id)
-
-    # Datasets
-    def get_dataset(self, dataset_id):
-        summary = self.dataset_summaries.get(dataset_id)
-        if summary and summary.get('datasetPath'):
-            path = Path(summary.get('datasetPath'))
-            if path.exists():
-                file = path.open('rb')
-                content = pickle.load(file)
-                file.close()
-                dataset = [json.loads(x) for x in content]
-                return dataset
-
-    def get_dataset_summaries(self):
-        return self.dataset_summaries
-
-    # Base Models
-    def get_base_model(self, base_model_id):
-        return self.base_models.get(base_model_id)
-
-    def get_base_models(self):
-        return self.base_models
-
-    # User Storage
-    # Molecules
-    def add_molecule(self, user_id, smiles, name):
-        self.get_user_handler(user_id).add_new_molecule(smiles, name)
-
-    def get_molecules(self, user_id):
-        return self.get_user_handler(user_id).get_molecules()
-
-    # Molecule Analyses
-    def add_analysis(self, user_id, smiles, analysis):
-        self.get_user_handler(user_id).add_analysis(smiles, analysis)
-
-    def get_analyses(self, user_id, smiles):
-        return self.get_user_handler(user_id).get_analyses(smiles)
-
-    # Models
-    # model is the actual model, not a summary
-    def add_model(self, user_id, name, base_model_id, model):
-        return self.get_user_handler(user_id).add_model(name, base_model_id, model)
-
-    def get_model(self, user_id, model_id):
-        return self.get_user_handler(user_id).get_model(model_id)
-
-    def get_model_summaries(self, user_id):
-        return self.get_user_handler(user_id).get_model_summaries()
-
-    # Fittings
-    # fitting is the actual, trained model, not a summary
-    def add_fitting(self, user_id, dataset_id, epochs, accuracy, model_id, fitting):
-        return self.get_user_handler(user_id).add_fitting(dataset_id, epochs, accuracy, model_id,
-                                                          fitting)
-
-    def get_fitting(self, user_id, fitting_id):
-        return self.get_user_handler(user_id).get_fitting(fitting_id)
-
-    def get_fitting_summaries(self, user_id):
-        return self.get_user_handler(user_id).get_fitting_summaries()
-
-    # Private Methods
-    # Datasets
-    def __analyze_datasets(self):
-        for idx, dataset_path in enumerate(sorted((Path.cwd() / _datasets_path).glob('*.pkl'))):
-            if dataset_path.exists():
-                self.dataset_summaries[idx] = self.__summarize_dataset(dataset_path)
-
-    @staticmethod
-    def __summarize_dataset(dataset_path):
-        file = dataset_path.open('rb')
-        content = pickle.load(file)
-        file.close()
-        dataset = [json.loads(x) for x in content]
-        labels = dataset[0].get('y')
-        dataset_summary = {'name': re.sub(r"(?<=\w)([A-Z])", r" \1", dataset_path.stem),
-                           'size': len(dataset),
-                           'labelDescriptors': list(labels.keys()),
-                           'datasetPath': str(dataset_path.absolute())}
-        return dataset_summary
-
-    # Base Models & Base Model Types
-    def __analyze_base_models(self):  # TODO: Implement
-        pass
-
-    def __read_base_model_types(self):  # TODO: Discuss base model types etc.
-        type_path = Path.cwd() / _base_models_path / 'types.json'
-        if type_path.exists():
-            file = type_path.open('r')
-            self.base_model_types = json.load(file)
-            file.close()
-
-
 class UserDataStorageHandler:
 
     def __init__(self, user_id):
@@ -258,6 +143,121 @@ class UserDataStorageHandler:
         self.user_path.mkdir(parents=True, exist_ok=True)
         self.user_models_path.mkdir(parents=True, exist_ok=True)
         self.user_fittings_path.mkdir(parents=True, exist_ok=True)
+
+
+# Goal: Never use file.open outside of storage handler
+# TODO: Test this boi
+class StorageHandler:
+
+    def __init__(self):
+        self.user_storage_handler = dict()
+        self.dataset_summaries = dict()
+        self.base_models = dict()
+        self.base_model_types = dict()
+        self.__analyze_datasets()
+        self.__analyze_base_models()
+
+    def add_user_handler(self, user_id) -> UserDataStorageHandler:
+        if self.user_storage_handler.get(user_id) is None:
+            self.user_storage_handler[user_id] = UserDataStorageHandler(user_id)
+        return self.user_storage_handler.get(user_id)
+
+    def get_user_handler(self, user_id) -> UserDataStorageHandler:
+        return self.user_storage_handler.get(user_id)
+
+    def delete_user_handler(self, user_id):
+        self.user_storage_handler.pop(user_id)
+
+    # Datasets
+    def get_dataset(self, dataset_id):
+        summary = self.dataset_summaries.get(dataset_id)
+        if summary and summary.get('datasetPath'):
+            path = Path(summary.get('datasetPath'))
+            if path.exists():
+                file = path.open('rb')
+                content = pickle.load(file)
+                file.close()
+                dataset = [json.loads(x) for x in content]
+                return dataset
+
+    def get_dataset_summaries(self):
+        return self.dataset_summaries
+
+    # Base Models
+    def get_base_model(self, base_model_id):
+        return self.base_models.get(base_model_id)
+
+    def get_base_models(self):
+        return self.base_models
+
+    # User Storage
+    # Molecules
+    def add_molecule(self, user_id, smiles, name):
+        self.get_user_handler(user_id).add_molecule(smiles, name)
+
+    def get_molecules(self, user_id):
+        return self.get_user_handler(user_id).get_molecules()
+
+    # Molecule Analyses
+    def add_analysis(self, user_id, smiles, fitting_id, results):
+        self.get_user_handler(user_id).add_analysis(smiles, fitting_id, results)
+
+    def get_analyses(self, user_id, smiles):
+        return self.get_user_handler(user_id).get_analyses(smiles)
+
+    # Models
+    # model is the actual model, not a summary
+    def add_model(self, user_id, name, base_model_id, model):
+        return self.get_user_handler(user_id).add_model(name, base_model_id, model)
+
+    def get_model(self, user_id, model_id):
+        return self.get_user_handler(user_id).get_model(model_id)
+
+    def get_model_summaries(self, user_id):
+        return self.get_user_handler(user_id).get_model_summaries()
+
+    # Fittings
+    # fitting is the actual, trained model, not a summary
+    def add_fitting(self, user_id, dataset_id, epochs, accuracy, model_id, fitting):
+        return self.get_user_handler(user_id).add_fitting(dataset_id, epochs, accuracy, model_id,
+                                                          fitting)
+
+    def get_fitting(self, user_id, fitting_id):
+        return self.get_user_handler(user_id).get_fitting(fitting_id)
+
+    def get_fitting_summaries(self, user_id):
+        return self.get_user_handler(user_id).get_fitting_summaries()
+
+    # Private Methods
+    # Datasets
+    def __analyze_datasets(self):
+        for idx, dataset_path in enumerate(sorted((Path.cwd() / _datasets_path).glob('*.pkl'))):
+            if dataset_path.exists():
+                self.dataset_summaries[idx] = self.__summarize_dataset(dataset_path)
+
+    @staticmethod
+    def __summarize_dataset(dataset_path):
+        file = dataset_path.open('rb')
+        content = pickle.load(file)
+        file.close()
+        dataset = [json.loads(x) for x in content]
+        labels = dataset[0].get('y')
+        dataset_summary = {'name': re.sub(r"(?<=\w)([A-Z])", r" \1", dataset_path.stem),
+                           'size': len(dataset),
+                           'labelDescriptors': list(labels.keys()),
+                           'datasetPath': str(dataset_path.absolute())}
+        return dataset_summary
+
+    # Base Models & Base Model Types
+    def __analyze_base_models(self):  # TODO: Implement
+        pass
+
+    def __read_base_model_types(self):  # TODO: Discuss base model types etc.
+        type_path = Path.cwd() / _base_models_path / 'types.json'
+        if type_path.exists():
+            file = type_path.open('r')
+            self.base_model_types = json.load(file)
+            file.close()
 
 
 _inst = StorageHandler()
