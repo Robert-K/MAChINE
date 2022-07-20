@@ -3,6 +3,7 @@ import api from './api.js'
 import PropTypes from 'prop-types'
 import Button from '@mui/material/Button'
 
+// TODO: remove this test component
 class ScoreComp extends React.Component {
   constructor(props) {
     super(props)
