@@ -33,6 +33,9 @@ class Models(Resource):
         args = parser.parse_args()
         return ml.create(user_id, args['name'], args['parameters'], args['baseModel'])
 
+class Molecules(Resource):
+    def get(self, user_id):
+        return sh.get_molecules(user_id)
 
 class Molecules(Resource):
     def get(self, user_id):
