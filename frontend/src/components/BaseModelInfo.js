@@ -13,25 +13,33 @@ import {
 import ExpandLess from '@mui/icons-material/ExpandLess'
 import ExpandMore from '@mui/icons-material/ExpandMore'
 import Button from '@mui/material/Button'
+import { useNavigate } from 'react-router-dom'
 
 function BaseModelInfo(props) {
+  const navigate = useNavigate()
   return (
-    <List sx={{ maxHeight: 400, overflow: 'auto' }}>
-      <Button fullWidth variant="contained">
+    <List sx={{ maxHeight: 400 }}>
+      <Button
+        fullWidth
+        variant="contained"
+        onClick={() => navigate('/modelconfig')}
+      >
         Configure this model
       </Button>
-      {props.baseModel.compatibleDatasets.map((dataset, i, datasets) => {
-        return (
-          <React.Fragment
-            key={`${JSON.stringify(dataset)} ${i.toString()} ${
-              props.baseModel.id
-            }`}
-          >
-            {i === 0 ? null : <Divider></Divider>}
-            <DatasetInfo dataset={dataset}></DatasetInfo>
-          </React.Fragment>
-        )
-      })}
+      <List sx={{ maxHeight: 350, overflow: 'auto' }}>
+        {props.baseModel.compatibleDatasets.map((dataset, i, datasets) => {
+          return (
+            <React.Fragment
+              key={`${JSON.stringify(dataset)} ${i.toString()} ${
+                props.baseModel.id
+              }`}
+            >
+              {i === 0 ? null : <Divider></Divider>}
+              <DatasetInfo dataset={dataset}></DatasetInfo>
+            </React.Fragment>
+          )
+        })}
+      </List>
     </List>
   )
 }

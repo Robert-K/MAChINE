@@ -33,6 +33,7 @@ function BaseModelCard(props) {
                * todo: Images currently get squashed when website is less wide (like when opening F12).
                *  might wanna fix that. */
               src={props.baseModel.type.image}
+              height="155px"
               alt="You should see a base model here."
               className="img"
             />

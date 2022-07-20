@@ -21,7 +21,7 @@ import SelectionList from '../components/SelectionList'
 import ExpandLess from '@mui/icons-material/ExpandLess'
 import ExpandMore from '@mui/icons-material/ExpandMore'
 import PropTypes from 'prop-types'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 /**
  * Depicts a list of saved models and shows a description of the selected model on click
@@ -34,14 +34,16 @@ export default function ModelsPage() {
     new ModelConfig('1', 'Test Model1', '13', [3, 4, 5], []),
     new ModelConfig('2', 'Test Model2', '14', [5, 4, 5], []),
   ]
-  models[0].addFitting('1a', 9, 70)
-  models[0].addFitting('1b', 10, 72)
-  models[1].addFitting('2a', 11, 75)
-  models[1].addFitting('2b', 12, 78)
+  models[0].addFitting('dataset1a', 9, 20, 70)
+  models[0].addFitting('dataset1b', 10, 20, 72)
+  models[1].addFitting('dataset2a', 11, 30, 75)
+  models[1].addFitting('dataset2b', 12, 30, 78)
 
   const updateSelection = (index) => {
     setSelectedModel(index)
   }
+
+  const navigate = useNavigate()
 
   return (
     <Box sx={{ m: 5 }}>
@@ -53,9 +55,7 @@ export default function ModelsPage() {
               elements={models}
               elementType="model"
               usePopper={false}
-              addFunc={() =>
-                console.log('Implement connection to base model selection')
-              }
+              addFunc={() => navigate('/base-models')}
             ></SelectionList>
           }
         </Grid>
@@ -151,6 +151,13 @@ function RenderFitting(props) {
                 primary="Epochs: "
               ></ListItemText>
               {props.fitting.epochs}
+            </ListItem>
+            <ListItem>
+              <ListItemText
+                sx={{ color: theme.palette.primary.main }}
+                primary="Batch Size: "
+              ></ListItemText>
+              {props.fitting.batchSize}
             </ListItem>
             <ListItem>
               <ListItemText

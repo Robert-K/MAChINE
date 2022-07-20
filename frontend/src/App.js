@@ -7,7 +7,6 @@ import SwaggerPage from './routes/SwaggerPage'
 import '@fontsource/roboto'
 import Navbar from './components/Navbar'
 import { createTheme, CssBaseline, ThemeProvider } from '@mui/material'
-import { blue, red } from '@mui/material/colors'
 import HomePage from './routes/HomePage'
 import MoleculesPage from './routes/MoleculesPage'
 import StartPage from './routes/StartPage'
@@ -20,10 +19,10 @@ import TrainedModels from './routes/TrainedModels'
 const themeLight = createTheme({
   palette: {
     primary: {
-      main: red[500],
+      main: '#137C83',
     },
     contrastbackground: {
-      main: red[100],
+      main: '#137C83',
     },
   },
 })
@@ -31,7 +30,7 @@ const themeLight = createTheme({
 const themeDark = createTheme({
   palette: {
     primary: {
-      main: blue[500],
+      main: '#dc3984',
     },
     mode: 'dark',
   },
@@ -39,7 +38,8 @@ const themeDark = createTheme({
     MuiAppBar: {
       styleOverrides: {
         colorPrimary: {
-          backgroundColor: blue[900],
+          backgroundColor: '#7E2E54',
+          backgroundImage: 'none',
         },
       },
     },

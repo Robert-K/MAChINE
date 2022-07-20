@@ -1,9 +1,9 @@
 import React from 'react'
 import {
   Card,
+  CardActionArea,
   CardContent,
   CardMedia,
-  CardActionArea,
   Grid,
   Typography,
 } from '@mui/material'
@@ -22,7 +22,7 @@ export default function DatasetCard(props) {
           <CardMedia
             component="img"
             height="110"
-            image="/dataset.jpg"
+            image="/dataset.jpeg"
             alt="data picture"
           />
           {/* TODO: Select a non-copyrighted image */}
