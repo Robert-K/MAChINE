@@ -1,16 +1,20 @@
-import json
-import pickle
-import numpy as np
-import tensorflow as tf
-
-from backend.storage_handler import StorageHandler as sh
-from backend.storage_handler import UserDataStorageHandler as udsh
-
+import storage_handler as sh
 
 class Analyzer:
+    def __init__(self):
+        self.user()
+        self.fitting()
+        self.molecule()
+        self.analysis()
 
     def analyze(self, user_id, fitting_id, molecule_id):
-        user_data_storage_handler_id = sh.__get_user_handler(sh, user_id)
-        #user_data_storage_handler_id
-        fitting = udsh.get_fitting(udsh, fitting_id)
-        #get_fitting(user
+
+        self.user = user_id
+        self.fitting = sh.get_fitting(user_id, fitting_id)
+        self.molecule = molecule_id
+
+        # TODO: Analyze Molecule
+
+        self.analysis = None
+
+
