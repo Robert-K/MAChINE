@@ -20,6 +20,8 @@ parser.add_argument('accuracy')
 parser.add_argument('batchSize')
 parser.add_argument('moleculeID')
 parser.add_argument('fittingID')
+parser.add_argument('smiles')
+parser.add_argument('name')
 
 
 
@@ -42,7 +44,8 @@ class Molecules(Resource):
         return sh.get_molecules(user_id)
 
     def patch(self, user_id):
-        pass  # TODO: implement
+        args = parser.parse_args()
+        return sh.add_molecule(user_id, args['smiles'], args['name'])
 
 
 class Fittings(Resource):
@@ -69,7 +72,7 @@ class Datasets(Resource):
 
 class BaseModels(Resource):
     def get(self):
-        return sh.get_base_models
+        return sh.get_base_models()
 
 
 class Analyze(Resource):
