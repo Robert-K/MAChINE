@@ -18,7 +18,7 @@ class Models(Resource):
     def get(self, user_id):
         return sh.get_models(user_id)
 
-    def post(self, user_id):
+    def patch(self, user_id):
         pass  # TODO: implement
 
 
@@ -26,7 +26,7 @@ class Molecules(Resource):
     def get(self, user_id):
         return sh.get_molecules(user_id)
 
-    def post(self, user_id):
+    def patch(self, user_id):
         pass  # TODO: implement
 
 
