@@ -22,8 +22,10 @@ __all__ = ['add_fitting',
            'get_molecules',
            'get_or_add_user']
 
-_user_data_path = 'storage\\user_data'
-_datasets_path = 'storage\\data'
+_storage_path = Path('storage')
+_user_data_path = _storage_path / 'user_data'
+_datasets_path = _storage_path / 'data'
+_base_models_path = _storage_path / 'models'
 
 
 class StorageHandler:
@@ -34,6 +36,7 @@ class StorageHandler:
         self.base_models = dict()
         self.base_model_types = dict()
         self.__analyze_datasets()
+        self.__analyze_base_models()
 
     def get_or_add_user(self, user_id):  # TODO: Test
         if self.user_storage_handler.get(user_id) is None:
@@ -96,12 +99,14 @@ class StorageHandler:
         return self.get_or_add_user(user_id).get_fittings()
 
     # Private Methods
+    # Datasets
     def __analyze_datasets(self):
         for idx, dataset_path in enumerate(sorted((Path.cwd() / _datasets_path).glob('*.pkl'))):
             if dataset_path.exists():
                 self.datasets_info[idx] = self.__parse_dataset_info(dataset_path)
 
-    def __parse_dataset_info(self, dataset_path):
+    @staticmethod
+    def __parse_dataset_info(dataset_path):
         file = dataset_path.open('rb')
         content = pickle.load(file)
         file.close()
@@ -112,6 +117,17 @@ class StorageHandler:
                         'labelDescriptors': list(labels.keys()),
                         'datasetPath': str(dataset_path.absolute())}
         return dataset_info
+
+    # Base Models & Base Model Types
+    def __analyze_base_models(self):  # TODO: Implement
+        pass
+
+    def __read_base_model_types(self):  # TODO: Discuss base model types etc.
+        type_path = Path.cwd() / _base_models_path / 'types.json'
+        if type_path.exists():
+            file = type_path.open('r')
+            self.base_model_types = json.load(file)
+            file.close()
 
 
 class UserDataStorageHandler:
