@@ -258,10 +258,13 @@ class StorageHandler:
         return dataset_summary
 
     # Base Models & Base Model Types
-    def __analyze_base_models(self):  # TODO: Implement
-        pass
+    def __analyze_base_models(self):
+        path = Path(_base_models_path)
+        file = path.open('r')
+        self.base_models = json.load(file)
+        file.close()
 
-    def __read_base_model_types(self):  # TODO: Discuss base model types etc.
+    def __read_base_model_types(self):
         type_path = Path.cwd() / _base_models_path / 'types.json'
         if type_path.exists():
             file = type_path.open('r')
