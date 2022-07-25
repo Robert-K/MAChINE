@@ -1,0 +1,8 @@
+{
+	"id": {
+		"name": "SequentialA",
+		"type": "sequential",
+		"lossFunction": "MeanSquaredError",
+		"inputSize": 1
+	}
+}
