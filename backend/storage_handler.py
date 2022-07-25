@@ -53,7 +53,7 @@ class UserDataStorageHandler:
     # Analyses
     def add_analysis(self, smiles, fitting_id, results):
         molecule = self.molecules.get(smiles)
-        if molecule and molecule.get('analyses'):
+        if molecule:
             molecule.get('analyses')[fitting_id] = results
             self.__save_summary_file('molecules.json', self.molecules)
 
