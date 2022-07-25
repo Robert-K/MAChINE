@@ -61,7 +61,7 @@ class UserDataStorageHandler:
         return self.molecules.get(smiles)
 
     # Models
-    def add_model(self, name, base_model_id, model):
+    def add_model(self, name, parameters, base_model_id, model):
         model_id = hash(model)
         path = self.user_models_path / f'{model_id}_model.pkl'
         file = path.open('wb')
@@ -69,6 +69,7 @@ class UserDataStorageHandler:
         file.close()
         self.model_summaries[model_id] = {'name': name,
                                           'baseModelID': base_model_id,
+                                          'parameters': parameters,
                                           'modelPath': path,
                                           'fittingIDs': []
                                           }
@@ -91,7 +92,8 @@ class UserDataStorageHandler:
         return self.model_summaries
 
     # Fittings
-    def add_fitting(self, dataset_id, epochs, accuracy, model_id, fitting):
+    # Saves a fitting, creates a summary, updates the model summary
+    def add_fitting(self, dataset_id, epochs, accuracy, batch_size, model_id, fitting):
         fitting_id = hash(fitting)
         path = self.user_fittings_path / f'{fitting_id}_fitting.pkl'
         file = path.open('wb')
@@ -100,11 +102,18 @@ class UserDataStorageHandler:
         self.fitting_summaries[fitting_id] = {'datasetID': dataset_id,
                                               'epochs': epochs,
                                               'accuracy': accuracy,
+                                              'batchSize': batch_size,
                                               'fittingPath': path,
                                               'modelID': model_id
                                               }
         self.__save_summary_file('fittings.json', self.fitting_summaries)
+        self.add_fitting_to_model(model_id, fitting_id)
         return fitting_id
+
+    def add_fitting_to_model(self, model_id, fitting_id):
+        summary = self.get_model_summaries().get(model_id)
+        summary.get('fittings').append(fitting_id)
+        self.__save_summary_file('models.json', self.model_summaries)
 
     def get_fitting(self, fitting_id):
         summary = self.fitting_summaries.get(fitting_id)
@@ -207,8 +216,8 @@ class StorageHandler:
 
     # Models
     # model is the actual model, not a summary
-    def add_model(self, user_id, name, base_model_id, model):
-        return self.get_user_handler(user_id).add_model(name, base_model_id, model)
+    def add_model(self, user_id, name, parameters, base_model_id, model):
+        return self.get_user_handler(user_id).add_model(name, parameters, base_model_id, model)
 
     def get_model(self, user_id, model_id):
         return self.get_user_handler(user_id).get_model(model_id)
@@ -218,8 +227,8 @@ class StorageHandler:
 
     # Fittings
     # fitting is the actual, trained model, not a summary
-    def add_fitting(self, user_id, dataset_id, epochs, accuracy, model_id, fitting):
-        return self.get_user_handler(user_id).add_fitting(dataset_id, epochs, accuracy, model_id,
+    def add_fitting(self, user_id, dataset_id, epochs, accuracy, batch_size, model_id, fitting):
+        return self.get_user_handler(user_id).add_fitting(dataset_id, epochs, accuracy, batch_size, model_id,
                                                           fitting)
 
     def get_fitting(self, user_id, fitting_id):
