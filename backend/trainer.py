@@ -12,7 +12,7 @@ class Trainer:
         self.user()
         self.fitting()
 
-    def train(self, user_id, dataset_id, model_id, fingerprint, label):
+    def train(self, user_id, dataset_id, model_id, fingerprint, label, epochs, accuracy, batch_size):
         self.dataset = sh.get_dataset_info(dataset_id)
         self.model = sh.get_model(model_id)
         self.user = user_id
@@ -22,4 +22,4 @@ class Trainer:
         # todo implement training (milestone for 26/08)
         self.fitting = None
 
-        sh.add_fitting(sh, user_id, self.fitting)
+        sh.add_fitting(user_id, dataset_id, epochs, accuracy, batch_size, model_id, self.fitting)

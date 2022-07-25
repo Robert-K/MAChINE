@@ -16,6 +16,9 @@ parser.add_argument('datasetID')
 parser.add_argument('modelID')
 parser.add_argument('fingerprint')
 parser.add_argument('label')
+parser.add_argument('epochs')
+parser.add_argument('accuracy')
+parser.add_argument('batchSize')
 parser.add_argument('moleculeID')
 parser.add_argument('fittingID')
 
@@ -71,7 +74,7 @@ class Analyze(Resource):
 class Train(Resource):
     def post(self, user_id):
         args = parser.parse_args()
-        return tr.train(user_id, args['datasetID'], args['modelID'], args['fingerprint'], args['label'])
+        return tr.train(user_id, args['datasetID'], args['modelID'], args['fingerprint'], args['label'], args['epochs'], args['accuracy'], args['batchSize'])
 
 
 # Actually set up the Api resource routing here

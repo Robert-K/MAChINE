@@ -89,13 +89,25 @@ export default {
       })
   },
 
-  async trainModel(userID, datasetID, modelID, fingerprint, label) {
+  async trainModel(
+    userID,
+    datasetID,
+    modelID,
+    fingerprint,
+    label,
+    epochs,
+    accuracy,
+    batchSize
+  ) {
     return api
       .post(`${serverAddress}/users/${userID}/train`, {
         datasetID,
         modelID,
         fingerprint,
         label,
+        epochs,
+        accuracy,
+        batchSize,
       })
       .then((response) => {
         return response.data
