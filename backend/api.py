@@ -146,6 +146,10 @@ class Check(Resource):
     def get(self):
         return
 
+class Check(Resource):
+    def get(self):
+        return
+
 
 # Actually set up the Api resource routing here
 api.add_resource(AddUser, '/users')
