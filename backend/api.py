@@ -93,10 +93,16 @@ class Fittings(Resource):
         return sh.get_fitting_summaries(user_id)
 
 
-class Users(Resource):
-    def post(self, user_id):
-        return sh.add_user_handler(user_id)
+class AddUser(Resource):
+    def post(self):
+        args = parser.parse_args()
+        user_id = hash(args['username'])
+        handler = sh.add_user_handler(user_id)
+        if handler:
+            return user_id, 201
 
+
+class DeleteUser(Resource):
     def delete(self, user_id):
         return sh.delete_user_handler(user_id)
 
@@ -140,7 +146,8 @@ class Train(Resource):
 
 
 # Actually set up the Api resource routing here
-api.add_resource(Users, '/users/<user_id>')
+api.add_resource(AddUser, '/users')
+api.add_resource(DeleteUser, '/users/<user_id>')
 api.add_resource(Models, '/users/<user_id>/models')
 api.add_resource(Molecules, '/users/<user_id>/molecules')
 api.add_resource(Fittings, '/users/<user_id>/fittings')

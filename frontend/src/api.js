@@ -60,7 +60,7 @@ export default {
   },
 
   async login(username) {
-    return api.post(`${serverAddress}/users/${username}`).then((response) => {
+    return api.post(`${serverAddress}/users`, { username }).then((response) => {
       return response.data
     })
   },
