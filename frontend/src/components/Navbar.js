@@ -1,8 +1,9 @@
 import { AppBar, Box, Toolbar } from '@mui/material'
 import { NavLink, useLocation } from 'react-router-dom'
-import React from 'react'
+import * as React from 'react'
 import logo from '../logo.svg'
 import PropTypes from 'prop-types'
+import ServerPopover from './ServerPopper'
 
 export default function Navbar(props) {
   const locationName = useLocation().pathname
@@ -27,6 +28,8 @@ export default function Navbar(props) {
             Not {props.userName}? <u>Log out</u>
           </NavLink>
         )}
+        <ServerPopover />
+
         {props.darkModeButton}
       </Toolbar>
       <style jsx="true">{`

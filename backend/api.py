@@ -144,10 +144,15 @@ class Train(Resource):
         args = parser.parse_args()
         return ml.train(user_id, args['datasetID'], args['modelID'], args['fingerprint'], args['label'], args['epochs'], args['accuracy'], args['batchSize'])
 
+class Check(Resource):
+    def get(self):
+        return
+
 
 # Actually set up the Api resource routing here
 api.add_resource(AddUser, '/users')
 api.add_resource(DeleteUser, '/users/<user_id>')
+api.add_resource(Check, '/check')
 api.add_resource(Models, '/users/<user_id>/models')
 api.add_resource(Molecules, '/users/<user_id>/molecules')
 api.add_resource(Fittings, '/users/<user_id>/fittings')
