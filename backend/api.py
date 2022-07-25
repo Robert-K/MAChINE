@@ -26,11 +26,40 @@ parser.add_argument('name')
 
 
 # modelList
-# shows a list of all models, and lets you POST to add new tasks
+# gets a list of all models, and lets you PATCH to add new models
 class Models(Resource):
     def get(self, user_id):
-        return sh.get_models(user_id)
+        models = sh.get_model_summaries(user_id)
+        fittings = sh.get_fitting_summaries(user_id)
+        model_configs = []
 
+        for key in models.keys():
+            current_model = models[key]
+            model_fittings = []
+            for fitting_id in current_model['fittingIDs']:
+                fitting = fittings.get(fitting_id)
+                if fitting:  # convert fitting
+                    model_fittings.append({
+                        {
+                            'id': fitting['name'],
+                            'modelID': fitting['modelID'],
+                            'modelName': current_model['name'],
+                            'datasetID': fitting['datasetID'],
+                            'epochs': fitting['epochs'],
+                            'batchSize': fitting['batchSize'],
+                            'accuracy': fitting['accuracy']
+                        }
+                    })
+            model_configs.append({
+                'id': key,
+                'name': current_model['name'],
+                'baseModel': current_model['baseModelID'],
+                'parameters': current_model['parameters'],
+                'fittings': model_fittings
+            })
+        return model_configs
+
+    # called when a new configs is added
     def patch(self, user_id):
         args = parser.parse_args()
         return ml.create(user_id, args['name'], args['parameters'], args['baseModel'])
@@ -48,17 +77,18 @@ class Molecules(Resource):
         return sh.add_molecule(user_id, args['smiles'], args['name'])
 
 
+# TODO: Maybe remove again
 class Fittings(Resource):
     def get(self, user_id):
-        return sh.get_fittings(user_id)
+        return sh.get_fitting_summaries(user_id)
 
 
 class Users(Resource):
     def post(self, user_id):
-        return sh.get_or_add_user(user_id)
+        return sh.add_user_handler(user_id)
 
     def delete(self, user_id):
-        return sh.delete_user(user_id)
+        return sh.delete_user_handler(user_id)
 
 
 class Datasets(Resource):
@@ -67,7 +97,7 @@ class Datasets(Resource):
     """
 
     def get(self):
-        return sh.get_datasets_info()
+        return sh.get_dataset_summaries()
 
 
 class BaseModels(Resource):
@@ -81,6 +111,7 @@ class Analyze(Resource):
         return ml.analyze(user_id, args['fittingID'], args['moleculeID'])
 
 
+# Creates a new fitting, adds that fitting to model
 class Train(Resource):
     def post(self, user_id):
         args = parser.parse_args()
@@ -94,7 +125,7 @@ api.add_resource(Molecules, '/users/<user_id>/molecules')
 api.add_resource(Fittings, '/users/<user_id>/fittings')
 # Training & Analyzing
 api.add_resource(Analyze, '/users/<user_id>/analyze')
-api.add_resource(Train, '/user/<user_id>/train')
+api.add_resource(Train, '/users/<user_id>/train')
 # Non-user-specific resources
 api.add_resource(Datasets, '/datasets')
 api.add_resource(BaseModels, '/baseModels')
