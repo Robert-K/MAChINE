@@ -13,7 +13,7 @@ class Trainer:
         self.fitting()
 
     def train(self, user_id, dataset_id, model_id, fingerprint, label, epochs, accuracy, batch_size):
-        self.dataset = sh.get_dataset_info(dataset_id)
+        self.dataset = sh.get_dataset(dataset_id)
         self.model = sh.get_model(model_id)
         self.user = user_id
         self.fingerprint = fingerprint
