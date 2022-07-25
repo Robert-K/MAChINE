@@ -124,7 +124,7 @@ class Datasets(Resource):
                     'size': current_dataset['size'],
                     'labelDescriptors': current_dataset['labelDescriptors'],
                 })
-        return sh.get_dataset_summaries()
+        return processed_datasets
 
 
 class BaseModels(Resource):
