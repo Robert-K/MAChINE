@@ -5,6 +5,7 @@ import Molecule from '../internal/Molecule'
 import MoleculeAnalysis from '../internal/MoleculeAnalysis'
 import SelectionList from '../components/SelectionList'
 import { Link } from 'react-router-dom'
+import { Jsme } from 'jsme-react'
 
 export default function MoleculesPage() {
   const testMolecules = [
@@ -71,12 +72,21 @@ export default function MoleculesPage() {
 }
 
 function MoleculeView() {
+  function logSmiles(smiles) {
+    console.log(smiles)
+  }
+
   return (
     <Card>
       <CardContent>
-        <Box
-          sx={{ background: 'black', width: '100%', height: '600px', mb: 2 }}
-        ></Box>
+        <Box sx={{ mb: 2 }}>
+          <Jsme
+            height="600px"
+            width="100%"
+            smiles="CC(CC1=CC=CC=C1)NC"
+            onChange={logSmiles}
+          />
+        </Box>
         <Grid container spacing={2}>
           <Grid item>
             <TextField label="Name"></TextField>
