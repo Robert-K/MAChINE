@@ -3,6 +3,7 @@ from pathlib import Path
 import json
 import shutil
 import pickle
+import joblib
 
 __all__ = ['add_analysis',
            'add_fitting',
@@ -65,9 +66,7 @@ class UserDataStorageHandler:
     def add_model(self, name, parameters, base_model_id, model):
         model_id = hash(model)
         path = self.user_models_path / f'{model_id}_model.pkl'
-        file = path.open('wb')
-        pickle.dump(model, file)
-        file.close()
+        joblib.dump(model, path)
         self.model_summaries[model_id] = {'name': name,
                                           'baseModelID': base_model_id,
                                           'parameters': parameters,
@@ -83,11 +82,7 @@ class UserDataStorageHandler:
         if summary and summary.get('modelPath'):
             path = Path(summary.get('modelPath'))
             if path.exists():
-                file = path.open('rb')
-                content = pickle.load(file)
-                file.close()
-                # TODO: Work on this in milestone 'model_training'
-                return content
+                return joblib.load(path)
 
     def get_model_summaries(self):
         return self.model_summaries
@@ -97,9 +92,7 @@ class UserDataStorageHandler:
     def add_fitting(self, dataset_id, epochs, accuracy, batch_size, model_id, fitting):
         fitting_id = hash(fitting)
         path = self.user_fittings_path / f'{fitting_id}_fitting.pkl'
-        file = path.open('wb')
-        pickle.dump(fitting, file)
-        file.close()
+        joblib.dump(fitting, path)
         self.fitting_summaries[fitting_id] = {'datasetID': dataset_id,
                                               'epochs': epochs,
                                               'accuracy': accuracy,
@@ -121,11 +114,7 @@ class UserDataStorageHandler:
         if summary and summary.get('fittingPath'):
             path = Path(summary.get('fittingPath'))
             if path.exists():
-                file = path.open('rb')
-                content = pickle.load(file)
-                file.close()
-                # TODO: Work on this in milestone 'model_training'
-                return content
+                return joblib.load(path)
 
     def get_fitting_summaries(self):
         return self.fitting_summaries
@@ -165,7 +154,8 @@ class StorageHandler:
         self.base_models = dict()
         self.base_model_types = dict()
         self.__analyze_datasets()
-        self.__analyze_base_models()
+        self.__read_base_models()
+        self.__read_base_model_types()
 
     def add_user_handler(self, user_id) -> UserDataStorageHandler:
         if self.user_storage_handler.get(user_id) is None:
@@ -259,8 +249,8 @@ class StorageHandler:
         return dataset_summary
 
     # Base Models & Base Model Types
-    def __analyze_base_models(self):
-        path = Path(_base_models_path)
+    def __read_base_models(self):
+        path = Path(_base_models_path / 'baseModels.json')
         file = path.open('r')
         self.base_models = json.load(file)
         file.close()
