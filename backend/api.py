@@ -70,7 +70,17 @@ class Molecules(Resource):
 
 class Molecules(Resource):
     def get(self, user_id):
-        return sh.get_molecules(user_id)
+        molecules = sh.get_molecules(user_id)
+        processed_molecules = []
+        for smiles in molecules.keys():
+            current_molecule = molecules.get(smiles)
+            if current_molecule:
+                processed_molecules.append({
+                    'name': current_molecule['name'],
+                    'smiles': smiles,
+                    'analyses': current_molecule['analyses']
+                })
+        return processed_molecules
 
     def patch(self, user_id):
         args = parser.parse_args()
@@ -97,6 +107,17 @@ class Datasets(Resource):
     """
 
     def get(self):
+        datasets = sh.get_dataset_summaries
+        processed_datasets = []
+        for dataset_id in datasets.keys():
+            current_dataset = datasets.get(dataset_id)
+            if current_dataset:
+                processed_datasets.append({
+                    'name': current_dataset['name'],
+                    'datasetID': dataset_id,
+                    'size': current_dataset['size'],
+                    'labelDescriptors': current_dataset['labelDescriptors'],
+                })
         return sh.get_dataset_summaries()
 
 
