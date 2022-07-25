@@ -26,6 +26,7 @@ _storage_path = Path('storage')
 _user_data_path = _storage_path / 'user_data'
 _datasets_path = _storage_path / 'data'
 _base_models_path = _storage_path / 'models'
+_base_model_images = _storage_path / 'base_model_images'
 
 
 class UserDataStorageHandler:
@@ -263,6 +264,10 @@ class StorageHandler:
         file = path.open('r')
         self.base_models = json.load(file)
         file.close()
+        # add corresponding images to models
+        for model in self.base_models.values():
+            type_name = model.get("type")
+            model["imagePath"] = self.base_model_types.get(type_name)
 
     def __read_base_model_types(self):
         type_path = Path.cwd() / _base_models_path / 'types.json'
