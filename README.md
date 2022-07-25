@@ -1,3 +1,9 @@
+![MAChINE Logo](https://kosro.de/share/machine.svg)
+
+A [PSE](https://pp.ipd.kit.edu/lehre/SS2022/pse) project by [13thWitch](https://github.com/13thWitch), [AnoukSommer](https://github.com/AnoukSommer), [CSCMe](https://github.com/CSCMe), [EliteStudent420](https://github.com/EliteStudent420), [Viola2345](https://github.com/Viola2345) & [Robert-K](https://github.com/Robert-K)
+
+Supervised by [André Eberhard](https://github.com/patchmeifyoucan)
+
 # Commit Message Etiquette
 
 Start commit messages with ADD, FIX, UPD or DEL corresponding to change.
