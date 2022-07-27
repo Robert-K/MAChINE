@@ -16,29 +16,38 @@ import {
   useTheme,
 } from '@mui/material'
 import Button from '@mui/material/Button'
-import ModelConfig from '../internal/ModelConfig'
 import SelectionList from '../components/SelectionList'
 import ExpandLess from '@mui/icons-material/ExpandLess'
 import ExpandMore from '@mui/icons-material/ExpandMore'
 import PropTypes from 'prop-types'
 import { Link, useNavigate } from 'react-router-dom'
+import api from '../api'
+import UserContext from '../UserContext'
 
 /**
  * Depicts a list of saved models and shows a description of the selected model on click
  */
 export default function ModelsPage() {
   const [selectedModel, setSelectedModel] = React.useState(-1)
+  const [modelList, setModelList] = React.useState([])
 
-  // Model storage, TODO: to be replaced by data from backend, probably needs to be relocated
-  const models = [
+  const user = React.useContext(UserContext)
+
+  React.useEffect(() => {
+    api.getModelList(user.userID).then((models) => setModelList(models))
+  }, [user])
+
+  // TODO: Delete dummy data
+  /*
+  const modelList = [
     new ModelConfig('1', 'Test Model1', '13', [3, 4, 5], []),
     new ModelConfig('2', 'Test Model2', '14', [5, 4, 5], []),
   ]
-  models[0].addFitting('dataset1a', 9, 20, 70)
-  models[0].addFitting('dataset1b', 10, 20, 72)
-  models[1].addFitting('dataset2a', 11, 30, 75)
-  models[1].addFitting('dataset2b', 12, 30, 78)
-
+  modelList[0].addFitting('dataset1a', 9, 20, 70)
+  modelList[0].addFitting('dataset1b', 10, 20, 72)
+  modelList[1].addFitting('dataset2a', 11, 30, 75)
+  modelList[1].addFitting('dataset2b', 12, 30, 78)
+  */
   const updateSelection = (model, index) => {
     setSelectedModel(index)
   }
@@ -52,7 +61,7 @@ export default function ModelsPage() {
           {
             <SelectionList
               updateFunc={updateSelection}
-              elements={models}
+              elements={modelList}
               elementType="model"
               usePopper={false}
               addFunc={() => navigate('/base-models')}
@@ -79,7 +88,7 @@ export default function ModelsPage() {
         </Card>
       )
     } else {
-      const currentModel = models[selectedModel]
+      const currentModel = modelList[selectedModel]
       return (
         <Card>
           <CardContent>
