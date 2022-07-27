@@ -2,12 +2,12 @@ import React from 'react'
 import { Box, Button, Card, CardContent, Grid, TextField } from '@mui/material'
 import SelectionList from '../components/shared/SelectionList'
 import { useNavigate } from 'react-router-dom'
-import { Jsme } from 'jsme-react'
 import UserContext from '../UserContext'
 import api from '../api'
 import Molecule from '../internal/Molecule'
 import SaveIcon from '@mui/icons-material/Save'
 import PropTypes from 'prop-types'
+import MoleculeEditor from '../components/MoleculeEditor'
 
 const gridHeight = '80vh'
 export default function MoleculesPage() {
@@ -68,36 +68,18 @@ export default function MoleculesPage() {
   )
 }
 
-function MoleculeEditor(show, smiles, onChange) {
-  console.log(show, 'ayyyy')
-  if (!show)
-    return (
-      <div style={{ width: '100%', height: '600px', background: 'red' }}></div>
-    )
-  return (
-    <Jsme
-      height="600px"
-      width="100%"
-      smiles={smiles}
-      onChange={() => onChange}
-      src="JSME_2022-02-26/jsme/jsme.nocache.js" // Oh god why
-    />
-  )
-}
-
-function MoleculeView({ smiles, showEditor }) {
+function MoleculeView({ smiles }) {
   const navigate = useNavigate()
   function logSmiles(smiles) {
     console.log(smiles)
   }
-
   return (
     <Card sx={{ maxHeight: gridHeight, height: gridHeight }}>
       <CardContent
         sx={{ flexDirection: 'column', height: '100%', display: 'flex' }}
       >
-        <Box sx={{ mb: 2 }} key={'jsme' + smiles}>
-          {MoleculeEditor(showEditor, smiles, logSmiles)}
+        <Box sx={{ width: '600px', mb: 2 }}>
+          <MoleculeEditor />
         </Box>
         <Grid container spacing={2}>
           <Grid item>
@@ -133,5 +115,4 @@ function MoleculeView({ smiles, showEditor }) {
 
 MoleculeView.propTypes = {
   smiles: PropTypes.string.isRequired,
-  showEditor: PropTypes.bool.isRequired,
 }

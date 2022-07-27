@@ -17,6 +17,7 @@
     "@testing-library/user-event": "^13.5.0",
     "axios": "^0.27.2",
     "jsme-react": "^0.0.9",
+    "kekule": "^0.9.7",
     "mui-image": "^1.0.5",
     "node-polyfill-webpack-plugin": "^2.0.0",
     "prop-types": "^15.8.1",
