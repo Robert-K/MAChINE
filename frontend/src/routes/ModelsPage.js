@@ -27,7 +27,7 @@ import { Link, useNavigate } from 'react-router-dom'
  * Depicts a list of saved models and shows a description of the selected model on click
  */
 export default function ModelsPage() {
-  const [selectedModel, setSelectedModel] = React.useState('')
+  const [selectedModel, setSelectedModel] = React.useState(-1)
 
   // Model storage, TODO: to be replaced by data from backend, probably needs to be relocated
   const models = [
