@@ -38,9 +38,9 @@ class Models(Resource):
             for fitting_id in current_model['fittingIDs']:
                 fitting = fittings.get(fitting_id)
                 if fitting:  # convert fitting
-                    model_fittings.append({
+                    model_fittings.append(
                         {
-                            'id': fitting['name'],
+                            'id': fitting_id,
                             'modelID': fitting['modelID'],
                             'modelName': current_model['name'],
                             'datasetID': fitting['datasetID'],
@@ -48,7 +48,7 @@ class Models(Resource):
                             'batchSize': fitting['batchSize'],
                             'accuracy': fitting['accuracy']
                         }
-                    })
+                    )
             model_configs.append({
                 'id': key,
                 'name': current_model['name'],
@@ -132,7 +132,7 @@ class Datasets(Resource):
     """
 
     def get(self):
-        datasets = sh.get_dataset_summaries
+        datasets = sh.get_dataset_summaries()
         processed_datasets = []
         for dataset_id in datasets.keys():
             current_dataset = datasets.get(dataset_id)
