@@ -8,8 +8,6 @@
 import React from 'react'
 import { Container } from '@mui/material'
 import BaseModelCard from '../components/BaseModelCard'
-import BaseModel from '../internal/BaseModel'
-import ModelType from '../internal/ModelType'
 import Grid from '@mui/material/Grid'
 import DetailsPopper from '../components/DetailsPopper'
 import PropTypes from 'prop-types'
