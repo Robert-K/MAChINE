@@ -9,6 +9,7 @@ import FittingCard from '../components/FittingCard'
 import Button from '@mui/material/Button'
 import DetailsPopper from '../components/DetailsPopper'
 import api from '../api'
+import UserContext from '../UserContext'
 
 export default function TrainedModelsPage() {
   // Also code duplication from MoleculeSelection but I don't know what else to do
@@ -63,7 +64,8 @@ export default function TrainedModelsPage() {
 const fittingArray = []
 
 function prepareContent() {
-  const modelList = api.getModelList()
+  const user = React.useContext(UserContext)
+  const modelList = api.getModelList(user.userID)
   let counter = 0
   for (let i = 0; i < modelList.length; i++) {
     for (let j = 0; j < modelList[i].fittings.length; j++) {
