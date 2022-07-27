@@ -66,17 +66,36 @@ class Models(Resource):
 
 class Molecules(Resource):
     def get(self, user_id):
+        # Gets all molecules and creates a new array to hold the converted molecules
         molecules = sh.get_molecules(user_id)
         processed_molecules = []
+
         for smiles in molecules.keys():
             current_molecule = molecules.get(smiles)
-            if current_molecule:
-                processed_molecules.append({
-                    'name': current_molecule['name'],
-                    'smiles': smiles,
-                    'analyses': current_molecule['analyses']
+            # Creates new array for converted analyses
+            analyses = []
+            for fitting_id in current_molecule['analyses']:
+                # Goes through every analysis, gets the fitting summary to get its modelID
+                current_analysis = current_molecule['analyses'].get(fitting_id)
+                _, fitting_summary = sh.get_fitting(user_id, fitting_id)
+                model_name = 'error'
+                if fitting_summary:
+                    # Uses that modelID to get a model to get its name
+                    _, model_summary = sh.get_model(user_id, fitting_summary.get('modelID'))
+                    model_name = model_summary.get('name')
+                # Appends the converted analysis to the array
+                analyses.append({
+                    'modelName': model_name,
+                    'fittingID': fitting_id,
+                    'results': current_analysis,
                 })
-        return processed_molecules, 201
+            # Converts the molecule
+            processed_molecules.append({
+                'name': current_molecule['name'],
+                'smiles': smiles,
+                'analyses': analyses,
+            })
+        return processed_molecules, 200
 
     def patch(self, user_id):
         args = parser.parse_args()
@@ -185,18 +204,20 @@ api.add_resource(BaseModels, '/baseModels')
 
 
 def run(debug=True):
-    test_user = 'yee'
+    # Lots of dummy data
+    # TODO: Remove
+    test_user = str(hash('yee'))
     sh.add_user_handler(test_user)
     sh.add_molecule(test_user, 'aaah', 'name')  # For testing purposes
-    sh.add_analysis(test_user, 'aaah', 5, {'god_why': 'help', 'number': 42, 'true': False})
+
+    model_id = ml.create(test_user, 'name', {'units_per_layer': 256, 'optimizer': 'Adam', 'loss': 'MeanSquaredError', 'metrics' : 'MeanAbsoluteError'}, 'id')
+    model, _ = sh.get_model(test_user, model_id)
+    fitting_id = sh.add_fitting(test_user, 0, 2, 0.25, 125, model_id, model)
+
+    sh.add_analysis(test_user, 'aaah', fitting_id, {'god_why': 'help', 'number': 42, 'true': False})
+    print(test_user)
     app.run()
 
 
 if __name__ == '__main__':
-    test_user = 'yee'
-    sh.add_user_handler(test_user)
-    sh.add_molecule(test_user, 'aaah', 'name')  # For testing purposes
-    sh.add_analysis(test_user, 'aaah', 5, {'god_why': 'help', 'number': 42, 'true': False})
-    aa = ml.create(test_user, "name", {'units_per_layer': 256, 'optimizer': 'Adam', 'metrics': 'MeanSquaredError'},
-                   'id')
     run()

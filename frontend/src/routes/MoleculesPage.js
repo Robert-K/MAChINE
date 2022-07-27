@@ -25,7 +25,7 @@ export default function MoleculesPage() {
   let showEditor = true
 
   function onMoleculeSelect(molecule, index) {
-    selectedMolecule = molecule
+    selectedMolecule = molecules[index]
     showEditor = true
     console.log(selectedMolecule)
     forceUpdate()

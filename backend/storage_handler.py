@@ -82,7 +82,7 @@ class UserDataStorageHandler:
         if summary and summary.get('modelPath'):
             path = Path(summary.get('modelPath'))
             if path.exists():
-                return tf.keras.models.load_model(path)
+                return tf.keras.models.load_model(path), self.model_summaries.get(model_id)
 
     def get_model_summaries(self):
         return self.model_summaries
@@ -106,7 +106,7 @@ class UserDataStorageHandler:
 
     def add_fitting_to_model(self, model_id, fitting_id):
         summary = self.get_model_summaries().get(model_id)
-        summary.get('fittings').append(fitting_id)
+        summary.get('fittingIDs').append(fitting_id)
         self.__save_summary_file('models.json', self.model_summaries)
 
     def get_fitting(self, fitting_id):
@@ -114,7 +114,7 @@ class UserDataStorageHandler:
         if summary and summary.get('fittingPath'):
             path = Path(summary.get('fittingPath'))
             if path.exists():
-                return tf.keras.models.load_model(path)
+                return tf.keras.models.load_model(path), self.fitting_summaries.get(fitting_id)
 
     def get_fitting_summaries(self):
         return self.fitting_summaries
