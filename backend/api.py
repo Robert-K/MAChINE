@@ -129,7 +129,25 @@ class Datasets(Resource):
 
 class BaseModels(Resource):
     def get(self):
-        return sh.get_base_models()
+        models = sh.get_base_models()
+        processed_models = []
+        for model_id in models.keys():
+            current = models.get(model_id)
+            layers = current.get('layers')
+            if current and layers:
+                processed_models.append({
+                    'name': current.get('name'),
+                    'id': model_id,
+                    'type': {
+                        'name': current.get('type'),
+                        'image': current.get('imagePath')
+                    },
+                    'taskType': 'regression' if layers[len(layers) - 1].get('units') == 1 else 'classification',
+                    'lossFunction': current.get('lossFunction'),
+                    'optimizer': current.get('optimizer'),
+                    'layers': current.get('layers'),
+                })
+        return processed_models
 
 
 class Analyze(Resource):
