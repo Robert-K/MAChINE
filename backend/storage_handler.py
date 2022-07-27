@@ -155,8 +155,8 @@ class StorageHandler:
         self.base_models = dict()
         self.base_model_types = dict()
         self.__analyze_datasets()
-        self.__read_base_models()
         self.__read_base_model_types()
+        self.__read_base_models()
 
     def add_user_handler(self, user_id) -> UserDataStorageHandler:
         if self.user_storage_handler.get(user_id) is None:
@@ -261,7 +261,7 @@ class StorageHandler:
             model["imagePath"] = self.base_model_types.get(type_name)
 
     def __read_base_model_types(self):
-        type_path = Path.cwd() / _base_models_path / 'types.json'
+        type_path = Path.cwd() / _base_models_path / 'modelTypes.json'
         if type_path.exists():
             file = type_path.open('r')
             self.base_model_types = json.load(file)
