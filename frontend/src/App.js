@@ -57,10 +57,10 @@ function App() {
     logout()
     setUserName(newUserName)
     api
-      .login(userName)
+      .login(newUserName)
       .then((r) => {
         setUserID(r.userID)
-        console.log(userID) // TODO: Remove later when sure this works
+        console.log(r.userID) // TODO: Remove later when sure this works
       })
       .catch((e) => console.log(e))
     /* Do things */
