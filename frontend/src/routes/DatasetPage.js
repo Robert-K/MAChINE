@@ -1,10 +1,11 @@
 import React from 'react'
 import { Container, Grid } from '@mui/material'
 import DatasetCard from '../components/DatasetCard'
-import Dataset from '../internal/Dataset'
 import PropTypes from 'prop-types'
 import DetailsPopper from '../components/DetailsPopper'
 import DatasetInfo from '../components/DatasetInfo'
+
+import api from '../api'
 
 export default function DatasetPage() {
   /* TODO: Buncha duplicated code from MoleculeSelection. Might want to fix that at some point */
@@ -33,7 +34,7 @@ export default function DatasetPage() {
   return (
     <Container>
       <Grid container spacing={4} sx={{ mt: 1, mb: 5 }}>
-        {datasetArray.map((dataset) => (
+        {api.getDatasets().map((dataset) => (
           <DatasetCard
             dataset={dataset}
             key={dataset.datasetID}
@@ -68,6 +69,9 @@ DatasetPage.propTypes = {
   dataset: PropTypes.array,
 }
 
+// eslint-disable-next-line no-lone-blocks
+{
+  /*
 const dataset1 = new Dataset('dataset1', 1, 200, [
   'Attribute1a',
   'Attribute1b',
@@ -85,3 +89,5 @@ const dataset3 = new Dataset('dataset3', 3, 1000, [
 ])
 
 const datasetArray = [dataset1, dataset2, dataset3, dataset2, dataset3]
+*/
+}
