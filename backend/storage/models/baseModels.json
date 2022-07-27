@@ -3,6 +3,27 @@
 		"name": "SequentialA",
 		"type": "sequential",
 		"lossFunction": "MeanSquaredError",
-		"inputSize": 1
+		"optimizer": "Adam",
+		"layers": [
+			{
+				"type": "Dense",
+				"units": 256,
+				"activation": "relu"
+			},
+			{
+				"type": "Dense",
+				"units": 256,
+				"activation": "relu"
+			},
+			{
+				"type": "Dense",
+				"units": 256,
+				"activation": "relu"
+			},
+			{
+				"type": "Dense",
+				"units": 1
+			}
+		]
 	}
 }
