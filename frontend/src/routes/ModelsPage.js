@@ -37,17 +37,6 @@ export default function ModelsPage() {
     api.getModelList(user.userID).then((models) => setModelList(models))
   }, [user])
 
-  // TODO: Delete dummy data
-  /*
-  const modelList = [
-    new ModelConfig('1', 'Test Model1', '13', [3, 4, 5], []),
-    new ModelConfig('2', 'Test Model2', '14', [5, 4, 5], []),
-  ]
-  modelList[0].addFitting('dataset1a', 9, 20, 70)
-  modelList[0].addFitting('dataset1b', 10, 20, 72)
-  modelList[1].addFitting('dataset2a', 11, 30, 75)
-  modelList[1].addFitting('dataset2b', 12, 30, 78)
-  */
   const updateSelection = (model, index) => {
     setSelectedModel(index)
   }

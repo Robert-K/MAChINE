@@ -74,18 +74,3 @@ function prepareContent() {
     }
   }
 }
-
-/*
-// TODO: Delete this Dummy Data
-const fitting0 = new Fitting('fitting0', 0, 'kurt', 10, 100, 20, 5)
-
-const fitting1 = new Fitting('fitting1', 1, 'bert', 11, 1000, 20, 100)
-
-const fitting2 = new Fitting('fitting2', 2, 'anna', 12, 10000, 30, 50)
-
-const fitting3 = new Fitting('fitting3', 3, 'elise', 13, 300, 30, 80)
-
-const fitting4 = new Fitting('fitting4', 4, 'alex', 14, 200, 40, 3)
-
-const fittingArray = [fitting0, fitting1, fitting2, fitting3, fitting4]
-*/

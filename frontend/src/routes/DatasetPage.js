@@ -68,26 +68,3 @@ export default function DatasetPage() {
 DatasetPage.propTypes = {
   dataset: PropTypes.array,
 }
-
-// eslint-disable-next-line no-lone-blocks
-{
-  /*
-const dataset1 = new Dataset('dataset1', 1, 200, [
-  'Attribute1a',
-  'Attribute1b',
-  'Attribute1c',
-])
-
-const dataset2 = new Dataset('dataset2', 2, 500, ['Attribute2a', 'Attribute2b'])
-
-const dataset3 = new Dataset('dataset3', 3, 1000, [
-  'Attribute3a',
-  'Attribute3b',
-  'Attribute3c',
-  'Attribute3d',
-  'Attribute3e',
-])
-
-const datasetArray = [dataset1, dataset2, dataset3, dataset2, dataset3]
-*/
-}
