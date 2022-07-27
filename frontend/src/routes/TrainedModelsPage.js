@@ -6,9 +6,9 @@ import React from 'react'
 import { Container } from '@mui/material'
 import Grid from '@mui/material/Grid'
 import FittingCard from '../components/FittingCard'
-import Fitting from '../internal/Fitting'
 import Button from '@mui/material/Button'
 import DetailsPopper from '../components/DetailsPopper'
+import api from '../api'
 
 export default function TrainedModelsPage() {
   // Also code duplication from MoleculeSelection but I don't know what else to do
@@ -28,6 +28,8 @@ export default function TrainedModelsPage() {
       }, 150)
     }
   }
+
+  prepareContent()
 
   return (
     <Container>
@@ -58,7 +60,21 @@ export default function TrainedModelsPage() {
   )
 }
 
-// TODO: get fittings from models in model storage (where exactly is tbd)
+const fittingArray = []
+
+function prepareContent() {
+  const modelList = api.getModelList()
+  let counter = 0
+  for (let i = 0; i < modelList.length; i++) {
+    for (let j = 0; j < modelList[i].fittings.length; j++) {
+      fittingArray[counter] = modelList[i].fittings[j]
+      counter++
+    }
+  }
+}
+
+/*
+// TODO: Delete this Dummy Data
 const fitting0 = new Fitting('fitting0', 0, 'kurt', 10, 100, 20, 5)
 
 const fitting1 = new Fitting('fitting1', 1, 'bert', 11, 1000, 20, 100)
@@ -70,3 +86,4 @@ const fitting3 = new Fitting('fitting3', 3, 'elise', 13, 300, 30, 80)
 const fitting4 = new Fitting('fitting4', 4, 'alex', 14, 200, 40, 3)
 
 const fittingArray = [fitting0, fitting1, fitting2, fitting3, fitting4]
+*/
