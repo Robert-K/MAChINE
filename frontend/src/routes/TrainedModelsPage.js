@@ -64,8 +64,14 @@ export default function TrainedModelsPage() {
 const fittingArray = []
 
 function prepareContent() {
+  const [modelList, setModelList] = React.useState([])
+
   const user = React.useContext(UserContext)
-  const modelList = api.getModelList(user.userID)
+
+  React.useEffect(() => {
+    api.getModelList(user.userID).then((models) => setModelList(models))
+  }, [user])
+
   let counter = 0
   for (let i = 0; i < modelList.length; i++) {
     for (let j = 0; j < modelList[i].fittings.length; j++) {
