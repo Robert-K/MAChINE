@@ -1,7 +1,5 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-// import Typography from '@mui/material/Typography'
-// import Box from '@mui/material/Box'
 import {
   Collapse,
   Divider,
@@ -86,21 +84,6 @@ function DatasetInfo(props) {
         </Collapse>
       </Collapse>
     </React.Fragment>
-
-    /*
-    <Box>
-      {props.baseModel.compatibleDatasets.map((dataset) => (
-        <Box key={dataset.datasetID} marginBottom={1}>
-          <Typography variant="h6" component="h4">
-            {dataset.name}
-          </Typography>
-          <Typography variant="subtitle1" component="h4">
-            Number of entries: {dataset.size}
-          </Typography>
-        </Box>
-      ))}
-    </Box>
-     */
   )
 }
 

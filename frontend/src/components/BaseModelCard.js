@@ -14,7 +14,6 @@ import CardContent from '@mui/material/CardContent'
  */
 
 function BaseModelCard(props) {
-  // ({ baseModel }) {
   return (
     <Grid item xs={4} md={3}>
       {/* ^ The grid has a total width of  12. The xs defines how much of that width each component of the grid gets,
@@ -22,7 +21,6 @@ function BaseModelCard(props) {
        row of width 3*4=12 */}
       <Card>
         <CardActionArea
-          onDoubleClick={(e) => props.doubleClickFunc(e)}
           onClick={(e) => {
             props.clickFunc(e)
           }}
@@ -64,7 +62,6 @@ function BaseModelCard(props) {
 
 BaseModelCard.propTypes = {
   baseModel: PropTypes.object.isRequired,
-  doubleClickFunc: PropTypes.func.isRequired,
   clickFunc: PropTypes.func.isRequired,
 }
 

@@ -21,8 +21,6 @@ import Dataset from '../internal/Dataset'
 // it was not deemed sufficiently important
 
 export default function BaseModelsPage() {
-  /* TODO: Buncha duplicated code from MoleculeSelection. Might want to fix that at some point */
-  // const [selectedIndex, setSelectedIndex] = React.useState('a')
   const [open, setOpen] = React.useState(false)
   const [waited, setWaited] = React.useState(false)
   const [content, setContent] = React.useState(<h1>Placeholder</h1>)
@@ -40,11 +38,6 @@ export default function BaseModelsPage() {
     }
   }
 
-  const handleListItemClick = (event, index) => {
-    // setSelectedIndex(index)
-    handlePopper(null, <div />, false)
-  }
-
   return (
     <Container>
       <Grid container spacing={4} marginTop={1} marginBottom={5}>
@@ -52,11 +45,6 @@ export default function BaseModelsPage() {
           <BaseModelCard
             baseModel={baseModel}
             key={baseModel.id}
-            /* Der Index, der bei handleListItemClick als zweites Argument übergeben wird, bestimmt, was beim Auftauchen des Poppers gehighlighted wird.
-            I think */
-            doubleClickFunc={(event) => {
-              handleListItemClick(event, baseModel.name)
-            }}
             clickFunc={(event) => {
               handlePopper(
                 event.currentTarget,
@@ -67,7 +55,6 @@ export default function BaseModelsPage() {
                 event.currentTarget !== anchor || !open
               )
             }}
-            // selected={selectedIndex === baseModel.name}
           />
         ))}
         <DetailsPopper
