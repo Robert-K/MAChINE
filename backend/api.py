@@ -2,9 +2,8 @@ from flask import Flask
 from flask_cors import CORS
 from flask_restful import reqparse, Api, Resource
 
-from backend import analyzer as an
-from backend import storage_handler as sh
-from backend import trainer as tr
+import storage_handler as sh
+import ml_functions as ml
 
 app = Flask(__name__)
 CORS(app)
@@ -31,7 +30,8 @@ class Models(Resource):
         return sh.get_models(user_id)
 
     def patch(self, user_id):
-        pass  # TODO: implement
+        args = parser.parse_args()
+        return ml.create(user_id, args['name'], args['parameters'], args['baseModel'])
 
 
 class Molecules(Resource):
@@ -56,6 +56,10 @@ class Users(Resource):
 
 
 class Datasets(Resource):
+    """
+    :returns array of json objects containing dataset information
+    """
+
     def get(self):
         return sh.get_datasets_info()
 
@@ -68,13 +72,13 @@ class BaseModels(Resource):
 class Analyze(Resource):
     def post(self, user_id):
         args = parser.parse_args()
-        return an.analyze(user_id, args['fittingID'], args['moleculeID'])
+        return ml.analyze(user_id, args['fittingID'], args['moleculeID'])
 
 
 class Train(Resource):
     def post(self, user_id):
         args = parser.parse_args()
-        return tr.train(user_id, args['datasetID'], args['modelID'], args['fingerprint'], args['label'], args['epochs'], args['accuracy'], args['batchSize'])
+        return ml.train(user_id, args['datasetID'], args['modelID'], args['fingerprint'], args['label'], args['epochs'], args['accuracy'], args['batchSize'])
 
 
 # Actually set up the Api resource routing here
@@ -96,6 +100,8 @@ def run(debug=True):
 
 if __name__ == '__main__':
     test_user = 'yee'
-    sh.get_or_add_user(test_user)
-    sh.add_molecule(test_user, 'aaah', {5: {'god_why': 'help', 'number': 42, 'true': False}})  # For testing purposes
+    sh.add_user_handler(test_user)
+    sh.add_molecule(test_user, 'aaah', 'name')  # For testing purposes
+    sh.add_analysis(test_user, 'aaah', 5, {'god_why': 'help', 'number': 42, 'true': False})
+    aa = ml.create(test_user, "name", {'units_per_layer': 256, 'optimizer': 'Adam', 'metrics': 'MeanSquaredError'}, 'id')
     run()

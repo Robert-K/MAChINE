@@ -3,7 +3,7 @@ from pathlib import Path
 import json
 import shutil
 import pickle
-import joblib
+import tensorflow as tf
 
 __all__ = ['add_analysis',
            'add_fitting',
@@ -65,12 +65,12 @@ class UserDataStorageHandler:
     # Models
     def add_model(self, name, parameters, base_model_id, model):
         model_id = hash(model)
-        path = self.user_models_path / f'{model_id}_model.pkl'
-        joblib.dump(model, path)
+        path = self.user_models_path / f'{model_id}_model.h5'
+        model.save(path)
         self.model_summaries[model_id] = {'name': name,
                                           'baseModelID': base_model_id,
                                           'parameters': parameters,
-                                          'modelPath': path,
+                                          'modelPath': str(path),
                                           'fittingIDs': []
                                           }
         self.__save_summary_file('models.json', self.model_summaries)
@@ -82,7 +82,7 @@ class UserDataStorageHandler:
         if summary and summary.get('modelPath'):
             path = Path(summary.get('modelPath'))
             if path.exists():
-                return joblib.load(path)
+                return tf.keras.models.load_model(path)
 
     def get_model_summaries(self):
         return self.model_summaries
@@ -91,13 +91,13 @@ class UserDataStorageHandler:
     # Saves a fitting, creates a summary, updates the model summary
     def add_fitting(self, dataset_id, epochs, accuracy, batch_size, model_id, fitting):
         fitting_id = hash(fitting)
-        path = self.user_fittings_path / f'{fitting_id}_fitting.pkl'
-        joblib.dump(fitting, path)
+        path = self.user_fittings_path / f'{fitting_id}_fitting.h5'
+        fitting.save(path)
         self.fitting_summaries[fitting_id] = {'datasetID': dataset_id,
                                               'epochs': epochs,
                                               'accuracy': accuracy,
                                               'batchSize': batch_size,
-                                              'fittingPath': path,
+                                              'fittingPath': str(path),
                                               'modelID': model_id
                                               }
         self.__save_summary_file('fittings.json', self.fitting_summaries)
@@ -114,7 +114,7 @@ class UserDataStorageHandler:
         if summary and summary.get('fittingPath'):
             path = Path(summary.get('fittingPath'))
             if path.exists():
-                return joblib.load(path)
+                return tf.keras.models.load_model(path)
 
     def get_fitting_summaries(self):
         return self.fitting_summaries
@@ -162,7 +162,7 @@ class StorageHandler:
             self.user_storage_handler[user_id] = UserDataStorageHandler(user_id)
         return self.user_storage_handler.get(user_id)
 
-    def get_user_handler(self, user_id) -> UserDataStorageHandler:
+    def get_user_handler(self, user_id) -> UserDataStorageHandler | None:
         return self.user_storage_handler.get(user_id)
 
     def delete_user_handler(self, user_id):
