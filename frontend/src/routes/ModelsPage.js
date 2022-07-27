@@ -67,13 +67,7 @@ export default function ModelsPage() {
   )
 
   function ModelDescription() {
-    function getCurrentIndex() {
-      // TODO: Oof, please use the element or index from updateFunc instead of this
-      // finds selected model in model storage
-      return models.findIndex((element) => element.name === selectedModel)
-    }
-
-    if (getCurrentIndex() < 0) {
+    if (selectedModel < 0) {
       // no model selected
       return (
         <Card>
@@ -85,7 +79,7 @@ export default function ModelsPage() {
         </Card>
       )
     } else {
-      const currentModel = models[getCurrentIndex()]
+      const currentModel = models[selectedModel]
       return (
         <Card>
           <CardContent>
