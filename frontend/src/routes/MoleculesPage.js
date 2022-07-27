@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom'
 import { Jsme } from 'jsme-react'
 import UserContext from '../UserContext'
 import api from '../api'
+import Molecule from '../internal/Molecule'
 
 export default function MoleculesPage() {
   const [molecules, setMolecules] = React.useState([])
@@ -19,7 +20,7 @@ export default function MoleculesPage() {
   }, [user])
 
   // TODO
-  let selectedMolecule = testMolecules[0]
+  let selectedMolecule = new Molecule('', '', '')
 
   let showEditor = true
 

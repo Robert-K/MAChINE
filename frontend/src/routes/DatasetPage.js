@@ -8,6 +8,15 @@ import DatasetInfo from '../components/DatasetInfo'
 import api from '../api'
 
 export default function DatasetPage() {
+  const [datasets, setDatasets] = React.useState([])
+
+  React.useEffect(() => {
+    api.getDatasets().then((datasetList) => {
+      setDatasets(datasetList)
+      console.log(datasets)
+    })
+  }, [])
+
   /* TODO: Buncha duplicated code from MoleculeSelection. Might want to fix that at some point */
   const [open, setOpen] = React.useState(false)
   const [waited, setWaited] = React.useState(false)
@@ -34,7 +43,7 @@ export default function DatasetPage() {
   return (
     <Container>
       <Grid container spacing={4} sx={{ mt: 1, mb: 5 }}>
-        {api.getDatasets().map((dataset) => (
+        {datasets.map((dataset) => (
           <DatasetCard
             dataset={dataset}
             key={dataset.datasetID}
