@@ -59,11 +59,12 @@ export default function SelectionList({
    * click handler for list items
    * updates parent component's state if necessary
    * @param event
+   * @param element
    * @param index of clicked item
    */
-  const handleListItemClick = (event, index) => {
+  const handleListItemClick = (event, element, index) => {
     setSelectedIndex(index)
-    if (updateFunc !== undefined) updateFunc(index)
+    if (updateFunc !== undefined) updateFunc(element, index)
     if (usePopper) handlePopper(null, <div />, false)
   }
 
@@ -74,11 +75,11 @@ export default function SelectionList({
           <Button onClick={() => addFunc()}>Add a {elementType}</Button>
         </CardActions>
         <List sx={{ height: '612px', maxHeight: '612px', overflow: 'auto' }}>
-          {elements.map((element) => (
+          {elements.map((element, index) => (
             <ListItemButton
               key={element.name}
               onDoubleClick={(event) =>
-                handleListItemClick(event, element.name)
+                handleListItemClick(event, element, index)
               }
               onClick={(event) => {
                 if (usePopper) {
@@ -87,7 +88,7 @@ export default function SelectionList({
                     <MoleculeInfo molecule={element}></MoleculeInfo>,
                     event.currentTarget !== anchor || !open
                   )
-                } else handleListItemClick(event, element.name)
+                } else handleListItemClick(event, element, index)
               }}
               selected={selectedIndex === element.name}
             >

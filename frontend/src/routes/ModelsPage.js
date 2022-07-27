@@ -39,7 +39,7 @@ export default function ModelsPage() {
   models[1].addFitting('dataset2a', 11, 30, 75)
   models[1].addFitting('dataset2b', 12, 30, 78)
 
-  const updateSelection = (index) => {
+  const updateSelection = (model, index) => {
     setSelectedModel(index)
   }
 
@@ -68,6 +68,7 @@ export default function ModelsPage() {
 
   function ModelDescription() {
     function getCurrentIndex() {
+      // TODO: Oof, please use the element or index from updateFunc instead of this
       // finds selected model in model storage
       return models.findIndex((element) => element.name === selectedModel)
     }
