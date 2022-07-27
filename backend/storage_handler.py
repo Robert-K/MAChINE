@@ -136,7 +136,8 @@ class UserDataStorageHandler:
         file.close()
 
     def __clean_files(self):
-        shutil.rmtree(self.user_path)
+        if shutil:
+            shutil.rmtree(self.user_path)
 
     def __build_folder_structure(self):
         self.user_path.mkdir(parents=True, exist_ok=True)
