@@ -6,7 +6,7 @@ import storage_handler as sh
 import ml_functions as ml
 
 app = Flask(__name__)
-CORS(app)
+cors = CORS(app, resources={r"*": {"origins": "*"}})
 api = Api(app)
 
 parser = reqparse.RequestParser()
@@ -76,11 +76,11 @@ class Molecules(Resource):
                     'smiles': smiles,
                     'analyses': current_molecule['analyses']
                 })
-        return processed_molecules
+        return processed_molecules, 201
 
     def patch(self, user_id):
         args = parser.parse_args()
-        return sh.add_molecule(user_id, args['smiles'], args['name'])
+        return sh.add_molecule(user_id, args['smiles'], args['name']), 201
 
 
 # TODO: Maybe remove again
@@ -92,15 +92,19 @@ class Fittings(Resource):
 class AddUser(Resource):
     def post(self):
         args = parser.parse_args()
-        user_id = hash(args['username'])
+        user_id = str(hash(args['username']))
         handler = sh.add_user_handler(user_id)
         if handler:
-            return user_id, 201
+            return {'userID': user_id}, 201
+        return 404
 
 
 class DeleteUser(Resource):
     def delete(self, user_id):
-        return sh.delete_user_handler(user_id)
+        if sh.get_user_handler(user_id):
+            sh.delete_user_handler(user_id)
+            return 200 if sh.get_user_handler(user_id) is None else 500
+        return 404
 
 
 class Datasets(Resource):
@@ -146,10 +150,6 @@ class Check(Resource):
     def get(self):
         return
 
-class Check(Resource):
-    def get(self):
-        return
-
 
 # Actually set up the Api resource routing here
 api.add_resource(AddUser, '/users')
@@ -167,6 +167,10 @@ api.add_resource(BaseModels, '/baseModels')
 
 
 def run(debug=True):
+    test_user = 'yee'
+    sh.add_user_handler(test_user)
+    sh.add_molecule(test_user, 'aaah', 'name')  # For testing purposes
+    sh.add_analysis(test_user, 'aaah', 5, {'god_why': 'help', 'number': 42, 'true': False})
     app.run()
 
 

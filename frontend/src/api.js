@@ -68,9 +68,15 @@ export default {
   },
 
   async getMoleculeList(userID) {
-    return api.get(`/users/${userID}/molecules`).then((response) => {
-      return response.data
-    })
+    return api
+      .get(`/users/${userID}/molecules`)
+      .then((response) => {
+        return response.data
+      })
+      .catch((e) => {
+        console.log(e)
+        return []
+      })
   },
 
   async getFittings(userID) {
@@ -114,7 +120,7 @@ export default {
     })
   },
   async logout(userID) {
-    return api.delete(`/users/${userID}/`).then((response) => {
+    return api.delete(`/users/${userID}`).then((response) => {
       return response.data
     })
   },

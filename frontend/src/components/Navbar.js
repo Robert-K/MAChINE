@@ -4,15 +4,16 @@ import * as React from 'react'
 import logo from '../logo.svg'
 import PropTypes from 'prop-types'
 import ServerPopover from './ServerPopper'
+import UserContext from '../UserContext'
 
 export default function Navbar(props) {
   const locationName = useLocation().pathname
-
+  const user = React.useContext(UserContext)
   return (
     <AppBar color="primary" position="sticky">
       <Toolbar>
         <img src={logo} height="30px" mx="2" />
-        {!(locationName !== '/' || props.userName) ? null : (
+        {!(locationName !== '/' || user.userName) ? null : (
           <>
             {/* TODO: set to lead to '/home', on page reload go to '/' */}
             <NavLink to="/">Home</NavLink>
@@ -23,9 +24,9 @@ export default function Navbar(props) {
         )}
 
         <Box sx={{ flexGrow: 1 }}></Box>
-        {!props.userName ? null : (
+        {!user.userName ? null : (
           <NavLink key="logout" to="/" onClick={() => props.logoutFunction()}>
-            Not {props.userName}? <u>Log out</u>
+            Not {user.userName}? <u>Log out</u>
           </NavLink>
         )}
         <ServerPopover />
@@ -47,7 +48,6 @@ export default function Navbar(props) {
 }
 
 Navbar.propTypes = {
-  userName: PropTypes.string,
   logoutFunction: PropTypes.func.isRequired,
   darkModeButton: PropTypes.element,
 }
