@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 // import Box from '@mui/material/Box'
 import {
   Collapse,
-  Divider,
+  // Divider,
   List,
   ListItem,
   ListItemButton,
@@ -26,7 +26,8 @@ function BaseModelInfo(props) {
       >
         Configure this model
       </Button>
-      <List sx={{ maxHeight: 350, overflow: 'auto' }}>
+      {/*
+        <List sx={{ maxHeight: 350, overflow: 'auto' }}>
         {props.baseModel.compatibleDatasets.map((dataset, i, datasets) => {
           return (
             <React.Fragment
@@ -40,6 +41,8 @@ function BaseModelInfo(props) {
           )
         })}
       </List>
+      TODO: are compatible datasets sensible? ask Andre
+      */}
     </List>
   )
 }
