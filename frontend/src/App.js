@@ -14,7 +14,7 @@ import TrainingPage from './routes/TrainingPage'
 import DarkModeButton from './components/DarkModeButton'
 import BaseModelsPage from './routes/BaseModelsPage'
 import DatasetPage from './routes/DatasetPage'
-import TrainedModels from './routes/TrainedModels'
+import TrainedModelsPage from './routes/TrainedModelsPage'
 
 const themeLight = createTheme({
   palette: {
@@ -87,7 +87,10 @@ function App() {
             <Route path="/results" element={<ScoreboardsPage />}></Route>
             <Route path="/swagger" element={<SwaggerPage />}></Route>
             <Route path="/training" element={<TrainingPage />}></Route>
-            <Route path="/trained-models" element={<TrainedModels />}></Route>
+            <Route
+              path="/trained-models"
+              element={<TrainedModelsPage />}
+            ></Route>
             <Route path="/base-models" element={<BaseModelsPage />}></Route>
             <Route path="/datasets" element={<DatasetPage />}></Route>
           </Routes>

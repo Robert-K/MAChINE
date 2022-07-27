@@ -10,7 +10,7 @@ import Fitting from '../internal/Fitting'
 import Button from '@mui/material/Button'
 import DetailsPopper from '../components/DetailsPopper'
 
-export default function TrainedModels() {
+export default function TrainedModelsPage() {
   // Also code duplication from MoleculeSelection but I don't know what else to do
   const [open, setOpen] = React.useState(false)
   const [waited, setWaited] = React.useState(false)
