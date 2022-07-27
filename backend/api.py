@@ -10,6 +10,7 @@ CORS(app)
 api = Api(app)
 
 parser = reqparse.RequestParser()
+parser.add_argument('username')
 parser.add_argument('smiles')
 parser.add_argument('name')
 parser.add_argument('datasetID')
@@ -21,7 +22,6 @@ parser.add_argument('epochs')
 parser.add_argument('accuracy')
 parser.add_argument('batchSize')
 parser.add_argument('baseModel')
-
 
 
 # modelList
@@ -63,9 +63,6 @@ class Models(Resource):
         args = parser.parse_args()
         return ml.create(user_id, args['name'], args['parameters'], args['baseModel'])
 
-class Molecules(Resource):
-    def get(self, user_id):
-        return sh.get_molecules(user_id)
 
 class Molecules(Resource):
     def get(self, user_id):
