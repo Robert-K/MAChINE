@@ -1,12 +1,12 @@
 from flask import Flask
 from flask_cors import CORS
 from flask_restful import reqparse, Api, Resource
-
+import hashlib
 import storage_handler as sh
 import ml_functions as ml
 
 app = Flask(__name__)
-cors = CORS(app, resources={r"*": {"origins": "*"}})
+cors = CORS(app)
 api = Api(app)
 
 parser = reqparse.RequestParser()
@@ -68,6 +68,8 @@ class Molecules(Resource):
     def get(self, user_id):
         # Gets all molecules and creates a new array to hold the converted molecules
         molecules = sh.get_molecules(user_id)
+        fittings = sh.get_fitting_summaries(user_id)
+        models = sh.get_model_summaries(user_id)
         processed_molecules = []
 
         for smiles in molecules.keys():
@@ -77,11 +79,11 @@ class Molecules(Resource):
             for fitting_id in current_molecule['analyses']:
                 # Goes through every analysis, gets the fitting summary to get its modelID
                 current_analysis = current_molecule['analyses'].get(fitting_id)
-                _, fitting_summary = sh.get_fitting(user_id, fitting_id)
+                fitting_summary = fittings.get(fitting_id)
                 model_name = 'error'
                 if fitting_summary:
                     # Uses that modelID to get a model to get its name
-                    _, model_summary = sh.get_model(user_id, fitting_summary.get('modelID'))
+                    model_summary = models.get(fitting_summary.get('modelID'))
                     model_name = model_summary.get('name')
                 # Appends the converted analysis to the array
                 analyses.append({
@@ -102,16 +104,35 @@ class Molecules(Resource):
         return sh.add_molecule(user_id, args['smiles'], args['name']), 201
 
 
-# TODO: Maybe remove again
 class Fittings(Resource):
     def get(self, user_id):
+        fittings = sh.get_fitting_summaries(user_id)
+        models = sh.get_model_summaries(user_id)
+        processed_fittings = []
+        for fitting_id in fittings.keys():
+            current_fitting = fittings.get(fitting_id)
+            model_name = 'n/a'
+            model = models.get(current_fitting['modelID'])
+            if model:
+                model_name = model['name']
+            processed_fittings.append({
+                {
+                    'id': fitting_id,
+                    'modelID': current_fitting['modelID'],
+                    'modelName': model_name,
+                    'datasetID': current_fitting['datasetID'],
+                    'epochs': current_fitting['epochs'],
+                    'batchSize': current_fitting['batchSize'],
+                    'accuracy': current_fitting['accuracy']
+                }
+            })
         return sh.get_fitting_summaries(user_id)
 
 
 class AddUser(Resource):
     def post(self):
         args = parser.parse_args()
-        user_id = str(hash(args['username']))
+        user_id = str(hashlib.sha1(args['username'].encode('utf-8'), usedforsecurity=False).hexdigest())
         handler = sh.add_user_handler(user_id)
         if handler:
             return {'userID': user_id}, 201
@@ -206,15 +227,18 @@ api.add_resource(BaseModels, '/baseModels')
 def run(debug=True):
     # Lots of dummy data
     # TODO: Remove
-    test_user = str(hash('yee'))
+    test_user = str(hashlib.sha1('Tom'.encode('utf-8'), usedforsecurity=False).hexdigest())
+    #test_user = str(hash('yee'))
     sh.add_user_handler(test_user)
-    sh.add_molecule(test_user, 'aaah', 'name')  # For testing purposes
+    sh.add_molecule(test_user, 'Clc(c(Cl)c(Cl)c1C(=O)O)c(Cl)c1Cl', 'MySuperCoolMolecule')  # For testing purposes
 
-    model_id = ml.create(test_user, 'name', {'units_per_layer': 256, 'optimizer': 'Adam', 'loss': 'MeanSquaredError', 'metrics' : 'MeanAbsoluteError'}, 'id')
-    model, _ = sh.get_model(test_user, model_id)
-    fitting_id = sh.add_fitting(test_user, 0, 2, 0.25, 125, model_id, model)
-
-    sh.add_analysis(test_user, 'aaah', fitting_id, {'god_why': 'help', 'number': 42, 'true': False})
+    model_id = ml.create(test_user, 'myFirstModel', {'units_per_layer': 256, 'optimizer': 'Adam', 'loss': 'MeanSquaredError', 'metrics' : 'MeanAbsoluteError'}, 'id')
+    model = sh.get_model(test_user, model_id)
+    fitting_id_1 = sh.add_fitting(test_user, '0', 2, 0.25, 125, model_id, model)
+    fitting_id_2 = sh.add_fitting(test_user, '0', 6000, 5.05, 5, model_id, model)
+    print(fitting_id_1, fitting_id_2)
+    sh.add_analysis(test_user, 'Clc(c(Cl)c(Cl)c1C(=O)O)c(Cl)c1Cl', fitting_id_1, {'lumo': -7.152523})
+    sh.add_analysis(test_user, 'Clc(c(Cl)c(Cl)c1C(=O)O)c(Cl)c1Cl', fitting_id_2, {'homo': 1.5254})
     print(test_user)
     app.run()
 

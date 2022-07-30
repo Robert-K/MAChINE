@@ -2,6 +2,7 @@ import re
 from pathlib import Path
 import json
 import shutil
+import atexit
 import pickle
 import tensorflow as tf
 
@@ -40,9 +41,7 @@ class UserDataStorageHandler:
         self.molecules = self.__load_summary_file('molecules.json')
         self.model_summaries = self.__load_summary_file('models.json')
         self.fitting_summaries = self.__load_summary_file('fittings.json')
-
-    def __del__(self):
-        self.__clean_files()
+        atexit.register(self.clean_files)
 
     # Molecules
     def add_molecule(self, smiles, name):
@@ -64,7 +63,7 @@ class UserDataStorageHandler:
 
     # Models
     def add_model(self, name, parameters, base_model_id, model):
-        model_id = hash(model)
+        model_id = str(hash(model) ^ hash(name))
         path = self.user_models_path / f'{model_id}_model.h5'
         model.save(path)
         self.model_summaries[model_id] = {'name': name,
@@ -82,7 +81,7 @@ class UserDataStorageHandler:
         if summary and summary.get('modelPath'):
             path = Path(summary.get('modelPath'))
             if path.exists():
-                return tf.keras.models.load_model(path), self.model_summaries.get(model_id)
+                return tf.keras.models.load_model(path)
 
     def get_model_summaries(self):
         return self.model_summaries
@@ -90,7 +89,7 @@ class UserDataStorageHandler:
     # Fittings
     # Saves a fitting, creates a summary, updates the model summary
     def add_fitting(self, dataset_id, epochs, accuracy, batch_size, model_id, fitting):
-        fitting_id = hash(fitting)
+        fitting_id = str(hash(fitting) ^ hash(epochs) ^ hash(accuracy) ^ hash(batch_size))
         path = self.user_fittings_path / f'{fitting_id}_fitting.h5'
         fitting.save(path)
         self.fitting_summaries[fitting_id] = {'datasetID': dataset_id,
@@ -114,10 +113,19 @@ class UserDataStorageHandler:
         if summary and summary.get('fittingPath'):
             path = Path(summary.get('fittingPath'))
             if path.exists():
-                return tf.keras.models.load_model(path), self.fitting_summaries.get(fitting_id)
+                return tf.keras.models.load_model(path)
 
     def get_fitting_summaries(self):
         return self.fitting_summaries
+
+    def clean_files(self):
+        if shutil:
+            try:
+                if self.user_path.exists():
+                    shutil.rmtree(self.user_path)
+            except (OSError, TypeError) as e:
+                print(f'Error deleting {self.user_path.stem}')
+                print(e)
 
     # Private Methods
     def __load_summary_file(self, filename):
@@ -134,10 +142,6 @@ class UserDataStorageHandler:
         file = file_path.open('w')
         json.dump(content, file)
         file.close()
-
-    def __clean_files(self):
-        if shutil:
-            shutil.rmtree(self.user_path)
 
     def __build_folder_structure(self):
         self.user_path.mkdir(parents=True, exist_ok=True)
@@ -167,7 +171,8 @@ class StorageHandler:
         return self.user_storage_handler.get(user_id)
 
     def delete_user_handler(self, user_id):
-        self.user_storage_handler.pop(user_id)
+        handler = self.user_storage_handler.pop(user_id)
+        handler.clean_files()
 
     # Datasets
     def get_dataset(self, dataset_id):
@@ -234,7 +239,7 @@ class StorageHandler:
     def __analyze_datasets(self):
         for idx, dataset_path in enumerate(sorted((Path.cwd() / _datasets_path).glob('*.pkl'))):
             if dataset_path.exists():
-                self.dataset_summaries[idx] = self.__summarize_dataset(dataset_path)
+                self.dataset_summaries[str(idx)] = self.__summarize_dataset(dataset_path)
 
     @staticmethod
     def __summarize_dataset(dataset_path):
