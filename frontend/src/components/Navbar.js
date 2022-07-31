@@ -3,7 +3,7 @@ import { NavLink, useLocation } from 'react-router-dom'
 import * as React from 'react'
 import logo from '../logo.svg'
 import PropTypes from 'prop-types'
-import ServerPopover from './ServerPopper'
+import ServerPopover from './ServerStatusButton'
 import UserContext from '../UserContext'
 
 export default function Navbar(props) {

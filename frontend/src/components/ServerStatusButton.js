@@ -1,7 +1,7 @@
 import * as React from 'react'
 import Popover from '@mui/material/Popover'
 import LanIcon from '@mui/icons-material/Lan'
-import ServerStatus from './ServerStatus'
+import ServerConfigForm from './ServerConfigForm'
 import { Badge, IconButton } from '@mui/material'
 import api from '../api'
 export default function ServerPopover() {
@@ -46,7 +46,7 @@ export default function ServerPopover() {
         }}
         transformOrigin={{ vertical: 'top', horizontal: 'right' }}
       >
-        <ServerStatus />
+        <ServerConfigForm />
       </Popover>
     </div>
   )
