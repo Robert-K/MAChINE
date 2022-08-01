@@ -4,6 +4,7 @@ import { Typography, Box, CardActionArea } from '@mui/material'
 import PropTypes from 'prop-types'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
+import { useNavigate } from 'react-router-dom'
 
 /**
  * A base model card is utilized in the process of the user creating a model.
@@ -14,7 +15,8 @@ import CardContent from '@mui/material/CardContent'
  * @constructor
  */
 
-export default function BaseModelCard({ baseModel, clickFunc }) {
+export default function BaseModelCard({ baseModel }) {
+  const navigate = useNavigate()
   return (
     <Grid item xs={4} md={3}>
       {/* ^ The grid has a total width of  12. The xs defines how much of that width each component of the grid gets,
@@ -22,8 +24,8 @@ export default function BaseModelCard({ baseModel, clickFunc }) {
        row of width 3*4=12 */}
       <Card>
         <CardActionArea
-          onClick={(e) => {
-            clickFunc(e)
+          onDoubleClick={(e) => {
+            navigate('/modelconfig')
           }}
         >
           <CardContent>

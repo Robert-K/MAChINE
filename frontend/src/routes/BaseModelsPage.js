@@ -9,16 +9,10 @@ import React from 'react'
 import { Container } from '@mui/material'
 import BaseModelCard from '../components/models/BaseModelCard'
 import Grid from '@mui/material/Grid'
-import DetailsPopper from '../components/shared/DetailsPopper'
 import PropTypes from 'prop-types'
-import BaseModelInfo from '../components/models/BaseModelInfo'
 import api from '../api'
 
 export default function BaseModelsPage() {
-  const [open, setOpen] = React.useState(false)
-  const [waited, setWaited] = React.useState(false)
-  const [content, setContent] = React.useState(<h1>Placeholder</h1>)
-  const [anchor, setAnchor] = React.useState(null)
   const [modelArray, setModelArray] = React.useState([])
 
   React.useEffect(() => {
@@ -28,43 +22,12 @@ export default function BaseModelsPage() {
     })
   }, [])
 
-  const handlePopper = (target, content, show) => {
-    setContent(content)
-    setAnchor(target)
-    setOpen(show)
-    setWaited(false)
-    if (show) {
-      setTimeout(() => {
-        setWaited(true)
-      }, 150)
-    }
-  }
-
   return (
     <Container>
       <Grid container spacing={4} marginTop={1} marginBottom={5}>
         {modelArray.map((baseModel) => (
-          <BaseModelCard
-            baseModel={baseModel}
-            key={baseModel.id}
-            clickFunc={(event) => {
-              handlePopper(
-                event.currentTarget,
-                <BaseModelInfo
-                  baseModel={baseModel}
-                  key={baseModel.id}
-                ></BaseModelInfo>,
-                event.currentTarget !== anchor || !open
-              )
-            }}
-          />
+          <BaseModelCard baseModel={baseModel} key={baseModel.id} />
         ))}
-        <DetailsPopper
-          anchor={anchor}
-          open={open}
-          content={content}
-          animate={waited}
-        />
       </Grid>
     </Container>
   )
