@@ -4,6 +4,7 @@ import LanIcon from '@mui/icons-material/Lan'
 import ServerConfigForm from './ServerConfigForm'
 import { Badge, IconButton } from '@mui/material'
 import api from '../../api'
+
 export default function ServerStatusButton() {
   const [anchorEl, setAnchorEl] = React.useState(null)
 
@@ -27,6 +28,7 @@ export default function ServerStatusButton() {
   return (
     <div>
       <IconButton
+        sx={{ color: 'white' }}
         aria-describedby={id}
         variant="contained"
         onClick={handleClick}

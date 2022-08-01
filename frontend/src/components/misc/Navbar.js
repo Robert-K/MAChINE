@@ -35,7 +35,7 @@ export default function Navbar(props) {
           <>
             {user.userName}
             <NavLink key="logout" to="/" onClick={() => props.logoutFunction()}>
-              <IconButton>
+              <IconButton sx={{ color: 'white' }}>
                 <LogoutIcon />
               </IconButton>
             </NavLink>
