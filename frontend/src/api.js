@@ -103,10 +103,10 @@ export default {
     })
   },
 
-  async addMolecule(userID, molecule, name) {
+  async addMolecule(userID, smiles, name) {
     return api
       .patch(`/users/${userID}/molecules`, {
-        molecule,
+        smiles,
         name,
       })
       .then((response) => {
