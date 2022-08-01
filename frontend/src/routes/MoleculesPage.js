@@ -1,60 +1,31 @@
 import React from 'react'
 import { Card, CardContent, Grid, Box, TextField } from '@mui/material'
 import Button from '@mui/material/Button'
-import Molecule from '../internal/Molecule'
-import MoleculeAnalysis from '../internal/MoleculeAnalysis'
 import SelectionList from '../components/SelectionList'
 import { Link } from 'react-router-dom'
 import { Jsme } from 'jsme-react'
+import UserContext from '../UserContext'
+import api from '../api'
+import Molecule from '../internal/Molecule'
 
 export default function MoleculesPage() {
-  const testMolecules = [
-    new Molecule('molecule_1', 'CC(CC1=CC=CC=C1)NC', [
-      new MoleculeAnalysis('my favourite model', 1, { toxicity: 5000 }),
-      new MoleculeAnalysis('second_model', 0, {
-        power_level: 500,
-        noble_gas: false,
-      }),
-    ]),
-    new Molecule('molecule_2', 'CCC', [
-      new MoleculeAnalysis('my favourite model', 1, { toxicity: 500 }),
-      new MoleculeAnalysis('second_model', 0, {
-        power_level: 500,
-        noble_gas: false,
-      }),
-    ]),
-    new Molecule('molecule_3', 'CNC', [
-      new MoleculeAnalysis('my favourite model', 1, { toxicity: 11616 }),
-      new MoleculeAnalysis('second_model', 0, {
-        power_level: 4,
-        noble_gas: true,
-      }),
-    ]),
-    new Molecule('molecule_4', 'C1=CC=CN', [
-      new MoleculeAnalysis('my favourite model', 0, { toxicity: 124 }),
-      new MoleculeAnalysis('second_model', 6, {
-        power_level: 1,
-        noble_gas: false,
-      }),
-      new MoleculeAnalysis('third_model', 3, {
-        test: 1,
-        other_test: 12512512,
-        other_other_test: `yes but maybe not it's quite weird tbh`,
-        smells_good: false,
-        light: 'no',
-      }),
-    ]),
-    new Molecule('Hydrogen-chloride', 'CCCCCCCC', [
-      new MoleculeAnalysis('second_model', 5, { power_level: 9001 }),
-    ]),
-  ]
+  const [molecules, setMolecules] = React.useState([])
+  const user = React.useContext(UserContext)
 
-  let selectedMolecule = testMolecules[0]
+  React.useEffect(() => {
+    api.getMoleculeList(user.userID).then((moleculeList) => {
+      setMolecules(moleculeList)
+      console.log(moleculeList)
+    })
+  }, [user])
+
+  // TODO
+  let selectedMolecule = new Molecule('', '', '')
 
   let showEditor = true
 
   function onMoleculeSelect(molecule, index) {
-    selectedMolecule = molecule
+    selectedMolecule = molecules[index]
     showEditor = true
     console.log(selectedMolecule)
     forceUpdate()
@@ -75,7 +46,7 @@ export default function MoleculesPage() {
         <Grid item md={3}>
           {
             <SelectionList
-              elements={testMolecules}
+              elements={molecules}
               elementType="molecule"
               usePopper={true}
               addFunc={() =>

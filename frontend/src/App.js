@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import ScoreboardsPage from './routes/ScoreboardsPage.js'
 import ModelsPage from './routes/ModelsPage.js'
 import ModelConfigPage from './routes/ModelConfigPage.js'
@@ -14,7 +14,9 @@ import TrainingPage from './routes/TrainingPage'
 import DarkModeButton from './components/DarkModeButton'
 import BaseModelsPage from './routes/BaseModelsPage'
 import DatasetPage from './routes/DatasetPage'
-import TrainedModelsPage from './routes/TrainedModelsPage'
+import FittingsPage from './routes/FittingsPage'
+import api from './api'
+import { UserProvider } from './UserContext'
 
 const themeLight = createTheme({
   palette: {
@@ -47,20 +49,31 @@ const themeDark = createTheme({
 })
 
 function App() {
-  const [userName, setUserName] = React.useState('')
-  const login = (userName) => {
+  const [darkMode, setDarkMode] = React.useState(false)
+  const [userName, setUserName] = React.useState(null)
+  const [userID, setUserID] = React.useState(null)
+
+  const login = (newUserName) => {
     logout()
-    setUserName(userName)
+    setUserName(newUserName)
+    api
+      .login(newUserName)
+      .then((r) => {
+        setUserID(r.userID)
+        console.log(r.userID) // TODO: Remove later when sure this works
+      })
+      .catch((e) => console.log(e))
     /* Do things */
   }
   const logout = () => {
-    setUserName('')
+    api.logout(userID).then()
+    setUserName(null)
+    setUserID(null)
     /* Delete all Data */
     /* Delete trained models */
     /* Delete molecules */
   }
 
-  const [darkMode, setDarkMode] = useState(false)
   const changeDarkMode = (value) => {
     setDarkMode(value)
   }
@@ -68,33 +81,33 @@ function App() {
   return (
     <div className="App">
       <ThemeProvider theme={darkMode ? themeDark : themeLight}>
-        <CssBaseline />
-        <BrowserRouter>
-          <Navbar
-            userName={userName}
-            logoutFunction={logout}
-            darkModeButton={<DarkModeButton setModeFunction={changeDarkMode} />}
-          />
-          <Routes>
-            <Route
-              path="/"
-              element={<StartPage sendNameAway={login} />}
-            ></Route>
-            <Route path="/home" element={<HomePage />}></Route>
-            <Route path="/modelconfig" element={<ModelConfigPage />}></Route>
-            <Route path="/models" element={<ModelsPage />}></Route>
-            <Route path="/molecules" element={<MoleculesPage />}></Route>
-            <Route path="/results" element={<ScoreboardsPage />}></Route>
-            <Route path="/swagger" element={<SwaggerPage />}></Route>
-            <Route path="/training" element={<TrainingPage />}></Route>
-            <Route
-              path="/trained-models"
-              element={<TrainedModelsPage />}
-            ></Route>
-            <Route path="/base-models" element={<BaseModelsPage />}></Route>
-            <Route path="/datasets" element={<DatasetPage />}></Route>
-          </Routes>
-        </BrowserRouter>
+        <UserProvider value={{ userName, userID }}>
+          <CssBaseline />
+          <BrowserRouter>
+            <Navbar
+              logoutFunction={logout}
+              darkModeButton={
+                <DarkModeButton setModeFunction={changeDarkMode} />
+              }
+            />
+            <Routes>
+              <Route
+                path="/"
+                element={<StartPage sendNameAway={login} />}
+              ></Route>
+              <Route path="/home" element={<HomePage />}></Route>
+              <Route path="/modelconfig" element={<ModelConfigPage />}></Route>
+              <Route path="/models" element={<ModelsPage />}></Route>
+              <Route path="/molecules" element={<MoleculesPage />}></Route>
+              <Route path="/results" element={<ScoreboardsPage />}></Route>
+              <Route path="/swagger" element={<SwaggerPage />}></Route>
+              <Route path="/training" element={<TrainingPage />}></Route>
+              <Route path="/trained-models" element={<FittingsPage />}></Route>
+              <Route path="/base-models" element={<BaseModelsPage />}></Route>
+              <Route path="/datasets" element={<DatasetPage />}></Route>
+            </Routes>
+          </BrowserRouter>
+        </UserProvider>
       </ThemeProvider>
     </div>
   )

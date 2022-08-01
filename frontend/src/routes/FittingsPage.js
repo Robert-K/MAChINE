@@ -6,11 +6,20 @@ import React from 'react'
 import { Container } from '@mui/material'
 import Grid from '@mui/material/Grid'
 import FittingCard from '../components/FittingCard'
-import Fitting from '../internal/Fitting'
 import Button from '@mui/material/Button'
 import DetailsPopper from '../components/DetailsPopper'
+import api from '../api'
+import UserContext from '../UserContext'
 
-export default function TrainedModelsPage() {
+export default function FittingsPage() {
+  const [fittingArray, setFittingArray] = React.useState([])
+
+  const user = React.useContext(UserContext)
+
+  React.useEffect(() => {
+    api.getFittings(user.userID).then((fittings) => setFittingArray(fittings))
+  }, [user])
+
   // Also code duplication from MoleculeSelection but I don't know what else to do
   const [open, setOpen] = React.useState(false)
   const [waited, setWaited] = React.useState(false)
@@ -57,16 +66,3 @@ export default function TrainedModelsPage() {
     </Container>
   )
 }
-
-// TODO: get fittings from models in model storage (where exactly is tbd)
-const fitting0 = new Fitting('fitting0', 0, 'kurt', 10, 100, 20, 5)
-
-const fitting1 = new Fitting('fitting1', 1, 'bert', 11, 1000, 20, 100)
-
-const fitting2 = new Fitting('fitting2', 2, 'anna', 12, 10000, 30, 50)
-
-const fitting3 = new Fitting('fitting3', 3, 'elise', 13, 300, 30, 80)
-
-const fitting4 = new Fitting('fitting4', 4, 'alex', 14, 200, 40, 3)
-
-const fittingArray = [fitting0, fitting1, fitting2, fitting3, fitting4]
