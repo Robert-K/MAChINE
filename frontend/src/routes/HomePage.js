@@ -45,8 +45,8 @@ export default function HomePage() {
   )
 }
 
-function SelectedPanel(props) {
-  switch (props.selected) {
+function SelectedPanel({ selected }) {
+  switch (selected) {
     case 'info':
       return InfoPanels()
     case 'download':

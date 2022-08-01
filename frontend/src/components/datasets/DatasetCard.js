@@ -9,14 +9,14 @@ import {
 } from '@mui/material'
 import PropTypes from 'prop-types'
 
-export default function DatasetCard(props) {
+export default function DatasetCard({ dataset, doubleClickFunc, clickFunc }) {
   return (
     <Grid item xs={4} md={3}>
       <Card sx={{ maxWidth: 260 }}>
         <CardActionArea
-          onDoubleClick={(e) => props.doubleClickFunc(e)}
+          onDoubleClick={(e) => doubleClickFunc(e)}
           onClick={(e) => {
-            props.clickFunc(e)
+            clickFunc(e)
           }}
         >
           <CardMedia
@@ -28,10 +28,10 @@ export default function DatasetCard(props) {
           {/* TODO: Select a non-copyrighted image */}
           <CardContent>
             <Typography gutterBottom component="div">
-              {props.dataset.name} #{props.dataset.datasetID}
+              {dataset.name} #{dataset.datasetID}
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              Size: {props.dataset.size}
+              Size: {dataset.size}
             </Typography>
           </CardContent>
         </CardActionArea>

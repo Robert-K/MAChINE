@@ -10,17 +10,18 @@ import ExpandLess from '@mui/icons-material/ExpandLess'
 import ExpandMore from '@mui/icons-material/ExpandMore'
 import PropTypes from 'prop-types'
 
-export default function AnalysisInfo(props) {
+export default function AnalysisInfo({ analysis }) {
   const [expand, setExpand] = React.useState(false)
   const toggleExpand = () => {
     setExpand(!expand)
   }
+
   return (
-    <React.Fragment key={JSON.stringify(props.analysis)}>
+    <React.Fragment key={JSON.stringify(analysis)}>
       <ListItemButton onClick={() => toggleExpand()}>
         <ListItemText
-          primary={`${props.analysis.modelName}:`}
-          secondary={`Fitting: ${props.analysis.fittingID}`}
+          primary={`${analysis.modelName}:`}
+          secondary={`Fitting: ${analysis.fittingID}`}
         ></ListItemText>
         {expand ? <ExpandLess /> : <ExpandMore />}{' '}
       </ListItemButton>
@@ -32,7 +33,7 @@ export default function AnalysisInfo(props) {
         orientation="vertical"
       >
         <List component="div" dense>
-          {Object.entries(props.analysis.results).map(([key, value]) => {
+          {Object.entries(analysis.results).map(([key, value]) => {
             return (
               <ListItem sx={{ pl: 4 }} key={key}>
                 <ListItemText

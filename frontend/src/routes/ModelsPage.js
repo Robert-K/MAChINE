@@ -116,23 +116,23 @@ function renderFittings(fittings) {
 
 /**
  * renders a fitting into a collapsable list
- * @param props contains the fitting to be rendered
+ * @param fitting the fitting to be rendered
  * @returns {JSX.Element}
  */
-function RenderFitting(props) {
+function RenderFitting({ fitting }) {
   const [open, setOpen] = React.useState(false)
   const toggleOpen = () => {
     setOpen(!open)
   }
   const theme = useTheme()
   return (
-    <ListItem key={props.fitting.id}>
+    <ListItem key={fitting.id}>
       <Box sx={{ width: 1 }}>
         <ListItemButton onClick={() => toggleOpen()}>
           {open ? <ExpandLess /> : <ExpandMore />}
           <ListItemText
-            primary={`Dataset ID: ${props.fitting.datasetID}`}
-            secondary={`Fitting ID: ${props.fitting.id}`}
+            primary={`Dataset ID: ${fitting.datasetID}`}
+            secondary={`Fitting ID: ${fitting.id}`}
             sx={{ color: theme.palette.primary.main }}
           ></ListItemText>
         </ListItemButton>
@@ -149,21 +149,21 @@ function RenderFitting(props) {
                 sx={{ color: theme.palette.primary.main }}
                 primary="Epochs: "
               ></ListItemText>
-              {props.fitting.epochs}
+              {fitting.epochs}
             </ListItem>
             <ListItem>
               <ListItemText
                 sx={{ color: theme.palette.primary.main }}
                 primary="Batch Size: "
               ></ListItemText>
-              {props.fitting.batchSize}
+              {fitting.batchSize}
             </ListItem>
             <ListItem>
               <ListItemText
                 sx={{ color: theme.palette.primary.main }}
                 primary="Accuracy:"
               ></ListItemText>
-              {props.fitting.accuracy}%
+              {fitting.accuracy}%
             </ListItem>
           </List>
         </Collapse>

@@ -15,7 +15,7 @@ import PropTypes from 'prop-types'
 import DetailsPopper from '../shared/DetailsPopper'
 import MoleculeInfo from '../molecules/MoleculeInfo'
 
-export default function MoleculeSelection(props) {
+export default function MoleculeSelection({ molecules }) {
   const [selectedIndex, setSelectedIndex] = React.useState('a')
   const [open, setOpen] = React.useState(false)
   const [waited, setWaited] = React.useState(false)
@@ -43,7 +43,7 @@ export default function MoleculeSelection(props) {
     <Card>
       <CardContent>
         <List sx={{ height: '612px', maxHeight: '612px', overflow: 'auto' }}>
-          {props.molecules.map((molecule) => (
+          {molecules.map((molecule) => (
             <ListItemButton
               key={molecule.smiles}
               onDoubleClick={(event) =>

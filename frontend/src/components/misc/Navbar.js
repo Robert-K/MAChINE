@@ -7,7 +7,7 @@ import ServerStatusButton from './ServerStatusButton'
 import UserContext from '../../UserContext'
 import LogoutIcon from '@mui/icons-material/Logout'
 
-export default function Navbar(props) {
+export default function Navbar({ logoutFunction, darkModeButton }) {
   const locationName = useLocation().pathname
   const user = React.useContext(UserContext)
 
@@ -34,7 +34,7 @@ export default function Navbar(props) {
         {!user.userName ? null : (
           <>
             {user.userName}
-            <NavLink key="logout" to="/" onClick={() => props.logoutFunction()}>
+            <NavLink key="logout" to="/" onClick={() => logoutFunction()}>
               <IconButton sx={{ color: 'white' }}>
                 <LogoutIcon />
               </IconButton>
@@ -44,7 +44,7 @@ export default function Navbar(props) {
 
         <ServerStatusButton />
 
-        {props.darkModeButton}
+        {darkModeButton}
       </Toolbar>
       <style jsx="true">{`
         a {

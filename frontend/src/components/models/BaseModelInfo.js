@@ -3,7 +3,11 @@ import PropTypes from 'prop-types'
 import { List, Button } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
 
-export default function BaseModelInfo(props) {
+export default function BaseModelInfo({
+  baseModel,
+  compatibleDatasets,
+  dataset,
+}) {
   const navigate = useNavigate()
   return (
     <List sx={{ maxHeight: 400 }}>
