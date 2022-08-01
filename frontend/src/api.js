@@ -13,7 +13,7 @@ let connected = false
 
 setInterval(() => {
   heartbeat()
-}, 1000)
+}, 10000)
 
 function heartbeat() {
   api
