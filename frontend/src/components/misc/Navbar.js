@@ -1,10 +1,10 @@
 import { AppBar, Box, Toolbar } from '@mui/material'
 import { NavLink, useLocation, useNavigate } from 'react-router-dom'
 import * as React from 'react'
-import logo from '../logo.svg'
+import logo from '../../logo.svg'
 import PropTypes from 'prop-types'
 import ServerStatusButton from './ServerStatusButton'
-import UserContext from '../UserContext'
+import UserContext from '../../UserContext'
 
 export default function Navbar(props) {
   const locationName = useLocation().pathname

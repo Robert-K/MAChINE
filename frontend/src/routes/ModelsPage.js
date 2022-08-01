@@ -16,7 +16,7 @@ import {
   useTheme,
 } from '@mui/material'
 import Button from '@mui/material/Button'
-import SelectionList from '../components/SelectionList'
+import SelectionList from '../components/shared/SelectionList'
 import ExpandLess from '@mui/icons-material/ExpandLess'
 import ExpandMore from '@mui/icons-material/ExpandMore'
 import PropTypes from 'prop-types'

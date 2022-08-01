@@ -5,9 +5,9 @@
 import React from 'react'
 import { Container } from '@mui/material'
 import Grid from '@mui/material/Grid'
-import FittingCard from '../components/FittingCard'
+import FittingCard from '../components/models/FittingCard'
 import Button from '@mui/material/Button'
-import DetailsPopper from '../components/DetailsPopper'
+import DetailsPopper from '../components/shared/DetailsPopper'
 import api from '../api'
 import UserContext from '../UserContext'
 

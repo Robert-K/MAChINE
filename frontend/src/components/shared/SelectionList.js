@@ -11,9 +11,9 @@ import {
 } from '@mui/material'
 import Button from '@mui/material/Button'
 import PropTypes from 'prop-types'
-import stringToColor from '../utils'
+import stringToColor from '../../utils'
 import DetailsPopper from './DetailsPopper'
-import MoleculeInfo from './MoleculeInfo'
+import MoleculeInfo from '../molecules/MoleculeInfo'
 
 /**
  * List of given elements with corresponding avatars and description text

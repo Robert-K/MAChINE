@@ -3,7 +3,7 @@ import Popover from '@mui/material/Popover'
 import LanIcon from '@mui/icons-material/Lan'
 import ServerConfigForm from './ServerConfigForm'
 import { Badge, IconButton } from '@mui/material'
-import api from '../api'
+import api from '../../api'
 export default function ServerStatusButton() {
   const [anchorEl, setAnchorEl] = React.useState(null)
 

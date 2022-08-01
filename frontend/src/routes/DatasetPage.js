@@ -1,9 +1,9 @@
 import React from 'react'
 import { Container, Grid } from '@mui/material'
-import DatasetCard from '../components/DatasetCard'
+import DatasetCard from '../components/datasets/DatasetCard'
 import PropTypes from 'prop-types'
-import DetailsPopper from '../components/DetailsPopper'
-import DatasetInfo from '../components/DatasetInfo'
+import DetailsPopper from '../components/shared/DetailsPopper'
+import DatasetInfo from '../components/datasets/DatasetInfo'
 
 import api from '../api'
 

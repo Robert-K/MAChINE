@@ -7,11 +7,11 @@
 
 import React from 'react'
 import { Container } from '@mui/material'
-import BaseModelCard from '../components/BaseModelCard'
+import BaseModelCard from '../components/models/BaseModelCard'
 import Grid from '@mui/material/Grid'
-import DetailsPopper from '../components/DetailsPopper'
+import DetailsPopper from '../components/shared/DetailsPopper'
 import PropTypes from 'prop-types'
-import BaseModelInfo from '../components/BaseModelInfo'
+import BaseModelInfo from '../components/models/BaseModelInfo'
 import api from '../api'
 
 export default function BaseModelsPage() {

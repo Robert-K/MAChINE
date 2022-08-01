@@ -9,11 +9,11 @@ import {
   ListItemButton,
   ListItemText,
 } from '@mui/material'
-import stringToColor from '../utils'
+import stringToColor from '../../utils'
 import Button from '@mui/material/Button'
 import PropTypes from 'prop-types'
-import DetailsPopper from './DetailsPopper'
-import MoleculeInfo from './MoleculeInfo'
+import DetailsPopper from '../shared/DetailsPopper'
+import MoleculeInfo from '../molecules/MoleculeInfo'
 
 function MoleculeSelection(props) {
   const [selectedIndex, setSelectedIndex] = React.useState('a')

@@ -1,7 +1,7 @@
 import React from 'react'
 import { Card, CardContent, Grid, Box, TextField } from '@mui/material'
 import Button from '@mui/material/Button'
-import SelectionList from '../components/SelectionList'
+import SelectionList from '../components/shared/SelectionList'
 import { Link } from 'react-router-dom'
 import { Jsme } from 'jsme-react'
 import UserContext from '../UserContext'
