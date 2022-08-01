@@ -1,5 +1,5 @@
 import { AppBar, Box, Toolbar } from '@mui/material'
-import { NavLink, useLocation } from 'react-router-dom'
+import { NavLink, useLocation, useNavigate } from 'react-router-dom'
 import * as React from 'react'
 import logo from '../logo.svg'
 import PropTypes from 'prop-types'
@@ -9,14 +9,20 @@ import UserContext from '../UserContext'
 export default function Navbar(props) {
   const locationName = useLocation().pathname
   const user = React.useContext(UserContext)
+
+  // Navigates the user to the start page on page reload
+  const navigate = useNavigate()
+  React.useEffect(() => {
+    navigate('/')
+  }, [])
+
   return (
     <AppBar color="primary" position="sticky">
       <Toolbar>
         <img src={logo} height="30px" mx="2" />
         {!(locationName !== '/' || user.userName) ? null : (
           <>
-            {/* TODO: set to lead to '/home', on page reload go to '/' */}
-            <NavLink to="/">Home</NavLink>
+            <NavLink to="/home">Home</NavLink>
             <NavLink to="/models">Models</NavLink>
             <NavLink to="/molecules">Molecules</NavLink>
             <NavLink to="/results">Scoreboards</NavLink>
