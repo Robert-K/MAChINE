@@ -28,7 +28,7 @@ export default function BaseModelsPage() {
       console.log(sentModels)
       setModelArray(sentModels)
     })
-  })
+  }, [])
 
   const handlePopper = (target, content, show) => {
     setContent(content)
