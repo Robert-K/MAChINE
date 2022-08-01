@@ -8,6 +8,7 @@ import Molecule from '../internal/Molecule'
 import SaveIcon from '@mui/icons-material/Save'
 import PropTypes from 'prop-types'
 import MoleculeEditor from '../components/MoleculeEditor'
+import MoleculeRenderer from '../components/MoleculeRenderer'
 
 const gridHeight = '80vh'
 export default function MoleculesPage() {
@@ -78,8 +79,11 @@ function MoleculeView({ smiles }) {
       <CardContent
         sx={{ flexDirection: 'column', height: '100%', display: 'flex' }}
       >
-        <Box sx={{ width: '600px', mb: 2 }}>
+        <Box sx={{ m: 2 }}>
           <MoleculeEditor />
+        </Box>
+        <Box sx={{ m: 2 }}>
+          <MoleculeRenderer />
         </Box>
         <Grid container spacing={2}>
           <Grid item>
