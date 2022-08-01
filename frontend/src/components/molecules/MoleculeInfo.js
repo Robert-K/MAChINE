@@ -1,18 +1,10 @@
-import {
-  Collapse,
-  List,
-  ListItemButton,
-  ListItemText,
-  ListItem,
-  Divider,
-} from '@mui/material'
+import { List, ListItemText, ListItem, Divider } from '@mui/material'
 import React from 'react'
 import PropTypes from 'prop-types'
-import ExpandLess from '@mui/icons-material/ExpandLess'
-import ExpandMore from '@mui/icons-material/ExpandMore'
+import AnalysisInfo from './AnalysisInfo'
 
 // TODO: Keys bei allen .map überprüfen & überarbeiten
-export default function MoleculeInfo(props) {
+function MoleculeInfo(props) {
   return (
     <List sx={{ maxHeight: 400, overflow: 'auto' }}>
       {props.molecule.analyses.length !== 0 ? (
@@ -43,47 +35,8 @@ export default function MoleculeInfo(props) {
   )
 }
 
-function AnalysisInfo(props) {
-  const [expand, setExpand] = React.useState(false)
-  const toggleExpand = () => {
-    setExpand(!expand)
-  }
-  return (
-    <React.Fragment key={JSON.stringify(props.analysis)}>
-      <ListItemButton onClick={() => toggleExpand()}>
-        <ListItemText
-          primary={`${props.analysis.modelName}:`}
-          secondary={`Fitting: ${props.analysis.fittingID}`}
-        ></ListItemText>
-        {expand ? <ExpandLess /> : <ExpandMore />}{' '}
-      </ListItemButton>
-      <Collapse
-        in={expand}
-        timeout="auto"
-        mountOnEnter
-        unmountOnExit
-        orientation="vertical"
-      >
-        <List component="div" dense>
-          {Object.entries(props.analysis.results).map(([key, value]) => {
-            return (
-              <ListItem sx={{ pl: 4 }} key={key}>
-                <ListItemText
-                  primary={`${key}: ${value.toString()}`}
-                ></ListItemText>
-              </ListItem>
-            )
-          })}
-        </List>
-      </Collapse>
-    </React.Fragment>
-  )
-}
-
 MoleculeInfo.propTypes = {
   molecule: PropTypes.object.isRequired,
 }
 
-AnalysisInfo.propTypes = {
-  analysis: PropTypes.object.isRequired,
-}
+export default MoleculeInfo

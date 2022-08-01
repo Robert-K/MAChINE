@@ -1,10 +1,9 @@
 import React from 'react'
-import { Divider, List, ListItem } from '@mui/material'
-import Button from '@mui/material/Button'
+import { Divider, List, ListItem, Button } from '@mui/material'
 import PropTypes from 'prop-types'
 import { Link } from 'react-router-dom'
 
-export default function DatasetInfo(props) {
+function DatasetInfo(props) {
   return (
     <List sx={{ maxHeight: 400, overflow: 'auto' }}>
       <Button fullWidth component={Link} to="/training" variant="contained">
@@ -29,3 +28,5 @@ export default function DatasetInfo(props) {
 DatasetInfo.propTypes = {
   dataset: PropTypes.object,
 }
+
+export default DatasetInfo
