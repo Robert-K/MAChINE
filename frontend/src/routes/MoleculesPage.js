@@ -40,7 +40,6 @@ export default function MoleculesPage() {
 
   const forceUpdate = useForceUpdate()
 
-  // eslint-disable-next-line no-unused-vars
   return (
     <Box sx={{ m: 5 }}>
       <Grid container spacing={2}>
