@@ -1,12 +1,12 @@
 import React from 'react'
-import { Card, CardContent, Grid, Box, TextField } from '@mui/material'
-import Button from '@mui/material/Button'
+import { Box, Button, Card, CardContent, Grid, TextField } from '@mui/material'
 import SelectionList from '../components/shared/SelectionList'
 import { Link } from 'react-router-dom'
 import { Jsme } from 'jsme-react'
 import UserContext from '../UserContext'
 import api from '../api'
 import Molecule from '../internal/Molecule'
+import SaveIcon from '@mui/icons-material/Save'
 
 export default function MoleculesPage() {
   const [molecules, setMolecules] = React.useState([])
@@ -99,6 +99,7 @@ function MoleculeView(smiles, showEditor) {
           <Grid item style={{ flex: 1 }}>
             <Button size="large" variant="outlined" sx={{ minHeight: 55 }}>
               Save
+              <SaveIcon sx={{ ml: 1 }} />
             </Button>
           </Grid>
           <Grid item>

@@ -14,6 +14,7 @@ import PropTypes from 'prop-types'
 import stringToColor from '../../utils'
 import DetailsPopper from './DetailsPopper'
 import MoleculeInfo from '../molecules/MoleculeInfo'
+import AddIcon from '@mui/icons-material/Add'
 
 /**
  * List of given elements with corresponding avatars and description text
@@ -72,7 +73,9 @@ export default function SelectionList({
     <Card>
       <CardContent>
         <CardActions>
-          <Button onClick={() => addFunc()}>Add a {elementType}</Button>
+          <Button onClick={() => addFunc()}>
+            <AddIcon sx={{ mr: 1 }} /> Add a {elementType}
+          </Button>
         </CardActions>
         <List sx={{ height: '612px', maxHeight: '612px', overflow: 'auto' }}>
           {elements.map((element, index) => (
