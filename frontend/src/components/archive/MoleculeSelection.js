@@ -15,7 +15,7 @@ import PropTypes from 'prop-types'
 import DetailsPopper from '../shared/DetailsPopper'
 import MoleculeInfo from '../molecules/MoleculeInfo'
 
-function MoleculeSelection(props) {
+export default function MoleculeSelection(props) {
   const [selectedIndex, setSelectedIndex] = React.useState('a')
   const [open, setOpen] = React.useState(false)
   const [waited, setWaited] = React.useState(false)
@@ -90,5 +90,3 @@ function MoleculeSelection(props) {
 MoleculeSelection.propTypes = {
   molecules: PropTypes.array.isRequired,
 }
-
-export default MoleculeSelection

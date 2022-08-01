@@ -13,7 +13,7 @@ import CardContent from '@mui/material/CardContent'
  * @constructor
  */
 
-function BaseModelCard(props) {
+export default function BaseModelCard(props) {
   return (
     <Grid item xs={4} md={3}>
       {/* ^ The grid has a total width of  12. The xs defines how much of that width each component of the grid gets,
@@ -64,5 +64,3 @@ BaseModelCard.propTypes = {
   baseModel: PropTypes.object.isRequired,
   clickFunc: PropTypes.func.isRequired,
 }
-
-export default BaseModelCard

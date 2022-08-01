@@ -95,7 +95,7 @@ const Popper = styled(MuiPopper, {
  * @param arrowWidth Number, width of Arrow pointing to anchor
  * @param extraArrowLength Number, additional length of Arrow pointing to anchor
  */
-function DetailsPopper({
+export default function DetailsPopper({
   open,
   anchor,
   animate,
@@ -224,4 +224,3 @@ DetailsPopper.defaultProps = {
   arrowHeight: 32,
   extraArrowLength: 0,
 }
-export default DetailsPopper

@@ -5,7 +5,7 @@ import { Box, CardActionArea, CardHeader, Typography } from '@mui/material'
 import CardContent from '@mui/material/CardContent'
 import PropTypes from 'prop-types'
 
-function FittingCard(props) {
+export default function FittingCard(props) {
   return (
     <Grid item xs={4} md={3}>
       <Card>
@@ -46,5 +46,3 @@ FittingCard.propTypes = {
   fitting: PropTypes.object.isRequired,
   clickFunc: PropTypes.func.isRequired,
 }
-
-export default FittingCard

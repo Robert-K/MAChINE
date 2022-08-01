@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 import AnalysisInfo from './AnalysisInfo'
 
 // TODO: Keys bei allen .map überprüfen & überarbeiten
-function MoleculeInfo(props) {
+export default function MoleculeInfo(props) {
   return (
     <List sx={{ maxHeight: 400, overflow: 'auto' }}>
       {props.molecule.analyses.length !== 0 ? (
@@ -38,5 +38,3 @@ function MoleculeInfo(props) {
 MoleculeInfo.propTypes = {
   molecule: PropTypes.object.isRequired,
 }
-
-export default MoleculeInfo

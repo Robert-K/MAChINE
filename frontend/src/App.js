@@ -48,7 +48,7 @@ const themeDark = createTheme({
   },
 })
 
-function App() {
+export default function App() {
   const [darkMode, setDarkMode] = React.useState(false)
   const [userName, setUserName] = React.useState(null)
 
@@ -103,5 +103,3 @@ function App() {
     </div>
   )
 }
-
-export default App

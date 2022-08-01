@@ -10,7 +10,7 @@ import ExpandLess from '@mui/icons-material/ExpandLess'
 import ExpandMore from '@mui/icons-material/ExpandMore'
 import PropTypes from 'prop-types'
 
-function AnalysisInfo(props) {
+export default function AnalysisInfo(props) {
   const [expand, setExpand] = React.useState(false)
   const toggleExpand = () => {
     setExpand(!expand)
@@ -50,5 +50,3 @@ function AnalysisInfo(props) {
 AnalysisInfo.propTypes = {
   analysis: PropTypes.object.isRequired,
 }
-
-export default AnalysisInfo

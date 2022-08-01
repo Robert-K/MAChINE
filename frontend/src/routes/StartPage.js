@@ -11,7 +11,7 @@ import {
 import PropTypes from 'prop-types'
 import { useNavigate } from 'react-router-dom'
 
-function StartPage(props) {
+export default function StartPage(props) {
   const [enteredName, setEnteredName] = React.useState('')
   const navigate = useNavigate()
   const updateName = (text) => {
@@ -110,4 +110,3 @@ function StartPage(props) {
 StartPage.propTypes = {
   sendNameAway: PropTypes.func.isRequired,
 }
-export default StartPage
