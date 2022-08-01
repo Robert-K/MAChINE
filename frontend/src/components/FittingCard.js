@@ -1,7 +1,7 @@
 import React from 'react'
 import Grid from '@mui/material/Grid'
 import Card from '@mui/material/Card'
-import { Box, CardActionArea, Typography } from '@mui/material'
+import { Box, CardActionArea, CardHeader, Typography } from '@mui/material'
 import CardContent from '@mui/material/CardContent'
 import PropTypes from 'prop-types'
 
@@ -15,28 +15,22 @@ function FittingCard(props) {
           }}
         >
           <CardContent>
-            <Box paddingX={1}>
-              <Typography variant="h4" component="h3">
-                {props.fitting.modelName}
-              </Typography>
-            </Box>
-            <Box paddingX={1}>
+            <CardHeader
+              sx={{ p: 1, pl: 2 }}
+              title={props.fitting.modelName}
+              subheader={`ID: ${props.fitting.id}`}
+            />
+            <Box paddingX={2}>
               <Typography variant="subtitle1" component="h4">
                 {/* TODO: display dataset's name instead. */}
                 Training dataset: {props.fitting.datasetID}
               </Typography>
-            </Box>
-            <Box paddingX={1}>
               <Typography variant="subtitle1" component="h4">
                 Epochs: {props.fitting.epochs}
               </Typography>
-            </Box>
-            <Box paddingX={1}>
               <Typography variant="subtitle1" component="h4">
-                Epochs: {props.fitting.batchSize}
+                Batch Size: {props.fitting.batchSize}
               </Typography>
-            </Box>
-            <Box paddingX={1}>
               <Typography variant="subtitle1" component="h4">
                 Accuracy: {props.fitting.accuracy}
               </Typography>

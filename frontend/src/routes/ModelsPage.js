@@ -81,9 +81,14 @@ export default function ModelsPage() {
       return (
         <Card>
           <CardContent>
-            <CardHeader>{currentModel.name}</CardHeader>
-            <Typography>Base Model: {currentModel.baseModel}</Typography>
-            <Typography>Trained on: </Typography>
+            <CardHeader
+              title={currentModel.name}
+              subheader={`Base Model: ${currentModel.baseModel}`}
+            ></CardHeader>
+            <Divider />
+            <Typography variant="h6" sx={{ pl: 2, pt: 2 }}>
+              Trained versions:
+            </Typography>
             {renderFittings(currentModel.fittings)}
           </CardContent>
           <CardActions>
@@ -126,7 +131,8 @@ function RenderFitting(props) {
         <ListItemButton onClick={() => toggleOpen()}>
           {open ? <ExpandLess /> : <ExpandMore />}
           <ListItemText
-            primary={props.fitting.datasetID}
+            primary={`Dataset ID: ${props.fitting.datasetID}`}
+            secondary={`Fitting ID: ${props.fitting.id}`}
             sx={{ color: theme.palette.primary.main }}
           ></ListItemText>
         </ListItemButton>

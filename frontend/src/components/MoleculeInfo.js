@@ -15,6 +15,18 @@ import ExpandMore from '@mui/icons-material/ExpandMore'
 export default function MoleculeInfo(props) {
   return (
     <List sx={{ maxHeight: 400, overflow: 'auto' }}>
+      {props.molecule.analyses.length !== 0 ? (
+        <>
+          <ListItem>
+            <ListItemText primary="Analyzed Properties:" />
+          </ListItem>
+          <Divider />
+        </>
+      ) : (
+        <ListItem>
+          <ListItemText primary="No analyses available" />
+        </ListItem>
+      )}
       {props.molecule.analyses.map((analysis, i, analyses) => {
         return (
           <React.Fragment
@@ -39,7 +51,10 @@ function AnalysisInfo(props) {
   return (
     <React.Fragment key={JSON.stringify(props.analysis)}>
       <ListItemButton onClick={() => toggleExpand()}>
-        {props.analysis.modelName}
+        <ListItemText
+          primary={`${props.analysis.modelName}:`}
+          secondary={`Fitting: ${props.analysis.fittingID}`}
+        ></ListItemText>
         {expand ? <ExpandLess /> : <ExpandMore />}{' '}
       </ListItemButton>
       <Collapse
@@ -54,7 +69,7 @@ function AnalysisInfo(props) {
             return (
               <ListItem sx={{ pl: 4 }} key={key}>
                 <ListItemText
-                  primary={`${key}:${value.toString()}`}
+                  primary={`${key}: ${value.toString()}`}
                 ></ListItemText>
               </ListItem>
             )

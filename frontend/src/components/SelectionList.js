@@ -99,7 +99,7 @@ export default function SelectionList({
                   <p>{element.name}</p>
                 </Avatar>
               </ListItemAvatar>
-              <ListItemText primary={`Hello, I am ${element.name}`} />
+              <ListItemText primary={element.name} />
             </ListItemButton>
           ))}
         </List>
@@ -108,6 +108,7 @@ export default function SelectionList({
           open={open}
           content={content}
           animate={waited}
+          popperWidth={300}
         />
       </CardContent>
     </Card>
