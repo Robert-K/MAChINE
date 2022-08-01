@@ -1,10 +1,11 @@
-import { AppBar, Box, Toolbar } from '@mui/material'
+import { AppBar, Box, IconButton, Toolbar } from '@mui/material'
 import { NavLink, useLocation, useNavigate } from 'react-router-dom'
 import * as React from 'react'
 import logo from '../../logo.svg'
 import PropTypes from 'prop-types'
 import ServerStatusButton from './ServerStatusButton'
 import UserContext from '../../UserContext'
+import LogoutIcon from '@mui/icons-material/Logout'
 
 export default function Navbar(props) {
   const locationName = useLocation().pathname
@@ -31,10 +32,16 @@ export default function Navbar(props) {
 
         <Box sx={{ flexGrow: 1 }}></Box>
         {!user.userName ? null : (
-          <NavLink key="logout" to="/" onClick={() => props.logoutFunction()}>
-            Not {user.userName}? <u>Log out</u>
-          </NavLink>
+          <>
+            {user.userName}
+            <NavLink key="logout" to="/" onClick={() => props.logoutFunction()}>
+              <IconButton>
+                <LogoutIcon />
+              </IconButton>
+            </NavLink>
+          </>
         )}
+
         <ServerStatusButton />
 
         {props.darkModeButton}
