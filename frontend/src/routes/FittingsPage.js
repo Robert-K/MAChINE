@@ -11,7 +11,15 @@ import DetailsPopper from '../components/DetailsPopper'
 import api from '../api'
 import UserContext from '../UserContext'
 
-export default function TrainedModelsPage() {
+export default function FittingsPage() {
+  const [fittingArray, setFittingArray] = React.useState([])
+
+  const user = React.useContext(UserContext)
+
+  React.useEffect(() => {
+    api.getFittings(user.userID).then((fittings) => setFittingArray(fittings))
+  }, [user])
+
   // Also code duplication from MoleculeSelection but I don't know what else to do
   const [open, setOpen] = React.useState(false)
   const [waited, setWaited] = React.useState(false)
@@ -29,8 +37,6 @@ export default function TrainedModelsPage() {
       }, 150)
     }
   }
-
-  prepareContent()
 
   return (
     <Container>
@@ -59,24 +65,4 @@ export default function TrainedModelsPage() {
       </Grid>
     </Container>
   )
-}
-
-const fittingArray = []
-
-function prepareContent() {
-  const [modelList, setModelList] = React.useState([])
-
-  const user = React.useContext(UserContext)
-
-  React.useEffect(() => {
-    api.getModelList(user.userID).then((models) => setModelList(models))
-  }, [user])
-
-  let counter = 0
-  for (let i = 0; i < modelList.length; i++) {
-    for (let j = 0; j < modelList[i].fittings.length; j++) {
-      fittingArray[counter] = modelList[i].fittings[j]
-      counter++
-    }
-  }
 }

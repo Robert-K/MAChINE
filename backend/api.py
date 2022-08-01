@@ -115,7 +115,7 @@ class Fittings(Resource):
             model = models.get(current_fitting['modelID'])
             if model:
                 model_name = model['name']
-            processed_fittings.append({
+            processed_fittings.append(
                 {
                     'id': fitting_id,
                     'modelID': current_fitting['modelID'],
@@ -125,8 +125,8 @@ class Fittings(Resource):
                     'batchSize': current_fitting['batchSize'],
                     'accuracy': current_fitting['accuracy']
                 }
-            })
-        return sh.get_fitting_summaries(user_id)
+            )
+        return processed_fittings
 
 
 class AddUser(Resource):

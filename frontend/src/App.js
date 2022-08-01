@@ -14,7 +14,7 @@ import TrainingPage from './routes/TrainingPage'
 import DarkModeButton from './components/DarkModeButton'
 import BaseModelsPage from './routes/BaseModelsPage'
 import DatasetPage from './routes/DatasetPage'
-import TrainedModelsPage from './routes/TrainedModelsPage'
+import FittingsPage from './routes/FittingsPage'
 import api from './api'
 import { UserProvider } from './UserContext'
 
@@ -102,10 +102,7 @@ function App() {
               <Route path="/results" element={<ScoreboardsPage />}></Route>
               <Route path="/swagger" element={<SwaggerPage />}></Route>
               <Route path="/training" element={<TrainingPage />}></Route>
-              <Route
-                path="/trained-models"
-                element={<TrainedModelsPage />}
-              ></Route>
+              <Route path="/trained-models" element={<FittingsPage />}></Route>
               <Route path="/base-models" element={<BaseModelsPage />}></Route>
               <Route path="/datasets" element={<DatasetPage />}></Route>
             </Routes>

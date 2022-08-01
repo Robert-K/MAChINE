@@ -48,7 +48,6 @@ export default function MoleculesPage() {
           {
             <SelectionList
               elements={molecules}
-              /* Todo enter the userID above */
               elementType="molecule"
               usePopper={true}
               addFunc={() =>
