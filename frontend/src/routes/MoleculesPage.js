@@ -7,7 +7,9 @@ import UserContext from '../UserContext'
 import api from '../api'
 import Molecule from '../internal/Molecule'
 import SaveIcon from '@mui/icons-material/Save'
+import PropTypes from 'prop-types'
 
+const gridHeight = '80vh'
 export default function MoleculesPage() {
   const [molecules, setMolecules] = React.useState([])
   const user = React.useContext(UserContext)
@@ -42,22 +44,30 @@ export default function MoleculesPage() {
 
   return (
     <Box sx={{ m: 5 }}>
-      <Grid container spacing={2}>
+      <Grid
+        container
+        direction="row"
+        justifyContent="center"
+        alignItems="stretch"
+        columnSpacing={2}
+      >
         <Grid item md={3}>
-          {
-            <SelectionList
-              elements={molecules}
-              elementType="molecule"
-              usePopper={true}
-              addFunc={() =>
-                console.log('Implement add molecule in molecules page')
-              }
-              updateFunc={(index) => onMoleculeSelect(index)}
-            ></SelectionList>
-          }
+          <SelectionList
+            elements={molecules}
+            elementType="molecule"
+            usePopper={true}
+            addFunc={() =>
+              console.log('Implement add molecule in molecules page')
+            }
+            updateFunc={(index) => onMoleculeSelect(index)}
+            height={gridHeight}
+          ></SelectionList>
         </Grid>
         <Grid item md={9} key={selectedMolecule.smiles}>
-          {MoleculeView(selectedMolecule.smiles, showEditor)}
+          <MoleculeView
+            smiles={selectedMolecule.smiles}
+            showEditor={showEditor}
+          ></MoleculeView>
         </Grid>
       </Grid>
     </Box>
@@ -81,14 +91,16 @@ function MoleculeEditor(show, smiles, onChange) {
   )
 }
 
-function MoleculeView(smiles, showEditor) {
+function MoleculeView({ smiles, showEditor }) {
   function logSmiles(smiles) {
     console.log(smiles)
   }
 
   return (
-    <Card>
-      <CardContent>
+    <Card sx={{ maxHeight: gridHeight, height: gridHeight }}>
+      <CardContent
+        sx={{ flexDirection: 'column', height: '100%', display: 'flex' }}
+      >
         <Box sx={{ mb: 2 }} key={'jsme' + smiles}>
           {MoleculeEditor(showEditor, smiles, logSmiles)}
         </Box>
@@ -117,4 +129,9 @@ function MoleculeView(smiles, showEditor) {
       </CardContent>
     </Card>
   )
+}
+
+MoleculeView.propTypes = {
+  smiles: PropTypes.string.isRequired,
+  showEditor: PropTypes.bool.isRequired,
 }

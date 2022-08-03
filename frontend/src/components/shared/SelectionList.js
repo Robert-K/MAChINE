@@ -31,6 +31,7 @@ export default function SelectionList({
   elementType,
   usePopper,
   addFunc,
+  height,
 }) {
   const [selectedIndex, setSelectedIndex] = React.useState('none')
   const [open, setOpen] = React.useState(false)
@@ -70,14 +71,21 @@ export default function SelectionList({
   }
 
   return (
-    <Card>
-      <CardContent>
+    <Card
+      sx={{
+        height,
+        maxHeight: height,
+      }}
+    >
+      <CardContent
+        sx={{ flexDirection: 'column', height: '100%', display: 'flex' }}
+      >
         <CardActions>
           <Button onClick={() => addFunc()}>
             <AddIcon sx={{ mr: 1 }} /> Add a {elementType}
           </Button>
         </CardActions>
-        <List sx={{ height: '612px', maxHeight: '612px', overflow: 'auto' }}>
+        <List sx={{ flexGrow: 1, overflow: 'scroll' }}>
           {elements.map((element, index) => (
             <ListItemButton
               key={element.name}
@@ -124,4 +132,9 @@ SelectionList.propTypes = {
   elementType: PropTypes.string.isRequired,
   updateFunc: PropTypes.func,
   addFunc: PropTypes.func.isRequired,
+  height: PropTypes.any,
+}
+
+SelectionList.defaultProps = {
+  height: '7vh',
 }

@@ -24,6 +24,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import api from '../api'
 import UserContext from '../UserContext'
 
+const gridHeight = '80vh'
 /**
  * Depicts a list of saved models and shows a description of the selected model on click
  */
@@ -45,20 +46,25 @@ export default function ModelsPage() {
 
   return (
     <Box sx={{ m: 5 }}>
-      <Grid container spacing={2}>
-        <Grid item md={3}>
-          {
-            <SelectionList
-              updateFunc={updateSelection}
-              elements={modelList}
-              elementType="model"
-              usePopper={false}
-              addFunc={() => navigate('/base-models')}
-            ></SelectionList>
-          }
+      <Grid
+        container
+        direction="row"
+        justifyContent="center"
+        alignItems="stretch"
+        columnSpacing={2}
+      >
+        <Grid item xs={3}>
+          <SelectionList
+            updateFunc={updateSelection}
+            elements={modelList}
+            elementType="model"
+            usePopper={false}
+            addFunc={() => navigate('/base-models')}
+            height={gridHeight}
+          ></SelectionList>
         </Grid>
-        <Grid item md={9}>
-          {ModelDescription()}
+        <Grid item xs={9}>
+          <ModelDescription />
         </Grid>
       </Grid>
     </Box>
@@ -79,17 +85,27 @@ export default function ModelsPage() {
     } else {
       const currentModel = modelList[selectedModel]
       return (
-        <Card>
-          <CardContent>
+        <Card sx={{ maxHeight: gridHeight, height: gridHeight }}>
+          <CardContent
+            sx={{ flexDirection: 'column', height: '100%', display: 'flex' }}
+          >
             <CardHeader
               title={currentModel.name}
               subheader={`Base Model: ${currentModel.baseModel}`}
             ></CardHeader>
             <Divider />
             <Typography variant="h6" sx={{ pl: 2, pt: 2 }}>
-              Trained versions:
+              Trained fittings:
             </Typography>
-            {renderFittings(currentModel.fittings)}
+            {/* Adds a fitting for each fitting saved in the model */}
+            <List sx={{ flexGrow: 1, overflow: 'scroll' }}>
+              {currentModel.fittings.map((fitting) => (
+                <RenderFitting
+                  fitting={fitting}
+                  key={fitting.id}
+                ></RenderFitting>
+              ))}
+            </List>
           </CardContent>
           <CardActions>
             <Grid container justifyContent="center">
@@ -102,16 +118,6 @@ export default function ModelsPage() {
       )
     }
   }
-}
-
-function renderFittings(fittings) {
-  return (
-    <List>
-      {fittings.map((fitting) => (
-        <RenderFitting fitting={fitting} key={fitting.id}></RenderFitting>
-      ))}
-    </List>
-  )
 }
 
 /**
