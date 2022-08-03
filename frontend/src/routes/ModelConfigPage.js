@@ -2,6 +2,8 @@ import React from 'react'
 import { List, TextField } from '@mui/material'
 import Button from '@mui/material/Button'
 import api from '../api'
+import Layer from '../internal/Layer'
+import LayerVisual from '../components/LayerVisual'
 
 export default function ModelConfigPage() {
   const [epochs, setEpochs] = React.useState(1000)
@@ -26,6 +28,8 @@ export default function ModelConfigPage() {
   }
 
   const [answer, setanswer] = React.useState('Controlled')
+
+  const testLayer = new Layer('Dense', 4)
 
   /* const modelconfig = {
     epochs: '1000',
@@ -129,6 +133,7 @@ export default function ModelConfigPage() {
           value={answer}
         />
       </List>
+      <LayerVisual layer={testLayer} />
     </div>
   )
 }
