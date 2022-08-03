@@ -82,6 +82,14 @@ function MoleculeEditor(props) {
   useEffect(() => {
     composer = new Kekule.Editor.Composer(document.getElementById('editor'))
     composer.setDimension('650px', '600px')
+    composer.setCommonToolButtons(['undo', 'redo', 'zoomIn', 'zoomOut'])
+    composer.setChemToolButtons([
+      'manipulate',
+      'erase',
+      'bond',
+      'atomAndFormula',
+      'glyph',
+    ])
     composer.setChemObj(mol)
   }, [])
   return (
