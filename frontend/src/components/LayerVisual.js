@@ -21,6 +21,8 @@ export default function LayerVisual(layer) {
     ],
   }
 
+  const options = {}
+
   return (
     <Box
       sx={{
