@@ -20,7 +20,9 @@ function BaseModelInfo(props) {
       <Button
         fullWidth
         variant="contained"
-        onClick={() => navigate('/modelconfig')}
+        onClick={() =>
+          navigate('/modelconfig', { state: { baseModel: props.baseModel } })
+        }
       >
         Configure this model
       </Button>
