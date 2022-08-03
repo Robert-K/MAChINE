@@ -25,7 +25,6 @@ export default function LayerVisual(layer) {
 
   return (
     <Box
-      id="exampleGraph"
       sx={{
         border: '1px',
         borderColor: theme.palette.primary.main,
