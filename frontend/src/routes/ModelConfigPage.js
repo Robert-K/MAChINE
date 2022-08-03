@@ -4,8 +4,13 @@ import Button from '@mui/material/Button'
 import api from '../api'
 import Layer from '../internal/Layer'
 import LayerVisual from '../components/LayerVisual'
+import { useLocation } from 'react-router-dom'
+import ModelVisual from '../components/ModelVisual'
 
 export default function ModelConfigPage() {
+  const { state } = useLocation()
+  const baseModel = state.baseModel
+
   const [epochs, setEpochs] = React.useState(1000)
   const handleEpochsChange = (event) => {
     setEpochs(event.target.value)
@@ -133,7 +138,7 @@ export default function ModelConfigPage() {
           value={answer}
         />
       </List>
-      <LayerVisual layer={testLayer} />
+      <ModelVisual model={baseModel} />
     </div>
   )
 }
