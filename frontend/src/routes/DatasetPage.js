@@ -1,5 +1,5 @@
 import React from 'react'
-import { Container, Grid } from '@mui/material'
+import { Box } from '@mui/material'
 import DatasetCard from '../components/datasets/DatasetCard'
 import PropTypes from 'prop-types'
 import DetailsPopper from '../components/shared/DetailsPopper'
@@ -41,8 +41,14 @@ export default function DatasetPage() {
   }
 
   return (
-    <Container>
-      <Grid container spacing={4} sx={{ mt: 1, mb: 5 }}>
+    <Box sx={{ m: 5 }}>
+      <Box
+        sx={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(4,1fr)',
+          gap: 5,
+        }}
+      >
         {datasets.map((dataset) => (
           <DatasetCard
             dataset={dataset}
@@ -69,8 +75,8 @@ export default function DatasetPage() {
           animate={waited}
           popperWidth={200}
         />
-      </Grid>
-    </Container>
+      </Box>
+    </Box>
   )
 }
 
