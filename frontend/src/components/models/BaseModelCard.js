@@ -10,7 +10,6 @@ import { useNavigate } from 'react-router-dom'
  * A base model card is utilized in the process of the user creating a model.
  * It displays one base model's name, image, and basic information.
  * @param baseModel The data from a base model
- * @param clickFunc The function that executes when card is clicked
  * @returns {JSX.Element} The the element for the website.
  * @constructor
  */
@@ -43,14 +42,10 @@ export default function BaseModelCard({ baseModel }) {
               <Typography variant="h4" component="h3">
                 {baseModel.name}
               </Typography>
-            </Box>
-            <Box paddingX={1}>
               {/* Displays the base model's type */}
               <Typography variant="subtitle1" component="h4">
-                {baseModel.type.name}
+                Type: {baseModel.type.name}
               </Typography>
-            </Box>
-            <Box paddingX={1}>
               {/* Displays the base model's taskType (classifier or regression) */}
               <Typography variant="subtitle1" component="h4">
                 Model task: {baseModel.taskType}
@@ -65,5 +60,4 @@ export default function BaseModelCard({ baseModel }) {
 
 BaseModelCard.propTypes = {
   baseModel: PropTypes.object.isRequired,
-  clickFunc: PropTypes.func.isRequired,
 }
