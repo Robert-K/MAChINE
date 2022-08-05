@@ -109,9 +109,13 @@ function MoleculeView({ smiles, showEditor }) {
             <TextField label="Name"></TextField>
           </Grid>
           <Grid item style={{ flex: 1 }}>
-            <Button size="large" variant="outlined" sx={{ minHeight: 55 }}>
+            <Button
+              size="large"
+              variant="outlined"
+              sx={{ minHeight: 55 }}
+              endIcon={<SaveIcon sx={{ ml: 1 }} />}
+            >
               Save
-              <SaveIcon sx={{ ml: 1 }} />
             </Button>
           </Grid>
           <Grid item>
