@@ -1,4 +1,6 @@
 import axios from 'axios'
+import userContext from './UserContext'
+import React from 'react'
 
 const defaultAddress = '127.0.0.1' // TODO: insert correct URL
 const defaultPort = '5000'
@@ -61,15 +63,17 @@ export default {
     api.defaults.baseURL = `http://${serverAddress}:${serverPort}`
   },
 
-  async getModelList(userID) {
-    return api.get(`/users/${userID}/models`).then((response) => {
-      return response.data
-    })
+  async getModelList() {
+    return api
+      .get(`/users/${React.useContext(userContext).userName}/models`)
+      .then((response) => {
+        return response.data
+      })
   },
 
-  async getMoleculeList(userID) {
+  async getMoleculeList() {
     return api
-      .get(`/users/${userID}/molecules`)
+      .get(`/users/${React.useContext(userContext).userName}/molecules`)
       .then((response) => {
         return response.data
       })
@@ -79,10 +83,12 @@ export default {
       })
   },
 
-  async getFittings(userID) {
-    return api.get(`/users/${userID}/fittings`).then((response) => {
-      return response.data
-    })
+  async getFittings() {
+    return api
+      .get(`/users/${React.useContext(userContext).userName}/fittings`)
+      .then((response) => {
+        return response.data
+      })
   },
 
   async getDatasets() {
@@ -97,15 +103,17 @@ export default {
     })
   },
 
-  async addModelConfig(userID, config) {
-    return api.patch(`/users/${userID}/models`, config).then((response) => {
-      return response.data
-    })
+  async addModelConfig(config) {
+    return api
+      .patch(`/users/${React.useContext(userContext).userName}/models`, config)
+      .then((response) => {
+        return response.data
+      })
   },
 
-  async addMolecule(userID, smiles, name) {
+  async addMolecule(smiles, name) {
     return api
-      .patch(`/users/${userID}/molecules`, {
+      .patch(`/users/${React.useContext(userContext).userName}/molecules`, {
         smiles,
         name,
       })
@@ -119,20 +127,23 @@ export default {
       return response.data
     })
   },
-  async logout(userID) {
-    return api.delete(`/users/${userID}`).then((response) => {
-      return response.data
-    })
+  async logout() {
+    return api
+      .delete(`/users/${React.useContext(userContext).userName}`)
+      .then((response) => {
+        return response.data
+      })
   },
 
-  async analyzeMolecule(userID) {
-    return api.post(`/users/${userID}/analyze`).then((response) => {
-      return response.data
-    })
+  async analyzeMolecule() {
+    return api
+      .post(`/users/${React.useContext(userContext).userName}/analyze`)
+      .then((response) => {
+        return response.data
+      })
   },
 
   async trainModel(
-    userID,
     datasetID,
     modelID,
     fingerprint,
@@ -142,7 +153,7 @@ export default {
     batchSize
   ) {
     return api
-      .post(`/users/${userID}/train`, {
+      .post(`/users/${React.useContext(userContext).userName}/train`, {
         datasetID,
         modelID,
         fingerprint,
