@@ -1,8 +1,8 @@
 import React from 'react'
 import Layer from '../internal/Layer'
 import LayerVisual from '../components/LayerVisual'
-import { useLocation } from 'react-router-dom'
-import ModelVisual from '../components/ModelVisual'
+// import { useLocation } from 'react-router-dom'
+// import ModelVisual from '../components/ModelVisual'
 import Grid from '@mui/material/Grid'
 import {
   Collapse,
@@ -15,10 +15,9 @@ import ExpandLess from '@mui/icons-material/ExpandLess'
 import ExpandMore from '@mui/icons-material/ExpandMore'
 
 export default function ModelConfigPage() {
-
-  const { state } = useLocation()
-  const baseModel = state.baseModel
-/*
+  // const { state } = useLocation()
+  // const baseModel = state.baseModel
+  /*
   const [epochs, setEpochs] = React.useState(1000)
   const handleEpochsChange = (event) => {
     setEpochs(event.target.value)
@@ -69,104 +68,13 @@ export default function ModelConfigPage() {
 
   return (
     <div>
-      <List>
-        <TextField
-          sx={{ m: 3 }}
-          required
-          id="epochs"
-          label="Epochs"
-          type="number"
-          onChange={handleEpochsChange}
-          defaultValue={epochs}
-        />
-        <TextField
-          sx={{ m: 3 }}
-          required
-          id="batchsize"
-          label="Batch Size"
-          type="number"
-          defaultValue={batchsize}
-          onChange={handlebatchsizeChange}
-        />
-        <TextField
-          sx={{ m: 3 }}
-          required
-          id="numLayers"
-          label="Number of Layers"
-          type="number"
-          defaultValue={numlayers}
-          onChange={handlenumlayersChange}
-        />
-        <TextField
-          sx={{ m: 3 }}
-          required
-          id="unitsPerLayer"
-          label="Units per Layer"
-          type="number"
-          defaultValue={unitsperlayer}
-          onChange={handleunitsperlayerChange}
-        />
-        <TextField
-          sx={{ m: 3 }}
-          required
-          id="label"
-          label="label"
-          defaultValue={label}
-          onChange={handlelabelChange}
-        />
-        <Button
-          variant="contained"
-          sx={{ m: 3 }}
-          disabled={
-            // these ranges of values where chosen *randomly* and have to be adjusted at some point
-            // this does not work for some reason
-            !(
-              epochs >= 100 &&
-              epochs <= 10000 &&
-              batchsize >= 50 &&
-              batchsize <= 100 &&
-              numlayers >= 2 &&
-              numlayers <= 20 &&
-              unitsperlayer >= 50 &&
-              unitsperlayer <= 1024
-            )
-          }
-          onClick={() =>
-            api
-              .createNewModelConfig({
-                epochs: { epochs },
-                batch_size: { batchsize },
-                num_layers: { numlayers },
-                units_per_layer: { unitsperlayer },
-                label: { label },
-              })
-              .then((value) => {
-                setanswer(value.modelconfig_ID)
-              })
-          }
-        >
-          Create Model Configuration
-        </Button>
-        <Button variant="outlined" sx={{ m: 3 }} onClick={() => setanswer('')}>
-          reset Value
-        </Button>
-        <TextField
-          sx={{ m: 3 }}
-          label="Server Response (modelconfig_ID)"
-          id="result"
-          variant="filled"
-          disabled={true}
-          defaultValue=""
-          value={answer}
-        />
-      </List>
-      <ModelVisual model={baseModel} />
+      {/* <ModelVisual model={baseModel} /> */}
       <Grid container>
         <Grid item xs={8}>
-          <LayerVisual layer={testLayer} />
+          {/* <LayerVisual layer={testLayer} /> */}
         </Grid>
         <Grid item xs={4}>
-          <ListItemButton onClick={() => toggleExpand()}>
+          <ListItemButton onClick={toggleExpand}>
             Loss-Function
             {expand ? <ExpandLess /> : <ExpandMore />}{' '}
           </ListItemButton>
@@ -178,12 +86,10 @@ export default function ModelConfigPage() {
             orientation="vertical"
           >
             <List component="div" dense>
-              {Object.entries(LossFunction).map(([key, value]) => {
+              {LossFunction.map((lossFunction) => {
                 return (
-                  <ListItem sx={{ pl: 4 }} key={key}>
-                    <ListItemText
-                      primary={`${key}:${value.toString()}`}
-                    ></ListItemText>
+                  <ListItem sx={{ pl: 4 }} key={lossFunction}>
+                    <ListItemText>{lossFunction}</ListItemText>
                   </ListItem>
                 )
               })}
@@ -201,12 +107,10 @@ export default function ModelConfigPage() {
             orientation="vertical"
           >
             <List component="div" dense>
-              {Object.entries(Optimizers).map(([key, value]) => {
+              {Optimizers.map((optimizer) => {
                 return (
-                  <ListItem sx={{ pl: 4 }} key={key}>
-                    <ListItemText
-                      primary={`${key}:${value.toString()}`}
-                    ></ListItemText>
+                  <ListItem sx={{ pl: 4 }} key={optimizer}>
+                    <ListItemText>{optimizer}</ListItemText>
                   </ListItem>
                 )
               })}
@@ -214,103 +118,6 @@ export default function ModelConfigPage() {
           </Collapse>
         </Grid>
       </Grid>
-      {/*
-        <List>
-          <TextField
-            sx={{ m: 3 }}
-            required
-            id="epochs"
-            label="Epochs"
-            type="number"
-            onChange={handleEpochsChange}
-            defaultValue={epochs}
-          />
-          <TextField
-            sx={{ m: 3 }}
-            required
-            id="batchsize"
-            label="Batch Size"
-            type="number"
-            defaultValue={batchsize}
-            onChange={handlebatchsizeChange}
-          />
-          <TextField
-            sx={{ m: 3 }}
-            required
-            id="numLayers"
-            label="Number of Layers"
-            type="number"
-            defaultValue={numlayers}
-            onChange={handlenumlayersChange}
-          />
-          <TextField
-            sx={{ m: 3 }}
-            required
-            id="unitsPerLayer"
-            label="Units per Layer"
-            type="number"
-            defaultValue={unitsperlayer}
-            onChange={handleunitsperlayerChange}
-          />
-          <TextField
-            sx={{ m: 3 }}
-            required
-            id="label"
-            label="label"
-            defaultValue={label}
-            onChange={handlelabelChange}
-          />
-          <Button
-            variant="contained"
-            sx={{ m: 3 }}
-            disabled={
-              // these ranges of values where chosen *randomly* and have to be adjusted at some point
-              // this does not work for some reason
-              !(
-                epochs >= 100 &&
-                epochs <= 10000 &&
-                batchsize >= 50 &&
-                batchsize <= 100 &&
-                numlayers >= 2 &&
-                numlayers <= 20 &&
-                unitsperlayer >= 50 &&
-                unitsperlayer <= 1024
-              )
-            }
-            onClick={() =>
-              api
-                .createNewModelConfig({
-                  epochs: { epochs },
-                  batch_size: { batchsize },
-                  num_layers: { numlayers },
-                  units_per_layer: { unitsperlayer },
-                  label: { label },
-                })
-                .then((value) => {
-                  setanswer(value.modelconfig_ID)
-                })
-            }
-          >
-            Create Model Configuration
-          </Button>
-          <Button
-            variant="outlined"
-            sx={{ m: 3 }}
-            onClick={() => setanswer('')}
-          >
-            reset Value
-          </Button>
-          <TextField
-            sx={{ m: 3 }}
-            label="Server Response (modelconfig_ID)"
-            id="result"
-            variant="filled"
-            disabled={true}
-            defaultValue=""
-            value={answer}
-          />
-        </List>
-        */}
     </div>
   )
 }
