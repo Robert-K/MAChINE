@@ -98,7 +98,7 @@ export default function ModelsPage() {
               Trained fittings:
             </Typography>
             {/* Adds a fitting for each fitting saved in the model */}
-            <List sx={{ flexGrow: 1, overflow: 'scroll' }}>
+            <List sx={{ flexGrow: 1, overflow: 'auto' }}>
               {currentModel.fittings.map((fitting) => (
                 <RenderFitting
                   fitting={fitting}

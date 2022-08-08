@@ -85,7 +85,7 @@ export default function SelectionList({
             <AddIcon sx={{ mr: 1 }} /> Add a {elementType}
           </Button>
         </CardActions>
-        <List sx={{ flexGrow: 1, overflow: 'scroll' }}>
+        <List sx={{ flexGrow: 1, overflow: 'auto' }}>
           {elements.map((element, index) => (
             <ListItemButton
               key={element.name}
