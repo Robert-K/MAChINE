@@ -36,7 +36,7 @@ export default function DatasetInfo({ dataset }) {
         sx={{ mb: 2 }}
         disabled={disabledButton}
       >
-        Start Training!
+        {`${disabledButton ? 'Choose a label' : 'Start Training!'}`}
       </Button>
       <FormLabel sx={{ ml: 0.5 }}>Label</FormLabel>
       {dataset.labelDescriptors.map((descriptor, index) => {
