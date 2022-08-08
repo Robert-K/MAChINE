@@ -13,13 +13,16 @@ import { Link } from 'react-router-dom'
 
 export default function DatasetInfo({ dataset }) {
   const [labelArray, setLabelArray] = React.useState([])
+  const [disabledButton, setDisabledButton] = React.useState(true)
 
   const handleChecked = (event) => {
     // TODO: Vielleicht etwas mehr darauf auslegen, dass man später mehr Label auswählen kann
     if (labelArray.includes(event.target.value)) {
       setLabelArray([])
+      setDisabledButton(true)
     } else {
       setLabelArray([event.target.value])
+      setDisabledButton(false)
     }
   }
 
@@ -31,6 +34,7 @@ export default function DatasetInfo({ dataset }) {
         to="/training"
         variant="contained"
         sx={{ mb: 2 }}
+        disabled={disabledButton}
       >
         Start Training!
       </Button>
