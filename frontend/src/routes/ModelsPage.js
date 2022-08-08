@@ -106,14 +106,14 @@ export default function ModelsPage() {
                 ></RenderFitting>
               ))}
             </List>
+            <CardActions>
+              <Grid container justifyContent="center">
+                <Button component={Link} to="/datasets">
+                  Select Training Data
+                </Button>
+              </Grid>
+            </CardActions>
           </CardContent>
-          <CardActions>
-            <Grid container justifyContent="center">
-              <Button component={Link} to="/datasets">
-                Select Training Data
-              </Button>
-            </Grid>
-          </CardActions>
         </Card>
       )
     }
