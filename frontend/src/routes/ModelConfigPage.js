@@ -44,13 +44,21 @@ export default function ModelConfigPage() {
 
   const testLayer = new Layer('Dense', 4)
 
-  const LossFunction = [
-    'Mean Squared Error',
-    'Mean Absolute Error',
-    'Huber Loss',
-    'Binary Cross Entropy',
+  const settableParameters = [
+    {
+      name: 'Optimizers',
+      nnFunctions: ['Adam', 'Adamax', 'Stochastic Gradient Descent'],
+    },
+    {
+      name: 'Loss',
+      nnFunctions: [
+        'Mean Squared Error',
+        'Mean Absolute Error',
+        'Huber Loss',
+        'Binary Cross Entropy',
+      ],
+    },
   ]
-  const Optimizers = ['Adam', 'Adamax', 'Stochastic Gradient Descent']
 
   /* const modelconfig = {
     epochs: '1000',
@@ -74,48 +82,33 @@ export default function ModelConfigPage() {
           {/* <LayerVisual layer={testLayer} /> */}
         </Grid>
         <Grid item xs={4}>
-          <ListItemButton onClick={toggleExpand}>
-            Loss-Function
-            {expand ? <ExpandLess /> : <ExpandMore />}{' '}
-          </ListItemButton>
-          <Collapse
-            in={expand}
-            timeout="auto"
-            mountOnEnter
-            unmountOnExit
-            orientation="vertical"
-          >
-            <List component="div" dense>
-              {LossFunction.map((lossFunction) => {
-                return (
-                  <ListItem sx={{ pl: 4 }} key={lossFunction}>
-                    <ListItemText>{lossFunction}</ListItemText>
-                  </ListItem>
-                )
-              })}
-            </List>
-          </Collapse>
-          <ListItemButton onClick={() => toggleExpand()}>
-            Optimizer
-            {expand ? <ExpandLess /> : <ExpandMore />}{' '}
-          </ListItemButton>
-          <Collapse
-            in={expand}
-            timeout="auto"
-            mountOnEnter
-            unmountOnExit
-            orientation="vertical"
-          >
-            <List component="div" dense>
-              {Optimizers.map((optimizer) => {
-                return (
-                  <ListItem sx={{ pl: 4 }} key={optimizer}>
-                    <ListItemText>{optimizer}</ListItemText>
-                  </ListItem>
-                )
-              })}
-            </List>
-          </Collapse>
+          <React.Fragment key={JSON.stringify(settableParameters.parameter)}>
+            {settableParameters.map((parameter) => {
+              return (
+                <ListItemButton key={parameter.name} onClick={toggleExpand}>
+                  {parameter.name}
+                  {expand ? <ExpandLess /> : <ExpandMore />}{' '}
+                </ListItemButton>
+              )
+            })}
+            <Collapse
+              in={expand}
+              timeout="auto"
+              mountOnEnter
+              unmountOnExit
+              orientation="vertical"
+            >
+              <List component="div" dense>
+                {settableParameters.parameter.map(([key, nnFunction]) => {
+                  return (
+                    <ListItem sx={{ pl: 4 }} key={key}>
+                      <ListItemText>{nnFunction}</ListItemText>
+                    </ListItem>
+                  )
+                })}
+              </List>
+            </Collapse>
+          </React.Fragment>
         </Grid>
       </Grid>
     </div>
