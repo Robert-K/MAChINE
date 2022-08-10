@@ -11,6 +11,11 @@ import PropTypes from 'prop-types'
 import MoleculeEditor from '../components/MoleculeEditor'
 import MoleculeRenderer from '../components/MoleculeRenderer'
 
+// TODO: Change Molecule format to support smiles & Kekule codes
+// Both in backend in frontend, change API for this
+// TODO: Add functionality to save button
+// TODO: Properly position switch button
+
 const gridHeight = '80vh'
 export default function MoleculesPage() {
   const [molecules, setMolecules] = React.useState([])
@@ -60,21 +65,65 @@ export default function MoleculesPage() {
           ></SelectionList>
         </Grid>
         <Grid item md={9} key={selectedMolecule.smiles}>
-          <MoleculeView
-            smiles={selectedMolecule.smiles}
-            showEditor={showEditor}
-          ></MoleculeView>
+          <MoleculeView smiles={selectedMolecule.smiles} />
         </Grid>
       </Grid>
     </Box>
   )
 }
 
-function MoleculeView({ smiles }) {
+// START TEST MOLECULE
+// create molecule first
+const mol = new Kekule.Molecule()
+
+// add atoms to molecule
+mol.appendNode(new Kekule.Atom().setSymbol('C').setCoord2D({ x: 0, y: 0.8 }))
+// explicit set mass number of an atom
+mol.appendNode(
+  new Kekule.Atom()
+    .setSymbol('C')
+    .setMassNumber(13)
+    .setCoord2D({ x: -0.69, y: 0.4 })
+)
+
+mol.appendNode(
+  new Kekule.Atom().setSymbol('C').setCoord2D({ x: -0.69, y: -0.4 })
+)
+// a pseudo atom
+mol.appendNode(
+  new Kekule.Pseudoatom()
+    .setAtomType(Kekule.PseudoatomType.ANY)
+    .setCoord2D({ x: 0, y: -0.8 })
+)
+mol.appendNode(
+  new Kekule.Atom().setSymbol('C').setCoord2D({ x: 0.69, y: -0.4 })
+)
+mol.appendNode(new Kekule.Atom().setSymbol('C').setCoord2D({ x: 0.69, y: 0.4 }))
+// a variable atom
+mol.appendNode(
+  new Kekule.VariableAtom()
+    .setAllowedIsotopeIds(['F', 'Cl', 'Br'])
+    .setCoord2D({ x: 1.39, y: 0.8 })
+)
+
+// add bonds to molecule
+//   here a shortcut method appendBond(atomIndexes, bondOrder) is used
+mol.appendBond([0, 1], 1)
+mol.appendBond([1, 2], 2)
+mol.appendBond([2, 3], 1)
+mol.appendBond([3, 4], 2)
+mol.appendBond([4, 5], 1)
+mol.appendBond([5, 0], 2)
+mol.appendBond([5, 6], 1)
+
+// END TEST MOLECULE
+
+function MoleculeView(props) {
+  const [molecule, setMolecule] = React.useState(mol)
+  const [show3D, setShow3D] = React.useState(false)
+  const [editorHeight, editorWidth] = ['600px', '800px']
   const navigate = useNavigate()
-  function logSmiles(smiles) {
-    console.log(smiles)
-  }
+
   return (
     <Card sx={{ maxHeight: gridHeight, height: gridHeight }}>
       <CardContent
@@ -84,7 +133,28 @@ function MoleculeView({ smiles }) {
           <MoleculeEditor />
         </Box>
         <Grid container spacing={2}>
-          <MoleculeEditinator />
+          {/* Actual Editor */}
+          <Grid item>
+            {show3D === true ? (
+              <MoleculeRenderer
+                molecule={molecule}
+                width={editorWidth}
+                height={editorHeight}
+              />
+            ) : (
+              <MoleculeEditor
+                molecule={molecule}
+                onChange={(newMolecule) => setMolecule(newMolecule)}
+                width={editorWidth}
+                height={editorHeight}
+              />
+            )}
+          </Grid>
+          <Grid item>
+            <Button onClick={() => setShow3D(!show3D)}>{`Switch to ${
+              show3D ? '2D-Editor' : '3D-Viewer'
+            }`}</Button>
+          </Grid>
           <Grid item>
             <TextField label="Name"></TextField>
           </Grid>
