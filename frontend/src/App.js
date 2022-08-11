@@ -52,13 +52,20 @@ export default function App() {
   const [darkMode, setDarkMode] = React.useState(false)
   const [userName, setUserName] = React.useState(null)
 
-  const login = (newUserName) => {
-    logout()
-    setUserName(newUserName)
-    api.completeLogin(newUserName)
+  async function login(newUserName) {
+    if (userName !== null) logout()
+    return api.completeLogin(newUserName)
+      .then((r) => {
+        setUserName(newUserName)
+        return true
+      })
+      .catch((e) => {
+        console.log(e)
+        return false
+      })
   }
   const logout = () => {
-    api.logout().then()
+    api.logout(userID).catch((e) => console.log(e))
     setUserName(null)
     /* Delete all Data */
     /* Delete trained models */
