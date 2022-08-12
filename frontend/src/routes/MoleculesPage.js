@@ -2,7 +2,7 @@ import React from 'react'
 import { Box, Button, Card, CardContent, Grid, TextField } from '@mui/material'
 import SelectionList from '../components/shared/SelectionList'
 import { useNavigate } from 'react-router-dom'
-import MoleculeEditinator from '../components/MoleculeEditinator'
+import { Kekule } from 'kekule'
 import UserContext from '../UserContext'
 import api from '../api'
 import Molecule from '../internal/Molecule'
@@ -30,8 +30,6 @@ export default function MoleculesPage() {
       console.log(moleculeList)
     })
   }, [user])
-
-  let showEditor = true
 
   function onMoleculeSelect(index) {
     setSelectedMolecule(
