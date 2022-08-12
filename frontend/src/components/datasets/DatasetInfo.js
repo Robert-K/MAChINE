@@ -1,5 +1,6 @@
 import React from 'react'
 import {
+  Box,
   Button,
   Checkbox,
   Divider,
@@ -7,7 +8,6 @@ import {
   FormLabel,
   List,
   ListItem,
-  Paper,
 } from '@mui/material'
 import PropTypes from 'prop-types'
 import { Link } from 'react-router-dom'
@@ -18,8 +18,9 @@ export default function DatasetInfo({ dataset }) {
   const [labelArray, setLabelArray] = React.useState([])
   const [disabledButton, setDisabledButton] = React.useState(true)
 
+  // TODO: Send labelArray to training
+
   const handleChecked = (event) => {
-    // TODO: Vielleicht etwas mehr darauf auslegen, dass man später mehr Label auswählen kann
     if (labelArray.includes(event.target.value)) {
       setLabelArray([])
       setDisabledButton(true)
@@ -30,7 +31,7 @@ export default function DatasetInfo({ dataset }) {
   }
 
   return (
-    <Paper elevation={0}>
+    <Box>
       <Button
         fullWidth
         component={Link}
@@ -42,10 +43,13 @@ export default function DatasetInfo({ dataset }) {
         {`${disabledButton ? 'Choose a label' : 'Start Training!'}`}
       </Button>
       <FormLabel sx={{ ml: 0.5 }}>Label</FormLabel>
-      <List sx={{ maxHeight: 400, overflow: 'auto' }}>
+      <List sx={{ py: 0, maxHeight: 400, overflow: 'auto' }}>
         {dataset.labelDescriptors.map((descriptor, index) => {
           return (
-            <ListItem key={`${descriptor}-${index}-${dataset.datasetID}`}>
+            <ListItem
+              key={`${descriptor}-${index}-${dataset.datasetID}`}
+              sx={{ py: 0 }}
+            >
               {index === 0 ? null : <Divider></Divider>}
               <FormControlLabel
                 control={
@@ -63,7 +67,7 @@ export default function DatasetInfo({ dataset }) {
           )
         })}
       </List>
-    </Paper>
+    </Box>
   )
 }
 
