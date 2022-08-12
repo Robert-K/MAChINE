@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import ScoreboardsPage from './routes/ScoreboardsPage.js'
 import ModelsPage from './routes/ModelsPage.js'
 import ModelConfigPage from './routes/ModelConfigPage.js'
@@ -17,6 +17,8 @@ import DatasetPage from './routes/DatasetPage'
 import FittingsPage from './routes/FittingsPage'
 import api from './api'
 import { UserProvider } from './UserContext'
+import Particles from 'react-tsparticles'
+import { loadFull } from 'tsparticles'
 
 const themeLight = createTheme({
   palette: {
@@ -25,6 +27,16 @@ const themeLight = createTheme({
     },
     contrastbackground: {
       main: '#137C83',
+    },
+  },
+  components: {
+    MuiCard: {
+      styleOverrides: {
+        root: {
+          backgroundColor: 'rgba(255, 255, 255, .2)',
+          backdropFilter: 'blur(5px)',
+        },
+      },
     },
   },
 })
@@ -45,12 +57,28 @@ const themeDark = createTheme({
         },
       },
     },
+    MuiCard: {
+      styleOverrides: {
+        root: {
+          backgroundColor: 'rgba(30, 30, 30, .5)',
+          backdropFilter: 'blur(5px)',
+        },
+      },
+    },
   },
 })
 
 export default function App() {
   const [darkMode, setDarkMode] = React.useState(false)
   const [userName, setUserName] = React.useState(null)
+
+  const particlesInit = useCallback(async (engine) => {
+    console.log(engine)
+    // you can initiate the tsParticles instance (engine) here, adding custom shapes or presets
+    // this loads the tsparticles package bundle, it's the easiest method for getting everything ready
+    // starting from v2 you can add only the features you need reducing the bundle size
+    await loadFull(engine)
+  }, [])
 
   async function login(newUserName) {
     if (userName !== null) logout()
@@ -64,6 +92,7 @@ export default function App() {
         return false
       })
   }
+
   const logout = () => {
     api.logout(userID).catch((e) => console.log(e))
     setUserName(null)
@@ -87,6 +116,55 @@ export default function App() {
               darkModeButton={
                 <DarkModeButton setModeFunction={changeDarkMode} />
               }
+            />
+            <Particles
+              init={particlesInit}
+              options={{
+                fullScreen: {
+                  enable: true,
+                  zIndex: -1000000,
+                },
+                particles: {
+                  color: {
+                    value: '#aaaaaa',
+                  },
+                  links: {
+                    color: '#aaaaaa',
+                    distance: 150,
+                    enable: true,
+                    opacity: 0.3,
+                    width: 2,
+                  },
+                  collisions: {
+                    enable: true,
+                  },
+                  move: {
+                    direction: 'none',
+                    enable: true,
+                    outMode: 'bounce',
+                    random: false,
+                    speed: 0.1,
+                    straight: false,
+                  },
+                  number: {
+                    density: {
+                      enable: true,
+                      value_area: 800,
+                    },
+                    value: 50,
+                  },
+                  opacity: {
+                    value: 0.3,
+                  },
+                  shape: {
+                    type: 'circle',
+                  },
+                  size: {
+                    random: true,
+                    value: 7,
+                  },
+                },
+              }}
             />
             <Routes>
               <Route
