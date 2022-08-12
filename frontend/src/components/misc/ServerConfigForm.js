@@ -3,8 +3,9 @@ import RestoreIcon from '@mui/icons-material/Restore'
 import React from 'react'
 import Button from '@mui/material/Button'
 import api from '../../api'
+import PropTypes from 'prop-types'
 
-export default function ServerConfigForm() {
+export default function ServerConfigForm(props) {
   const [address, setAddress] = React.useState(api.getServerAddress())
   const [port, setPort] = React.useState(api.getServerPort)
   const [validIP, setValidIP] = React.useState(true)
@@ -13,11 +14,13 @@ export default function ServerConfigForm() {
   const handleAddressChange = (event) => {
     setAddress(event.target.value)
     setValidIP(!event.target.error)
+    props.onChange()
   }
 
   const handlePortChange = (event) => {
     setPort(event.target.value)
     setValidPort(!event.target.error)
+    props.onChange()
   }
 
   return (
@@ -84,4 +87,8 @@ export default function ServerConfigForm() {
       api.setServerPort(port)
     }
   }
+}
+
+ServerConfigForm.propTypes = {
+  onChange: PropTypes.func,
 }

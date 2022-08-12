@@ -21,9 +21,11 @@ export default function ServerStatusButton() {
   const open = Boolean(anchorEl)
   const id = open ? 'simple-popover' : undefined
 
-  setInterval(() => {
+  function updateColor() {
     setColor(api.getConnectionStatus() ? 'connected' : 'error')
-  }, 1000)
+  }
+
+  setInterval(updateColor, 1000)
 
   return (
     <div>
@@ -59,7 +61,7 @@ export default function ServerStatusButton() {
         }}
         transformOrigin={{ vertical: 'top', horizontal: 'right' }}
       >
-        <ServerConfigForm />
+        <ServerConfigForm onChange={updateColor} />
       </Popover>
     </div>
   )
