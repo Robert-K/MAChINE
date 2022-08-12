@@ -143,7 +143,7 @@ export default function App() {
                     enable: true,
                     outMode: 'bounce',
                     random: false,
-                    speed: 0.1,
+                    speed: 0.2,
                     straight: false,
                   },
                   number: {
@@ -162,6 +162,21 @@ export default function App() {
                   size: {
                     random: true,
                     value: 7,
+                  },
+                },
+                interactivity: {
+                  events: {
+                    onHover: {
+                      enable: true,
+                      mode: 'repulse',
+                    },
+                    resize: true,
+                  },
+                  modes: {
+                    repulse: {
+                      distance: 60,
+                      easing: 'ease-out-quad',
+                    },
                   },
                 },
               }}
