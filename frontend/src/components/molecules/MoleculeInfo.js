@@ -3,7 +3,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import AnalysisInfo from './AnalysisInfo'
 
-// TODO: Map keys am Ende nochmal überprüfen
+// TODO: Check .map keys again at the end
 export default function MoleculeInfo({ molecule }) {
   return (
     <List sx={{ maxHeight: 400, overflow: 'auto' }}>

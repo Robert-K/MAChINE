@@ -17,7 +17,6 @@ export default function DatasetPage() {
     })
   }, [])
 
-  /* TODO: Buncha duplicated code from MoleculeSelection. Might want to fix that at some point */
   const [open, setOpen] = React.useState(false)
   const [content, setContent] = React.useState(<h1>Placeholder</h1>)
   const [anchor, setAnchor] = React.useState(null)

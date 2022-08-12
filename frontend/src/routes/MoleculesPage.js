@@ -21,7 +21,6 @@ export default function MoleculesPage() {
     })
   }, [user])
 
-  // TODO
   let selectedMolecule = new Molecule('', '', '')
 
   let showEditor = true
