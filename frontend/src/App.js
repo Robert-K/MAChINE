@@ -19,60 +19,74 @@ import api from './api'
 import { UserProvider } from './UserContext'
 import Particles from 'react-tsparticles'
 import { loadFull } from 'tsparticles'
+import { deepmerge } from '@mui/utils'
 
-const themeLight = createTheme({
+const themeBase = {
   palette: {
-    primary: {
-      main: '#137C83',
-    },
-    contrastbackground: {
-      main: '#137C83',
-    },
     connected: {
       main: '#6dcd00',
     },
   },
-  components: {
-    MuiCard: {
-      styleOverrides: {
-        root: {
-          backgroundColor: 'rgba(255, 255, 255, .2)',
-          backdropFilter: 'blur(5px)',
-        },
-      },
-    },
+  typography: {
+    fontFamily: `"Poppins", "Helvetica", "Arial", sans-serif`,
+    fontSize: 14,
+    fontWeightLight: 300,
+    fontWeightRegular: 400,
+    fontWeightMedium: 400,
   },
-})
+}
 
-const themeDark = createTheme({
-  palette: {
-    primary: {
-      main: '#dc3984',
+const themeLight = createTheme(
+  deepmerge(themeBase, {
+    palette: {
+      primary: {
+        main: '#137C83',
+      },
+      contrastbackground: {
+        main: '#137C83',
+      },
     },
-    connected: {
-      main: '#6dcd00',
-    },
-    mode: 'dark',
-  },
-  components: {
-    MuiAppBar: {
-      styleOverrides: {
-        colorPrimary: {
-          backgroundColor: '#7E2E54',
-          backgroundImage: 'none',
+    components: {
+      MuiCard: {
+        styleOverrides: {
+          root: {
+            backgroundColor: 'rgba(255, 255, 255, .2)',
+            backdropFilter: 'blur(5px)',
+          },
         },
       },
     },
-    MuiCard: {
-      styleOverrides: {
-        root: {
-          backgroundColor: 'rgba(30, 30, 30, .5)',
-          backdropFilter: 'blur(5px)',
+  })
+)
+
+const themeDark = createTheme(
+  deepmerge(themeBase, {
+    palette: {
+      primary: {
+        main: '#dc3984',
+      },
+      mode: 'dark',
+    },
+    components: {
+      MuiAppBar: {
+        styleOverrides: {
+          colorPrimary: {
+            backgroundColor: '#7E2E54',
+            backgroundImage: 'none',
+          },
+        },
+      },
+      MuiCard: {
+        styleOverrides: {
+          root: {
+            backgroundColor: 'rgba(30, 30, 30, .5)',
+            backdropFilter: 'blur(5px)',
+          },
         },
       },
     },
-  },
-})
+  })
+)
 
 export default function App() {
   const [darkMode, setDarkMode] = React.useState(false)
@@ -136,10 +150,10 @@ export default function App() {
                   },
                   links: {
                     color: '#aaaaaa',
-                    distance: 150,
+                    distance: 111,
                     enable: true,
                     opacity: 0.3,
-                    width: 2,
+                    width: 4,
                   },
                   move: {
                     direction: 'none',
@@ -154,7 +168,7 @@ export default function App() {
                       enable: true,
                       value_area: 800,
                     },
-                    value: 50,
+                    value: 30,
                   },
                   opacity: {
                     value: 0.3,

@@ -7,6 +7,13 @@ import ServerStatusButton from './ServerStatusButton'
 import UserContext from '../../UserContext'
 import LogoutIcon from '@mui/icons-material/Logout'
 
+const links = [
+  { link: '/home', label: 'Home' },
+  { link: '/models', label: 'Models' },
+  { link: '/molecules', label: 'Molecules' },
+  { link: '/results', label: 'Scoreboards' },
+]
+
 export default function Navbar({ logoutFunction, darkModeButton }) {
   const locationName = useLocation().pathname
   const user = React.useContext(UserContext)
@@ -20,13 +27,22 @@ export default function Navbar({ logoutFunction, darkModeButton }) {
   return (
     <AppBar color="primary" position="sticky">
       <Toolbar>
-        <img src={logo} height="30px" mx="2" />
+        <img src={logo} height="30px" style={{ marginRight: 10 }} />
         {!(locationName !== '/' || user.userName) ? null : (
           <>
-            <NavLink to="/home">Home</NavLink>
-            <NavLink to="/models">Models</NavLink>
-            <NavLink to="/molecules">Molecules</NavLink>
-            <NavLink to="/results">Scoreboards</NavLink>
+            {links.map(({ link, label }) => (
+              <NavLink
+                to={link}
+                key={label}
+                style={({ isActive }) =>
+                  isActive
+                    ? { fontWeight: 600, paddingLeft: 10, paddingRight: 10 }
+                    : { paddingLeft: 10, paddingRight: 10 }
+                }
+              >
+                {label}
+              </NavLink>
+            ))}
           </>
         )}
 
