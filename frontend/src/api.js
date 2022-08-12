@@ -123,12 +123,15 @@ export default {
   },
 
   completeLogin(username) {
-    this.login(username)
+    return this.login(username)
       .then((r) => {
         userID = r.userID
-        return r.userID
+        return true
       })
-      .catch((e) => console.log(e))
+      .catch((e) => {
+        console.log(e)
+        return false
+      })
   },
 
   async logout() {
