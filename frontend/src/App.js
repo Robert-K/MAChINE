@@ -28,6 +28,9 @@ const themeLight = createTheme({
     contrastbackground: {
       main: '#137C83',
     },
+    connected: {
+      main: '#6dcd00',
+    },
   },
   components: {
     MuiCard: {
@@ -45,6 +48,9 @@ const themeDark = createTheme({
   palette: {
     primary: {
       main: '#dc3984',
+    },
+    connected: {
+      main: '#6dcd00',
     },
     mode: 'dark',
   },
