@@ -34,7 +34,6 @@ export default function SelectionList({
 }) {
   const [selectedIndex, setSelectedIndex] = React.useState('none')
   const [open, setOpen] = React.useState(false)
-  const [waited, setWaited] = React.useState(false)
   const [content, setContent] = React.useState(<h1>Placeholder</h1>)
   const [anchor, setAnchor] = React.useState(null)
 
@@ -48,12 +47,6 @@ export default function SelectionList({
     setContent(content)
     setAnchor(target)
     setOpen(show)
-    setWaited(false)
-    if (show) {
-      setTimeout(() => {
-        setWaited(true)
-      }, 150)
-    }
   }
 
   /**
@@ -126,7 +119,6 @@ export default function SelectionList({
           anchor={anchor}
           open={open}
           content={content}
-          animate={waited}
           popperWidth={300}
         />
       </CardContent>

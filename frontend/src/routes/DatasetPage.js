@@ -19,7 +19,6 @@ export default function DatasetPage() {
 
   /* TODO: Buncha duplicated code from MoleculeSelection. Might want to fix that at some point */
   const [open, setOpen] = React.useState(false)
-  const [waited, setWaited] = React.useState(false)
   const [content, setContent] = React.useState(<h1>Placeholder</h1>)
   const [anchor, setAnchor] = React.useState(null)
 
@@ -27,12 +26,6 @@ export default function DatasetPage() {
     setContent(content)
     setAnchor(target)
     setOpen(show)
-    setWaited(false)
-    if (show) {
-      setTimeout(() => {
-        setWaited(true)
-      }, 150)
-    }
   }
 
   const handleListItemClick = (event, index) => {
@@ -72,7 +65,6 @@ export default function DatasetPage() {
           anchor={anchor}
           open={open}
           content={content}
-          animate={waited}
           popperWidth={200}
         />
       </Box>

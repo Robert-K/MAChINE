@@ -18,7 +18,6 @@ import MoleculeInfo from '../molecules/MoleculeInfo'
 export default function MoleculeSelection({ molecules }) {
   const [selectedIndex, setSelectedIndex] = React.useState('a')
   const [open, setOpen] = React.useState(false)
-  const [waited, setWaited] = React.useState(false)
   const [content, setContent] = React.useState(<h1>Placeholder</h1>)
   const [anchor, setAnchor] = React.useState(null)
 
@@ -26,12 +25,6 @@ export default function MoleculeSelection({ molecules }) {
     setContent(content)
     setAnchor(target)
     setOpen(show)
-    setWaited(false)
-    if (show) {
-      setTimeout(() => {
-        setWaited(true)
-      }, 150)
-    }
   }
 
   const handleListItemClick = (event, index) => {
@@ -76,7 +69,6 @@ export default function MoleculeSelection({ molecules }) {
           anchor={anchor}
           open={open}
           content={content}
-          animate={waited}
           popperWidth={200}
         />
       </CardContent>

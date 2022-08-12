@@ -98,7 +98,6 @@ const Popper = styled(MuiPopper, {
 export default function DetailsPopper({
   open,
   anchor,
-  animate,
   content,
   popperWidth,
   arrowHeight,
@@ -109,10 +108,21 @@ export default function DetailsPopper({
   const id = canBeOpen ? 'transition-popper' : undefined
   const [arrowRef, setArrowRef] = React.useState()
   const [, forceUpdate] = React.useReducer((x) => x + 1, 0)
+  const [animate, setAnimate] = React.useState(false)
+
   const theme = useTheme()
   function handleClick() {
     forceUpdate()
   }
+
+  React.useEffect(() => {
+    setAnimate(false)
+    if (open) {
+      setTimeout(() => {
+        setAnimate(true)
+      }, 150)
+    }
+  }, [open])
 
   return (
     <>
