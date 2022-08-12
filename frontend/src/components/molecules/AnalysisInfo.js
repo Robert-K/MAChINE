@@ -17,10 +17,10 @@ export default function AnalysisInfo({ analysis }) {
   }
 
   return (
-    <React.Fragment key={JSON.stringify(analysis)}>
+    <>
       <ListItemButton onClick={() => toggleExpand()}>
         <ListItemText
-          primary={`${analysis.modelName}:`}
+          primary={`${analysis.modelName}`}
           secondary={`Fitting: ${analysis.fittingID}`}
         ></ListItemText>
         {expand ? <ExpandLess /> : <ExpandMore />}{' '}
@@ -44,7 +44,7 @@ export default function AnalysisInfo({ analysis }) {
           })}
         </List>
       </Collapse>
-    </React.Fragment>
+    </>
   )
 }
 

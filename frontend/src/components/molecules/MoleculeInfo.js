@@ -3,7 +3,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import AnalysisInfo from './AnalysisInfo'
 
-// TODO: Keys bei allen .map überprüfen & überarbeiten
+// TODO: Map keys am Ende nochmal überprüfen
 export default function MoleculeInfo({ molecule }) {
   return (
     <List sx={{ maxHeight: 400, overflow: 'auto' }}>
@@ -19,13 +19,9 @@ export default function MoleculeInfo({ molecule }) {
           <ListItemText primary="No analyses available" />
         </ListItem>
       )}
-      {molecule.analyses.map((analysis, i, analyses) => {
+      {molecule.analyses.map((analysis, i) => {
         return (
-          <React.Fragment
-            key={`${JSON.stringify(analysis)} ${i.toString()} ${
-              molecule.smiles
-            }`}
-          >
+          <React.Fragment key={`${molecule.smiles}-${analysis.fittingID}-${i}`}>
             {i === 0 ? null : <Divider></Divider>}
             <AnalysisInfo analysis={analysis}></AnalysisInfo>
           </React.Fragment>

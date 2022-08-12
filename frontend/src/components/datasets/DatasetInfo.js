@@ -45,11 +45,7 @@ export default function DatasetInfo({ dataset }) {
       <List sx={{ maxHeight: 400, overflow: 'auto' }}>
         {dataset.labelDescriptors.map((descriptor, index) => {
           return (
-            <ListItem
-              key={`${JSON.stringify(descriptor)} ${index.toString()} ${
-                dataset.datasetID
-              }`}
-            >
+            <ListItem key={`${descriptor}-${index}-${dataset.datasetID}`}>
               {index === 0 ? null : <Divider></Divider>}
               <FormControlLabel
                 control={
