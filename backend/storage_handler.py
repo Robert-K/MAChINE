@@ -44,8 +44,8 @@ class UserDataStorageHandler:
         atexit.register(self.clean_files)
 
     # Molecules
-    def add_molecule(self, smiles, name):
-        self.molecules[smiles] = {'name': name, 'analyses': dict()}
+    def add_molecule(self, smiles, cml, name):
+        self.molecules[smiles] = {'name': name, 'cml': cml, 'analyses': dict()}
         self.__save_summary_file('molecules.json', self.molecules)
 
     def get_molecules(self):
@@ -198,8 +198,8 @@ class StorageHandler:
 
     # User Storage
     # Molecules
-    def add_molecule(self, user_id, smiles, name):
-        self.get_user_handler(user_id).add_molecule(smiles, name)
+    def add_molecule(self, user_id, smiles, cml, name):
+        self.get_user_handler(user_id).add_molecule(smiles, cml, name)
 
     def get_molecules(self, user_id):
         return self.get_user_handler(user_id).get_molecules()

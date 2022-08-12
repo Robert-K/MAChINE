@@ -12,6 +12,7 @@ api = Api(app)
 parser = reqparse.RequestParser()
 parser.add_argument('username')
 parser.add_argument('smiles')
+parser.add_argument('cml')
 parser.add_argument('name')
 parser.add_argument('datasetID')
 parser.add_argument('modelID')
@@ -95,13 +96,14 @@ class Molecules(Resource):
             processed_molecules.append({
                 'name': current_molecule['name'],
                 'smiles': smiles,
+                'cml': current_molecule['cml'],
                 'analyses': analyses,
             })
         return processed_molecules, 200
 
     def patch(self, user_id):
         args = parser.parse_args()
-        return sh.add_molecule(user_id, args['smiles'], args['name']), 201
+        return sh.add_molecule(user_id, args['smiles'], args['cml'], args['name']), 201
 
 
 class Fittings(Resource):
@@ -230,7 +232,8 @@ def run(debug=True):
     test_user = str(hashlib.sha1('Tom'.encode('utf-8'), usedforsecurity=False).hexdigest())
     #test_user = str(hash('yee'))
     sh.add_user_handler(test_user)
-    sh.add_molecule(test_user, 'Clc(c(Cl)c(Cl)c1C(=O)O)c(Cl)c1Cl', 'MySuperCoolMolecule')  # For testing purposes
+    sh.add_molecule(test_user, 'Clc(c(Cl)c(Cl)c1C(=O)O)c(Cl)c1Cl', '<this be cml/>' ,'MySuperCoolMolecule')
+    # For testing purposes
 
     model_id = ml.create(test_user, 'myFirstModel', {'units_per_layer': 256, 'optimizer': 'Adam', 'loss': 'MeanSquaredError', 'metrics' : 'MeanAbsoluteError'}, 'id')
     model = sh.get_model(test_user, model_id)

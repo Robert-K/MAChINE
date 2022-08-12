@@ -35,7 +35,7 @@ export default function MoleculesPage() {
     setSelectedMolecule(
       molecules[index] !== undefined
         ? molecules[index]
-        : new Molecule('', '', '')
+        : new Molecule('', '', '',[])
     )
     showEditor = true
     console.log(molecules[index])

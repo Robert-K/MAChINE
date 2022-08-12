@@ -104,10 +104,11 @@ export default {
     })
   },
 
-  async addMolecule(smiles, name) {
+  async addMolecule(smiles, cml, name) {
     return api
       .patch(`/users/${userID}/molecules`, {
         smiles,
+        cml,
         name,
       })
       .then((response) => {
