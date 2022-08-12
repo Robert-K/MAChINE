@@ -1,6 +1,4 @@
 import axios from 'axios'
-import userContext from './UserContext'
-import React from 'react'
 
 const defaultAddress = '127.0.0.1' // TODO: insert correct URL
 const defaultPort = '5000'
@@ -10,6 +8,8 @@ let serverPort = defaultPort
 
 //
 const api = axios.create({ baseURL: `http://${serverAddress}:${serverPort}` })
+
+let userID = ''
 
 let connected = false
 
@@ -64,16 +64,14 @@ export default {
   },
 
   async getModelList() {
-    return api
-      .get(`/users/${React.useContext(userContext).userName}/models`)
-      .then((response) => {
-        return response.data
-      })
+    return api.get(`/users/${userID}/models`).then((response) => {
+      return response.data
+    })
   },
 
   async getMoleculeList() {
     return api
-      .get(`/users/${React.useContext(userContext).userName}/molecules`)
+      .get(`/users/${userID}/molecules`)
       .then((response) => {
         return response.data
       })
@@ -84,11 +82,9 @@ export default {
   },
 
   async getFittings() {
-    return api
-      .get(`/users/${React.useContext(userContext).userName}/fittings`)
-      .then((response) => {
-        return response.data
-      })
+    return api.get(`/users/${userID}/fittings`).then((response) => {
+      return response.data
+    })
   },
 
   async getDatasets() {
@@ -104,16 +100,14 @@ export default {
   },
 
   async addModelConfig(config) {
-    return api
-      .patch(`/users/${React.useContext(userContext).userName}/models`, config)
-      .then((response) => {
-        return response.data
-      })
+    return api.patch(`/users/${userID}/models`, config).then((response) => {
+      return response.data
+    })
   },
 
   async addMolecule(smiles, name) {
     return api
-      .patch(`/users/${React.useContext(userContext).userName}/molecules`, {
+      .patch(`/users/${userID}/molecules`, {
         smiles,
         name,
       })
@@ -127,20 +121,27 @@ export default {
       return response.data
     })
   },
-  async logout() {
-    return api
-      .delete(`/users/${React.useContext(userContext).userName}`)
-      .then((response) => {
-        return response.data
+
+  completeLogin(username) {
+    this.login(username)
+      .then((r) => {
+        userID = r.userID
+        return r.userID
       })
+      .catch((e) => console.log(e))
+  },
+
+  async logout() {
+    return api.delete(`/users/${userID}`).then((response) => {
+      userID = ''
+      return response.data
+    })
   },
 
   async analyzeMolecule() {
-    return api
-      .post(`/users/${React.useContext(userContext).userName}/analyze`)
-      .then((response) => {
-        return response.data
-      })
+    return api.post(`/users/${userID}/analyze`).then((response) => {
+      return response.data
+    })
   },
 
   async trainModel(
@@ -153,7 +154,7 @@ export default {
     batchSize
   ) {
     return api
-      .post(`/users/${React.useContext(userContext).userName}/train`, {
+      .post(`/users/${userID}/train`, {
         datasetID,
         modelID,
         fingerprint,

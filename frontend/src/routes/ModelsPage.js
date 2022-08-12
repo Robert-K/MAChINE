@@ -34,7 +34,7 @@ export default function ModelsPage() {
   const user = React.useContext(UserContext)
 
   React.useEffect(() => {
-    api.getModelList(user.userID).then((models) => setModelList(models))
+    api.getModelList().then((models) => setModelList(models))
   }, [user])
 
   const updateSelection = (model, index) => {
