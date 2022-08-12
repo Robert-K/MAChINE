@@ -135,9 +135,6 @@ export default function App() {
                     opacity: 0.3,
                     width: 2,
                   },
-                  collisions: {
-                    enable: true,
-                  },
                   move: {
                     direction: 'none',
                     enable: true,
@@ -174,7 +171,8 @@ export default function App() {
                   },
                   modes: {
                     repulse: {
-                      distance: 60,
+                      distance: 200,
+                      factor: 0.77,
                       easing: 'ease-out-quad',
                     },
                   },
