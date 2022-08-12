@@ -24,8 +24,6 @@ class BaseModel {
     this.optimizer = optimizer
     // array of predefined layers
     this.layers = layers
-    // Array of Dataset Identifiers TODO: is this necessary? ask André
-    // this.compatibleDatasets = compatibleDatasets
   }
 }
 export default BaseModel
