@@ -51,24 +51,15 @@ const themeDark = createTheme({
 function App() {
   const [darkMode, setDarkMode] = React.useState(false)
   const [userName, setUserName] = React.useState(null)
-  const [userID, setUserID] = React.useState(null)
 
   const login = (newUserName) => {
     logout()
     setUserName(newUserName)
-    api
-      .login(newUserName)
-      .then((r) => {
-        setUserID(r.userID)
-        console.log(r.userID) // TODO: Remove later when sure this works
-      })
-      .catch((e) => console.log(e))
-    /* Do things */
+    api.completeLogin(newUserName)
   }
   const logout = () => {
-    api.logout(userID).then()
+    api.logout().then()
     setUserName(null)
-    setUserID(null)
     /* Delete all Data */
     /* Delete trained models */
     /* Delete molecules */
@@ -81,7 +72,7 @@ function App() {
   return (
     <div className="App">
       <ThemeProvider theme={darkMode ? themeDark : themeLight}>
-        <UserProvider value={{ userName, userID }}>
+        <UserProvider value={{ userName }}>
           <CssBaseline />
           <BrowserRouter>
             <Navbar

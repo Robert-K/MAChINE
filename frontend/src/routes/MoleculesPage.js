@@ -13,7 +13,7 @@ export default function MoleculesPage() {
   const user = React.useContext(UserContext)
 
   React.useEffect(() => {
-    api.getMoleculeList(user.userID).then((moleculeList) => {
+    api.getMoleculeList().then((moleculeList) => {
       setMolecules(moleculeList)
       console.log(moleculeList)
     })

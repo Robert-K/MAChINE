@@ -17,7 +17,7 @@ export default function FittingsPage() {
   const user = React.useContext(UserContext)
 
   React.useEffect(() => {
-    api.getFittings(user.userID).then((fittings) => setFittingArray(fittings))
+    api.getFittings().then((fittings) => setFittingArray(fittings))
   }, [user])
 
   // Also code duplication from MoleculeSelection but I don't know what else to do

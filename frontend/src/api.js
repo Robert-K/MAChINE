@@ -9,6 +9,8 @@ let serverPort = defaultPort
 //
 const api = axios.create({ baseURL: `http://${serverAddress}:${serverPort}` })
 
+let userID = ''
+
 let connected = false
 
 setInterval(() => {
@@ -61,13 +63,13 @@ export default {
     api.defaults.baseURL = `http://${serverAddress}:${serverPort}`
   },
 
-  async getModelList(userID) {
+  async getModelList() {
     return api.get(`/users/${userID}/models`).then((response) => {
       return response.data
     })
   },
 
-  async getMoleculeList(userID) {
+  async getMoleculeList() {
     return api
       .get(`/users/${userID}/molecules`)
       .then((response) => {
@@ -79,7 +81,7 @@ export default {
       })
   },
 
-  async getFittings(userID) {
+  async getFittings() {
     return api.get(`/users/${userID}/fittings`).then((response) => {
       return response.data
     })
@@ -97,13 +99,13 @@ export default {
     })
   },
 
-  async addModelConfig(userID, config) {
+  async addModelConfig(config) {
     return api.patch(`/users/${userID}/models`, config).then((response) => {
       return response.data
     })
   },
 
-  async addMolecule(userID, smiles, name) {
+  async addMolecule(smiles, name) {
     return api
       .patch(`/users/${userID}/molecules`, {
         smiles,
@@ -119,20 +121,33 @@ export default {
       return response.data
     })
   },
-  async logout(userID) {
+
+  completeLogin(username) {
+    return this.login(username)
+      .then((r) => {
+        userID = r.userID
+        return true
+      })
+      .catch((e) => {
+        console.log(e)
+        return false
+      })
+  },
+
+  async logout() {
     return api.delete(`/users/${userID}`).then((response) => {
+      userID = ''
       return response.data
     })
   },
 
-  async analyzeMolecule(userID) {
+  async analyzeMolecule() {
     return api.post(`/users/${userID}/analyze`).then((response) => {
       return response.data
     })
   },
 
   async trainModel(
-    userID,
     datasetID,
     modelID,
     fingerprint,
