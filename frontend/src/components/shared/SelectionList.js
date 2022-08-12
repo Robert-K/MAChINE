@@ -1,20 +1,19 @@
 import React from 'react'
 import {
-  Avatar,
   Card,
   CardActions,
   CardContent,
+  IconButton,
   List,
-  ListItemAvatar,
   ListItemButton,
   ListItemText,
 } from '@mui/material'
 import Button from '@mui/material/Button'
 import PropTypes from 'prop-types'
-import stringToColor from '../../utils'
 import DetailsPopper from './DetailsPopper'
 import MoleculeInfo from '../molecules/MoleculeInfo'
 import AddIcon from '@mui/icons-material/Add'
+import InfoIcon from '@mui/icons-material/Info'
 
 /**
  * List of given elements with corresponding avatars and description text
@@ -58,6 +57,32 @@ export default function SelectionList({
   }
 
   /**
+   * popper button
+   * shows popper button if usePopper is true
+   * @param element
+   */
+  function popperButton(element) {
+    if (usePopper)
+      return (
+        <IconButton
+          aria-label="info"
+          color="primary"
+          onClick={(event) => {
+            handlePopper(
+              event.currentTarget,
+              <MoleculeInfo molecule={element}></MoleculeInfo>,
+              event.currentTarget !== anchor || !open
+            )
+            event.stopPropagation()
+            event.preventDefault()
+          }}
+        >
+          <InfoIcon />
+        </IconButton>
+      )
+  }
+
+  /**
    * click handler for list items
    * updates parent component's state if necessary
    * @param event
@@ -88,29 +113,12 @@ export default function SelectionList({
         <List sx={{ flexGrow: 1, overflow: 'auto' }}>
           {elements.map((element, index) => (
             <ListItemButton
-              key={element.name}
-              onDoubleClick={(event) =>
-                handleListItemClick(event, element, index)
-              }
-              onClick={(event) => {
-                if (usePopper) {
-                  handlePopper(
-                    event.currentTarget,
-                    <MoleculeInfo molecule={element}></MoleculeInfo>,
-                    event.currentTarget !== anchor || !open
-                  )
-                } else handleListItemClick(event, element, index)
-              }}
+              key={index + element.name}
+              onClick={(event) => handleListItemClick(event, element, index)}
               selected={selectedIndex === element.name}
             >
-              <ListItemAvatar>
-                <Avatar
-                  sx={{ bgcolor: stringToColor(`${element.name} peter`) }}
-                >
-                  <p>{element.name}</p>
-                </Avatar>
-              </ListItemAvatar>
               <ListItemText primary={element.name} />
+              {popperButton(element)}
             </ListItemButton>
           ))}
         </List>
