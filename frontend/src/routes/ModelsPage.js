@@ -20,7 +20,7 @@ import SelectionList from '../components/shared/SelectionList'
 import ExpandLess from '@mui/icons-material/ExpandLess'
 import ExpandMore from '@mui/icons-material/ExpandMore'
 import PropTypes from 'prop-types'
-import { Link, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import api from '../api'
 import UserContext from '../UserContext'
 
@@ -29,7 +29,7 @@ const gridHeight = '80vh'
  * Depicts a list of saved models and shows a description of the selected model on click
  */
 export default function ModelsPage() {
-  const [selectedModel, setSelectedModel] = React.useState(-1)
+  const [selectedIndex, setSelectedIndex] = React.useState(-1)
   const [modelList, setModelList] = React.useState([])
 
   const user = React.useContext(UserContext)
@@ -39,7 +39,7 @@ export default function ModelsPage() {
   }, [user])
 
   const updateSelection = (model, index) => {
-    setSelectedModel(index)
+    setSelectedIndex(index)
   }
 
   const navigate = useNavigate()
@@ -71,7 +71,7 @@ export default function ModelsPage() {
   )
 
   function ModelDescription() {
-    if (selectedModel < 0) {
+    if (selectedIndex < 0) {
       // no model selected
       return (
         <Card>
@@ -83,15 +83,15 @@ export default function ModelsPage() {
         </Card>
       )
     } else {
-      const currentModel = modelList[selectedModel]
+      const selectedModel = modelList[selectedIndex]
       return (
         <Card sx={{ maxHeight: gridHeight, height: gridHeight }}>
           <CardContent
             sx={{ flexDirection: 'column', height: '100%', display: 'flex' }}
           >
             <CardHeader
-              title={currentModel.name}
-              subheader={`Base Model: ${currentModel.baseModel}`}
+              title={selectedModel.name}
+              subheader={`Base Model: ${selectedModel.baseModel}`}
             ></CardHeader>
             <Divider />
             <Typography variant="h6" sx={{ pl: 2, pt: 2 }}>
@@ -99,7 +99,7 @@ export default function ModelsPage() {
             </Typography>
             {/* Adds a fitting for each fitting saved in the model */}
             <List sx={{ flexGrow: 1, overflow: 'auto' }}>
-              {currentModel.fittings.map((fitting) => (
+              {selectedModel.fittings.map((fitting) => (
                 <RenderFitting
                   fitting={fitting}
                   key={fitting.id}
@@ -108,7 +108,13 @@ export default function ModelsPage() {
             </List>
             <CardActions>
               <Grid container justifyContent="center">
-                <Button component={Link} to="/datasets">
+                <Button
+                  onClick={() => {
+                    navigate('/datasets', {
+                      state: { selectedModel },
+                    })
+                  }}
+                >
                   Select Training Data
                 </Button>
               </Grid>

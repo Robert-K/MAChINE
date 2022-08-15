@@ -23,8 +23,8 @@ export default function BaseModelCard({ baseModel }) {
        row of width 3*4=12 */}
       <Card>
         <CardActionArea
-          onDoubleClick={(e) => {
-            navigate('/modelconfig')
+          onClick={() => {
+            navigate('/modelconfig', { state: { baseModel } })
           }}
         >
           <CardContent>

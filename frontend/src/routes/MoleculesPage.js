@@ -1,7 +1,7 @@
 import React from 'react'
 import { Box, Button, Card, CardContent, Grid, TextField } from '@mui/material'
 import SelectionList from '../components/shared/SelectionList'
-import { Link } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { Jsme } from 'jsme-react'
 import UserContext from '../UserContext'
 import api from '../api'
@@ -91,6 +91,7 @@ function MoleculeEditor(show, smiles, onChange) {
 }
 
 function MoleculeView({ smiles, showEditor }) {
+  const navigate = useNavigate()
   function logSmiles(smiles) {
     console.log(smiles)
   }
@@ -119,12 +120,13 @@ function MoleculeView({ smiles, showEditor }) {
           </Grid>
           <Grid item>
             <Button
-              component={Link}
-              to="/trained-models"
               size="large"
               variant="outlined"
+              onClick={() => navigate('/trained-models', { state: { smiles } })}
+              disabled={!smiles}
               sx={{ minHeight: 55 }}
             >
+              {/* TODO: Rework disabled when MoleculeEditor is done */}
               Analyze!
             </Button>
           </Grid>
