@@ -109,6 +109,7 @@ export default function DetailsPopper({
   const [arrowRef, setArrowRef] = React.useState()
   const [, forceUpdate] = React.useReducer((x) => x + 1, 0)
   const [animate, setAnimate] = React.useState(false)
+  const [timeoutID, setTimeoutID] = React.useState(-1)
 
   const theme = useTheme()
   function handleClick() {
@@ -117,12 +118,15 @@ export default function DetailsPopper({
 
   React.useEffect(() => {
     setAnimate(false)
+    clearTimeout(timeoutID)
     if (open) {
-      setTimeout(() => {
-        setAnimate(true)
-      }, 150)
+      setTimeoutID(
+        setTimeout(() => {
+          setAnimate(true)
+        }, 150)
+      )
     }
-  }, [open])
+  }, [open, anchor, content])
 
   return (
     <>
