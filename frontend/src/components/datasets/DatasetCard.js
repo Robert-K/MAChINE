@@ -20,10 +20,9 @@ export default function DatasetCard({ dataset, doubleClickFunc, clickFunc }) {
         <CardMedia
           component="img"
           height="110"
-          image="/dataset.jpeg"
-          alt="data picture"
+          image={dataset.image}
+          alt="You should see a dataset picture here."
         />
-        {/* TODO: Select a non-copyrighted image */}
         <CardContent>
           <Typography gutterBottom component="div">
             {dataset.name} #{dataset.datasetID}
