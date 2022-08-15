@@ -221,7 +221,6 @@ DetailsPopper.propTypes = {
   anchor: PropTypes.object,
   open: PropTypes.bool.isRequired,
   content: PropTypes.any,
-  animate: PropTypes.bool.isRequired,
   popperWidth: PropTypes.number,
   arrowWidth: PropTypes.number,
   arrowHeight: PropTypes.number,
