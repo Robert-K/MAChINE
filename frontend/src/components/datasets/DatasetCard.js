@@ -20,7 +20,7 @@ export default function DatasetCard({ dataset, doubleClickFunc, clickFunc }) {
         <CardMedia
           component="img"
           height="110"
-          image={dataset.image}
+          src={`data:image/png;base64,${dataset.image}`}
           alt="You should see a dataset picture here."
         />
         <CardContent>
