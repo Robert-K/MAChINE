@@ -102,7 +102,8 @@ export default function App() {
 
   async function login(newUserName) {
     if (userName !== null) logout()
-    return api.completeLogin(newUserName)
+    return api
+      .completeLogin(newUserName)
       .then((r) => {
         setUserName(newUserName)
         return true
@@ -114,7 +115,7 @@ export default function App() {
   }
 
   const logout = () => {
-    api.logout(userID).catch((e) => console.log(e))
+    api.logout().catch((e) => console.log(e))
     setUserName(null)
     /* Delete all Data */
     /* Delete trained models */
