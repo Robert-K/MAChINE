@@ -1,16 +1,16 @@
 import React from 'react'
-import { List, TextField } from '@mui/material'
-import Button from '@mui/material/Button'
-import api from '../api'
-import Layer from '../internal/Layer'
-import LayerVisual from '../components/LayerVisual'
+// import { List, TextField } from '@mui/material'
+// import Button from '@mui/material/Button'
+// import api from '../api'
+// import Layer from '../internal/Layer'
+// import LayerVisual from '../components/LayerVisual'
 import { useLocation } from 'react-router-dom'
 import ModelVisual from '../components/ModelVisual'
 
 export default function ModelConfigPage() {
   const { state } = useLocation()
   const baseModel = state.baseModel
-
+  /*
   const [epochs, setEpochs] = React.useState(1000)
   const handleEpochsChange = (event) => {
     setEpochs(event.target.value)
@@ -33,8 +33,10 @@ export default function ModelConfigPage() {
   }
 
   const [answer, setanswer] = React.useState('Controlled')
+  
+ */
 
-  const testLayer = new Layer('Dense', 4)
+  //  const testLayer = new Layer('Dense', 4)
 
   /* const modelconfig = {
     epochs: '1000',
@@ -47,7 +49,7 @@ export default function ModelConfigPage() {
   } */
   return (
     <div>
-      <List>
+      {/* <List>
         <TextField
           sx={{ m: 3 }}
           required
@@ -137,7 +139,7 @@ export default function ModelConfigPage() {
           defaultValue=""
           value={answer}
         />
-      </List>
+      </List> */}
       <ModelVisual model={baseModel} />
     </div>
   )
