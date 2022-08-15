@@ -105,8 +105,11 @@ export default function App() {
     return api
       .completeLogin(newUserName)
       .then((r) => {
-        setUserName(newUserName)
-        return true
+        if (r) {
+          setUserName(newUserName)
+          return true
+        }
+        return false
       })
       .catch((e) => {
         console.log(e)
