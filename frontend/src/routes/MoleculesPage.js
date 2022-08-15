@@ -120,6 +120,7 @@ function MoleculeView(props) {
   const [molecule, setMolecule] = React.useState(mol)
   const [show3D, setShow3D] = React.useState(false)
   const [editorHeight, editorWidth] = ['600px', '800px']
+  const [molname, setMolName] = React.useState('')
   const navigate = useNavigate()
 
   return (
@@ -154,13 +155,24 @@ function MoleculeView(props) {
             }`}</Button>
           </Grid>
           <Grid item>
-            <TextField label="Name"></TextField>
+            <TextField
+              label="Molecule Name"
+              onChange={(e) => setMolName(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  saveMol()
+                }
+              }}
+            />
           </Grid>
           <Grid item style={{ flex: 1 }}>
             <Button
               size="large"
               variant="outlined"
               sx={{ minHeight: 55 }}
+              onClick={() => {
+                saveMol()
+              }}
               endIcon={<SaveIcon sx={{ ml: 1 }} />}
             >
               Save
@@ -182,6 +194,17 @@ function MoleculeView(props) {
       </CardContent>
     </Card>
   )
+
+  function saveMol() {
+    console.log('SAVED!')
+    api
+      .addMolecule(
+        Kekule.IO.saveFormatData(molecule, 'smi'),
+        Kekule.IO.saveFormatData(molecule, 'cml'),
+        molname
+      )
+      .then()
+  }
 }
 
 MoleculeView.propTypes = {

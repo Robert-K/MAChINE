@@ -4,6 +4,7 @@ import PropTypes from 'prop-types'
 
 const composer = new Kekule.Editor.Composer(document)
 composer.appendToElem(document.getElementById('editor'))
+composer.setAllowCreateNewChild(false)
 composer.setCommonToolButtons(['undo', 'redo', 'zoomIn', 'zoomOut'])
 composer.setChemToolButtons([
   'manipulate',
