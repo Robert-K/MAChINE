@@ -5,13 +5,11 @@ const defaultPort = '5000'
 
 let serverAddress = defaultAddress
 let serverPort = defaultPort
+let connected = false
 
-//
 const api = axios.create({ baseURL: `http://${serverAddress}:${serverPort}` })
 
 let userID = ''
-
-let connected = false
 
 setInterval(() => {
   heartbeat()
@@ -26,6 +24,11 @@ function heartbeat() {
     .catch(() => {
       connected = false
     })
+}
+
+function updateBaseURL() {
+  api.defaults.baseURL = `http://${serverAddress}:${serverPort}`
+  heartbeat()
 }
 
 export default {
@@ -51,16 +54,12 @@ export default {
 
   setServerAddress(address) {
     serverAddress = address
-    this.__updateBaseURL()
+    updateBaseURL()
   },
 
   setServerPort(port) {
     serverPort = port
-    this.__updateBaseURL()
-  },
-
-  __updateBaseURL() {
-    api.defaults.baseURL = `http://${serverAddress}:${serverPort}`
+    updateBaseURL()
   },
 
   async getModelList() {
@@ -122,7 +121,7 @@ export default {
     })
   },
 
-  completeLogin(username) {
+  async completeLogin(username) {
     return this.login(username)
       .then((r) => {
         userID = r.userID

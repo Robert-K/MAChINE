@@ -5,7 +5,7 @@ import Button from '@mui/material/Button'
 import api from '../../api'
 import PropTypes from 'prop-types'
 
-export default function ServerConfigForm(props) {
+export default function ServerConfigForm({ onChange }) {
   const [address, setAddress] = React.useState(api.getServerAddress())
   const [port, setPort] = React.useState(api.getServerPort)
   const [validIP, setValidIP] = React.useState(true)
@@ -14,13 +14,11 @@ export default function ServerConfigForm(props) {
   const handleAddressChange = (event) => {
     setAddress(event.target.value)
     setValidIP(!event.target.error)
-    props.onChange()
   }
 
   const handlePortChange = (event) => {
     setPort(event.target.value)
     setValidPort(!event.target.error)
-    props.onChange()
   }
 
   return (
@@ -85,6 +83,7 @@ export default function ServerConfigForm(props) {
     if (validIP && validPort) {
       api.setServerAddress(address)
       api.setServerPort(port)
+      onChange()
     }
   }
 }
