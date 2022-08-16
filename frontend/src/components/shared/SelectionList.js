@@ -22,6 +22,7 @@ import InfoIcon from '@mui/icons-material/Info'
  * @param elementType string describing element type
  * @param usePopper boolean whether a descriptive popper should appear
  * @param addFunc function to be called when using add button
+ * @param height string setting height of the list (ex: 88vh)
  * @returns {JSX.Element}
  */
 export default function SelectionList({
@@ -32,7 +33,7 @@ export default function SelectionList({
   addFunc,
   height,
 }) {
-  const [selectedIndex, setSelectedIndex] = React.useState('none')
+  const [selectedIndex, setSelectedIndex] = React.useState(-1)
   const [open, setOpen] = React.useState(false)
   const [content, setContent] = React.useState(<h1>Placeholder</h1>)
   const [anchor, setAnchor] = React.useState(null)
@@ -76,15 +77,13 @@ export default function SelectionList({
   }
 
   /**
-   * click handler for list items
+   * Handler for Index Changes (aka list item clicks & "New"-Button clicks)
    * updates parent component's state if necessary
-   * @param event
-   * @param element
    * @param index of clicked item
    */
-  const handleListItemClick = (event, element, index) => {
+  const handleIndexChange = (index) => {
     setSelectedIndex(index)
-    if (updateFunc !== undefined) updateFunc(element, index)
+    if (updateFunc !== undefined) updateFunc(index)
     if (usePopper) handlePopper(null, <div />, false)
   }
 
@@ -99,7 +98,12 @@ export default function SelectionList({
         sx={{ flexDirection: 'column', height: '100%', display: 'flex' }}
       >
         <CardActions>
-          <Button onClick={() => addFunc()}>
+          <Button
+            onClick={() => {
+              handleIndexChange(-1)
+              addFunc()
+            }}
+          >
             <AddIcon sx={{ mr: 1 }} /> Add a {elementType}
           </Button>
         </CardActions>
@@ -107,8 +111,12 @@ export default function SelectionList({
           {elements.map((element, index) => (
             <ListItemButton
               key={index + element.name}
-              onClick={(event) => handleListItemClick(event, element, index)}
-              selected={selectedIndex === element.name}
+              onClick={() => {
+                // Toggles selection if already selected
+                const newIndex = selectedIndex !== index ? index : -1
+                handleIndexChange(newIndex)
+              }}
+              selected={selectedIndex === index}
             >
               <ListItemText primary={element.name} />
               {popperButton(element)}

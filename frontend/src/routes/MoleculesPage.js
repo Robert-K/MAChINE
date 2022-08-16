@@ -12,6 +12,9 @@ import PropTypes from 'prop-types'
 const gridHeight = '80vh'
 export default function MoleculesPage() {
   const [molecules, setMolecules] = React.useState([])
+  const [selectedMolecule, setSelectedMolecule] = React.useState(
+    new Molecule('', '', '')
+  )
   const user = React.useContext(UserContext)
 
   React.useEffect(() => {
@@ -21,25 +24,17 @@ export default function MoleculesPage() {
     })
   }, [user])
 
-  let selectedMolecule = new Molecule('', '', '')
-
   let showEditor = true
 
-  function onMoleculeSelect(molecule, index) {
-    selectedMolecule = molecules[index]
+  function onMoleculeSelect(index) {
+    setSelectedMolecule(
+      molecules[index] !== undefined
+        ? molecules[index]
+        : new Molecule('', '', '')
+    )
     showEditor = true
-    console.log(selectedMolecule)
-    forceUpdate()
+    console.log(molecules[index])
   }
-
-  function useForceUpdate() {
-    const [, setValue] = React.useState(0) // integer state
-    return () => setValue((value) => value + 1) // update state to force render
-    // An function that increment 👆🏻 the previous state like here
-    // is better than directly setting `value + 1`
-  }
-
-  const forceUpdate = useForceUpdate()
 
   return (
     <Box sx={{ m: 5 }}>

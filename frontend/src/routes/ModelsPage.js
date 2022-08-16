@@ -38,7 +38,7 @@ export default function ModelsPage() {
     api.getModelList().then((models) => setModelList(models))
   }, [user])
 
-  const updateSelection = (model, index) => {
+  const updateSelection = (index) => {
     setSelectedIndex(index)
   }
 
