@@ -1,5 +1,13 @@
 import React from 'react'
-import { Box, Button, Card, CardContent, Grid, TextField } from '@mui/material'
+import {
+  Box,
+  Button,
+  Card,
+  CardActions,
+  CardContent,
+  Grid,
+  TextField,
+} from '@mui/material'
 import SelectionList from '../components/shared/SelectionList'
 import { useNavigate } from 'react-router-dom'
 import { Kekule } from 'kekule'
@@ -7,6 +15,7 @@ import UserContext from '../UserContext'
 import api from '../api'
 import Molecule from '../internal/Molecule'
 import SaveIcon from '@mui/icons-material/Save'
+import VisibilityIcon from '@mui/icons-material/Visibility'
 import PropTypes from 'prop-types'
 import MoleculeEditor from '../components/molecules/MoleculeEditor'
 import MoleculeRenderer from '../components/molecules/MoleculeRenderer'
@@ -130,7 +139,7 @@ function MoleculeView({ selectedSmiles, update }) {
   const navigate = useNavigate()
 
   return (
-    <Card sx={{ maxHeight: gridHeight, height: gridHeight }}>
+    <Card>
       <CardContent
         sx={{ flexDirection: 'column', height: '100%', display: 'flex' }}
       >
@@ -151,52 +160,49 @@ function MoleculeView({ selectedSmiles, update }) {
                 height={editorHeight}
               />
             )}
-          </Grid>
-          <Grid item>
-            <Button onClick={() => setShow3D(!show3D)}>{`Switch to ${
-              show3D ? '2D-Editor' : '3D-Viewer'
-            }`}</Button>
-          </Grid>
-          <Grid item>
-            <TextField
-              label="Molecule Name"
-              onChange={(e) => setMolName(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  saveMol()
-                }
-              }}
-            />
-          </Grid>
-          <Grid item style={{ flex: 1 }}>
+
             <Button
-              size="large"
-              variant="outlined"
-              sx={{ minHeight: 55 }}
-              onClick={() => {
-                saveMol()
-              }}
-              endIcon={<SaveIcon sx={{ ml: 1 }} />}
-            >
-              Save
-            </Button>
-          </Grid>
-          <Grid item>
-            <Button
-              size="large"
-              variant="outlined"
-              onClick={() =>
-                navigate('/trained-models', { state: { selectedSmiles } })
-              }
-              disabled={!selectedSmiles}
-              sx={{ minHeight: 55 }}
-            >
-              {/* TODO: Rework disabled when MoleculeEditor is done */}
-              Analyze!
-            </Button>
+              variant="contained"
+              onClick={() => setShow3D(!show3D)}
+              endIcon={<VisibilityIcon />}
+            >{`Switch to ${show3D ? '2D-Editor' : '3D-Viewer'}`}</Button>
           </Grid>
         </Grid>
       </CardContent>
+      <CardActions>
+        <TextField
+          label="Molecule Name"
+          onChange={(e) => setMolName(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              saveMol()
+            }
+          }}
+        />
+        <Button
+          size="large"
+          variant="outlined"
+          sx={{ minHeight: 55, marginRight: 'auto' }}
+          onClick={() => {
+            saveMol()
+          }}
+          endIcon={<SaveIcon sx={{ ml: 1 }} />}
+        >
+          Save
+        </Button>
+        <Button
+          size="large"
+          variant="outlined"
+          onClick={() =>
+            navigate('/trained-models', { state: { selectedSmiles } })
+          }
+          disabled={!selectedSmiles}
+          sx={{ minHeight: 55 }}
+        >
+          {/* TODO: Rework disabled when MoleculeEditor is done */}
+          Analyze!
+        </Button>
+      </CardActions>
     </Card>
   )
 
