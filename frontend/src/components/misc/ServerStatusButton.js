@@ -2,8 +2,9 @@ import * as React from 'react'
 import Popover from '@mui/material/Popover'
 import LanIcon from '@mui/icons-material/Lan'
 import ServerConfigForm from './ServerConfigForm'
-import { Badge, IconButton } from '@mui/material'
-import api from '../api'
+import { Badge, IconButton, badgeClasses } from '@mui/material'
+import api from '../../api'
+
 export default function ServerStatusButton() {
   const [anchorEl, setAnchorEl] = React.useState(null)
 
@@ -20,18 +21,32 @@ export default function ServerStatusButton() {
   const open = Boolean(anchorEl)
   const id = open ? 'simple-popover' : undefined
 
-  setInterval(() => {
-    setColor(api.getConnectionStatus() ? 'success' : 'error')
-  }, 1000)
+  function updateColor() {
+    setColor(api.getConnectionStatus() ? 'connected' : 'error')
+  }
+
+  setInterval(updateColor, 1000)
 
   return (
     <div>
       <IconButton
+        sx={{ color: 'white' }}
         aria-describedby={id}
         variant="contained"
         onClick={handleClick}
       >
-        <Badge variant="dot" color={color}>
+        <Badge
+          variant="dot"
+          color={color}
+          sx={{
+            [`& .${badgeClasses.dot}`]: {
+              width: 12,
+              height: 12,
+              borderRadius: '50%',
+              border: '2px solid white',
+            },
+          }}
+        >
           <LanIcon />
         </Badge>
       </IconButton>
@@ -46,7 +61,7 @@ export default function ServerStatusButton() {
         }}
         transformOrigin={{ vertical: 'top', horizontal: 'right' }}
       >
-        <ServerConfigForm />
+        <ServerConfigForm onChangeSubmit={updateColor} />
       </Popover>
     </div>
   )

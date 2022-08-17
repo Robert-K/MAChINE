@@ -5,9 +5,9 @@
 import React from 'react'
 import { Container } from '@mui/material'
 import Grid from '@mui/material/Grid'
-import FittingCard from '../components/FittingCard'
+import FittingCard from '../components/models/FittingCard'
 import Button from '@mui/material/Button'
-import DetailsPopper from '../components/DetailsPopper'
+import DetailsPopper from '../components/shared/DetailsPopper'
 import api from '../api'
 import UserContext from '../UserContext'
 
@@ -22,7 +22,6 @@ export default function FittingsPage() {
 
   // Also code duplication from MoleculeSelection but I don't know what else to do
   const [open, setOpen] = React.useState(false)
-  const [waited, setWaited] = React.useState(false)
   const [content, setContent] = React.useState(<h1>Placeholder</h1>)
   const [anchor, setAnchor] = React.useState(null)
 
@@ -30,12 +29,6 @@ export default function FittingsPage() {
     setContent(content)
     setAnchor(target)
     setOpen(show)
-    setWaited(false)
-    if (show) {
-      setTimeout(() => {
-        setWaited(true)
-      }, 150)
-    }
   }
 
   return (
@@ -56,12 +49,7 @@ export default function FittingsPage() {
             }}
           />
         ))}
-        <DetailsPopper
-          anchor={anchor}
-          open={open}
-          content={content}
-          animate={waited}
-        />
+        <DetailsPopper anchor={anchor} open={open} content={content} />
       </Grid>
     </Container>
   )

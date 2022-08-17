@@ -95,10 +95,9 @@ const Popper = styled(MuiPopper, {
  * @param arrowWidth Number, width of Arrow pointing to anchor
  * @param extraArrowLength Number, additional length of Arrow pointing to anchor
  */
-function DetailsPopper({
+export default function DetailsPopper({
   open,
   anchor,
-  animate,
   content,
   popperWidth,
   arrowHeight,
@@ -109,10 +108,25 @@ function DetailsPopper({
   const id = canBeOpen ? 'transition-popper' : undefined
   const [arrowRef, setArrowRef] = React.useState()
   const [, forceUpdate] = React.useReducer((x) => x + 1, 0)
+  const [animate, setAnimate] = React.useState(false)
+  const [timeoutID, setTimeoutID] = React.useState(-1)
+
   const theme = useTheme()
   function handleClick() {
     forceUpdate()
   }
+
+  React.useEffect(() => {
+    setAnimate(false)
+    clearTimeout(timeoutID)
+    if (open) {
+      setTimeoutID(
+        setTimeout(() => {
+          setAnimate(true)
+        }, 150)
+      )
+    }
+  }, [open, anchor, content])
 
   return (
     <>
@@ -211,7 +225,6 @@ DetailsPopper.propTypes = {
   anchor: PropTypes.object,
   open: PropTypes.bool.isRequired,
   content: PropTypes.any,
-  animate: PropTypes.bool.isRequired,
   popperWidth: PropTypes.number,
   arrowWidth: PropTypes.number,
   arrowHeight: PropTypes.number,
@@ -224,4 +237,3 @@ DetailsPopper.defaultProps = {
   arrowHeight: 32,
   extraArrowLength: 0,
 }
-export default DetailsPopper

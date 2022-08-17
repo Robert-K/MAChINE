@@ -2,9 +2,10 @@ import { Box, IconButton, TextField } from '@mui/material'
 import RestoreIcon from '@mui/icons-material/Restore'
 import React from 'react'
 import Button from '@mui/material/Button'
-import api from '../api'
+import api from '../../api'
+import PropTypes from 'prop-types'
 
-export default function ServerConfigForm() {
+export default function ServerConfigForm({ onChangeSubmit }) {
   const [address, setAddress] = React.useState(api.getServerAddress())
   const [port, setPort] = React.useState(api.getServerPort)
   const [validIP, setValidIP] = React.useState(true)
@@ -82,6 +83,11 @@ export default function ServerConfigForm() {
     if (validIP && validPort) {
       api.setServerAddress(address)
       api.setServerPort(port)
+      onChangeSubmit()
     }
   }
+}
+
+ServerConfigForm.propTypes = {
+  onChangeSubmit: PropTypes.func,
 }

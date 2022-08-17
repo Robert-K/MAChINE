@@ -9,16 +9,15 @@ import {
   ListItemButton,
   ListItemText,
 } from '@mui/material'
-import stringToColor from '../utils'
+import stringToColor from '../../utils'
 import Button from '@mui/material/Button'
 import PropTypes from 'prop-types'
-import DetailsPopper from './DetailsPopper'
-import MoleculeInfo from './MoleculeInfo'
+import DetailsPopper from '../shared/DetailsPopper'
+import MoleculeInfo from '../molecules/MoleculeInfo'
 
-function MoleculeSelection(props) {
+export default function MoleculeSelection({ molecules }) {
   const [selectedIndex, setSelectedIndex] = React.useState('a')
   const [open, setOpen] = React.useState(false)
-  const [waited, setWaited] = React.useState(false)
   const [content, setContent] = React.useState(<h1>Placeholder</h1>)
   const [anchor, setAnchor] = React.useState(null)
 
@@ -26,12 +25,6 @@ function MoleculeSelection(props) {
     setContent(content)
     setAnchor(target)
     setOpen(show)
-    setWaited(false)
-    if (show) {
-      setTimeout(() => {
-        setWaited(true)
-      }, 150)
-    }
   }
 
   const handleListItemClick = (event, index) => {
@@ -43,7 +36,7 @@ function MoleculeSelection(props) {
     <Card>
       <CardContent>
         <List sx={{ height: '612px', maxHeight: '612px', overflow: 'auto' }}>
-          {props.molecules.map((molecule) => (
+          {molecules.map((molecule) => (
             <ListItemButton
               key={molecule.smiles}
               onDoubleClick={(event) =>
@@ -76,7 +69,6 @@ function MoleculeSelection(props) {
           anchor={anchor}
           open={open}
           content={content}
-          animate={waited}
           popperWidth={200}
         />
       </CardContent>
@@ -90,5 +82,3 @@ function MoleculeSelection(props) {
 MoleculeSelection.propTypes = {
   molecules: PropTypes.array.isRequired,
 }
-
-export default MoleculeSelection

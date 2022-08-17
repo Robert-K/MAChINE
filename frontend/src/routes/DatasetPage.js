@@ -1,9 +1,9 @@
 import React from 'react'
-import { Container, Grid } from '@mui/material'
-import DatasetCard from '../components/DatasetCard'
+import { Box } from '@mui/material'
+import DatasetCard from '../components/datasets/DatasetCard'
 import PropTypes from 'prop-types'
-import DetailsPopper from '../components/DetailsPopper'
-import DatasetInfo from '../components/DatasetInfo'
+import DetailsPopper from '../components/shared/DetailsPopper'
+import DatasetInfo from '../components/datasets/DatasetInfo'
 
 import api from '../api'
 
@@ -17,9 +17,7 @@ export default function DatasetPage() {
     })
   }, [])
 
-  /* TODO: Buncha duplicated code from MoleculeSelection. Might want to fix that at some point */
   const [open, setOpen] = React.useState(false)
-  const [waited, setWaited] = React.useState(false)
   const [content, setContent] = React.useState(<h1>Placeholder</h1>)
   const [anchor, setAnchor] = React.useState(null)
 
@@ -27,12 +25,6 @@ export default function DatasetPage() {
     setContent(content)
     setAnchor(target)
     setOpen(show)
-    setWaited(false)
-    if (show) {
-      setTimeout(() => {
-        setWaited(true)
-      }, 150)
-    }
   }
 
   const handleListItemClick = (event, index) => {
@@ -41,8 +33,14 @@ export default function DatasetPage() {
   }
 
   return (
-    <Container>
-      <Grid container spacing={4} sx={{ mt: 1, mb: 5 }}>
+    <Box sx={{ m: 5 }}>
+      <Box
+        sx={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(4,1fr)',
+          gap: 5,
+        }}
+      >
         {datasets.map((dataset) => (
           <DatasetCard
             dataset={dataset}
@@ -66,11 +64,10 @@ export default function DatasetPage() {
           anchor={anchor}
           open={open}
           content={content}
-          animate={waited}
           popperWidth={200}
         />
-      </Grid>
-    </Container>
+      </Box>
+    </Box>
   )
 }
 

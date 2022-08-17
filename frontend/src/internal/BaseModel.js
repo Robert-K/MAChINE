@@ -1,14 +1,5 @@
 class BaseModel {
-  constructor(
-    name,
-    id,
-    type,
-    taskType,
-    lossFunction,
-    optimizer,
-    layers,
-    compatibleDatasets
-  ) {
+  constructor(name, id, type, taskType, lossFunction, optimizer, layers) {
     // String, name for base model
     this.name = name
     // Identifier for base model
@@ -24,8 +15,6 @@ class BaseModel {
     this.optimizer = optimizer
     // array of predefined layers
     this.layers = layers
-    // Array of Dataset Identifiers TODO: is this necessary? ask André
-    // this.compatibleDatasets = compatibleDatasets
   }
 }
 export default BaseModel

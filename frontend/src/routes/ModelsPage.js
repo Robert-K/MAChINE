@@ -16,19 +16,20 @@ import {
   useTheme,
 } from '@mui/material'
 import Button from '@mui/material/Button'
-import SelectionList from '../components/SelectionList'
+import SelectionList from '../components/shared/SelectionList'
 import ExpandLess from '@mui/icons-material/ExpandLess'
 import ExpandMore from '@mui/icons-material/ExpandMore'
 import PropTypes from 'prop-types'
-import { Link, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import api from '../api'
 import UserContext from '../UserContext'
 
+const gridHeight = '80vh'
 /**
  * Depicts a list of saved models and shows a description of the selected model on click
  */
 export default function ModelsPage() {
-  const [selectedModel, setSelectedModel] = React.useState(-1)
+  const [selectedIndex, setSelectedIndex] = React.useState(-1)
   const [modelList, setModelList] = React.useState([])
 
   const user = React.useContext(UserContext)
@@ -37,35 +38,40 @@ export default function ModelsPage() {
     api.getModelList().then((models) => setModelList(models))
   }, [user])
 
-  const updateSelection = (model, index) => {
-    setSelectedModel(index)
+  const updateSelection = (index) => {
+    setSelectedIndex(index)
   }
 
   const navigate = useNavigate()
 
   return (
     <Box sx={{ m: 5 }}>
-      <Grid container spacing={2}>
-        <Grid item md={3}>
-          {
-            <SelectionList
-              updateFunc={updateSelection}
-              elements={modelList}
-              elementType="model"
-              usePopper={false}
-              addFunc={() => navigate('/base-models')}
-            ></SelectionList>
-          }
+      <Grid
+        container
+        direction="row"
+        justifyContent="center"
+        alignItems="stretch"
+        columnSpacing={2}
+      >
+        <Grid item xs={3}>
+          <SelectionList
+            updateFunc={updateSelection}
+            elements={modelList}
+            elementType="model"
+            usePopper={false}
+            addFunc={() => navigate('/base-models')}
+            height={gridHeight}
+          ></SelectionList>
         </Grid>
-        <Grid item md={9}>
-          {ModelDescription()}
+        <Grid item xs={9}>
+          <ModelDescription />
         </Grid>
       </Grid>
     </Box>
   )
 
   function ModelDescription() {
-    if (selectedModel < 0) {
+    if (selectedIndex < 0) {
       // no model selected
       return (
         <Card>
@@ -77,56 +83,68 @@ export default function ModelsPage() {
         </Card>
       )
     } else {
-      const currentModel = modelList[selectedModel]
+      const selectedModel = modelList[selectedIndex]
       return (
-        <Card>
-          <CardContent>
-            <CardHeader>{currentModel.name}</CardHeader>
-            <Typography>Base Model: {currentModel.baseModel}</Typography>
-            <Typography>Trained on: </Typography>
-            {renderFittings(currentModel.fittings)}
+        <Card sx={{ maxHeight: gridHeight, height: gridHeight }}>
+          <CardContent
+            sx={{ flexDirection: 'column', height: '100%', display: 'flex' }}
+          >
+            <CardHeader
+              title={selectedModel.name}
+              subheader={`Base Model: ${selectedModel.baseModel}`}
+            ></CardHeader>
+            <Divider />
+            <Typography variant="h6" sx={{ pl: 2, pt: 2 }}>
+              Trained fittings:
+            </Typography>
+            {/* Adds a fitting for each fitting saved in the model */}
+            <List sx={{ flexGrow: 1, overflow: 'auto' }}>
+              {selectedModel.fittings.map((fitting) => (
+                <RenderFitting
+                  fitting={fitting}
+                  key={fitting.id}
+                ></RenderFitting>
+              ))}
+            </List>
+            <CardActions>
+              <Grid container justifyContent="center">
+                <Button
+                  onClick={() => {
+                    navigate('/datasets', {
+                      state: { selectedModel },
+                    })
+                  }}
+                >
+                  Select Training Data
+                </Button>
+              </Grid>
+            </CardActions>
           </CardContent>
-          <CardActions>
-            <Grid container justifyContent="center">
-              <Button component={Link} to="/datasets">
-                Select Training Data
-              </Button>
-            </Grid>
-          </CardActions>
         </Card>
       )
     }
   }
 }
 
-function renderFittings(fittings) {
-  return (
-    <List>
-      {fittings.map((fitting) => (
-        <RenderFitting fitting={fitting} key={fitting.id}></RenderFitting>
-      ))}
-    </List>
-  )
-}
-
 /**
  * renders a fitting into a collapsable list
- * @param props contains the fitting to be rendered
+ * @param fitting the fitting to be rendered
  * @returns {JSX.Element}
  */
-function RenderFitting(props) {
+function RenderFitting({ fitting }) {
   const [open, setOpen] = React.useState(false)
   const toggleOpen = () => {
     setOpen(!open)
   }
   const theme = useTheme()
   return (
-    <ListItem key={props.fitting.id}>
+    <ListItem key={fitting.id}>
       <Box sx={{ width: 1 }}>
         <ListItemButton onClick={() => toggleOpen()}>
           {open ? <ExpandLess /> : <ExpandMore />}
           <ListItemText
-            primary={props.fitting.datasetID}
+            primary={`Dataset ID: ${fitting.datasetID}`}
+            secondary={`Fitting ID: ${fitting.id}`}
             sx={{ color: theme.palette.primary.main }}
           ></ListItemText>
         </ListItemButton>
@@ -143,21 +161,21 @@ function RenderFitting(props) {
                 sx={{ color: theme.palette.primary.main }}
                 primary="Epochs: "
               ></ListItemText>
-              {props.fitting.epochs}
+              {fitting.epochs}
             </ListItem>
             <ListItem>
               <ListItemText
                 sx={{ color: theme.palette.primary.main }}
                 primary="Batch Size: "
               ></ListItemText>
-              {props.fitting.batchSize}
+              {fitting.batchSize}
             </ListItem>
             <ListItem>
               <ListItemText
                 sx={{ color: theme.palette.primary.main }}
                 primary="Accuracy:"
               ></ListItemText>
-              {props.fitting.accuracy}%
+              {fitting.accuracy}%
             </ListItem>
           </List>
         </Collapse>

@@ -1,5 +1,5 @@
 import React from 'react'
-import api from './api.js'
+import api from '../../api.js'
 import PropTypes from 'prop-types'
 import Button from '@mui/material/Button'
 

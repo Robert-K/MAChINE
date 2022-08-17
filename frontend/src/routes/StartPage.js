@@ -7,19 +7,31 @@ import {
   Stack,
   TextField,
   useTheme,
+  CircularProgress,
 } from '@mui/material'
 import PropTypes from 'prop-types'
 import { useNavigate } from 'react-router-dom'
 
-function StartPage(props) {
+export default function StartPage({ onLogin }) {
   const [enteredName, setEnteredName] = React.useState('')
+  const [connecting, setConnecting] = React.useState(false)
+  const [connectionFailed, setConnectionFailed] = React.useState(false)
+
   const navigate = useNavigate()
   const updateName = (text) => {
     setEnteredName(text)
   }
   const submitName = () => {
-    props.sendNameAway(enteredName)
-    navigate('/home')
+    setConnecting(true)
+    setConnectionFailed(false)
+    onLogin(enteredName).then((result) => {
+      setConnecting(false)
+      if (result) {
+        navigate('/home')
+      } else {
+        setConnectionFailed(true)
+      }
+    })
   }
 
   const theme = useTheme()
@@ -101,6 +113,32 @@ function StartPage(props) {
               Start your journey!
             </Button>
           </Stack>
+          {/* Connecting... text */}
+          <Stack
+            direction="row"
+            spacing={4}
+            justifyContent="center"
+            sx={{ pt: 4 }}
+          >
+            {connecting ? <CircularProgress></CircularProgress> : null}
+            <Box
+              sx={{
+                position: 'relative',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <Typography
+                variant="caption"
+                component="div"
+                color="text.secondary"
+              >
+                {connecting ? 'connecting...' : ''}
+                {connectionFailed ? 'Connection failed. Please try again' : ''}
+              </Typography>
+            </Box>
+          </Stack>
         </Box>
       </main>
     </Box>
@@ -108,6 +146,5 @@ function StartPage(props) {
 }
 
 StartPage.propTypes = {
-  sendNameAway: PropTypes.func.isRequired,
+  onLogin: PropTypes.func.isRequired,
 }
-export default StartPage

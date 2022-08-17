@@ -7,10 +7,11 @@ import {
   CardActions,
   CardContent,
   CardMedia,
+  Collapse,
   Grid,
-  IconButton,
   Stack,
   Typography,
+  styled,
 } from '@mui/material'
 import DownloadIcon from '@mui/icons-material/Download'
 import InfoIcon from '@mui/icons-material/Info'
@@ -22,31 +23,36 @@ export default function HomePage() {
     <div className="Home" align="center">
       <Box
         sx={{
-          maxWidth: 350,
+          maxWidth: 250,
           p: 4,
         }}
       >
         <Image sx={{ filter: 'invert(50%)' }} src={logo} />
       </Box>
       <HelpPanel />
-      <Stack direction="row" justifyContent="center" spacing={4}>
-        <IconButton
+      <Stack direction="row" justifyContent="space-evenly" spacing={0}>
+        <Button
           aria-label="Result"
           onClick={() => setSelection('download')}
+          endIcon={<DownloadIcon />}
         >
-          <DownloadIcon />
-        </IconButton>
-        <IconButton aria-label="Info" onClick={() => setSelection('info')}>
-          <InfoIcon />
-        </IconButton>
+          Take your work home
+        </Button>
+        <Button
+          aria-label="Info"
+          onClick={() => setSelection('info')}
+          startIcon={<InfoIcon />}
+        >
+          About us
+        </Button>
       </Stack>
       <SelectedPanel selected={selection} />
     </div>
   )
 }
 
-function SelectedPanel(props) {
-  switch (props.selected) {
+function SelectedPanel({ selected }) {
+  switch (selected) {
     case 'info':
       return InfoPanels()
     case 'download':
@@ -55,20 +61,122 @@ function SelectedPanel(props) {
 }
 
 function HelpPanel() {
+  const [open, setOpen] = React.useState([false, false, false, false])
+
+  const changeCollapsed = (index) => {
+    const newOpen = [...open]
+    newOpen[index] = !open[index]
+    setOpen(newOpen)
+  }
+
+  const TextButton = styled(Button)(() => ({
+    background: 'none',
+    border: 'none',
+    textTransform: 'none',
+  }))
+
+  // TODO: Rewrite help text when done with everything (also do something about that alignment)
   return (
     <Box sx={{ maxWidth: 600, m: 3 }}>
       <Typography variant="h6" align="center" color="text.primary" paragraph>
         New here? Then learn here how to use this website:
       </Typography>
-      <Typography align="center" color="text.secondary" paragraph>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-        veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-        commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
-        velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint
-        occaecat cupidatat non proident, sunt in culpa qui officia deserunt
-        mollit anim id est laborum.
+      <Typography align="center" color="text.secondary">
+        Our website allows you to do five things:
       </Typography>
+      <Typography align="center" color="text.secondary" paragraph>
+        (Click on them to get a more detailed explanation)
+      </Typography>
+
+      <Grid container>
+        {/* 1. Model creation */}
+        <Typography
+          align="left"
+          color="text.primary"
+          component={TextButton}
+          onClick={() => changeCollapsed(0)}
+        >
+          1. Create your own machine learning model(s)
+        </Typography>
+        <Collapse in={open[0]} timeout="auto" orientation="vertical">
+          <Typography align="left" color="text.secondary" paragraph>
+            {`You do this by clicking "Models" in the Navbar and clicking "Add a Model"`}
+            <br />
+            Then simply select a base model, change some properties, et voilà,
+            your own model
+          </Typography>
+        </Collapse>
+
+        {/* 2. Model training */}
+        <Typography
+          align="left"
+          color="text.primary"
+          component={TextButton}
+          onClick={() => changeCollapsed(1)}
+        >
+          2. Train your machine learning model(s)
+        </Typography>
+
+        <Collapse in={open[1]} timeout="auto" orientation="vertical">
+          <Typography align="left" color="text.secondary" paragraph>
+            You need to have a model to do this!
+            <br />
+            {`Select "Models" in the Navbar and click on one of your models`}
+            <br />
+            {`Click on one of your models, then on "Select Training Data" in the new overview`}
+            <br />
+            Select one of the Datasets a label and start training!
+            <br />
+            Your trained models will appear in your model overview
+          </Typography>
+        </Collapse>
+
+        {/* 3. Molecule creation */}
+        <Typography
+          align="left"
+          color="text.primary"
+          component={TextButton}
+          onClick={() => changeCollapsed(2)}
+        >
+          3. Draw custom molecule(s)
+        </Typography>
+
+        <Collapse in={open[2]} timeout="auto" orientation="vertical">
+          <Typography align="left" color="text.secondary" paragraph>
+            {`Click "Molecules" in the Navbar and click "Add a Molecule"`}
+            <br />
+            Your Molecule Editor will now be blank, try it out and create
+            something beautiful!
+            <br />
+            {`When you're done, enter a name and click on "Save" to keep your molecule`}
+          </Typography>
+        </Collapse>
+
+        {/* 4. Molecule analysis */}
+        <Typography
+          align="left"
+          color="text.primary"
+          component={TextButton}
+          onClick={() => changeCollapsed(3)}
+        >
+          4. Predict properties of your molecule
+        </Typography>
+
+        <Collapse in={open[3]} timeout="auto" orientation="vertical">
+          <Typography align="left" color="text.secondary" paragraph>
+            You need to have a trained model (aka fitting) and a molecule to do
+            this!
+            <br />
+            Navigate to the Molecule page
+            <br />
+            {`Select one of your molecules in the list and click on "Analyze"`}
+            <br />
+            Choose one of your trained models
+            <br />
+            You will now see your predicted properties!
+          </Typography>
+        </Collapse>
+      </Grid>
     </Box>
   )
 }
