@@ -15,6 +15,7 @@ import DarkModeButton from './components/misc/DarkModeButton'
 import BaseModelsPage from './routes/BaseModelsPage'
 import DatasetPage from './routes/DatasetPage'
 import FittingsPage from './routes/FittingsPage'
+import SocketTestPage from './routes/SocketTestPage'
 import api from './api'
 import { UserProvider } from './UserContext'
 import Particles from 'react-tsparticles'
@@ -215,6 +216,7 @@ export default function App() {
               <Route path="/trained-models" element={<FittingsPage />}></Route>
               <Route path="/base-models" element={<BaseModelsPage />}></Route>
               <Route path="/datasets" element={<DatasetPage />}></Route>
+              <Route path="/socket" element={<SocketTestPage />}></Route>
             </Routes>
           </BrowserRouter>
         </UserProvider>

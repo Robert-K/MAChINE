@@ -26,6 +26,8 @@
     "react-scripts": "5.0.1",
     "react-tsparticles": "^2.2.0",
     "sass": "^1.51.0",
+    "socket.io": "^4.5.1",
+    "socket.io-client": "^4.5.1",
     "styled-components": "^5.3.5",
     "styled-jsx": "^5.0.2",
     "swagger-ui-react": "^4.12.0",
