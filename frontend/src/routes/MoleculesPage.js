@@ -23,11 +23,15 @@ export default function MoleculesPage() {
   const user = React.useContext(UserContext)
 
   React.useEffect(() => {
+    refreshMolecules()
+  }, [user])
+
+  function refreshMolecules() {
     api.getMoleculeList().then((moleculeList) => {
       setMolecules(moleculeList)
       console.log(moleculeList)
     })
-  }, [user])
+  }
 
   function onMoleculeSelect(index) {
     setSelectedMolecule(
@@ -60,7 +64,12 @@ export default function MoleculesPage() {
           ></SelectionList>
         </Grid>
         <Grid item md={9} key={selectedMolecule.smiles}>
-          <MoleculeView selectedSmiles={selectedMolecule.smiles} />
+          <MoleculeView
+            selectedSmiles={selectedMolecule.smiles}
+            update={() => {
+              refreshMolecules()
+            }}
+          />
         </Grid>
       </Grid>
     </Box>
@@ -113,7 +122,7 @@ mol.appendBond([5, 6], 1)
 
 // END TEST MOLECULE
 
-function MoleculeView({ selectedSmiles }) {
+function MoleculeView({ selectedSmiles, update }) {
   const [molecule, setMolecule] = React.useState(mol)
   const [molName, setMolName] = React.useState('')
   const [show3D, setShow3D] = React.useState(false)
@@ -199,10 +208,11 @@ function MoleculeView({ selectedSmiles }) {
         Kekule.IO.saveFormatData(molecule, 'cml'),
         molName
       )
-      .then()
+      .then(update)
   }
 }
 
 MoleculeView.propTypes = {
   selectedSmiles: PropTypes.string,
+  update: PropTypes.func,
 }
