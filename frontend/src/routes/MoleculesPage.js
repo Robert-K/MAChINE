@@ -8,11 +8,9 @@ import api from '../api'
 import Molecule from '../internal/Molecule'
 import SaveIcon from '@mui/icons-material/Save'
 import PropTypes from 'prop-types'
-import MoleculeEditor from '../components/MoleculeEditor'
-import MoleculeRenderer from '../components/MoleculeRenderer'
+import MoleculeEditor from '../components/molecules/MoleculeEditor'
+import MoleculeRenderer from '../components/molecules/MoleculeRenderer'
 
-// TODO: Change Molecule format to support smiles & Kekule codes
-// Both in backend in frontend, change API for this
 // TODO: Add functionality to save button
 // TODO: Properly position switch button
 
@@ -35,9 +33,8 @@ export default function MoleculesPage() {
     setSelectedMolecule(
       molecules[index] !== undefined
         ? molecules[index]
-        : new Molecule('', '', '',[])
+        : new Molecule('', '', '', [])
     )
-    showEditor = true
     console.log(molecules[index])
   }
 
@@ -63,7 +60,7 @@ export default function MoleculesPage() {
           ></SelectionList>
         </Grid>
         <Grid item md={9} key={selectedMolecule.smiles}>
-          <MoleculeView smiles={selectedMolecule.smiles} />
+          <MoleculeView selectedSmiles={selectedMolecule.smiles} />
         </Grid>
       </Grid>
     </Box>
@@ -116,11 +113,11 @@ mol.appendBond([5, 6], 1)
 
 // END TEST MOLECULE
 
-function MoleculeView(props) {
+function MoleculeView({ selectedSmiles }) {
   const [molecule, setMolecule] = React.useState(mol)
+  const [molName, setMolName] = React.useState('')
   const [show3D, setShow3D] = React.useState(false)
   const [editorHeight, editorWidth] = ['600px', '800px']
-  const [molname, setMolName] = React.useState('')
   const navigate = useNavigate()
 
   return (
@@ -128,9 +125,6 @@ function MoleculeView(props) {
       <CardContent
         sx={{ flexDirection: 'column', height: '100%', display: 'flex' }}
       >
-        <Box sx={{ m: 2 }}>
-          <MoleculeEditor />
-        </Box>
         <Grid container spacing={2}>
           {/* Actual Editor */}
           <Grid item>
@@ -182,8 +176,10 @@ function MoleculeView(props) {
             <Button
               size="large"
               variant="outlined"
-              onClick={() => navigate('/trained-models', { state: { smiles } })}
-              disabled={!smiles}
+              onClick={() =>
+                navigate('/trained-models', { state: { selectedSmiles } })
+              }
+              disabled={!selectedSmiles}
               sx={{ minHeight: 55 }}
             >
               {/* TODO: Rework disabled when MoleculeEditor is done */}
@@ -201,12 +197,12 @@ function MoleculeView(props) {
       .addMolecule(
         Kekule.IO.saveFormatData(molecule, 'smi'),
         Kekule.IO.saveFormatData(molecule, 'cml'),
-        molname
+        molName
       )
       .then()
   }
 }
 
 MoleculeView.propTypes = {
-  smiles: PropTypes.string.isRequired,
+  selectedSmiles: PropTypes.string,
 }
