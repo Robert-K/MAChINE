@@ -5,7 +5,7 @@ import Button from '@mui/material/Button'
 import api from '../../api'
 import PropTypes from 'prop-types'
 
-export default function ServerConfigForm({ onChange }) {
+export default function ServerConfigForm({ onChangeSubmit }) {
   const [address, setAddress] = React.useState(api.getServerAddress())
   const [port, setPort] = React.useState(api.getServerPort)
   const [validIP, setValidIP] = React.useState(true)
@@ -83,11 +83,11 @@ export default function ServerConfigForm({ onChange }) {
     if (validIP && validPort) {
       api.setServerAddress(address)
       api.setServerPort(port)
-      onChange()
+      onChangeSubmit()
     }
   }
 }
 
 ServerConfigForm.propTypes = {
-  onChange: PropTypes.func,
+  onChangeSubmit: PropTypes.func,
 }

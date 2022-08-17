@@ -12,7 +12,7 @@ import {
 import PropTypes from 'prop-types'
 import { useNavigate } from 'react-router-dom'
 
-export default function StartPage({ sendNameAway }) {
+export default function StartPage({ onLogin }) {
   const [enteredName, setEnteredName] = React.useState('')
   const [connecting, setConnecting] = React.useState(false)
   const [connectionFailed, setConnectionFailed] = React.useState(false)
@@ -24,7 +24,7 @@ export default function StartPage({ sendNameAway }) {
   const submitName = () => {
     setConnecting(true)
     setConnectionFailed(false)
-    sendNameAway(enteredName).then((result) => {
+    onLogin(enteredName).then((result) => {
       setConnecting(false)
       if (result) {
         navigate('/home')
@@ -146,5 +146,5 @@ export default function StartPage({ sendNameAway }) {
 }
 
 StartPage.propTypes = {
-  sendNameAway: PropTypes.func.isRequired,
+  onLogin: PropTypes.func.isRequired,
 }

@@ -61,7 +61,7 @@ export default function ServerStatusButton() {
         }}
         transformOrigin={{ vertical: 'top', horizontal: 'right' }}
       >
-        <ServerConfigForm onChange={updateColor} />
+        <ServerConfigForm onChangeSubmit={updateColor} />
       </Popover>
     </div>
   )

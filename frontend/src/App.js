@@ -204,10 +204,7 @@ export default function App() {
               }}
             />
             <Routes>
-              <Route
-                path="/"
-                element={<StartPage sendNameAway={login} />}
-              ></Route>
+              <Route path="/" element={<StartPage onLogin={login} />}></Route>
               <Route path="/home" element={<HomePage />}></Route>
               <Route path="/modelconfig" element={<ModelConfigPage />}></Route>
               <Route path="/models" element={<ModelsPage />}></Route>
