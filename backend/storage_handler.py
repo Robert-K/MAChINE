@@ -5,6 +5,9 @@ import shutil
 import atexit
 import pickle
 import tensorflow as tf
+from base64 import encodebytes
+import io
+from PIL import Image
 
 __all__ = ['add_analysis',
            'add_fitting',
@@ -27,8 +30,10 @@ __all__ = ['add_analysis',
 _storage_path = Path('storage')
 _user_data_path = _storage_path / 'user_data'
 _datasets_path = _storage_path / 'data'
+_dataset_images_path = _datasets_path / 'images'
 _base_models_path = _storage_path / 'models'
-_base_model_images = _storage_path / 'base_model_images'
+_base_model_images_path = _base_models_path / 'images'
+MAX_THUMB_SIZE = (500, 500)
 
 
 class UserDataStorageHandler:
@@ -183,8 +188,7 @@ class StorageHandler:
                 file = path.open('rb')
                 content = pickle.load(file)
                 file.close()
-                dataset = [json.loads(x) for x in content]
-                return dataset
+                return content.get('dataset')
 
     def get_dataset_summaries(self):
         return self.dataset_summaries
@@ -234,6 +238,19 @@ class StorageHandler:
     def get_fitting_summaries(self, user_id):
         return self.get_user_handler(user_id).get_fitting_summaries()
 
+    # Stolen from https://stackoverflow.com/a/59367737
+    @staticmethod
+    def __encode_image(path_to_image):
+        image_path = Path(path_to_image)
+        if not image_path.exists():
+            return
+        pil_img = Image.open(image_path, mode='r')  # reads the PIL image
+        pil_img.thumbnail(MAX_THUMB_SIZE)
+        byte_arr = io.BytesIO()
+        pil_img.save(byte_arr, format='PNG')  # convert the PIL image to byte array
+        encoded_img = encodebytes(byte_arr.getvalue()).decode('ascii')  # encode as base64
+        return encoded_img
+
     # Private Methods
     # Datasets
     def __analyze_datasets(self):
@@ -241,17 +258,16 @@ class StorageHandler:
             if dataset_path.exists():
                 self.dataset_summaries[str(idx)] = self.__summarize_dataset(dataset_path)
 
-    @staticmethod
-    def __summarize_dataset(dataset_path):
+    def __summarize_dataset(self, dataset_path):
         file = dataset_path.open('rb')
         content = pickle.load(file)
         file.close()
-        dataset = [json.loads(x) for x in content]
-        labels = dataset[0].get('y')
-        dataset_summary = {'name': re.sub(r"(?<=\w)([A-Z])", r" \1", dataset_path.stem),
-                           'size': len(dataset),
-                           'labelDescriptors': list(labels.keys()),
-                           'datasetPath': str(dataset_path.absolute())}
+        dataset_summary = {'name': content.get('name'),
+                           'size': content.get('size'),
+                           'labelDescriptors': content.get('labels'),
+                           'datasetPath': str(dataset_path.absolute()),
+                           'image': self.__encode_image(_dataset_images_path / content.get('image_file')),
+                           }
         return dataset_summary
 
     # Base Models & Base Model Types
@@ -263,7 +279,7 @@ class StorageHandler:
         # add corresponding images to models
         for model in self.base_models.values():
             type_name = model.get("type")
-            model["imagePath"] = self.base_model_types.get(type_name)
+            model["image"] = self.__encode_image(_base_model_images_path / self.base_model_types.get(type_name))
 
     def __read_base_model_types(self):
         type_path = Path.cwd() / _base_models_path / 'modelTypes.json'
