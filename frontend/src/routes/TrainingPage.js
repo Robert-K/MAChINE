@@ -1,55 +1,83 @@
 import React from 'react'
-import { Box, Card, CardContent, Divider, Grid, List } from '@mui/material'
-import Button from '@mui/material/Button'
-import { useLocation } from 'react-router-dom'
+import {
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Grid,
+  ListItem,
+  TextField,
+  Typography,
+} from '@mui/material'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 export default function TrainingPage() {
   const { state } = useLocation()
   const { selectedModel, selectedDatasetID, selectedLabels } = state
   console.log(selectedModel, selectedDatasetID, selectedLabels)
+
+  const [epochs, setEpochs] = React.useState(1000)
+  const handleEpochsChange = (event) => {
+    setEpochs(event.target.value)
+  }
+  const [batchsize, setBatchSize] = React.useState(64)
+  const handlebatchsizeChange = (event2) => {
+    setBatchSize(event2.target.value)
+  }
+
+  const navigate = useNavigate()
+
   return (
-    <List>
-      <List item>
-        <Grid container>
-          <Grid item xs sx={{ maxWidth: 400 }}>
-            <Box>
-              <Card sx={{ minWidth: 250, m: 6 }}>
-                <CardContent sx={{ fontSize: 20 }}>Modell Details</CardContent>
-              </Card>
-              <Card sx={{ minWidth: 250, m: 6 }}>
-                <CardContent sx={{ fontSize: 20 }}>Dataset Details</CardContent>
-              </Card>
-            </Box>
-          </Grid>
-          <Divider
-            oriantation="vertical"
-            variant="middle"
-            flexitem
-            sx={{ border: 'black' }}
-          ></Divider>
-          <Grid item xs>
-            <Box sx={{ m: 5, display: 'flex', justifyContent: 'center' }}>
-              <Box
-                sx={{
-                  width: 600,
-                  height: 500,
-                  background: 'black',
-                }}
-              ></Box>
-            </Box>
-          </Grid>
-        </Grid>
-      </List>
-      <List item>
-        <Grid Item>
-          <Box sx={{ display: 'flex', justifyContent: 'right' }}>
-            <Box>
-              <Button>Start/Stopp</Button>
-              <Button>Continue to Molecule</Button>
-            </Box>
-          </Box>
-        </Grid>
-      </List>
-    </List>
+    <Grid container>
+      <Grid xs={6}>
+        <TextField
+          sx={{ m: 3 }}
+          required
+          id="epochs"
+          label="Epochs"
+          type="number"
+          onChange={handleEpochsChange}
+          defaultValue={epochs}
+        />
+        <TextField
+          sx={{ m: 3 }}
+          required
+          id="batchsize"
+          label="Batch Size"
+          type="number"
+          defaultValue={batchsize}
+          onChange={handlebatchsizeChange}
+        />
+        <Card sx={{ m: 3 }}>
+          <CardContent>
+            <Typography sx={{ fontSize: 20 }}>Modell Details</Typography>
+            <Typography>Name: {selectedModel.name}</Typography>
+          </CardContent>
+        </Card>
+        <Card sx={{ m: 3 }}>
+          <CardContent>
+            <Typography sx={{ fontSize: 20 }}>Dataset Details</Typography>
+            <Typography>id: {selectedDatasetID}</Typography>
+            <Typography>Label:</Typography>
+            {selectedLabels.map((label) => (
+              <ListItem key={label}>{label}</ListItem>
+            ))}
+          </CardContent>
+        </Card>
+      </Grid>
+      <Grid item xs={6}>
+        <Box sx={{ m: 2, background: 'black', height: 400 }}></Box>
+        <Button variant="outlined" sx={{ m: 2 }}>
+          Start/Stopp
+        </Button>
+        <Button
+          variant="outlined"
+          sx={{ m: 2 }}
+          onClick={() => navigate('/molecules')}
+        >
+          Continue to Molecules
+        </Button>
+      </Grid>
+    </Grid>
   )
 }
