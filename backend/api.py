@@ -163,6 +163,7 @@ class Datasets(Resource):
                     'datasetID': dataset_id,
                     'size': current_dataset['size'],
                     'labelDescriptors': current_dataset['labelDescriptors'],
+                    'image': current_dataset['image'],
                 })
         return processed_datasets
 
@@ -180,7 +181,7 @@ class BaseModels(Resource):
                     'id': model_id,
                     'type': {
                         'name': current.get('type'),
-                        'image': current.get('imagePath')
+                        'image': current.get('image'),
                     },
                     'taskType': 'regression' if layers[len(layers) - 1].get('units') == 1 else 'classification',
                     'lossFunction': current.get('lossFunction'),
