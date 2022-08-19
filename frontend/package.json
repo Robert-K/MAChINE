@@ -33,7 +33,8 @@
     "swagger-ui-react": "^4.12.0",
     "three": "^0.143.0",
     "tsparticles": "^2.2.0",
-    "vis-react": "^0.5.1",
+    "vis-data": "^7.1.4",
+    "vis-network": "^9.1.2",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
