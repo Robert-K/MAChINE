@@ -4,6 +4,7 @@ import {
   Button,
   Card,
   CardContent,
+  CardHeader,
   Grid,
   ListItem,
   TextField,
@@ -13,8 +14,8 @@ import { useLocation, useNavigate } from 'react-router-dom'
 
 export default function TrainingPage() {
   const { state } = useLocation()
-  const { selectedModel, selectedDatasetID, selectedLabels } = state
-  console.log(selectedModel, selectedDatasetID, selectedLabels)
+  const { selectedModel, selectedDataset, selectedLabels } = state
+  console.log(selectedModel, selectedDataset, selectedLabels)
 
   const [epochs, setEpochs] = React.useState(1000)
   const handleEpochsChange = (event) => {
@@ -50,14 +51,14 @@ export default function TrainingPage() {
         />
         <Card sx={{ m: 3 }}>
           <CardContent>
-            <Typography sx={{ fontSize: 20 }}>Modell Details</Typography>
+            <CardHeader title="Model Details" />
             <Typography>Name: {selectedModel.name}</Typography>
           </CardContent>
         </Card>
         <Card sx={{ m: 3 }}>
           <CardContent>
-            <Typography sx={{ fontSize: 20 }}>Dataset Details</Typography>
-            <Typography>id: {selectedDatasetID}</Typography>
+            <CardHeader title="Dataset Details" />
+            <Typography>id: {selectedDataset.id}</Typography>
             <Typography>Label:</Typography>
             {selectedLabels.map((label) => (
               <ListItem key={label}>{label}</ListItem>

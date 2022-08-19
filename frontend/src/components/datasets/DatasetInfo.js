@@ -44,7 +44,7 @@ export default function DatasetInfo({ dataset }) {
           navigate('/training', {
             state: {
               selectedModel,
-              selectedDatasetID: dataset.datasetID,
+              selectedDataset: dataset,
               selectedLabels: labelArray,
             },
           })
