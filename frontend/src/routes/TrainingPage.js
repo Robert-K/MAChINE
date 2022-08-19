@@ -1,14 +1,7 @@
 import React from 'react'
-import {
-  Box,
-  Button,
-  Card,
-  CardContent,
-  Grid,
-  ListItem,
-  TextField,
-  Typography,
-} from '@mui/material'
+import { Box, Button, Grid, TextField } from '@mui/material'
+import ModelDetailsCard from '../components/training/ModelDetailsCard'
+import DatasetDetailsCard from '../components/training/DatasetDetailsCard'
 import { useLocation, useNavigate } from 'react-router-dom'
 
 export default function TrainingPage() {
@@ -59,38 +52,11 @@ export default function TrainingPage() {
           defaultValue={batchsize}
           onChange={handlebatchsizeChange}
         />
-        <Card sx={{ m: 3 }}>
-          <CardContent>
-            <Typography gutterBottom variant="h5" component="div">
-              Model Details
-            </Typography>
-            <Typography>Name: {selectedModel.name}</Typography>
-            <Typography>Base Model: {selectedModel.baseModel}</Typography>
-            <Typography>Parameters: </Typography>
-            {Object.values(selectedModel.parameters).map((value, index) => {
-              return (
-                <div key={index}>
-                  <ListItem sx={{ py: 0.1 }}>{value}</ListItem>
-                </div>
-              )
-            })}
-          </CardContent>
-        </Card>
-        <Card sx={{ m: 3 }}>
-          <CardContent>
-            <Typography gutterBottom variant="h5" component="div">
-              Dataset Details
-            </Typography>
-            <Typography>ID: {selectedDataset.datasetID}</Typography>
-            <Typography>Size: {selectedDataset.size}</Typography>
-            <Typography>Label:</Typography>
-            {selectedLabels.map((label) => (
-              <ListItem sx={{ py: 0.1 }} key={label}>
-                {label}
-              </ListItem>
-            ))}
-          </CardContent>
-        </Card>
+        <ModelDetailsCard selectedModel={selectedModel} />
+        <DatasetDetailsCard
+          selectedDataset={selectedDataset}
+          selectedLabels={selectedLabels}
+        />
       </Grid>
       <Grid item xs={6}>
         <Box sx={{ m: 2, background: 'black', height: 400 }}></Box>
