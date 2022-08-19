@@ -26,14 +26,40 @@ export default function ModelVisual(props) {
   })
 
   const theme = useTheme()
+  const layerBorderColors = {
+    red: 'rgb(255, 0, 0)',
+    blue: 'rgb(0, 255, 0)',
+    green: 'rgb(0, 0, 255)',
+  }
+  const layerBackgroundColors = {
+    red: 'rgba(255, 0, 0, 0.3)',
+    blue: 'rgba(0, 255, 0, 0.3)',
+    green: 'rgba(0, 0, 255, 0.3)',
+  }
+  const colors = ['red', 'blue', 'green']
   // TODO: style: opacity, border, color, shape, shadow, image
   // TODO: make add-node appear on hover between layers
   // TODO: update graph when adding layers
 
   React.useEffect(() => {
     const container = document.getElementById('network')
-    const myNetwork = new v.Network(container, graph, options)
-    console.log(myNetwork.getPosition('0.1'))
+    const network = new v.Network(container, graph, options)
+    network.on('beforeDrawing', (ctx) => {
+      layers.forEach((layer, index) => {
+        const topNodePos = network.getPosition(`${index}.1`)
+        const lowestNodePos = network.getPosition(`${index}.${layer.units}`)
+        ctx.strokeStyle = Object.values(options.groups)[index].color.border
+        ctx.beginPath()
+        ctx.rect(
+          topNodePos.x - 50,
+          topNodePos.y - 50,
+          100,
+          lowestNodePos.y - topNodePos.y + 100
+        )
+        ctx.closePath()
+        ctx.stroke()
+      })
+    })
   }, [])
 
   function fillGraph() {
@@ -42,29 +68,32 @@ export default function ModelVisual(props) {
     // const newOptions = Object.assign({}, options)
     layers.forEach((layer, index) => {
       // add new group for layer
-      options.groups[index] = {
-        color: { background: theme.palette.primary.main },
+      options.groups[index.toString()] = {
+        color: {
+          background: layerBackgroundColors[colors[index % colors.length]],
+          border: layerBorderColors[colors[index % colors.length]],
+        },
       }
       const graphLayer = []
       if (layer.units < 10) {
-        for (let i = 0; i < layer.units; i++) {
+        for (let i = 1; i <= layer.units; i++) {
           // add nodes to layer
           graphLayer.push({
             id: `${index}.${i}`,
-            label: `${i + 1}`,
-            group: index,
+            label: `${i}`,
+            group: index.toString(),
           })
         }
       } else {
         graphLayer.push({
           id: `${index}.1`,
           label: '1',
-          group: index,
+          group: index.toString(),
         })
         graphLayer.push({
           id: `${index}.${2}`,
           label: 'nodes',
-          group: index,
+          group: index.toString(),
           shape: 'image',
           // TODO: toggle white/black dots and node color with dark/light theme
           image: 'http://127.0.0.1:3000/more_vert.svg',
@@ -72,7 +101,7 @@ export default function ModelVisual(props) {
         graphLayer.push({
           id: `${index}.${layer.units}`,
           label: layer.units.toString(),
-          group: index,
+          group: index.toString(),
         })
       }
       nodesByLayer.push(graphLayer)
