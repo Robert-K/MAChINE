@@ -25,6 +25,17 @@ export default function TrainingPage() {
     setBatchSize(event2.target.value)
   }
 
+  const start = 'Start'
+  const stop = 'Stop'
+  const [startStopButton, setStartStopButton] = React.useState(start)
+  const handleStartStop = () => {
+    if (startStopButton === start) {
+      setStartStopButton(stop)
+    } else {
+      setStartStopButton(start)
+    }
+  }
+
   const navigate = useNavigate()
 
   return (
@@ -83,8 +94,8 @@ export default function TrainingPage() {
       </Grid>
       <Grid item xs={6}>
         <Box sx={{ m: 2, background: 'black', height: 400 }}></Box>
-        <Button variant="outlined" sx={{ m: 2 }}>
-          Start/Stopp
+        <Button variant="outlined" sx={{ m: 2 }} onClick={handleStartStop}>
+          {startStopButton}
         </Button>
         <Button
           variant="outlined"
