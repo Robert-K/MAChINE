@@ -4,7 +4,6 @@ import {
   Button,
   Card,
   CardContent,
-  CardHeader,
   Grid,
   ListItem,
   TextField,
@@ -32,7 +31,7 @@ export default function TrainingPage() {
     <Grid container>
       <Grid xs={6}>
         <TextField
-          sx={{ m: 3 }}
+          sx={{ mx: 3, mt: 3 }}
           required
           id="epochs"
           label="Epochs"
@@ -41,7 +40,7 @@ export default function TrainingPage() {
           defaultValue={epochs}
         />
         <TextField
-          sx={{ m: 3 }}
+          sx={{ mx: 3, mt: 3 }}
           required
           id="batchsize"
           label="Batch Size"
@@ -51,17 +50,33 @@ export default function TrainingPage() {
         />
         <Card sx={{ m: 3 }}>
           <CardContent>
-            <CardHeader title="Model Details" />
+            <Typography gutterBottom variant="h5" component="div">
+              Model Details
+            </Typography>
             <Typography>Name: {selectedModel.name}</Typography>
+            <Typography>Base Model: {selectedModel.baseModel}</Typography>
+            <Typography>Parameters: </Typography>
+            {Object.values(selectedModel.parameters).map((value, index) => {
+              return (
+                <div key={index}>
+                  <ListItem sx={{ py: 0.1 }}>{value}</ListItem>
+                </div>
+              )
+            })}
           </CardContent>
         </Card>
         <Card sx={{ m: 3 }}>
           <CardContent>
-            <CardHeader title="Dataset Details" />
-            <Typography>id: {selectedDataset.id}</Typography>
+            <Typography gutterBottom variant="h5" component="div">
+              Dataset Details
+            </Typography>
+            <Typography>ID: {selectedDataset.datasetID}</Typography>
+            <Typography>Size: {selectedDataset.size}</Typography>
             <Typography>Label:</Typography>
             {selectedLabels.map((label) => (
-              <ListItem key={label}>{label}</ListItem>
+              <ListItem sx={{ py: 0.1 }} key={label}>
+                {label}
+              </ListItem>
             ))}
           </CardContent>
         </Card>
