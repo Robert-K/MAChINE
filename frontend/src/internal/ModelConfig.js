@@ -6,7 +6,7 @@ class ModelConfig {
    * @param id , string
    * @param name of configuration given by user, is a string
    * @param baseModelId , string
-   * @param parameters array of customized model parameters
+   * @param parameters dictonary of customized model parameters
    * @param fittings array of fittings for models based on this config
    */
   constructor(id, name, baseModelId, parameters, fittings) {
