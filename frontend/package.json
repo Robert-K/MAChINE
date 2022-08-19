@@ -27,7 +27,8 @@
     "styled-components": "^5.3.5",
     "styled-jsx": "^5.0.2",
     "swagger-ui-react": "^4.12.0",
-    "vis-react": "^0.5.1",
+    "vis-data": "^7.1.4",
+    "vis-network": "^9.1.2",
     "web-vitals": "^2.1.4"
   },
   "scripts": {

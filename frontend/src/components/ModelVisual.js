@@ -1,11 +1,15 @@
-import { Card, CardContent, Typography, useTheme } from '@mui/material'
+import { Card, CardContent, useTheme } from '@mui/material'
 import React from 'react'
-import Graph from 'vis-react'
 import PropTypes from 'prop-types'
+import * as vis from 'vis-data'
+import * as v from 'vis-network'
 
 export default function ModelVisual(props) {
   const [layers] = React.useState(props.model.layers)
-  const [graph] = React.useState({ nodes: [], edges: [] })
+  const [graph] = React.useState({
+    nodes: new vis.DataSet([]),
+    edges: new vis.DataSet({}),
+  })
   const [options] = React.useState({
     nodes: {
       borderWidth: 2,
@@ -20,18 +24,17 @@ export default function ModelVisual(props) {
       },
     },
   })
-  const [events] = React.useState({
-    beforeDrawing: (ctx) => {
-      ctx.strokeStyle = theme.palette.primary.main
-      ctx.rect(-60, 200, 150, 75)
-      ctx.stroke()
-    },
-  })
 
   const theme = useTheme()
   // TODO: style: opacity, border, color, shape, shadow, image
   // TODO: make add-node appear on hover between layers
   // TODO: update graph when adding layers
+
+  React.useEffect(() => {
+    const container = document.getElementById('network')
+    const myNetwork = new v.Network(container, graph, options)
+    console.log(myNetwork.getPosition('0.1'))
+  }, [])
 
   function fillGraph() {
     const nodesByLayer = []
@@ -68,7 +71,7 @@ export default function ModelVisual(props) {
         })
         graphLayer.push({
           id: `${index}.${layer.units}`,
-          label: layer.units,
+          label: layer.units.toString(),
           group: index,
         })
       }
@@ -82,11 +85,9 @@ export default function ModelVisual(props) {
       }
     })
     nodesByLayer.forEach((layer) => {
-      graph.nodes = graph.nodes.concat(layer)
+      graph.nodes.add(layer)
     })
-    graph.edges = graph.edges.concat(newEdges)
-    // setGraph(newGraph)
-    // setOptions(newOptions)
+    graph.edges.add(newEdges)
   }
 
   /**
@@ -117,6 +118,7 @@ export default function ModelVisual(props) {
    */
 
   fillGraph()
+
   return (
     <Card>
       <CardContent
@@ -124,11 +126,9 @@ export default function ModelVisual(props) {
           border: '1px',
           borderColor: theme.palette.primary.main,
           width: '100%',
-          height: '80vh',
         }}
       >
-        <Typography>Model visualized here.</Typography>
-        <Graph graph={graph} options={options} events={events} />
+        <div id="network" style={{ height: '80vh' }}></div>
       </CardContent>
     </Card>
   )
