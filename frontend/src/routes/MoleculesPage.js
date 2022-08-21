@@ -7,6 +7,8 @@ import {
   CardContent,
   Grid,
   TextField,
+  Snackbar,
+  Alert,
 } from '@mui/material'
 import SelectionList from '../components/shared/SelectionList'
 import { useNavigate } from 'react-router-dom'
@@ -23,6 +25,7 @@ const gridHeight = '85vh'
 export default function MoleculesPage() {
   const [molecules, setMolecules] = React.useState([])
   const [selectedMolecule, setSelectedMolecule] = React.useState(null)
+  const [errorMessage, setErrorMessage] = React.useState('')
 
   const user = React.useContext(UserContext)
 
@@ -31,16 +34,28 @@ export default function MoleculesPage() {
   }, [user])
 
   function refreshMolecules() {
-    api.getMoleculeList().then((moleculeList) => {
-      setMolecules(moleculeList)
-      console.log(moleculeList)
-    })
+    api.getMoleculeList().then((moleculeList) => setMolecules(moleculeList))
   }
 
   function onMoleculeSelect(index) {
     setSelectedMolecule(
       molecules[index] !== undefined ? molecules[index] : null
     )
+  }
+
+  function saveMolecule(molName, smiles, cml) {
+    // Find a duplicate
+    const duplicate = molecules.find((mol) => {
+      return mol.smiles === smiles || mol.cml === cml || mol.name === molName
+    })
+
+    if (duplicate) {
+      setErrorMessage(`Molecule already saved as "${duplicate.name}"`)
+    } else if (!molName || !smiles || !cml) {
+      setErrorMessage(`Can't save molecule.`)
+    } else {
+      api.addMolecule(smiles, cml, molName).then(refreshMolecules)
+    }
   }
 
   return (
@@ -57,9 +72,7 @@ export default function MoleculesPage() {
             elements={molecules}
             elementType="molecule"
             usePopper={true}
-            addFunc={() =>
-              console.log('Implement add molecule in molecules page')
-            }
+            addFunc={() => onMoleculeSelect(-1)}
             updateFunc={(index) => onMoleculeSelect(index)}
             height={gridHeight}
           ></SelectionList>
@@ -67,18 +80,29 @@ export default function MoleculesPage() {
         <Grid item md={9} key="molecule-view">
           <MoleculeView
             selectedMolecule={selectedMolecule}
-            update={() => {
-              refreshMolecules()
-            }}
+            onSave={saveMolecule}
           />
         </Grid>
       </Grid>
+      <Snackbar
+        open={errorMessage}
+        onClose={() => setErrorMessage('')}
+        message={errorMessage}
+        key="error-snack"
+      >
+        <Alert
+          onClose={() => setErrorMessage('')}
+          severity="warning"
+          sx={{ width: '100%' }}
+        >
+          {errorMessage}
+        </Alert>
+      </Snackbar>
     </Box>
   )
 }
-// TODO: Disallow deselection in SelectionList
-// TODO: Check for duplicate molecule names, molecule smiles... and don't allow save if duplicate
-function MoleculeView({ selectedMolecule, update }) {
+
+function MoleculeView({ selectedMolecule, onSave }) {
   const [editorHeight, editorWidth] = ['70vh', '100%']
 
   const [moleculeDoc, setMoleculeDoc] = React.useState(null)
@@ -97,7 +121,7 @@ function MoleculeView({ selectedMolecule, update }) {
   }, [selectedMolecule])
 
   return (
-    <Card sx={{ maxHeight: gridHeight, height: gridHeight }}>
+    <Card sx={{ maxHeight: gridHeight, height: gridHeight, overflow: 'auto' }}>
       <CardContent>
         {show3D === true ? (
           <MoleculeRenderer
@@ -114,7 +138,11 @@ function MoleculeView({ selectedMolecule, update }) {
         )}
       </CardContent>
       <CardActions>
-        <Box component="form" onSubmit={saveMol}>
+        <Box
+          component="form"
+          onSubmit={saveMol}
+          sx={{ display: 'inherit', ml: 4 }}
+        >
           <TextField
             label="Molecule Name"
             variant="standard"
@@ -125,17 +153,19 @@ function MoleculeView({ selectedMolecule, update }) {
             size="large"
             variant="outlined"
             type="submit"
-            sx={{ mr: 'auto', ml: 1 }}
             endIcon={<SaveIcon />}
+            disabled={!molName}
+            sx={{ ml: 1 }}
           >
             Save
           </Button>
         </Box>
-        <Box sx={{ flexGrow: 1 }}></Box>
         <Button
+          size="large"
           variant="contained"
           onClick={() => setShow3D(!show3D)}
           endIcon={<VisibilityIcon />}
+          sx={{ ml: 12 }}
         >{`Switch to ${show3D ? '2D-Editor' : '3D-Viewer'}`}</Button>
         <Box sx={{ flexGrow: 1 }}></Box>
         <Button
@@ -148,7 +178,6 @@ function MoleculeView({ selectedMolecule, update }) {
           }
           disabled={!selectedMolecule}
         >
-          {/* TODO: Rework disabled when MoleculeEditor is done */}
           Analyze {selectedMolecule ? selectedMolecule.name : ''}
         </Button>
       </CardActions>
@@ -157,18 +186,18 @@ function MoleculeView({ selectedMolecule, update }) {
 
   function saveMol(event) {
     event.preventDefault()
-    const molecule = moleculeDoc.getChildAt(0)
-    api
-      .addMolecule(
-        Kekule.IO.saveFormatData(molecule, 'smi'),
-        Kekule.IO.saveFormatData(molecule, 'cml'),
-        molName
-      )
-      .then(update)
+    try {
+      const molecule = moleculeDoc.getChildAt(0)
+      const smiles = Kekule.IO.saveFormatData(molecule, 'smi')
+      const cml = Kekule.IO.saveFormatData(molecule, 'cml')
+      onSave(molName, smiles, cml)
+    } catch (e) {
+      onSave('', '', '')
+    }
   }
 }
 
 MoleculeView.propTypes = {
   selectedMolecule: PropTypes.object,
-  update: PropTypes.func,
+  onSave: PropTypes.func,
 }
