@@ -12,10 +12,8 @@ composer
     'redo',
     'zoomIn',
     'zoomOut',
-    /*
-    'config', //These are great for debugging
-    'objInspector',
-    */
+    /* 'config', // These are great for debugging
+    'objInspector', */
   ])
   .setChemToolButtons([
     'manipulate',
@@ -24,9 +22,9 @@ composer
     'atomAndFormula',
     'charge',
   ])
-// Dig around in here to change stuff
-console.log(composer.getEditorConfigs())
-// TODO: Somehow set default bond length to 1 from 0.8
+// Makes atoms atom-colored and bonds longer for better 3D View
+composer.getEditorConfigs().structureConfigs.defBondLength = 1
+composer.getRenderConfigs().colorConfigs.useAtomSpecifiedColor = true
 
 export default function MoleculeEditor({ moleculeDoc, width, height }) {
   useEffect(() => {
