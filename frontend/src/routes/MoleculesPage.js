@@ -26,6 +26,7 @@ export default function MoleculesPage() {
   const [molecules, setMolecules] = React.useState([])
   const [selectedMolecule, setSelectedMolecule] = React.useState(null)
   const [errorMessage, setErrorMessage] = React.useState('')
+  const [showSnackBar, setShowSnackBar] = React.useState(false)
 
   const user = React.useContext(UserContext)
 
@@ -43,6 +44,11 @@ export default function MoleculesPage() {
     )
   }
 
+  function showSnackError(message) {
+    setShowSnackBar(true)
+    setErrorMessage(message)
+  }
+
   function saveMolecule(molName, smiles, cml) {
     // Find a duplicate
     const duplicate = molecules.find((mol) => {
@@ -50,9 +56,9 @@ export default function MoleculesPage() {
     })
 
     if (duplicate) {
-      setErrorMessage(`Molecule already saved as "${duplicate.name}"`)
+      showSnackError(`Molecule already saved as "${duplicate.name}"`)
     } else if (!molName || !smiles || !cml) {
-      setErrorMessage(`Can't save molecule.`)
+      showSnackError(`Can't save molecule.`)
     } else {
       api.addMolecule(smiles, cml, molName).then(refreshMolecules)
     }
@@ -85,13 +91,12 @@ export default function MoleculesPage() {
         </Grid>
       </Grid>
       <Snackbar
-        open={errorMessage}
-        onClose={() => setErrorMessage('')}
-        message={errorMessage}
+        open={showSnackBar}
+        onClose={() => setShowSnackBar(false)}
         key="error-snack"
       >
         <Alert
-          onClose={() => setErrorMessage('')}
+          onClose={() => setShowSnackBar(false)}
           severity="warning"
           sx={{ width: '100%' }}
         >
@@ -147,7 +152,7 @@ function MoleculeView({ selectedMolecule, onSave }) {
             label="Molecule Name"
             variant="standard"
             onChange={(e) => setMolName(e.target.value)}
-            inputProps={{ maxLength: 42 }}
+            inputProps={{ maxLength: 21 }}
           />
           <Button
             size="large"
