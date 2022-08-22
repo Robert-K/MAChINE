@@ -1,8 +1,9 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { Box, Button, Grid, TextField } from '@mui/material'
 import ModelDetailsCard from '../components/training/ModelDetailsCard'
 import DatasetDetailsCard from '../components/training/DatasetDetailsCard'
 import { useLocation, useNavigate } from 'react-router-dom'
+import TrainingContext from '../TrainingContext'
 
 export default function TrainingPage() {
   const { state } = useLocation()
@@ -14,18 +15,24 @@ export default function TrainingPage() {
     setEpochs(event.target.value)
   }
   const [batchsize, setBatchSize] = React.useState(64)
-  const handlebatchsizeChange = (event2) => {
-    setBatchSize(event2.target.value)
+  const handlebatchsizeChange = (event) => {
+    setBatchSize(event.target.value)
   }
 
+  const [trainingStatus, setTrainingStatus] = useContext(TrainingContext)
   const start = 'Start'
   const stop = 'Stop'
   const [startStopButton, setStartStopButton] = React.useState(start)
+
   const handleStartStop = () => {
-    if (startStopButton === start) {
-      setStartStopButton(stop)
-    } else {
+    if (trainingStatus === true) {
       setStartStopButton(start)
+      setTrainingStatus(false)
+      console.log(startStopButton)
+      console.log(trainingStatus)
+    } else {
+      setStartStopButton(stop)
+      setTrainingStatus(true)
     }
   }
 

@@ -5,6 +5,7 @@ import logo from '../../logo.svg'
 import PropTypes from 'prop-types'
 import ServerStatusButton from './ServerStatusButton'
 import UserContext from '../../UserContext'
+import TrainingContext from '../../TrainingContext'
 import LogoutIcon from '@mui/icons-material/Logout'
 
 const links = [
@@ -17,6 +18,7 @@ const links = [
 export default function Navbar({ logoutFunction, darkModeButton }) {
   const locationName = useLocation().pathname
   const user = React.useContext(UserContext)
+  const [trainingStatus] = React.useContext(TrainingContext)
 
   // Navigates the user to the start page on page reload
   const navigate = useNavigate()
@@ -45,7 +47,21 @@ export default function Navbar({ logoutFunction, darkModeButton }) {
             ))}
           </>
         )}
-
+        {!(locationName === '/training' || trainingStatus) ? null : (
+          <>
+            <NavLink
+              to={'/training'}
+              key={'Training'}
+              style={({ isActive }) =>
+                isActive
+                  ? { fontWeight: 600, paddingLeft: 10, paddingRight: 10 }
+                  : { paddingLeft: 10, paddingRight: 10 }
+              }
+            >
+              Training
+            </NavLink>
+          </>
+        )}
         <Box sx={{ flexGrow: 1 }}></Box>
         {!user.userName ? null : (
           <>
@@ -57,9 +73,7 @@ export default function Navbar({ logoutFunction, darkModeButton }) {
             </NavLink>
           </>
         )}
-
         <ServerStatusButton />
-
         {darkModeButton}
       </Toolbar>
       <style jsx="true">{`
