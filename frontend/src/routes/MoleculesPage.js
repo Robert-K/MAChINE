@@ -20,6 +20,7 @@ import VisibilityIcon from '@mui/icons-material/Visibility'
 import PropTypes from 'prop-types'
 import MoleculeEditor from '../components/molecules/MoleculeEditor'
 import MoleculeRenderer from '../components/molecules/MoleculeRenderer'
+import Molecule from '../internal/Molecule'
 
 const gridHeight = '85vh'
 export default function MoleculesPage() {
@@ -40,7 +41,9 @@ export default function MoleculesPage() {
 
   function onMoleculeSelect(index) {
     setSelectedMolecule(
-      molecules[index] !== undefined ? molecules[index] : null
+      molecules[index] !== undefined
+        ? molecules[index]
+        : new Molecule('', null, null, [])
     )
   }
 
@@ -116,13 +119,13 @@ function MoleculeView({ selectedMolecule, onSave }) {
   const navigate = useNavigate()
 
   React.useEffect(() => {
-    const document = new Kekule.ChemDocument()
+    const chemDocument = new Kekule.ChemDocument()
     if (selectedMolecule && selectedMolecule.cml) {
-      document.appendChild(
+      chemDocument.appendChild(
         Kekule.IO.loadFormatData(selectedMolecule.cml, 'cml')
       )
     }
-    setMoleculeDoc(document)
+    setMoleculeDoc(chemDocument)
   }, [selectedMolecule])
 
   return (
@@ -181,7 +184,7 @@ function MoleculeView({ selectedMolecule, onSave }) {
               state: { selectedSmiles: selectedMolecule.smiles },
             })
           }
-          disabled={!selectedMolecule}
+          disabled={!(selectedMolecule && selectedMolecule.smiles)}
         >
           Analyze {selectedMolecule ? selectedMolecule.name : ''}
         </Button>
