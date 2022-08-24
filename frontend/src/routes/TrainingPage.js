@@ -3,7 +3,7 @@ import { Box, Button, Grid, TextField } from '@mui/material'
 import ModelDetailsCard from '../components/training/ModelDetailsCard'
 import DatasetDetailsCard from '../components/training/DatasetDetailsCard'
 import { useLocation, useNavigate } from 'react-router-dom'
-import TrainingContext from '../TrainingContext'
+import TrainingContext from '../context/TrainingContext'
 
 export default function TrainingPage() {
   const { state } = useLocation()

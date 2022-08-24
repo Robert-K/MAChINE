@@ -22,7 +22,7 @@ import ExpandMore from '@mui/icons-material/ExpandMore'
 import PropTypes from 'prop-types'
 import { useNavigate } from 'react-router-dom'
 import api from '../api'
-import UserContext from '../UserContext'
+import UserContext from '../context/UserContext'
 
 const gridHeight = '80vh'
 /**

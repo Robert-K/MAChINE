@@ -9,7 +9,7 @@ import FittingCard from '../components/models/FittingCard'
 import Button from '@mui/material/Button'
 import DetailsPopper from '../components/shared/DetailsPopper'
 import api from '../api'
-import UserContext from '../UserContext'
+import UserContext from '../context/UserContext'
 
 export default function FittingsPage() {
   const [fittingArray, setFittingArray] = React.useState([])

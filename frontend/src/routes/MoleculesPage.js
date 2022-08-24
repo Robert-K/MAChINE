@@ -1,19 +1,19 @@
 import React from 'react'
 import {
+  Alert,
   Box,
   Button,
   Card,
   CardActions,
   CardContent,
   Grid,
-  TextField,
   Snackbar,
-  Alert,
+  TextField,
 } from '@mui/material'
 import SelectionList from '../components/shared/SelectionList'
 import { useNavigate } from 'react-router-dom'
 import { Kekule } from 'kekule'
-import UserContext from '../UserContext'
+import UserContext from '../context/UserContext'
 import api from '../api'
 import SaveIcon from '@mui/icons-material/Save'
 import VisibilityIcon from '@mui/icons-material/Visibility'
