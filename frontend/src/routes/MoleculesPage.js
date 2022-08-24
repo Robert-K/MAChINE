@@ -40,11 +40,18 @@ export default function MoleculesPage() {
   }
 
   function onMoleculeSelect(index) {
-    setSelectedMolecule(
-      molecules[index] !== undefined
-        ? molecules[index]
-        : new Molecule('', null, null, [])
-    )
+    const molecule = molecules[index]
+    if (molecule !== undefined) {
+      const copy = new Molecule(
+        molecule.name,
+        molecule.smiles,
+        molecule.cml,
+        molecule.analyses
+      )
+      setSelectedMolecule(copy)
+    } else {
+      setSelectedMolecule(new Molecule(null, null, null, null))
+    }
   }
 
   function showSnackError(message) {

@@ -25,6 +25,7 @@ composer
 // Makes atoms atom-colored and bonds longer for better 3D View
 composer.getEditorConfigs().structureConfigs.defBondLength = 1
 composer.getRenderConfigs().colorConfigs.useAtomSpecifiedColor = true
+composer.getEditorConfigs().hotKeyConfigs.setHotKeys([])
 
 export default function MoleculeEditor({ moleculeDoc, width, height }) {
   useEffect(() => {
