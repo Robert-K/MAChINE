@@ -1,6 +1,6 @@
-import storage_handler as sh
+from backend.utils import storage_handler as sh
 import tensorflow as tf
-import ml_dicts as mld
+from backend.machine_learning import ml_dicts as mld
 
 # Parameter content is currently WIP
 # TODO: Work on

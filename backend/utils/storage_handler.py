@@ -26,7 +26,7 @@ __all__ = ['add_analysis',
            'get_molecules',
            'get_user_handler']
 
-_storage_path = Path('storage')
+_storage_path = Path.cwd() / 'storage'
 _user_data_path = _storage_path / 'user_data'
 _datasets_path = _storage_path / 'data'
 _dataset_images_path = _datasets_path / 'images'
@@ -38,7 +38,7 @@ MAX_THUMB_SIZE = (500, 500)
 class UserDataStorageHandler:
 
     def __init__(self, user_id):
-        self.user_path = Path.cwd() / _user_data_path / user_id
+        self.user_path = _user_data_path / user_id
         self.user_models_path = self.user_path / 'models'
         self.user_fittings_path = self.user_path / 'fittings'
         self.__build_folder_structure()
@@ -253,7 +253,7 @@ class StorageHandler:
     # Private Methods
     # Datasets
     def __analyze_datasets(self):
-        for idx, dataset_path in enumerate(sorted((Path.cwd() / _datasets_path).glob('*.pkl'))):
+        for idx, dataset_path in enumerate(sorted(_datasets_path.glob('*.pkl'))):
             if dataset_path.exists():
                 self.dataset_summaries[str(idx)] = self.__summarize_dataset(dataset_path)
 
@@ -271,17 +271,18 @@ class StorageHandler:
 
     # Base Models & Base Model Types
     def __read_base_models(self):
-        path = Path(_base_models_path / 'baseModels.json')
-        file = path.open('r')
-        self.base_models = json.load(file)
-        file.close()
-        # add corresponding images to models
-        for model in self.base_models.values():
-            type_name = model.get("type")
-            model["image"] = self.__encode_image(_base_model_images_path / self.base_model_types.get(type_name))
+        path = _base_models_path / 'baseModels.json'
+        if path.exists():
+            file = path.open('r')
+            self.base_models = json.load(file)
+            file.close()
+            # add corresponding images to models
+            for model in self.base_models.values():
+                type_name = model.get("type")
+                model["image"] = self.__encode_image(_base_model_images_path / self.base_model_types.get(type_name))
 
     def __read_base_model_types(self):
-        type_path = Path.cwd() / _base_models_path / 'modelTypes.json'
+        type_path = _base_models_path / 'modelTypes.json'
         if type_path.exists():
             file = type_path.open('r')
             self.base_model_types = json.load(file)

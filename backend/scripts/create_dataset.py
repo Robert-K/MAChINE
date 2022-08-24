@@ -125,7 +125,7 @@ def unjson_my_set(dataset):
 # Look at examples below
 if __name__ == '__main__':
     # Example for creating a new dataset
-    new_set = create_dataset(path="data\\solubility.csv",
+    new_set = create_dataset(path="storage/csv_data/solubility.csv",
                              max_size=10000,
                              data_offset=125,
                              smiles_fingerprint_sizes=[128, 256, 512, 1024],

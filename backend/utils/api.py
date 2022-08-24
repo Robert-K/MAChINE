@@ -2,8 +2,8 @@ from flask import Flask
 from flask_cors import CORS
 from flask_restful import reqparse, Api, Resource
 import hashlib
-import storage_handler as sh
-import ml_functions as ml
+from backend.utils import storage_handler as sh
+from backend.machine_learning import ml_functions as ml
 
 app = Flask(__name__)
 cors = CORS(app)
