@@ -93,6 +93,9 @@ export default function App() {
   const [darkMode, setDarkMode] = React.useState(false)
   const [userName, setUserName] = React.useState(null)
   const [trainingStatus, setTrainingStatus] = React.useState(false)
+  const [selectedModel, setSelectedModel] = React.useState({})
+  const [selectedDataset, setSelectedDataset] = React.useState({})
+  const [selectedLabels, setSelectedLabels] = React.useState([])
 
   const particlesInit = useCallback(async (engine) => {
     console.log(engine)
@@ -136,7 +139,18 @@ export default function App() {
     <div className="App">
       <ThemeProvider theme={darkMode ? themeDark : themeLight}>
         <UserProvider value={{ userName }}>
-          <TrainingProvider value={[trainingStatus, setTrainingStatus]}>
+          <TrainingProvider
+            value={{
+              trainingStatus,
+              setTrainingStatus,
+              selectedModel,
+              setSelectedModel,
+              selectedDataset,
+              setSelectedDataset,
+              selectedLabels,
+              setSelectedLabels,
+            }}
+          >
             <CssBaseline />
             <BrowserRouter>
               <Navbar

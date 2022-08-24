@@ -18,7 +18,7 @@ const links = [
 export default function Navbar({ logoutFunction, darkModeButton }) {
   const locationName = useLocation().pathname
   const user = React.useContext(UserContext)
-  const [trainingStatus] = React.useContext(TrainingContext)
+  const training = React.useContext(TrainingContext)
   const [progress, setProgress] = React.useState(0)
 
   // Navigates the user to the start page on page reload
@@ -66,7 +66,7 @@ export default function Navbar({ logoutFunction, darkModeButton }) {
           </>
         )}
         {!(
-          (locationName === '/training' || trainingStatus) &&
+          (locationName === '/training' || training.trainingStatus) &&
           user.userName
         ) ? null : (
           <>
@@ -81,7 +81,7 @@ export default function Navbar({ logoutFunction, darkModeButton }) {
             >
               Training
             </NavLink>
-            {!trainingStatus ? null : (
+            {!training.trainingStatus ? null : (
               <Box sx={{ width: '10%', ml: 1 }}>
                 <LinearProgress
                   variant="determinate"

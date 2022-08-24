@@ -22,6 +22,7 @@ import ExpandMore from '@mui/icons-material/ExpandMore'
 import PropTypes from 'prop-types'
 import { useNavigate } from 'react-router-dom'
 import api from '../api'
+import TrainingContext from '../context/TrainingContext'
 import UserContext from '../context/UserContext'
 
 const gridHeight = '80vh'
@@ -31,6 +32,7 @@ const gridHeight = '80vh'
 export default function ModelsPage() {
   const [selectedIndex, setSelectedIndex] = React.useState(-1)
   const [modelList, setModelList] = React.useState([])
+  const training = React.useContext(TrainingContext)
 
   const user = React.useContext(UserContext)
 
@@ -110,9 +112,8 @@ export default function ModelsPage() {
               <Grid container justifyContent="center">
                 <Button
                   onClick={() => {
-                    navigate('/datasets', {
-                      state: { selectedModel },
-                    })
+                    training.setSelectedModel(selectedModel)
+                    navigate('/datasets')
                   }}
                 >
                   Select Training Data

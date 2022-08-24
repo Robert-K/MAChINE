@@ -1,15 +1,11 @@
-import React, { useContext } from 'react'
+import React from 'react'
 import { Box, Button, Grid, TextField } from '@mui/material'
 import ModelDetailsCard from '../components/training/ModelDetailsCard'
 import DatasetDetailsCard from '../components/training/DatasetDetailsCard'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import TrainingContext from '../context/TrainingContext'
 
 export default function TrainingPage() {
-  const { state } = useLocation()
-  const { selectedModel, selectedDataset, selectedLabels } = state
-  console.log(selectedModel, selectedDataset, selectedLabels)
-
   const [epochs, setEpochs] = React.useState(1000)
   const handleEpochsChange = (event) => {
     setEpochs(event.target.value)
@@ -19,20 +15,20 @@ export default function TrainingPage() {
     setBatchSize(event.target.value)
   }
 
-  const [trainingStatus, setTrainingStatus] = useContext(TrainingContext)
+  const training = React.useContext(TrainingContext)
   const start = 'Start'
   const stop = 'Stop'
   const [startStopButton, setStartStopButton] = React.useState(start)
 
   const handleStartStop = () => {
-    if (trainingStatus === true) {
+    if (training.trainingStatus === true) {
       setStartStopButton(start)
-      setTrainingStatus(false)
+      training.setTrainingStatus(false)
       console.log(startStopButton)
-      console.log(trainingStatus)
+      console.log(training.trainingStatus)
     } else {
       setStartStopButton(stop)
-      setTrainingStatus(true)
+      training.setTrainingStatus(true)
     }
   }
 
@@ -59,10 +55,10 @@ export default function TrainingPage() {
           defaultValue={batchsize}
           onChange={handlebatchsizeChange}
         />
-        <ModelDetailsCard selectedModel={selectedModel} />
+        <ModelDetailsCard selectedModel={training.selectedModel} />
         <DatasetDetailsCard
-          selectedDataset={selectedDataset}
-          selectedLabels={selectedLabels}
+          selectedDataset={training.selectedDataset}
+          selectedLabels={training.selectedLabels}
         />
       </Grid>
       <Grid item xs={6}>
