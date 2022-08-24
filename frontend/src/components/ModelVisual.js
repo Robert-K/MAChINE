@@ -5,11 +5,7 @@ import * as vis from 'vis-data'
 import * as v from 'vis-network'
 
 export default function ModelVisual(props) {
-  const [layers] = React.useState(props.model.layers)
-  const [graph] = React.useState({
-    nodes: new vis.DataSet([]),
-    edges: new vis.DataSet({}),
-  })
+  const [layers, setLayers] = React.useState(props.model.layers)
   const [options] = React.useState({
     nodes: {
       borderWidth: 2,
@@ -42,27 +38,58 @@ export default function ModelVisual(props) {
   // TODO: update graph when adding layers
 
   React.useEffect(() => {
+    const graph = fillGraph()
     const container = document.getElementById('network')
     const network = new v.Network(container, graph, options)
-    network.on('beforeDrawing', (ctx) => {
-      layers.forEach((layer, index) => {
-        const topNodePos = network.getPosition(`${index}.1`)
-        const lowestNodePos = network.getPosition(`${index}.${layer.units}`)
-        ctx.strokeStyle = Object.values(options.groups)[index].color.border
-        ctx.beginPath()
-        ctx.rect(
-          topNodePos.x - 50,
-          topNodePos.y - 50,
-          100,
-          lowestNodePos.y - topNodePos.y + 100
-        )
-        ctx.closePath()
-        ctx.stroke()
-      })
+
+    network.on('beforeDrawing', (ctx) => beforeDraw(ctx, network))
+    network.on('doubleClick', (eventProps) =>
+      onDoubleClick(eventProps, network, graph)
+    )
+  }, [options, layers])
+
+  function onDoubleClick(eventProps, network, graph) {
+    const clickPos = eventProps.pointer.canvas
+    if (clickPos.x < network.getPosition('0.1').x) {
+      return
+    }
+    let lastLeftNode
+    Object.entries(network.getPositions()).every(([node, pos]) => {
+      if (pos.x > clickPos.x) {
+        return false
+      }
+      lastLeftNode = node
+      return true
     })
-  }, [])
+    addLayer(
+      new Layer('Dense', 4, 'SoftMax'),
+      graph.nodes.get(lastLeftNode).group
+    ) // TODO: replace after addLayer rewrite
+  }
+
+  function beforeDraw(ctx, network) {
+    layers.forEach((layer, index) => {
+      const topNodePos = network.getPosition(`${index}.1`)
+      const lowestNodePos = network.getPosition(`${index}.${layer.units}`)
+      ctx.strokeStyle = Object.values(options.groups)[index].color.border
+      ctx.beginPath()
+      ctx.rect(
+        topNodePos.x - 50,
+        topNodePos.y - 50,
+        100,
+        lowestNodePos.y - topNodePos.y + 100
+      )
+      ctx.closePath()
+      ctx.stroke()
+      // TODO: find html canvas shape library, this here is trash
+    })
+  }
 
   function fillGraph() {
+    const graph = {
+      nodes: new vis.DataSet({}),
+      edges: new vis.DataSet({}),
+    }
     const nodesByLayer = []
     const newEdges = []
     // const newOptions = Object.assign({}, options)
@@ -117,6 +144,7 @@ export default function ModelVisual(props) {
       graph.nodes.add(layer)
     })
     graph.edges.add(newEdges)
+    return graph
   }
 
   /**
@@ -138,15 +166,16 @@ export default function ModelVisual(props) {
    * can't replace first or last layer
    * @param layer to be inserted
    * @param index of added layer after insertion
-
-  const addLayer = (layer, index) => {
-    if (index && index > 0 && index < layers.length() - 1) {
-      setLayers(layers.splice(index, 0, layer))
+   **/
+  function addLayer(layer, index) {
+    // TODO: rewrite to create new layer here given activation and unitNum
+    if (index && index > 0 && index < layers.length - 1) {
+      const layersCopy = []
+      Object.assign(layersCopy, layers)
+      layersCopy.splice(index, 0, layer)
+      setLayers(layersCopy)
     }
   }
-   */
-
-  fillGraph()
 
   return (
     <Card>
