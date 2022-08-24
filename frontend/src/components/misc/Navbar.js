@@ -4,8 +4,8 @@ import * as React from 'react'
 import logo from '../../logo.svg'
 import PropTypes from 'prop-types'
 import ServerStatusButton from './ServerStatusButton'
-import UserContext from '../../UserContext'
-import TrainingContext from '../../TrainingContext'
+import UserContext from '../../context/UserContext'
+import TrainingContext from '../../context/TrainingContext'
 import LogoutIcon from '@mui/icons-material/Logout'
 
 const links = [
