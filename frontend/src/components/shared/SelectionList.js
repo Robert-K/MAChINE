@@ -112,9 +112,7 @@ export default function SelectionList({
             <ListItemButton
               key={index + element.name}
               onClick={() => {
-                // Toggles selection if already selected
-                const newIndex = selectedIndex !== index ? index : -1
-                handleIndexChange(newIndex)
+                handleIndexChange(index)
               }}
               selected={selectedIndex === index}
             >

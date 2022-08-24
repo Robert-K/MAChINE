@@ -12,6 +12,7 @@ api = Api(app)
 parser = reqparse.RequestParser()
 parser.add_argument('username')
 parser.add_argument('smiles')
+parser.add_argument('cml')
 parser.add_argument('name')
 parser.add_argument('datasetID')
 parser.add_argument('modelID')
@@ -95,13 +96,14 @@ class Molecules(Resource):
             processed_molecules.append({
                 'name': current_molecule['name'],
                 'smiles': smiles,
+                'cml': current_molecule['cml'],
                 'analyses': analyses,
             })
         return processed_molecules, 200
 
     def patch(self, user_id):
         args = parser.parse_args()
-        return sh.add_molecule(user_id, args['smiles'], args['name']), 201
+        return sh.add_molecule(user_id, args['smiles'], args['cml'], args['name']), 201
 
 
 class Fittings(Resource):
@@ -231,7 +233,8 @@ def run(debug=True):
     test_user = str(hashlib.sha1('Tom'.encode('utf-8'), usedforsecurity=False).hexdigest())
     #test_user = str(hash('yee'))
     sh.add_user_handler(test_user)
-    sh.add_molecule(test_user, 'Clc(c(Cl)c(Cl)c1C(=O)O)c(Cl)c1Cl', 'MySuperCoolMolecule')  # For testing purposes
+    sh.add_molecule(test_user, '[13C]/C=C(/[*])C', '<cml xmlns=\"http://www.xml-cml.org/schema\"><molecule id=\"m1\"><atomArray><atom id=\"a1\" elementType=\"C\" x2=\"14.04999999999995\" y2=\"46.39999999999984\"/><atom id=\"a2\" elementType=\"C\" isotope=\"13\" x2=\"13.35999999999995\" y2=\"45.999999999999844\"/><atom id=\"a5\" elementType=\"C\" x2=\"14.739999999999949\" y2=\"45.19999999999985\"/><atom id=\"a6\" elementType=\"C\" x2=\"14.739999999999949\" y2=\"45.999999999999844\"/><atom id=\"a7\" elementType=\"R\" x2=\"15.43999999999995\" y2=\"46.39999999999984\"/></atomArray><bondArray><bond id=\"b1\" order=\"S\" atomRefs2=\"a1 a2\"/><bond id=\"b5\" order=\"S\" atomRefs2=\"a5 a6\"/><bond id=\"b6\" order=\"D\" atomRefs2=\"a6 a1\"/><bond id=\"b7\" order=\"S\" atomRefs2=\"a6 a7\"/></bondArray></molecule></cml>' ,'MySuperCoolMolecule')
+    # For testing purposes
 
     model_id = ml.create(test_user, 'myFirstModel', {'units_per_layer': 256, 'optimizer': 'Adam', 'loss': 'MeanSquaredError', 'metrics' : 'MeanAbsoluteError'}, 'id')
     model = sh.get_model(test_user, model_id)
