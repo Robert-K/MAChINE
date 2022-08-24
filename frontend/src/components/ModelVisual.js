@@ -3,6 +3,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import * as vis from 'vis-data'
 import * as v from 'vis-network'
+import Layer from '../internal/Layer'
 
 export default function ModelVisual(props) {
   const [layers, setLayers] = React.useState(props.model.layers)
@@ -28,13 +29,15 @@ export default function ModelVisual(props) {
     green: 'rgb(0, 0, 255)',
   }
   const layerBackgroundColors = {
-    red: 'rgba(255, 0, 0, 0.3)',
-    blue: 'rgba(0, 255, 0, 0.3)',
-    green: 'rgba(0, 0, 255, 0.3)',
+    red: 'rgba(255, 0, 0, 1)',
+    blue: 'rgba(0, 255, 0, 1)',
+    green: 'rgba(0, 0, 255, 1)',
   }
   const colors = ['red', 'blue', 'green']
-  // TODO: style: opacity, border, color, shape, shadow, image
-  // TODO: make add-node appear on hover between layers
+  // TODO: style: node opacity, pick colors, make boxes pretty
+  // TODO: fix dark mode interaction
+  // TODO: add layer box labels
+  // TODO: popup(?) to set unitNum and activation when adding. Idea: separate react component placed on top
   // TODO: update graph when adding layers
 
   React.useEffect(() => {
