@@ -27,12 +27,12 @@ def create(user_id, name, parameters, base_model_id):
     # TODO: Implement: Replace input layer in train,
     #  see https://stackoverflow.com/questions/42187425/how-to-change-input-shape-in-sequential-model-in-keras
     model.build(input_shape=(10000, 128))
-    return sh.add_model(user_id, name, parameters, base_model_id, model)
+    return sh.add_model(user_id, name, parameters, base_model_id)
 
 
 def train(user_id, dataset_id, model_id, fingerprint, label, epochs, batch_size):
     dataset = sh.get_dataset(dataset_id)
-    model = sh.get_model(user_id, model_id)
+    model = sh.get_model_summary(user_id, model_id)
 
     print(user_id, dataset_id, model_id, fingerprint, label, epochs, batch_size)
 

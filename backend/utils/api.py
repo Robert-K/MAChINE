@@ -205,7 +205,8 @@ class Analyze(Resource):
 class Train(Resource):
     def post(self, user_id):
         args = parser.parse_args()
-        return ml.train(user_id, args['datasetID'], args['modelID'], args['fingerprint'], args['label'], args['epochs'], args['batchSize'])
+        return ml.train(user_id, args['datasetID'], args['modelID'], args['fingerprint'], args['label'], args['epochs'],
+                        args['batchSize'])
 
 
 class Check(Resource):
@@ -248,12 +249,12 @@ def run(debug=True):
     model_id = ml.create(test_user, 'myFirstModel',
                          {'units_per_layer': 256, 'optimizer': 'Adam', 'loss': 'MeanSquaredError',
                           'metrics': 'MeanAbsoluteError'}, 'id')
-    model = sh.get_model(test_user, model_id)
-    fitting_id_1 = sh.add_fitting(test_user, '0', 2, 0.25, 125, model_id, model)
-    fitting_id_2 = sh.add_fitting(test_user, '0', 6000, 5.05, 5, model_id, model)
-    print(fitting_id_1, fitting_id_2)
-    sh.add_analysis(test_user, 'Clc(c(Cl)c(Cl)c1C(=O)O)c(Cl)c1Cl', fitting_id_1, {'lumo': -7.152523})
-    sh.add_analysis(test_user, 'Clc(c(Cl)c(Cl)c1C(=O)O)c(Cl)c1Cl', fitting_id_2, {'homo': 1.5254})
+    model = sh.get_model_summary(test_user, model_id)
+    # fitting_id_1 = sh.add_fitting(test_user, '0', 2, 0.25, 125, model_id, ml.train(test_user))
+    # fitting_id_2 = sh.add_fitting(test_user, '0', 6000, 5.05, 5, model_id, )
+    # print(fitting_id_1, fitting_id_2)
+    # sh.add_analysis(test_user, 'Clc(c(Cl)c(Cl)c1C(=O)O)c(Cl)c1Cl', fitting_id_1, {'lumo': -7.152523})
+    # sh.add_analysis(test_user, 'Clc(c(Cl)c(Cl)c1C(=O)O)c(Cl)c1Cl', fitting_id_2, {'homo': 1.5254})
     print(test_user)
     sio.run(app, allow_unsafe_werkzeug=True)
 

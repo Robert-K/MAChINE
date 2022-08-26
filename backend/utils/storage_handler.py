@@ -21,7 +21,7 @@ __all__ = ['add_analysis',
            'get_dataset_summaries',
            'get_fitting',
            'get_fitting_summaries',
-           'get_model',
+           'get_model_summary',
            'get_model_summaries',
            'get_molecules',
            'get_user_handler']
@@ -39,7 +39,6 @@ class UserDataStorageHandler:
 
     def __init__(self, user_id):
         self.user_path = _user_data_path / user_id
-        self.user_models_path = self.user_path / 'models'
         self.user_fittings_path = self.user_path / 'fittings'
         self.__build_folder_structure()
         self.molecules = self.__load_summary_file('molecules.json')
@@ -66,26 +65,18 @@ class UserDataStorageHandler:
         return self.molecules.get(smiles)
 
     # Models
-    def add_model(self, name, parameters, base_model_id, model):
-        model_id = str(hash(model) ^ hash(name))
-        path = self.user_models_path / f'{model_id}_model.h5'
-        model.save(path)
+    def add_model(self, name, parameters, base_model_id):
+        model_id = str(hash(str(parameters)) ^ hash(name) ^ hash(base_model_id))
         self.model_summaries[model_id] = {'name': name,
                                           'baseModelID': base_model_id,
                                           'parameters': parameters,
-                                          'modelPath': str(path),
                                           'fittingIDs': []
                                           }
         self.__save_summary_file('models.json', self.model_summaries)
         return model_id
 
-    # Models are pickled
-    def get_model(self, model_id):
-        summary = self.model_summaries.get(model_id)
-        if summary and summary.get('modelPath'):
-            path = Path(summary.get('modelPath'))
-            if path.exists():
-                return tf.keras.models.load_model(path)
+    def get_model_summary(self, model_id):
+        return self.model_summaries.get(model_id)
 
     def get_model_summaries(self):
         return self.model_summaries
@@ -149,7 +140,6 @@ class UserDataStorageHandler:
 
     def __build_folder_structure(self):
         self.user_path.mkdir(parents=True, exist_ok=True)
-        self.user_models_path.mkdir(parents=True, exist_ok=True)
         self.user_fittings_path.mkdir(parents=True, exist_ok=True)
 
 
@@ -216,11 +206,11 @@ class StorageHandler:
 
     # Models
     # model is the actual model, not a summary
-    def add_model(self, user_id, name, parameters, base_model_id, model):
-        return self.get_user_handler(user_id).add_model(name, parameters, base_model_id, model)
+    def add_model(self, user_id, name, parameters, base_model_id):
+        return self.get_user_handler(user_id).add_model(name, parameters, base_model_id)
 
-    def get_model(self, user_id, model_id):
-        return self.get_user_handler(user_id).get_model(model_id)
+    def get_model_summary(self, user_id, model_id):
+        return self.get_user_handler(user_id).get_model_summary(model_id)
 
     def get_model_summaries(self, user_id):
         return self.get_user_handler(user_id).get_model_summaries()
@@ -307,7 +297,7 @@ get_dataset = _inst.get_dataset
 get_dataset_summaries = _inst.get_dataset_summaries
 get_fitting = _inst.get_fitting
 get_fitting_summaries = _inst.get_fitting_summaries
-get_model = _inst.get_model
+get_model_summary = _inst.get_model_summary
 get_model_summaries = _inst.get_model_summaries
 get_molecules = _inst.get_molecules
 get_user_handler = _inst.get_user_handler
