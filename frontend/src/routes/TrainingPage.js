@@ -4,6 +4,10 @@ import ModelDetailsCard from '../components/training/ModelDetailsCard'
 import DatasetDetailsCard from '../components/training/DatasetDetailsCard'
 import { useNavigate } from 'react-router-dom'
 import TrainingContext from '../context/TrainingContext'
+import io from 'socket.io-client'
+import api from '../api'
+
+const socket = io(`ws://${api.getServerAddress()}:${api.getServerPort()}`)
 
 export default function TrainingPage() {
   const [epochs, setEpochs] = React.useState(1000)
@@ -30,6 +34,33 @@ export default function TrainingPage() {
       training.setTrainingStatus(true)
       // TODO: Send start training command to backend
     }
+  }
+
+  const [isConnected, setIsConnected] = React.useState(socket.connected)
+  const [lastPong, setLastPong] = React.useState(null)
+
+  React.useEffect(() => {
+    socket.on('connect', () => {
+      setIsConnected(true)
+    })
+
+    socket.on('disconnect', () => {
+      setIsConnected(false)
+    })
+
+    socket.on('pong', (answer) => {
+      setLastPong(answer)
+    })
+
+    return () => {
+      socket.off('connect')
+      socket.off('disconnect')
+      socket.off('pong')
+    }
+  }, [])
+
+  const sendPing = (text) => {
+    socket.emit('ping', text)
   }
 
   const navigate = useNavigate()
@@ -62,7 +93,10 @@ export default function TrainingPage() {
         />
       </Grid>
       <Grid item xs={6}>
-        <Box sx={{ m: 2, background: 'black', height: 400 }}></Box>
+        <Box sx={{ m: 2, background: 'grey', height: 400 }}>
+          {lastPong}
+          {isConnected}
+        </Box>
         <Button variant="outlined" sx={{ m: 2 }} onClick={handleStartStop}>
           {startStopButton}
         </Button>
@@ -72,6 +106,15 @@ export default function TrainingPage() {
           onClick={() => navigate('/molecules')}
         >
           Continue to Molecules
+        </Button>
+        <Button
+          variant="outlined"
+          sx={{ m: 2 }}
+          onClick={() => {
+            sendPing('hallo')
+          }}
+        >
+          ping
         </Button>
       </Grid>
     </Grid>
