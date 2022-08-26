@@ -12,6 +12,7 @@ export default function DatasetDetailsCard({
         <Typography gutterBottom variant="h5" component="div">
           Dataset Details
         </Typography>
+        <Typography>Name: {selectedDataset.name}</Typography>
         <Typography>ID: {selectedDataset.datasetID}</Typography>
         <Typography>Size: {selectedDataset.size}</Typography>
         <Typography>Label:</Typography>

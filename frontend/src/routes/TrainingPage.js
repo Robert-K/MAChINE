@@ -80,8 +80,10 @@ export default function TrainingPage() {
           id="epochs"
           label="Epochs"
           type="number"
-          onChange={handleEpochsChange}
           defaultValue={epochs}
+          onChange={handleEpochsChange}
+          error={epochs === ''}
+          helperText={epochs === '' ? 'Required!' : ' '}
         />
         <TextField
           sx={{ mx: 3, mt: 3 }}
@@ -91,6 +93,8 @@ export default function TrainingPage() {
           type="number"
           defaultValue={batchsize}
           onChange={handlebatchsizeChange}
+          error={batchsize === ''}
+          helperText={batchsize === '' ? 'Required!' : ' '}
         />
         <ModelDetailsCard selectedModel={training.selectedModel} />
         <DatasetDetailsCard
@@ -103,7 +107,12 @@ export default function TrainingPage() {
           {lastPong}
           {isConnected}
         </Box>
-        <Button variant="outlined" sx={{ m: 2 }} onClick={handleStartStop}>
+        <Button
+          variant="outlined"
+          disabled={!training.trainingStatus && !(epochs > 0 && batchsize > 0)} // TODO: Add range of possible values
+          sx={{ m: 2 }}
+          onClick={handleStartStop}
+        >
           {startStopButton}
         </Button>
         <Button
