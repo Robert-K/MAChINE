@@ -24,11 +24,11 @@ export default function TrainingPage() {
     if (training.trainingStatus === true) {
       setStartStopButton(start)
       training.setTrainingStatus(false)
-      console.log(startStopButton)
-      console.log(training.trainingStatus)
+      // TODO: Send abort training command to backend
     } else {
       setStartStopButton(stop)
       training.setTrainingStatus(true)
+      // TODO: Send start training command to backend
     }
   }
 
@@ -36,7 +36,7 @@ export default function TrainingPage() {
 
   return (
     <Grid container>
-      <Grid xs={6}>
+      <Grid item xs={6}>
         <TextField
           sx={{ mx: 3, mt: 3 }}
           required
