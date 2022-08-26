@@ -4,10 +4,12 @@ from flask_restful import reqparse, Api, Resource
 import hashlib
 from backend.utils import storage_handler as sh
 from backend.machine_learning import ml_functions as ml
+from flask_socketio import SocketIO, send, emit
 
 app = Flask(__name__)
 cors = CORS(app)
 api = Api(app)
+sio = SocketIO(app, cors_allowed_origins='*')
 
 parser = reqparse.RequestParser()
 parser.add_argument('username')
@@ -227,16 +229,26 @@ api.add_resource(Datasets, '/datasets')
 api.add_resource(BaseModels, '/baseModels')
 
 
+# SocketIO event listeners
+@sio.on('ping')
+def handle_ping(data):
+    sio.emit('pong', data + 'copy')
+
+
 def run(debug=True):
     # Lots of dummy data
     # TODO: Remove
     test_user = str(hashlib.sha1('Tom'.encode('utf-8'), usedforsecurity=False).hexdigest())
-    #test_user = str(hash('yee'))
+    # test_user = str(hash('yee'))
     sh.add_user_handler(test_user)
-    sh.add_molecule(test_user, '[13C]/C=C(/[*])C', '<cml xmlns=\"http://www.xml-cml.org/schema\"><molecule id=\"m1\"><atomArray><atom id=\"a1\" elementType=\"C\" x2=\"14.04999999999995\" y2=\"46.39999999999984\"/><atom id=\"a2\" elementType=\"C\" isotope=\"13\" x2=\"13.35999999999995\" y2=\"45.999999999999844\"/><atom id=\"a5\" elementType=\"C\" x2=\"14.739999999999949\" y2=\"45.19999999999985\"/><atom id=\"a6\" elementType=\"C\" x2=\"14.739999999999949\" y2=\"45.999999999999844\"/><atom id=\"a7\" elementType=\"R\" x2=\"15.43999999999995\" y2=\"46.39999999999984\"/></atomArray><bondArray><bond id=\"b1\" order=\"S\" atomRefs2=\"a1 a2\"/><bond id=\"b5\" order=\"S\" atomRefs2=\"a5 a6\"/><bond id=\"b6\" order=\"D\" atomRefs2=\"a6 a1\"/><bond id=\"b7\" order=\"S\" atomRefs2=\"a6 a7\"/></bondArray></molecule></cml>' ,'MySuperCoolMolecule')
+    sh.add_molecule(test_user, '[13C]/C=C(/[*])C',
+                    '<cml xmlns=\"http://www.xml-cml.org/schema\"><molecule id=\"m1\"><atomArray><atom id=\"a1\" elementType=\"C\" x2=\"14.04999999999995\" y2=\"46.39999999999984\"/><atom id=\"a2\" elementType=\"C\" isotope=\"13\" x2=\"13.35999999999995\" y2=\"45.999999999999844\"/><atom id=\"a5\" elementType=\"C\" x2=\"14.739999999999949\" y2=\"45.19999999999985\"/><atom id=\"a6\" elementType=\"C\" x2=\"14.739999999999949\" y2=\"45.999999999999844\"/><atom id=\"a7\" elementType=\"R\" x2=\"15.43999999999995\" y2=\"46.39999999999984\"/></atomArray><bondArray><bond id=\"b1\" order=\"S\" atomRefs2=\"a1 a2\"/><bond id=\"b5\" order=\"S\" atomRefs2=\"a5 a6\"/><bond id=\"b6\" order=\"D\" atomRefs2=\"a6 a1\"/><bond id=\"b7\" order=\"S\" atomRefs2=\"a6 a7\"/></bondArray></molecule></cml>',
+                    'MySuperCoolMolecule')
     # For testing purposes
 
-    model_id = ml.create(test_user, 'myFirstModel', {'units_per_layer': 256, 'optimizer': 'Adam', 'loss': 'MeanSquaredError', 'metrics' : 'MeanAbsoluteError'}, 'id')
+    model_id = ml.create(test_user, 'myFirstModel',
+                         {'units_per_layer': 256, 'optimizer': 'Adam', 'loss': 'MeanSquaredError',
+                          'metrics': 'MeanAbsoluteError'}, 'id')
     model = sh.get_model(test_user, model_id)
     fitting_id_1 = sh.add_fitting(test_user, '0', 2, 0.25, 125, model_id, model)
     fitting_id_2 = sh.add_fitting(test_user, '0', 6000, 5.05, 5, model_id, model)
@@ -244,7 +256,7 @@ def run(debug=True):
     sh.add_analysis(test_user, 'Clc(c(Cl)c(Cl)c1C(=O)O)c(Cl)c1Cl', fitting_id_1, {'lumo': -7.152523})
     sh.add_analysis(test_user, 'Clc(c(Cl)c(Cl)c1C(=O)O)c(Cl)c1Cl', fitting_id_2, {'homo': 1.5254})
     print(test_user)
-    app.run()
+    sio.run(app)
 
 
 if __name__ == '__main__':
