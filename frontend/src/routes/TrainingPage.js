@@ -32,7 +32,13 @@ export default function TrainingPage() {
     } else {
       setStartStopButton(stop)
       training.setTrainingStatus(true)
-      // TODO: Send start training command to backend
+      api.trainModel(
+        training.selectedDataset.datasetID,
+        training.selectedModel.modelID,
+        training.selectedLabels,
+        epochs,
+        batchsize
+      )
     }
   }
 

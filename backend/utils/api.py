@@ -2,9 +2,9 @@ from flask import Flask
 from flask_cors import CORS
 from flask_restful import reqparse, Api, Resource
 import hashlib
+from flask_socketio import SocketIO, send, emit
 from backend.utils import storage_handler as sh
 from backend.machine_learning import ml_functions as ml
-from flask_socketio import SocketIO, send, emit
 
 app = Flask(__name__)
 cors = CORS(app)
@@ -205,8 +205,7 @@ class Analyze(Resource):
 class Train(Resource):
     def post(self, user_id):
         args = parser.parse_args()
-        return ml.train(user_id, args['datasetID'], args['modelID'], args['fingerprint'], args['label'], args['epochs'],
-                        args['accuracy'], args['batchSize'])
+        return ml.train(user_id, args['datasetID'], args['modelID'], args['fingerprint'], args['label'], args['epochs'], args['batchSize'])
 
 
 class Check(Resource):
