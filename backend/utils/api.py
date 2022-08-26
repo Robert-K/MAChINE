@@ -255,7 +255,7 @@ def run(debug=True):
     sh.add_analysis(test_user, 'Clc(c(Cl)c(Cl)c1C(=O)O)c(Cl)c1Cl', fitting_id_1, {'lumo': -7.152523})
     sh.add_analysis(test_user, 'Clc(c(Cl)c(Cl)c1C(=O)O)c(Cl)c1Cl', fitting_id_2, {'homo': 1.5254})
     print(test_user)
-    sio.run(app)
+    sio.run(app, allow_unsafe_werkzeug=True)
 
 
 if __name__ == '__main__':
