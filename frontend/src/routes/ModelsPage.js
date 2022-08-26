@@ -6,6 +6,11 @@ import {
   CardContent,
   CardHeader,
   Collapse,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   Divider,
   Grid,
   List,
@@ -32,8 +37,8 @@ const gridHeight = '80vh'
 export default function ModelsPage() {
   const [selectedIndex, setSelectedIndex] = React.useState(-1)
   const [modelList, setModelList] = React.useState([])
+  const [showDialog, setShowDialog] = React.useState(false)
   const training = React.useContext(TrainingContext)
-
   const user = React.useContext(UserContext)
 
   React.useEffect(() => {
@@ -86,6 +91,19 @@ export default function ModelsPage() {
       )
     } else {
       const selectedModel = modelList[selectedIndex]
+
+      const handleCloseDialog = () => {
+        setShowDialog(false)
+      }
+
+      const abortTraining = () => {
+        training.setTrainingStatus(false)
+        // TODO: Send abort training command to backend
+        setShowDialog(false)
+        training.setSelectedModel(selectedModel)
+        navigate('/datasets')
+      }
+
       return (
         <Card sx={{ maxHeight: gridHeight, height: gridHeight }}>
           <CardContent
@@ -112,12 +130,36 @@ export default function ModelsPage() {
               <Grid container justifyContent="center">
                 <Button
                   onClick={() => {
-                    training.setSelectedModel(selectedModel)
-                    navigate('/datasets')
+                    if (!training.trainingStatus) {
+                      training.setSelectedModel(selectedModel)
+                      navigate('/datasets')
+                    } else {
+                      setShowDialog(true)
+                    }
                   }}
                 >
                   Select Training Data
                 </Button>
+                <Dialog
+                  open={showDialog}
+                  onClose={handleCloseDialog}
+                  aria-labelledby="alert-dialog-title"
+                  aria-describedby="alert-dialog-description"
+                >
+                  <DialogTitle id="alert-dialog-title">
+                    {'Abort current training?'}
+                  </DialogTitle>
+                  <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                      To start a new training, you have to abort the current
+                      training
+                    </DialogContentText>
+                  </DialogContent>
+                  <DialogActions>
+                    <Button onClick={handleCloseDialog}>Cancel</Button>
+                    <Button onClick={abortTraining}>Continue</Button>
+                  </DialogActions>
+                </Dialog>
               </Grid>
             </CardActions>
           </CardContent>
