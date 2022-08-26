@@ -33,7 +33,7 @@ _dataset_images_path = _datasets_path / 'images'
 _base_models_path = _storage_path / 'models'
 _base_model_images_path = _base_models_path / 'images'
 MAX_THUMB_SIZE = (500, 500)
-
+_dataset_version = 3
 
 class UserDataStorageHandler:
 
@@ -261,9 +261,13 @@ class StorageHandler:
         file = dataset_path.open('rb')
         content = pickle.load(file)
         file.close()
+        if content.get('version') != _dataset_version:
+            print(f'Dataset {content.get("name")} not compatible. Current version: {_dataset_version}. Set version: {content.get("version")}')
+            return
         dataset_summary = {'name': content.get('name'),
                            'size': content.get('size'),
                            'labelDescriptors': content.get('labels'),
+                           'fingerprintSizes': content.get('fingerprint_sizes'),
                            'datasetPath': str(dataset_path.absolute()),
                            'image': self.__encode_image(_dataset_images_path / content.get('image_file')),
                            }
