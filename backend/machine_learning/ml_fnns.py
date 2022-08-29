@@ -1,3 +1,6 @@
+from rdkit import Chem
+from rdkit.Chem import AllChem
+
 from backend.utils import storage_handler as sh
 import tensorflow as tf
 from backend.machine_learning import ml_dicts as mld
@@ -9,6 +12,8 @@ from keras import layers
 # parameters right now needs to contain fields for 'optimizer', 'units_per_layer', 'activationFunction', 'metrics'
 # Technically, we do not need batchSize in this method. It was added so that create_fnn and create_schnet have the same signature
 _fingerprint_size = 512
+
+
 def create_fnn_with_dataset(parameters, dataset, labels, loss, optimizer, metrics, batch_size):
     layers_param = parameters.get('layers')
 
@@ -30,16 +35,20 @@ def create_fnn_with_dataset(parameters, dataset, labels, loss, optimizer, metric
                   loss=loss,
                   metrics=metrics)
 
-    model.build(input_shape=(10000, 128))
+    model.build(input_shape=x.shape)
 
     ds = tf.data.Dataset.from_tensor_slices((x, y)).batch(batch_size)
 
     return model, ds
 
+
 def train(user_id, dataset_id, model_id, fingerprint, labels, epochs, accuracy, batch_size):
     dataset = sh.get_dataset(dataset_id)
     model_summary = sh.get_model_summary(model_id)
-    model, ds = create_fnn_with_dataset(model_summary.get('parameters'), dataset, labels, mld.loss.get(model_summary.get('parameters').get('loss')), mld.optimizer.get(model_summary.get('parameters').get('optimizer')), [mld.metrics.get(model_summary.get('base_model').get('metric'))], batch_size)
+    model = create_fnn_with_dataset(model_summary.get('parameters'), dataset, labels,
+                                    mld.loss.get(model_summary.get('parameters').get('loss')),
+                                    mld.optimizer.get(model_summary.get('parameters').get('optimizer')),
+                                    [mld.metrics.get(model_summary.get('base_model').get('metric'))], batch_size)
 
     # TODO: implement training (milestone for 26/08)
     # todo fit
@@ -54,3 +63,12 @@ def analyze(user_id, fitting_id, molecule_id):
 
     analysis = fitting.predict(molecule)
     sh.add_analysis(sh, molecule, fitting, analysis)
+
+
+def smiles_to_fingerprint(smiles):
+    try:
+        mol = Chem.MolFromSmiles(smiles)
+        fingerprint = AllChem.GetMorganFingerprintAsBitVect(mol, radius=2, nBits=_fingerprint_size)
+        return list(fingerprint)
+    except (IndexError, ValueError):
+        return None

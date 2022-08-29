@@ -141,19 +141,21 @@ export default {
     })
   },
 
-  async analyzeMolecule() {
-    return api.post(`/users/${userID}/analyze`).then((response) => {
-      return response.data
-    })
+  async analyzeMolecule(fittingID, modelID, smiles) {
+    return api
+      .post(`/users/${userID}/analyze`, { fittingID, modelID, smiles })
+      .then((response) => {
+        return response.data
+      })
   },
 
-  async trainModel(datasetID, modelID, label, epochs, batchSize) {
+  async trainModel(datasetID, modelID, labels, epochs, batchSize) {
     console.log(modelID)
     return api
       .post(`/users/${userID}/train`, {
         datasetID,
         modelID,
-        label,
+        labels,
         epochs,
         batchSize,
       })
