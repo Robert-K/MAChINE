@@ -46,6 +46,4 @@ def analyze(user_id, fitting_id, model_id, smiles):
 class LiveStats(keras.callbacks.Callback):
 
     def on_epoch_end(self, epoch, logs={}):
-        print(logs)
-        print('called')
         api.update(logs)

@@ -1,3 +1,4 @@
+import json
 from flask import Flask
 from flask_cors import CORS
 from flask_restful import reqparse, Api, Resource
@@ -20,11 +21,10 @@ parser.add_argument('name')
 parser.add_argument('datasetID')
 parser.add_argument('modelID')
 parser.add_argument('fittingID')
-parser.add_argument('fingerprint')
 parser.add_argument('labels')
-parser.add_argument('epochs')
+parser.add_argument('epochs', type=int)
 parser.add_argument('accuracy')
-parser.add_argument('batchSize')
+parser.add_argument('batchSize', type=int)
 parser.add_argument('baseModel')
 
 
@@ -206,7 +206,8 @@ class Analyze(Resource):
 class Train(Resource):
     def post(self, user_id):
         args = parser.parse_args()
-        return ml.train(user_id, args['datasetID'], args['modelID'], args['labels'], args['epochs'], args['batchSize'])
+        labels = json.loads(args['labels'])
+        return ml.train(user_id, args['datasetID'], args['modelID'], labels, args['epochs'], args['batchSize'])
 
 
 class Check(Resource):
@@ -264,7 +265,7 @@ def run(debug=True):
             'activation': 'relu',
         }
     ], 'loss': 'MeanSquaredError', 'optimizer': 'Adam'}, 'id')
-    #fitting_id = ml.train(test_user, '1', model_id, ['HIV_active'], 10, 64)
+    fitting_id = ml.train(test_user, '1', model_id, ['HIV_active'], 0, 64)
     # fitting_id_1 = sh.add_fitting(test_user, '0', 2, 0.25, 125, model_id, ml.train(test_user))
     # fitting_id_2 = sh.add_fitting(test_user, '0', 6000, 5.05, 5, model_id, )
     # print(fitting_id_1, fitting_id_2)
