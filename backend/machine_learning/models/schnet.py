@@ -1,3 +1,4 @@
+# Copyright André Eberhard 2022 | All rights reserved.
 import tensorflow as tf
 from keras.engine.base_layer import Layer
 from keras.utils.generic_utils import get_custom_objects
