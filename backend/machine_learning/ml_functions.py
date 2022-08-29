@@ -5,6 +5,7 @@ from backend.machine_learning import ml_dicts as mld
 
 fingerprint = ["128", "512", "1024"]
 
+
 # Parameter content is currently WIP
 # TODO: Work on
 # parameters right now needs to contain fields for 'optimizer', 'units_per_layer', 'activationFunction', 'metrics'
@@ -34,7 +35,8 @@ def create(user_id, name, parameters, base_model_id):
 def train(user_id, dataset_id, model_id, label, epochs, batch_size):
     dataset = sh.get_dataset(dataset_id)
     model_summary = sh.get_model_summary(user_id, model_id)
-
+    base_model = sh.get_base_model(model_summary.get('baseModelID'))
+    model, ds = mld.creation_functions(base_model.get('type'))
 
     print(user_id, dataset_id, model_id, label, epochs, batch_size)
 

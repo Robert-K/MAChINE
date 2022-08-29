@@ -9,7 +9,7 @@ from rdkit import Chem
 from rdkit.Chem import AllChem
 from scipy.spatial.distance import squareform, pdist
 
-from schnet import make_schnet
+from backend.machine_learning.models.schnet import make_schnet
 
 
 def smiles_to_mol_graph(smiles):
