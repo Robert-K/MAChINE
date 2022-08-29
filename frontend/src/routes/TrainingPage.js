@@ -34,7 +34,7 @@ export default function TrainingPage() {
       training.setTrainingStatus(true)
       api.trainModel(
         training.selectedDataset.datasetID,
-        training.selectedModel.modelID,
+        training.selectedModel.id,
         training.selectedLabels,
         epochs,
         batchsize
