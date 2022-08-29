@@ -13,6 +13,7 @@ const links = [
   { link: '/models', label: 'Models' },
   { link: '/molecules', label: 'Molecules' },
   { link: '/results', label: 'Scoreboards' },
+  { link: '/charts', label: 'Charts Test' },
 ]
 
 export default function Navbar({ logoutFunction, darkModeButton }) {
