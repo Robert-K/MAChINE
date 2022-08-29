@@ -9,6 +9,10 @@ const TrainingContext = React.createContext({
   setSelectedDataset: () => {},
   selectedLabels: [],
   setSelectedLabels: () => {},
+  selectedEpochs: 0,
+  setSelectedEpochs: () => {},
+  selectedBatchSize: 0,
+  setSelectedBatchSize: () => {},
 })
 
 export const TrainingProvider = TrainingContext.Provider

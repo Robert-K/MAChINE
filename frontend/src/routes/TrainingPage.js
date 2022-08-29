@@ -10,11 +10,12 @@ import api from '../api'
 const socket = io(`ws://${api.getServerAddress()}:${api.getServerPort()}`)
 
 export default function TrainingPage() {
-  const [epochs, setEpochs] = React.useState(1000)
+  const training = React.useContext(TrainingContext)
+
   const [epochsError, setEpochsError] = React.useState(false)
   const handleEpochsChange = (event) => {
     const tempEpochs = event.target.value
-    setEpochs(tempEpochs)
+    training.setSelectedEpochs(tempEpochs)
     if (tempEpochs > 0) {
       // TODO: Add allowed range of values
       setEpochsError(false)
@@ -23,11 +24,10 @@ export default function TrainingPage() {
     }
   }
 
-  const [batchSize, setBatchSize] = React.useState(64)
   const [batchSizeError, setBatchSizeError] = React.useState(false)
   const handleBatchSizeChange = (event) => {
     const tempBatchSize = event.target.value
-    setBatchSize(tempBatchSize)
+    training.setSelectedBatchSize(tempBatchSize)
     if (tempBatchSize > 0) {
       // TODO: Add allowed range of values
       setBatchSizeError(false)
@@ -36,7 +36,6 @@ export default function TrainingPage() {
     }
   }
 
-  const training = React.useContext(TrainingContext)
   const [startStopButton, setStartStopButton] = React.useState('Start')
 
   useEffect(() => {
@@ -57,8 +56,8 @@ export default function TrainingPage() {
         training.selectedDataset.datasetID,
         training.selectedModel.id,
         training.selectedLabels,
-        epochs,
-        batchSize
+        training.selectedEpochs,
+        training.selectedBatchSize
       )
     }
   }
@@ -101,7 +100,8 @@ export default function TrainingPage() {
           id="epochs"
           label="Epochs"
           type="number"
-          defaultValue={epochs}
+          defaultValue={training.selectedEpochs}
+          disabled={training.trainingStatus}
           onChange={handleEpochsChange}
           error={epochsError}
           helperText={epochsError ? 'Required!' : ' '}
@@ -112,7 +112,8 @@ export default function TrainingPage() {
           id="batchsize"
           label="Batch Size"
           type="number"
-          defaultValue={batchSize}
+          defaultValue={training.selectedBatchSize}
+          disabled={training.trainingStatus}
           onChange={handleBatchSizeChange}
           error={batchSizeError}
           helperText={batchSizeError ? 'Required!' : ' '}
