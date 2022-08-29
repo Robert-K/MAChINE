@@ -66,7 +66,7 @@ export default function ModelVisual(props) {
     })
     addLayer(
       new Layer('Dense', 4, 'SoftMax'),
-      graph.nodes.get(lastLeftNode).group
+      parseInt(graph.nodes.get(lastLeftNode).group)
     ) // TODO: replace after addLayer rewrite
   }
 
@@ -172,11 +172,12 @@ export default function ModelVisual(props) {
    **/
   function addLayer(layer, index) {
     // TODO: rewrite to create new layer here given activation and unitNum
-    if (index && index > 0 && index < layers.length - 1) {
-      const layersCopy = []
-      Object.assign(layersCopy, layers)
-      layersCopy.splice(index, 0, layer)
-      setLayers(layersCopy)
+    if (index && index >= 0 && index < layers.length - 1) {
+      setLayers((layers) => [
+        ...layers.slice(0, index + 1),
+        layer,
+        ...layers.slice(index + 1, layers.length),
+      ])
     }
   }
 
