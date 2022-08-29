@@ -3,6 +3,7 @@ import tensorflow as tf
 import numpy as np
 from backend.machine_learning import ml_dicts as mld
 
+fingerprint = ["128", "512", "1024"]
 
 # Parameter content is currently WIP
 # TODO: Work on
@@ -30,19 +31,39 @@ def create(user_id, name, parameters, base_model_id):
     return sh.add_model(user_id, name, parameters, base_model_id)
 
 
-def train(user_id, dataset_id, model_id, fingerprint, label, epochs, batch_size):
+def train(user_id, dataset_id, model_id, label, epochs, batch_size):
     dataset = sh.get_dataset(dataset_id)
-    model = sh.get_model_summary(user_id, model_id)
+    model_summary = sh.get_model_summary(user_id, model_id)
 
-    print(user_id, dataset_id, model_id, fingerprint, label, epochs, batch_size)
+
+    print(user_id, dataset_id, model_id, label, epochs, batch_size)
 
     # TODO: implement training (milestone for 26/08)
 
-    x, y = zip(*[(mol["x"][str(fingerprint)], mol["y"][label]) for mol in dataset])
+    x, y = zip(*[(mol["x"].get("fingerprints")[fingerprint[0]], mol["y"][label]) for mol in dataset])
     x, y = np.array(x), np.array(y)
-    fitting = model.fit(x, y, epochs=epochs, batch_size=batch_size)
 
-    sh.add_fitting(user_id, dataset_id, epochs, batch_size, model_id, fitting)
+    #################################################
+    n_units_per_layer = 256
+
+    model = tf.keras.models.Sequential([
+        tf.keras.layers.Dense(units=n_units_per_layer, activation="relu"),
+        tf.keras.layers.Dense(units=n_units_per_layer, activation="relu"),
+        tf.keras.layers.Dense(units=n_units_per_layer, activation="relu"),
+        tf.keras.layers.Dense(units=1)
+    ])
+
+    model.compile(optimizer=tf.keras.optimizers.Adam(), loss=tf.keras.losses.MeanSquaredError(),
+                  metrics=[tf.keras.metrics.MeanAbsoluteError()])
+
+    model.build(input_shape=x.shape)
+    model.summary()
+
+    #################################################
+
+    fitting = model.fit(x, y, epochs=int(epochs), batch_size=int(batch_size))
+
+    sh.add_fitting(user_id, dataset_id, epochs, 0, batch_size, model_id, model)
 
 
 def analyze(user_id, fitting_id, molecule_id):
