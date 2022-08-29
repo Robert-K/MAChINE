@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Box, Button, Grid, TextField } from '@mui/material'
 import ModelDetailsCard from '../components/training/ModelDetailsCard'
 import DatasetDetailsCard from '../components/training/DatasetDetailsCard'
@@ -11,33 +11,54 @@ const socket = io(`ws://${api.getServerAddress()}:${api.getServerPort()}`)
 
 export default function TrainingPage() {
   const [epochs, setEpochs] = React.useState(1000)
+  const [epochsError, setEpochsError] = React.useState(false)
   const handleEpochsChange = (event) => {
-    setEpochs(event.target.value)
+    const tempEpochs = event.target.value
+    setEpochs(tempEpochs)
+    if (tempEpochs > 0) {
+      // TODO: Add allowed range of values
+      setEpochsError(false)
+    } else {
+      setEpochsError(true)
+    }
   }
-  const [batchsize, setBatchSize] = React.useState(64)
-  const handlebatchsizeChange = (event) => {
-    setBatchSize(event.target.value)
+
+  const [batchSize, setBatchSize] = React.useState(64)
+  const [batchSizeError, setBatchSizeError] = React.useState(false)
+  const handleBatchSizeChange = (event) => {
+    const tempBatchSize = event.target.value
+    setBatchSize(tempBatchSize)
+    if (tempBatchSize > 0) {
+      // TODO: Add allowed range of values
+      setBatchSizeError(false)
+    } else {
+      setBatchSizeError(true)
+    }
   }
 
   const training = React.useContext(TrainingContext)
-  const start = 'Start'
-  const stop = 'Stop'
-  const [startStopButton, setStartStopButton] = React.useState(start)
+  const [startStopButton, setStartStopButton] = React.useState('Start')
+
+  useEffect(() => {
+    if (training.trainingStatus === true) {
+      setStartStopButton('Stop')
+    } else {
+      setStartStopButton('Start')
+    }
+  }, [training.trainingStatus])
 
   const handleStartStop = () => {
     if (training.trainingStatus === true) {
-      setStartStopButton(start)
       training.setTrainingStatus(false)
       // TODO: Send abort training command to backend
     } else {
-      setStartStopButton(stop)
       training.setTrainingStatus(true)
       api.trainModel(
         training.selectedDataset.datasetID,
         training.selectedModel.id,
         training.selectedLabels,
         epochs,
-        batchsize
+        batchSize
       )
     }
   }
@@ -82,8 +103,8 @@ export default function TrainingPage() {
           type="number"
           defaultValue={epochs}
           onChange={handleEpochsChange}
-          error={epochs === ''}
-          helperText={epochs === '' ? 'Required!' : ' '}
+          error={epochsError}
+          helperText={epochsError ? 'Required!' : ' '}
         />
         <TextField
           sx={{ mx: 3, mt: 3 }}
@@ -91,10 +112,10 @@ export default function TrainingPage() {
           id="batchsize"
           label="Batch Size"
           type="number"
-          defaultValue={batchsize}
-          onChange={handlebatchsizeChange}
-          error={batchsize === ''}
-          helperText={batchsize === '' ? 'Required!' : ' '}
+          defaultValue={batchSize}
+          onChange={handleBatchSizeChange}
+          error={batchSizeError}
+          helperText={batchSizeError ? 'Required!' : ' '}
         />
         <ModelDetailsCard selectedModel={training.selectedModel} />
         <DatasetDetailsCard
@@ -109,7 +130,7 @@ export default function TrainingPage() {
         </Box>
         <Button
           variant="outlined"
-          disabled={!training.trainingStatus && !(epochs > 0 && batchsize > 0)} // TODO: Add range of possible values
+          disabled={epochsError || batchSizeError}
           sx={{ m: 2 }}
           onClick={handleStartStop}
         >
