@@ -25,6 +25,7 @@ def train(user_id, dataset_id, model_id, labels, epochs, batch_size):
     # Trains the model
 
     model.fit(ds, epochs=int(epochs), batch_size=int(batch_size), callbacks=[LiveStats()], verbose=0)
+    api.noticeDone()
     # Saves the trained model
     return sh.add_fitting(user_id, dataset_id, epochs, 0, batch_size, model_id, model)
 

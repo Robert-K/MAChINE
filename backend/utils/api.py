@@ -239,6 +239,8 @@ def update(logs):
     sio.emit('update', logs)
     el.sleep(0)
 
+def noticeDone():
+    sio.emit('done')
 
 def run(debug=True):
     # Lots of dummy data
