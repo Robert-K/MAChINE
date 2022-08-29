@@ -148,6 +148,7 @@ export default {
   },
 
   async trainModel(datasetID, modelID, label, epochs, batchSize) {
+    console.log(modelID)
     return api
       .post(`/users/${userID}/train`, {
         datasetID,

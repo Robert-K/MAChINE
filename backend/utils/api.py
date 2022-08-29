@@ -205,8 +205,7 @@ class Analyze(Resource):
 class Train(Resource):
     def post(self, user_id):
         args = parser.parse_args()
-        return ml.train(user_id, args['datasetID'], args['modelID'], args['fingerprint'], args['label'], args['epochs'],
-                        args['batchSize'])
+        return ml.train(user_id, args['datasetID'], args['modelID'], args['label'], args['epochs'], args['batchSize'])
 
 
 class Check(Resource):
@@ -256,7 +255,7 @@ def run(debug=True):
     # sh.add_analysis(test_user, 'Clc(c(Cl)c(Cl)c1C(=O)O)c(Cl)c1Cl', fitting_id_1, {'lumo': -7.152523})
     # sh.add_analysis(test_user, 'Clc(c(Cl)c(Cl)c1C(=O)O)c(Cl)c1Cl', fitting_id_2, {'homo': 1.5254})
     print(test_user)
-    sio.run(app, allow_unsafe_werkzeug=True)
+    sio.run(app)
 
 
 if __name__ == '__main__':
