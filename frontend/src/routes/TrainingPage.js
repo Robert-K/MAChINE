@@ -1,11 +1,12 @@
-import React, { useEffect } from 'react'
-import { Box, Button, Grid, TextField } from '@mui/material'
+import React, { useEffect, useState } from 'react'
+import { Box, Button, Grid, TextField, useTheme } from '@mui/material'
 import ModelDetailsCard from '../components/training/ModelDetailsCard'
 import DatasetDetailsCard from '../components/training/DatasetDetailsCard'
 import { useNavigate } from 'react-router-dom'
 import TrainingContext from '../context/TrainingContext'
 import io from 'socket.io-client'
 import api from '../api'
+import Chart from 'react-apexcharts'
 
 const socket = io(`ws://${api.getServerAddress()}:${api.getServerPort()}`)
 
@@ -13,6 +14,11 @@ export default function TrainingPage() {
   const training = React.useContext(TrainingContext)
 
   const [epochsError, setEpochsError] = React.useState(false)
+
+  const theme = useTheme()
+
+  const [values, setValues] = useState([100, 100])
+
   const handleEpochsChange = (event) => {
     const tempEpochs = event.target.value
     training.setSelectedEpochs(tempEpochs)
@@ -52,6 +58,7 @@ export default function TrainingPage() {
       // TODO: Send abort training command to backend
     } else {
       training.setTrainingStatus(true)
+      setValues([100, 100])
       api.trainModel(
         training.selectedDataset.datasetID,
         training.selectedModel.id,
@@ -78,12 +85,21 @@ export default function TrainingPage() {
       setLastPong(answer)
     })
 
+    socket.on('update', (data) => {
+      addData(data)
+      console.log(data)
+    })
+
     return () => {
       socket.off('connect')
       socket.off('disconnect')
       socket.off('pong')
     }
   }, [])
+
+  const addData = (data) => {
+    setValues((prevValues) => [...prevValues, data.mean_absolute_error * 1000])
+  }
 
   const sendPing = (text) => {
     socket.emit('ping', text)
@@ -125,7 +141,51 @@ export default function TrainingPage() {
         />
       </Grid>
       <Grid item xs={6}>
-        <Box sx={{ m: 2, background: 'grey', height: 400 }}>
+        <Box>
+          <Chart
+            options={{
+              stroke: { curve: 'smooth' },
+              dataLabels: { enabled: false },
+              fill: {
+                type: 'gradient',
+                gradient: {
+                  shade: theme.apexcharts.shade,
+                  shadeIntensity: 1,
+                  opacityFrom: 0.7,
+                  opacityTo: 0.9,
+                  stops: [0, 90, 100],
+                },
+              },
+              theme: { mode: theme.apexcharts.shade },
+              chart: {
+                background: 'transparent',
+                toolbar: { show: false },
+                animations: {
+                  enabled: true,
+                  easing: 'linear',
+                  dynamicAnimation: {
+                    speed: 1000,
+                  },
+                },
+              },
+              colors: [theme.palette.primary.main],
+              xaxis: {
+                labels: { show: false },
+              },
+              yaxis: {
+                min: 0,
+                max: 100,
+                labels: {
+                  formatter(val, opts) {
+                    return val.toFixed(0)
+                  },
+                },
+              },
+            }}
+            series={[{ data: values }]}
+            width="800"
+            type="area"
+          />
           {lastPong}
           {isConnected}
         </Box>

@@ -18,7 +18,7 @@ def create_fnn_with_dataset(parameters, dataset, labels, loss, optimizer, metric
     layers_param = parameters.get('layers')
 
     # Create thingies for dataset
-    x, y = zip(*[(mol["x"].get("fingerprints")[str(_fingerprint_size)], mol["y"][labels[0]]) for mol in dataset])
+    x, y = zip(*[(mol["x"].get("fingerprints")[str(_fingerprint_size)], mol["y"][labels]) for mol in dataset])
     x, y = tf.constant(x), tf.constant(y)
 
     model = tf.keras.models.Sequential()
@@ -37,7 +37,7 @@ def create_fnn_with_dataset(parameters, dataset, labels, loss, optimizer, metric
 
     model.build(input_shape=x.shape)
 
-    ds = tf.data.Dataset.from_tensor_slices((x, y)).batch(batch_size)
+    ds = tf.data.Dataset.from_tensor_slices((x, y)).batch(int(batch_size))
 
     return model, ds
 

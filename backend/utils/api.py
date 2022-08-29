@@ -2,6 +2,7 @@ from flask import Flask
 from flask_cors import CORS
 from flask_restful import reqparse, Api, Resource
 import hashlib
+import eventlet as el
 from flask_socketio import SocketIO, send, emit
 from backend.utils import storage_handler as sh
 from backend.machine_learning import ml_functions as ml
@@ -9,7 +10,7 @@ from backend.machine_learning import ml_functions as ml
 app = Flask(__name__)
 cors = CORS(app)
 api = Api(app)
-sio = SocketIO(app, cors_allowed_origins='*')
+sio = SocketIO(app, cors_allowed_origins='*', async_mode="eventlet")
 
 parser = reqparse.RequestParser()
 parser.add_argument('username')
@@ -249,6 +250,11 @@ def handle_ping(data):
     sio.emit('pong', data + 'copy')
 
 
+def update(logs):
+    sio.emit('update', logs)
+    el.sleep(0)
+
+
 def run(debug=True):
     # Lots of dummy data
     # TODO: Remove
@@ -271,14 +277,14 @@ def run(debug=True):
             'activation': 'relu',
         }
     ], 'loss': 'MeanSquaredError', 'optimizer': 'Adam'}, 'id')
-    fitting_id = ml.train(test_user, '1', model_id, ['HIV_active'], 10, 64)
+    #fitting_id = ml.train(test_user, '1', model_id, ['HIV_active'], 10, 64)
     # fitting_id_1 = sh.add_fitting(test_user, '0', 2, 0.25, 125, model_id, ml.train(test_user))
     # fitting_id_2 = sh.add_fitting(test_user, '0', 6000, 5.05, 5, model_id, )
     # print(fitting_id_1, fitting_id_2)
     # sh.add_analysis(test_user, 'Clc(c(Cl)c(Cl)c1C(=O)O)c(Cl)c1Cl', fitting_id_1, {'lumo': -7.152523})
     # sh.add_analysis(test_user, 'Clc(c(Cl)c(Cl)c1C(=O)O)c(Cl)c1Cl', fitting_id_2, {'homo': 1.5254})
     print(test_user)
-    sio.run(app, allow_unsafe_werkzeug=True)
+    sio.run(app)
 
 
 if __name__ == '__main__':

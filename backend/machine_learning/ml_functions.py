@@ -1,6 +1,10 @@
+import keras.callbacks
+
 from backend.utils import storage_handler as sh
-from backend.machine_learning import ml_dicts as mld
 import tensorflow as tf
+import numpy as np
+import backend.utils.api as api
+from backend.machine_learning import ml_dicts as mld
 
 def train(user_id, dataset_id, model_id, labels, epochs, batch_size):
     # Creates a new model and datasets, gets all the needed parameters
@@ -19,8 +23,8 @@ def train(user_id, dataset_id, model_id, labels, epochs, batch_size):
     model.summary()
 
     # Trains the model
-    model.fit(ds, epochs=int(epochs), batch_size=int(batch_size))
 
+    model.fit(ds, epochs=int(epochs), batch_size=int(batch_size), callbacks=[LiveStats()], verbose=0)
     # Saves the trained model
     return sh.add_fitting(user_id, dataset_id, epochs, 0, batch_size, model_id, model)
 
@@ -36,3 +40,11 @@ def analyze(user_id, fitting_id, model_id, smiles):
     analysis = fitting.predict(converted_molecule)
     print('analysis')
     sh.add_analysis(sh, smiles, fitting, analysis)
+
+
+class LiveStats(keras.callbacks.Callback):
+
+    def on_epoch_end(self, epoch, logs={}):
+        print(logs)
+        print('called')
+        api.update(logs)
