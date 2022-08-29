@@ -7,13 +7,19 @@ from keras import layers
 # Parameter content is currently WIP
 # TODO: Work on
 # parameters right now needs to contain fields for 'optimizer', 'units_per_layer', 'activationFunction', 'metrics'
-def create_fnn(parameters, loss, optimizer, metrics, fingerprint, labels):
+# Technically, we do not need batchSize in this method. It was added so that create_fnn and create_schnet have the same signature
+_fingerprint_size = 512
+def create_fnn_with_dataset(parameters, dataset, labels, loss, optimizer, metrics, batch_size):
     layers = parameters.get('layers')
+
+    # Create thingies for dataset
+    x, y = zip(*[(mol["x"].get("fingerprints")[str(_fingerprint_size)], mol["y"][labels[0]]) for mol in dataset])
+    x, y = tf.constant(x), tf.constant(y)
 
     model = tf.keras.models.Sequential()
     # todo see if using relu causes problems.
     # Adding the first layer
-    model.add(tf.keras.layers.Dense(units=int(fingerprint), activation='relu'))
+    model.add(tf.keras.layers.Dense(units=int(_fingerprint_size), activation='relu'))
     # Adding the hidden layers
     for layer in layers:
         model.add(tf.keras.layers.Dense(units=layer.get('units'), activation=layer.get('activation')))
@@ -26,12 +32,14 @@ def create_fnn(parameters, loss, optimizer, metrics, fingerprint, labels):
 
     model.build(input_shape=(10000, 128))
 
-    return model
+    ds = tf.data.Dataset.from_tensor_slices((x, y)).batch(batch_size)
+
+    return model, ds
 
 def train(user_id, dataset_id, model_id, fingerprint, labels, epochs, accuracy, batch_size):
     dataset = sh.get_dataset(dataset_id)
     model_summary = sh.get_model_summary(model_id)
-    model = create_fnn(model_summary.get('parameters'), mld.loss.get(model_summary.get('parameters').get('loss')), mld.optimizer.get(model_summary.get('parameters').get('optimizer')), [mld.metrics.get(model_summary.get('base_model').get('metric'))], fingerprint, labels)
+    model = create_fnn_with_dataset(model_summary.get('parameters'), dataset, labels, mld.loss.get(model_summary.get('parameters').get('loss')), mld.optimizer.get(model_summary.get('parameters').get('optimizer')), [mld.metrics.get(model_summary.get('base_model').get('metric'))], batch_size)
 
     # TODO: implement training (milestone for 26/08)
     #todo fit
