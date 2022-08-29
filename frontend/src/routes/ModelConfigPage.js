@@ -37,32 +37,30 @@ export default function ModelConfigPage() {
           <ModelVisual model={baseModel} />
         </Grid>
         <Grid item xs={4}>
-          <React.Fragment key={JSON.stringify(settableParameters.parameter)}>
-            {Object.entries(settableParameters).map(([key, value], i) => {
-              return (
-                <Box key={i} sx={{ minWidth: 120, m: 2 }}>
-                  <FormControl required fullWidth>
-                    <InputLabel id="select-function-label">{key}</InputLabel>
-                    <Select
-                      labelId="select-function"
-                      id={i}
-                      value={funcs[i]}
-                      label={key}
-                      onChange={(e) => handleChange(e, i)}
-                    >
-                      {value.map((valueEntry, i) => {
-                        return (
-                          <MenuItem key={valueEntry} value={valueEntry}>
-                            {valueEntry}
-                          </MenuItem>
-                        )
-                      })}
-                    </Select>
-                  </FormControl>
-                </Box>
-              )
-            })}
-          </React.Fragment>
+          {Object.entries(settableParameters).map(([key, value], i) => {
+            return (
+              <Box key={i} sx={{ minWidth: 120, m: 2 }}>
+                <FormControl required fullWidth>
+                  <InputLabel id="select-function-label">{key}</InputLabel>
+                  <Select
+                    labelId="select-function"
+                    id={i}
+                    value={funcs[i]}
+                    label={key}
+                    onChange={(e) => handleChange(e, i)}
+                  >
+                    {value.map((valueEntry, i) => {
+                      return (
+                        <MenuItem key={valueEntry} value={valueEntry}>
+                          {valueEntry}
+                        </MenuItem>
+                      )
+                    })}
+                  </Select>
+                </FormControl>
+              </Box>
+            )
+          })}
         </Grid>
       </Grid>
     </div>
