@@ -20,7 +20,7 @@ parser.add_argument('datasetID')
 parser.add_argument('modelID')
 parser.add_argument('fittingID')
 parser.add_argument('fingerprint')
-parser.add_argument('label')
+parser.add_argument('labels')
 parser.add_argument('epochs')
 parser.add_argument('accuracy')
 parser.add_argument('batchSize')
@@ -213,14 +213,14 @@ class BaseModels(Resource):
 class Analyze(Resource):
     def post(self, user_id):
         args = parser.parse_args()
-        return ml.analyze(user_id, args['fittingID'], args['smiles'])
+        return ml.analyze(user_id, args['fittingID'], args['modelID'], args['smiles'])
 
 
 # Creates a new fitting, adds that fitting to model
 class Train(Resource):
     def post(self, user_id):
         args = parser.parse_args()
-        return ml.train(user_id, args['datasetID'], args['modelID'], args['label'], args['epochs'], args['batchSize'])
+        return ml.train(user_id, args['datasetID'], args['modelID'], args['labels'], args['epochs'], args['batchSize'])
 
 
 class Check(Resource):
@@ -255,15 +255,23 @@ def run(debug=True):
     test_user = str(hashlib.sha1('Tom'.encode('utf-8'), usedforsecurity=False).hexdigest())
     # test_user = str(hash('yee'))
     sh.add_user_handler(test_user)
-    sh.add_molecule(test_user, '[13C]/C=C(/[*])C',
+    sh.add_molecule(test_user, 'Clc(c(Cl)c(Cl)c1C(=O)O)c(Cl)c1Cl',
                     '<cml xmlns=\"http://www.xml-cml.org/schema\"><molecule id=\"m1\"><atomArray><atom id=\"a1\" elementType=\"C\" x2=\"14.04999999999995\" y2=\"46.39999999999984\"/><atom id=\"a2\" elementType=\"C\" isotope=\"13\" x2=\"13.35999999999995\" y2=\"45.999999999999844\"/><atom id=\"a5\" elementType=\"C\" x2=\"14.739999999999949\" y2=\"45.19999999999985\"/><atom id=\"a6\" elementType=\"C\" x2=\"14.739999999999949\" y2=\"45.999999999999844\"/><atom id=\"a7\" elementType=\"R\" x2=\"15.43999999999995\" y2=\"46.39999999999984\"/></atomArray><bondArray><bond id=\"b1\" order=\"S\" atomRefs2=\"a1 a2\"/><bond id=\"b5\" order=\"S\" atomRefs2=\"a5 a6\"/><bond id=\"b6\" order=\"D\" atomRefs2=\"a6 a1\"/><bond id=\"b7\" order=\"S\" atomRefs2=\"a6 a7\"/></bondArray></molecule></cml>',
                     'MySuperCoolMolecule')
     # For testing purposes
-
-    model_id = ml.create(test_user, 'myFirstModel',
-                         {'units_per_layer': 256, 'optimizer': 'Adam', 'loss': 'MeanSquaredError',
-                          'metrics': 'MeanAbsoluteError'}, 'id')
-    model = sh.get_model_summary(test_user, model_id)
+    model_id = sh.add_model(test_user, 'MyCoolModel', {'layers': [
+        {
+            'type': 'dense',
+            'units': 256,
+            'activation': 'relu',
+        },
+        {
+            'type': 'dense',
+            'units': 256,
+            'activation': 'relu',
+        }
+    ], 'loss': 'MeanSquaredError', 'optimizer': 'Adam'}, 'id')
+    fitting_id = ml.train(test_user, '1', model_id, ['HIV_active'], 10, 64)
     # fitting_id_1 = sh.add_fitting(test_user, '0', 2, 0.25, 125, model_id, ml.train(test_user))
     # fitting_id_2 = sh.add_fitting(test_user, '0', 6000, 5.05, 5, model_id, )
     # print(fitting_id_1, fitting_id_2)

@@ -4,6 +4,7 @@
 		"type": "sequential",
 		"lossFunction": "MeanSquaredError",
 		"optimizer": "Adam",
+		"metric": "MeanAbsoluteError",
 		"layers": [
 			{
 				"type": "Dense",
