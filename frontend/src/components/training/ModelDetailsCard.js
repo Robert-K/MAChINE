@@ -15,7 +15,7 @@ export default function ModelDetailsCard({ selectedModel }) {
         {Object.values(selectedModel.parameters).map((value, index) => {
           return (
             <div key={index}>
-              <ListItem sx={{ py: 0.1 }}>{value}</ListItem>
+              <ListItem sx={{ py: 0.1 }}>{JSON.stringify(value)}</ListItem>
             </div>
           )
         })}
