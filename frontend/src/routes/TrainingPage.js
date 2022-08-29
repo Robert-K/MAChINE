@@ -90,6 +90,10 @@ export default function TrainingPage() {
       console.log(data)
     })
 
+    socket.on('done', () => {
+      training.setTrainingStatus(false)
+    })
+
     return () => {
       socket.off('connect')
       socket.off('disconnect')
