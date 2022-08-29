@@ -1,9 +1,4 @@
 import React from 'react'
-// import { List, TextField } from '@mui/material'
-// import Button from '@mui/material/Button'
-// import api from '../api'
-// import Layer from '../internal/Layer'
-// import LayerVisual from '../components/LayerVisual'
 import { useLocation } from 'react-router-dom'
 import ModelVisual from '../components/ModelVisual'
 import Grid from '@mui/material/Grid'
@@ -16,10 +11,10 @@ export default function ModelConfigPage() {
   const settableParameters = {
     Optimizer: ['Adam', 'Adamax', 'Stochastic Gradient Descent'],
     Loss: [
-      'Mean Squared Error',
-      'Mean Absolute Error',
-      'Huber Loss',
       'Binary Cross Entropy',
+      'Huber Loss',
+      'Mean Absolute Error',
+      'Mean Squared Error',
     ],
   }
 
@@ -44,7 +39,7 @@ export default function ModelConfigPage() {
                   <InputLabel id="select-function-label">{key}</InputLabel>
                   <Select
                     labelId="select-function"
-                    id={i}
+                    id={i.toString()}
                     value={funcs[i]}
                     label={key}
                     onChange={(e) => handleChange(e, i)}
