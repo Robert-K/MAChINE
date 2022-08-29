@@ -10,7 +10,7 @@ from keras import layers
 # Technically, we do not need batchSize in this method. It was added so that create_fnn and create_schnet have the same signature
 _fingerprint_size = 512
 def create_fnn_with_dataset(parameters, dataset, labels, loss, optimizer, metrics, batch_size):
-    layers = parameters.get('layers')
+    layers_param = parameters.get('layers')
 
     # Create thingies for dataset
     x, y = zip(*[(mol["x"].get("fingerprints")[str(_fingerprint_size)], mol["y"][labels[0]]) for mol in dataset])
@@ -21,10 +21,10 @@ def create_fnn_with_dataset(parameters, dataset, labels, loss, optimizer, metric
     # Adding the first layer
     model.add(tf.keras.layers.Dense(units=int(_fingerprint_size), activation='relu'))
     # Adding the hidden layers
-    for layer in layers:
+    for layer in layers_param:
         model.add(tf.keras.layers.Dense(units=layer.get('units'), activation=layer.get('activation')))
     # Adding the final layer
-    model.add(layers.Dense(units=labels.len()))
+    model.add(layers.Dense(units=len(labels)))
 
     model.compile(optimizer=optimizer,
                   loss=loss,
@@ -39,10 +39,10 @@ def create_fnn_with_dataset(parameters, dataset, labels, loss, optimizer, metric
 def train(user_id, dataset_id, model_id, fingerprint, labels, epochs, accuracy, batch_size):
     dataset = sh.get_dataset(dataset_id)
     model_summary = sh.get_model_summary(model_id)
-    model = create_fnn_with_dataset(model_summary.get('parameters'), dataset, labels, mld.loss.get(model_summary.get('parameters').get('loss')), mld.optimizer.get(model_summary.get('parameters').get('optimizer')), [mld.metrics.get(model_summary.get('base_model').get('metric'))], batch_size)
+    model, ds = create_fnn_with_dataset(model_summary.get('parameters'), dataset, labels, mld.loss.get(model_summary.get('parameters').get('loss')), mld.optimizer.get(model_summary.get('parameters').get('optimizer')), [mld.metrics.get(model_summary.get('base_model').get('metric'))], batch_size)
 
     # TODO: implement training (milestone for 26/08)
-    #todo fit
+    # todo fit
     model.fit()
 
     sh.add_fitting(user_id, dataset_id, epochs, accuracy, batch_size, model_id, model)
