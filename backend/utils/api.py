@@ -33,14 +33,13 @@ parser.add_argument('baseModel')
 class Models(Resource):
     def get(self, user_id):
         models = sh.get_model_summaries(user_id)
-        fittings = sh.get_fitting_summaries(user_id)
         model_configs = []
 
         for key in models.keys():
             current_model = models[key]
             model_fittings = []
             for fitting_id in current_model['fittingIDs']:
-                fitting = fittings.get(fitting_id)
+                fitting = sh.get_fitting_summary(user_id, fitting_id)
                 if fitting:  # convert fitting
                     model_fittings.append(
                         {
@@ -48,6 +47,7 @@ class Models(Resource):
                             'modelID': fitting['modelID'],
                             'modelName': current_model['name'],
                             'datasetID': fitting['datasetID'],
+                            'labels': fitting['labels'],
                             'epochs': fitting['epochs'],
                             'batchSize': fitting['batchSize'],
                             'accuracy': fitting['accuracy']
@@ -72,8 +72,6 @@ class Molecules(Resource):
     def get(self, user_id):
         # Gets all molecules and creates a new array to hold the converted molecules
         molecules = sh.get_molecules(user_id)
-        fittings = sh.get_fitting_summaries(user_id)
-        models = sh.get_model_summaries(user_id)
         processed_molecules = []
 
         for smiles in molecules.keys():
@@ -83,11 +81,11 @@ class Molecules(Resource):
             for fitting_id in current_molecule['analyses']:
                 # Goes through every analysis, gets the fitting summary to get its modelID
                 current_analysis = current_molecule['analyses'].get(fitting_id)
-                fitting_summary = fittings.get(fitting_id)
+                fitting_summary = sh.get_fitting_summary(user_id, fitting_id)
                 model_name = 'error'
                 if fitting_summary:
                     # Uses that modelID to get a model to get its name
-                    model_summary = models.get(fitting_summary.get('modelID'))
+                    model_summary = sh.get_model_summary(user_id, fitting_summary.get('modelID'))
                     model_name = model_summary.get('name')
                 # Appends the converted analysis to the array
                 analyses.append({
@@ -112,12 +110,11 @@ class Molecules(Resource):
 class Fittings(Resource):
     def get(self, user_id):
         fittings = sh.get_fitting_summaries(user_id)
-        models = sh.get_model_summaries(user_id)
         processed_fittings = []
         for fitting_id in fittings.keys():
             current_fitting = fittings.get(fitting_id)
             model_name = 'n/a'
-            model = models.get(current_fitting['modelID'])
+            model = sh.get_model_summary(user_id, current_fitting.get('modelID'))
             if model:
                 model_name = model['name']
             processed_fittings.append(
@@ -126,6 +123,7 @@ class Fittings(Resource):
                     'modelID': current_fitting['modelID'],
                     'modelName': model_name,
                     'datasetID': current_fitting['datasetID'],
+                    'labels': current_fitting['labels'],
                     'epochs': current_fitting['epochs'],
                     'batchSize': current_fitting['batchSize'],
                     'accuracy': current_fitting['accuracy']
@@ -199,7 +197,7 @@ class BaseModels(Resource):
 class Analyze(Resource):
     def post(self, user_id):
         args = parser.parse_args()
-        return ml.analyze(user_id, args['fittingID'], args['modelID'], args['smiles'])
+        return ml.analyze(user_id, args['fittingID'], args['smiles'])
 
 
 # Creates a new fitting, adds that fitting to model

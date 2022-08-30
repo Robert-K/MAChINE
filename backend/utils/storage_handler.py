@@ -20,6 +20,7 @@ __all__ = ['add_analysis',
            'get_dataset',
            'get_dataset_summaries',
            'get_fitting',
+           'get_fitting_summary',
            'get_fitting_summaries',
            'get_model_summary',
            'get_model_summaries',
@@ -34,6 +35,7 @@ _base_models_path = _storage_path / 'models'
 _base_model_images_path = _base_models_path / 'images'
 MAX_THUMB_SIZE = (500, 500)
 _dataset_version = 3
+
 
 class UserDataStorageHandler:
 
@@ -83,11 +85,20 @@ class UserDataStorageHandler:
 
     # Fittings
     # Saves a fitting, creates a summary, updates the model summary
-    def add_fitting(self, dataset_id, epochs, accuracy, batch_size, model_id, fitting):
+    def add_fitting(self, dataset_id, labels, epochs, accuracy, batch_size, model_id, fitting):
         fitting_id = str(hash(fitting) ^ hash(epochs) ^ hash(accuracy) ^ hash(batch_size))
-        path = self.user_fittings_path / f'{fitting_id}_fitting.h5'
-        fitting.save(path)
+        path = self.user_fittings_path / f'{fitting_id}_fitting'
+        try:
+            fitting.save(path)
+        except NotImplementedError:
+            print('Cannot save this model. Please write serialisation functions')
+            # Potential Fallback
+            # file = path.open('wb')
+            # pickle.dump(fitting, file)
+            # file.close()
+            return None
         self.fitting_summaries[fitting_id] = {'datasetID': dataset_id,
+                                              'labels': labels,
                                               'epochs': epochs,
                                               'accuracy': accuracy,
                                               'batchSize': batch_size,
@@ -110,6 +121,9 @@ class UserDataStorageHandler:
             if path.exists():
                 return tf.keras.models.load_model(path)
 
+    def get_fitting_summary(self, fitting_id):
+        return self.fitting_summaries.get(fitting_id)
+
     def get_fitting_summaries(self):
         return self.fitting_summaries
 
@@ -128,7 +142,11 @@ class UserDataStorageHandler:
         file_path = (self.user_path / filename)
         if file_path.exists():
             file = file_path.open('r')
-            content = json.load(file)
+            try:
+                content = json.load(file)
+            except json.decoder.JSONDecodeError:
+                print('Error reading', file.name)
+                content = {}
             file.close()
         return content
 
@@ -217,12 +235,15 @@ class StorageHandler:
 
     # Fittings
     # fitting is the actual, trained model, not a summary
-    def add_fitting(self, user_id, dataset_id, epochs, accuracy, batch_size, model_id, fitting):
-        return self.get_user_handler(user_id).add_fitting(dataset_id, epochs, accuracy, batch_size, model_id,
+    def add_fitting(self, user_id, dataset_id, labels, epochs, accuracy, batch_size, model_id, fitting):
+        return self.get_user_handler(user_id).add_fitting(dataset_id, labels, epochs, accuracy, batch_size, model_id,
                                                           fitting)
 
     def get_fitting(self, user_id, fitting_id):
         return self.get_user_handler(user_id).get_fitting(fitting_id)
+
+    def get_fitting_summary(self, user_id, fitting_id):
+        return self.get_user_handler(user_id).get_fitting_summary(fitting_id)
 
     def get_fitting_summaries(self, user_id):
         return self.get_user_handler(user_id).get_fitting_summaries()
@@ -252,7 +273,8 @@ class StorageHandler:
         content = pickle.load(file)
         file.close()
         if content.get('version') != _dataset_version:
-            print(f'Dataset {content.get("name")} not compatible. Current version: {_dataset_version}. Set version: {content.get("version")}')
+            print(
+                f'Dataset {content.get("name")} not compatible. Current version: {_dataset_version}. Set version: {content.get("version")}')
             return
         dataset_summary = {'name': content.get('name'),
                            'size': content.get('size'),
@@ -296,6 +318,7 @@ get_base_models = _inst.get_base_models
 get_dataset = _inst.get_dataset
 get_dataset_summaries = _inst.get_dataset_summaries
 get_fitting = _inst.get_fitting
+get_fitting_summary = _inst.get_fitting_summary
 get_fitting_summaries = _inst.get_fitting_summaries
 get_model_summary = _inst.get_model_summary
 get_model_summaries = _inst.get_model_summaries
