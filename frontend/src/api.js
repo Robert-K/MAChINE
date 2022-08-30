@@ -141,9 +141,9 @@ export default {
     })
   },
 
-  async analyzeMolecule(fittingID, modelID, smiles) {
+  async analyzeMolecule(fittingID, smiles) {
     return api
-      .post(`/users/${userID}/analyze`, { fittingID, modelID, smiles })
+      .post(`/users/${userID}/analyze`, { fittingID, smiles })
       .then((response) => {
         return response.data
       })

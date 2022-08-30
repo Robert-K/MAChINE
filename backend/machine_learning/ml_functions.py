@@ -6,6 +6,7 @@ import numpy as np
 import backend.utils.api as api
 from backend.machine_learning import ml_dicts as mld
 
+
 def train(user_id, dataset_id, model_id, labels, epochs, batch_size):
     # Creates a new model and datasets, gets all the needed parameters
     dataset = sh.get_dataset(dataset_id)
@@ -27,12 +28,13 @@ def train(user_id, dataset_id, model_id, labels, epochs, batch_size):
     model.fit(ds, epochs=int(epochs), batch_size=int(batch_size), callbacks=[LiveStats()], verbose=0)
     api.noticeDone()
     # Saves the trained model
-    return sh.add_fitting(user_id, dataset_id, epochs, 0, batch_size, model_id, model)
+    return sh.add_fitting(user_id, dataset_id, labels, epochs, 0, batch_size, model_id, model)
 
 
-def analyze(user_id, fitting_id, model_id, smiles):
+def analyze(user_id, fitting_id, smiles):
     fitting = sh.get_fitting(user_id, fitting_id)
-    model_summary = sh.get_model_summary(user_id, model_id)
+    fitting_summary = sh.get_fitting_summary(user_id, fitting_id)
+    model_summary = sh.get_model_summary(user_id, fitting_summary.get('modelID'))
     base_model = sh.get_base_model(model_summary.get('baseModelID'))
 
     converted_molecule = mld.molecule_conversion_functions.get(base_model.get('type'))(smiles)
