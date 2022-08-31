@@ -249,12 +249,17 @@ def handle_ping(data):
     sio.emit('pong', data + 'copy')
 
 
+@sio.on('abort')
+def abort_training():
+    ml.set_abort(True)
+
+
 def update(logs):
     sio.emit('update', logs)
     el.sleep(0)
 
 
-def noticeDone():
+def notice_done():
     sio.emit('done')
 
 

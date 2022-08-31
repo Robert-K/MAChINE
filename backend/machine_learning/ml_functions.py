@@ -4,6 +4,8 @@ from backend.utils import storage_handler as sh
 import backend.utils.api as api
 from backend.machine_learning import ml_dicts as mld
 
+abort = False
+
 
 def train(user_id, dataset_id, model_id, labels, epochs, batch_size):
     # Creates a new model and datasets, gets all the needed parameters
@@ -23,8 +25,8 @@ def train(user_id, dataset_id, model_id, labels, epochs, batch_size):
 
     # Trains the model
 
-    model.fit(ds, epochs=int(epochs), batch_size=int(batch_size), callbacks=[LiveStats()], verbose=1)
-    api.noticeDone()
+    model.fit(ds, epochs=int(epochs), batch_size=int(batch_size), callbacks=[LiveStats(), Abort()], verbose=1)
+    api.notice_done()
     # Saves the trained model
     return sh.add_fitting(user_id, dataset_id, labels, epochs, 0, batch_size, model_id, model)
 
@@ -52,7 +54,26 @@ def analyze(user_id, fitting_id, smiles):
     return formatted_analysis
 
 
+def get_abort():
+    return abort
+
+
+def set_abort(val):
+    global abort
+    abort = val
+
+
 class LiveStats(keras.callbacks.Callback):
 
     def on_epoch_end(self, epoch, logs={}):
         api.update(logs)
+
+
+class Abort(keras.callbacks.Callback):
+
+    def on_epoch_end(self, epoch, logs={}):
+        print(get_abort())
+        if get_abort():
+            self.model.stop_training = True
+            print("CHECK")
+            set_abort(False)

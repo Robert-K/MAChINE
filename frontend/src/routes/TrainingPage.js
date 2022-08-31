@@ -17,7 +17,9 @@ export default function TrainingPage() {
 
   const theme = useTheme()
 
-  const [values, setValues] = useState([1, 1])
+  const initialState = [1, 1]
+
+  const [values, setValues] = useState(initialState)
 
   const handleEpochsChange = (event) => {
     const tempEpochs = event.target.value
@@ -54,8 +56,7 @@ export default function TrainingPage() {
 
   const handleStartStop = () => {
     if (training.trainingStatus === true) {
-      training.setTrainingStatus(false)
-      // TODO: Send abort training command to backend
+      socket.emit('abort')
     } else {
       training.setTrainingStatus(true)
       setValues([1, 1])
@@ -101,7 +102,21 @@ export default function TrainingPage() {
   }, [])
 
   const addData = (data) => {
-    setValues((prevValues) => [...prevValues, data.mean_absolute_error])
+    setValues((prevValues) => {
+      if (
+        prevValues[0] === initialState[0] &&
+        prevValues[1] === initialState[1]
+      ) {
+        return [prevValues[0], data.mean_absolute_error]
+      } else if (
+        prevValues[0] === initialState[0] &&
+        prevValues[1] !== initialState[1]
+      ) {
+        return [prevValues[1], data.mean_absolute_error]
+      } else {
+        return [...prevValues, data.mean_absolute_error]
+      }
+    })
     console.log(values)
   }
 
