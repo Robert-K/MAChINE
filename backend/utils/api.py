@@ -253,8 +253,10 @@ def update(logs):
     sio.emit('update', logs)
     el.sleep(0)
 
+
 def noticeDone():
     sio.emit('done')
+
 
 def run(debug=True):
     # Lots of dummy data
@@ -278,7 +280,13 @@ def run(debug=True):
             'activation': 'relu',
         }
     ], 'loss': 'MeanSquaredError', 'optimizer': 'Adam'}, 'id')
-    fitting_id = ml.train(test_user, '1', model_id, ['HIV_active'], 0, 64)
+    # fitting_id = ml.train(test_user, '1', model_id, ['HIV_active'], 0, 64)
+    model_id_2 = sh.add_model(test_user, 'MyCoolSecondModel',
+                              {'loss': 'MeanSquaredError', 'optimizer': 'Adam', 'embeddingDim': 128, 'readoutSize': 1,
+                               'depth': 2}, 'id2')
+    # fitting_id2 = ml.train(test_user, '1', model_id_2, ['HIV_active'], 5, 128)
+    # ml.analyze(test_user, fitting_id, 'c1ccn2nncc2c1')
+    # ml.analyze(test_user, fitting_id2, 'c1ccn2nncc2c1')
     # fitting_id_1 = sh.add_fitting(test_user, '0', 2, 0.25, 125, model_id, ml.train(test_user))
     # fitting_id_2 = sh.add_fitting(test_user, '0', 6000, 5.05, 5, model_id, )
     # print(fitting_id_1, fitting_id_2)
