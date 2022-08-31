@@ -1,9 +1,5 @@
 import tensorflow as tf
-import numpy as np
-from rdkit import Chem
-from rdkit.Chem import AllChem
-from scipy.spatial.distance import squareform, pdist
-
+from backend.utils.molecule_formats import smiles_to_mol_graph
 from backend.machine_learning.models.schnet import make_schnet
 
 
@@ -34,26 +30,13 @@ def create_schnet_with_dataset(parameters, dataset, labels, loss, optimizer, met
     return model, ds
 
 
-def smiles_to_mol_graph(smiles):
-    try:
-        mol = Chem.MolFromSmiles(smiles)
-        mol = Chem.AddHs(mol)
-        AllChem.EmbedMolecule(mol)
-        AllChem.MMFFOptimizeMolecule(mol)
+def smiles_to_schnet_input(smiles):
+    # TODO: Convert molecule
+    (nodes, edges, edges_i) = smiles_to_mol_graph(smiles)
+    node_dim = nodes.shape[-1]
+    edge_dim = edges.shape[-1]
 
-        conformer = mol.GetConformer()
-
-        node_features = np.array([[a.GetAtomicNum()] for a in mol.GetAtoms()])
-        node_positions = np.array([list(conformer.GetAtomPosition(i)) for i, _ in enumerate(mol.GetAtoms())])
-
-        dist_mat = squareform(pdist(node_positions))
-
-        edge_indices_forward = [[b.GetBeginAtomIdx(), b.GetEndAtomIdx()] for b in mol.GetBonds()]
-        edge_indices_backward = [[b, a] for a, b in edge_indices_forward]
-        edge_indices = np.array(edge_indices_forward + edge_indices_backward)
-
-        edge_features = dist_mat[edge_indices[:, 0], edge_indices[:, 1]][..., None]
-
-        return node_features, edge_features, edge_indices
-    except (IndexError, ValueError):
-        return None, None, None
+    nodes = tf.ragged.constant(nodes, dtype="float32", inner_shape=[1,  len(nodes), node_dim ])
+    edges = tf.ragged.constant(edges, dtype="float32", inner_shape=[1, len(edges), edge_dim])
+    edges_i = tf.ragged.constant(edges_i, dtype="int32", inner_shape=[1, len(edges_i), 2])
+    return [nodes, edges, edges_i]

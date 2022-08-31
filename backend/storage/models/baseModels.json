@@ -26,5 +26,12 @@
 				"units": 1
 			}
 		]
+	},
+	"id2": {
+		"name": "SCHNET A",
+		"type": "schnet",
+		"lossFunction": "MeanSquaredError",
+		"optimizer": "Adam",
+		"metric": "MeanAbsoluteError"
 	}
 }
