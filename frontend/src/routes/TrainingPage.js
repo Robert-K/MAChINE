@@ -17,7 +17,7 @@ export default function TrainingPage() {
 
   const theme = useTheme()
 
-  const [values, setValues] = useState([100, 100])
+  const [values, setValues] = useState([1, 1])
 
   const handleEpochsChange = (event) => {
     const tempEpochs = event.target.value
@@ -58,7 +58,7 @@ export default function TrainingPage() {
       // TODO: Send abort training command to backend
     } else {
       training.setTrainingStatus(true)
-      setValues([100, 100])
+      setValues([1, 1])
       api.trainModel(
         training.selectedDataset.datasetID,
         training.selectedModel.id,
