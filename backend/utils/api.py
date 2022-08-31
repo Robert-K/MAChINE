@@ -225,6 +225,7 @@ class Train(Resource):
     def delete(self, user_id):
         return ml.stop_training(user_id)
 
+
 class Check(Resource):
     def get(self):
         return
@@ -258,6 +259,12 @@ def update_training_logs(user_id, logs):
 
 def notify_training_done(user_id):
     sio.emit('done', {user_id: True})
+    el.sleep(0)
+
+
+def notify_training_start(user_id):
+    sio.emit('started', {user_id: True})
+    el.sleep(0)
 
 
 def run(debug=True):

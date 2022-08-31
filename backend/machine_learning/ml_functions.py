@@ -67,6 +67,7 @@ def stop_training(user_id):
         return training.stop_training()
     return False, 404
 
+
 def analyze(user_id, fitting_id, smiles):
     # Gets required objects
     fitting = sh.get_fitting(user_id, fitting_id)
@@ -99,6 +100,9 @@ class LiveStats(keras.callbacks.Callback):
         if logs is None:
             logs = {}
         api.update_training_logs(self.user_id, logs)
+
+    def on_train_begin(self, logs=None):
+        api.notify_training_start(self.user_id)
 
     def on_train_end(self, logs=None):
         live_trainings.pop(self.user_id, None)
