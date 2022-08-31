@@ -4,7 +4,7 @@
 		"type": "sequential",
 		"lossFunction": "MeanSquaredError",
 		"optimizer": "Adam",
-		"metric": "MeanAbsoluteError",
+		"metrics": ["MeanAbsoluteError", "R2"],
 		"layers": [
 			{
 				"type": "Dense",
@@ -32,6 +32,6 @@
 		"type": "schnet",
 		"lossFunction": "MeanSquaredError",
 		"optimizer": "Adam",
-		"metric": "MeanAbsoluteError"
+		"metrics": ["MeanAbsoluteError", "R2"]
 	}
 }

@@ -107,16 +107,17 @@ export default function TrainingPage() {
         prevValues[0] === initialState[0] &&
         prevValues[1] === initialState[1]
       ) {
-        return [prevValues[0], data.mean_absolute_error]
+        return [data.r_square, data.val_r_square]
       } else if (
         prevValues[0] === initialState[0] &&
         prevValues[1] !== initialState[1]
       ) {
-        return [prevValues[1], data.mean_absolute_error]
+        return [prevValues[1], data.val_r_square]
       } else {
-        return [...prevValues, data.mean_absolute_error]
+        return [...prevValues, data.val_r_square]
       }
     })
+    console.log(data)
     console.log(values)
   }
 
