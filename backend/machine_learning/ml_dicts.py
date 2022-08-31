@@ -1,6 +1,6 @@
 import tensorflow as tf
-from backend.machine_learning.ml_gnns import create_schnet_with_dataset, smiles_to_mol_graph
-from backend.machine_learning.ml_fnns import create_fnn_with_dataset, smiles_to_fingerprint
+from backend.machine_learning.ml_gnns import create_schnet_with_dataset, smiles_to_schnet_input
+from backend.machine_learning.ml_fnns import create_fnn_with_dataset, smiles_to_fnn_input
 
 optimizers = {
     'Adam': tf.keras.optimizers.Adam(),
@@ -20,6 +20,6 @@ creation_functions = {
 }
 
 molecule_conversion_functions = {
-    'schnet': smiles_to_mol_graph,
-    'sequential': smiles_to_fingerprint,
+    'schnet': smiles_to_schnet_input,
+    'sequential': smiles_to_fnn_input,
 }

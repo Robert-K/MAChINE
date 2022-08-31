@@ -1,47 +1,10 @@
 from multiprocessing import Pool, cpu_count
 import pandas as pd
-from rdkit import Chem
-from rdkit.Chem import AllChem
 from pathlib import Path
 import pickle
-from scipy.spatial.distance import squareform, pdist
-import numpy as np
+from backend.utils.molecule_formats import *
 
 _version = 3
-
-
-def smiles_to_fingerprint(smiles, size=128, radius=2):
-    try:
-        mol = Chem.MolFromSmiles(smiles)
-        fingerprint = AllChem.GetMorganFingerprintAsBitVect(mol, radius=radius, nBits=size)
-        return list(fingerprint)
-    except (IndexError, ValueError):
-        return None
-
-
-def smiles_to_mol_graph(smiles):
-    try:
-        mol = Chem.MolFromSmiles(smiles)
-        mol = Chem.AddHs(mol)
-        AllChem.EmbedMolecule(mol)
-        AllChem.MMFFOptimizeMolecule(mol)
-
-        conformer = mol.GetConformer()
-
-        node_features = np.array([[a.GetAtomicNum()] for a in mol.GetAtoms()])
-        node_positions = np.array([list(conformer.GetAtomPosition(i)) for i, _ in enumerate(mol.GetAtoms())])
-
-        dist_mat = squareform(pdist(node_positions))
-
-        edge_indices_forward = [[b.GetBeginAtomIdx(), b.GetEndAtomIdx()] for b in mol.GetBonds()]
-        edge_indices_backward = [[b, a] for a, b in edge_indices_forward]
-        edge_indices = np.array(edge_indices_forward + edge_indices_backward)
-
-        edge_features = dist_mat[edge_indices[:, 0], edge_indices[:, 1]][..., None]
-
-        return node_features, edge_features, edge_indices
-    except (IndexError, ValueError):
-        return None, None, None
 
 
 def smiles_to_fingerprints(smiles, sizes, radius=2):

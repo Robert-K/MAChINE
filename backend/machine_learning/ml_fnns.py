@@ -1,6 +1,4 @@
-from rdkit import Chem
-from rdkit.Chem import AllChem
-
+from backend.utils.molecule_formats import smiles_to_fingerprint
 from backend.utils import storage_handler as sh
 import tensorflow as tf
 from backend.machine_learning import ml_dicts as mld
@@ -36,7 +34,7 @@ def create_fnn_with_dataset(parameters, dataset, labels, loss, optimizer, metric
                   loss=loss,
                   metrics=metrics)
 
-    model.build(input_shape=x.shape)
+    model.build(input_shape=x.get_shape())
 
     ds = tf.data.Dataset.from_tensor_slices((x, y)).batch(int(batch_size))
 
@@ -47,8 +45,8 @@ def train(user_id, dataset_id, model_id, fingerprint, labels, epochs, accuracy, 
     dataset = sh.get_dataset(dataset_id)
     model_summary = sh.get_model_summary(model_id)
     model = create_fnn_with_dataset(model_summary.get('parameters'), dataset, labels,
-                                    mld.loss.get(model_summary.get('parameters').get('loss')),
-                                    mld.optimizer.get(model_summary.get('parameters').get('optimizer')),
+                                    mld.losses.get(model_summary.get('parameters').get('loss')),
+                                    mld.optimizers.get(model_summary.get('parameters').get('optimizer')),
                                     [mld.metrics.get(model_summary.get('base_model').get('metric'))], batch_size)
 
     # TODO: implement training (milestone for 26/08)
@@ -66,10 +64,8 @@ def analyze(user_id, fitting_id, molecule_id):
     sh.add_analysis(sh, molecule, fitting, analysis)
 
 
-def smiles_to_fingerprint(smiles):
-    try:
-        mol = Chem.MolFromSmiles(smiles)
-        fingerprint = AllChem.GetMorganFingerprintAsBitVect(mol, radius=2, nBits=_fingerprint_size)
-        return list(fingerprint)
-    except (IndexError, ValueError):
-        return None
+def smiles_to_fnn_input(smiles):
+    converted_molecule = smiles_to_fingerprint(smiles, fingerprint_size=_fingerprint_size)
+    if converted_molecule is not None:
+        converted_molecule = tf.constant(converted_molecule, shape=(1, _fingerprint_size))
+    return converted_molecule

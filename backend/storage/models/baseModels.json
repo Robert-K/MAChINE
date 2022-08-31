@@ -27,12 +27,11 @@
 			}
 		]
 	},
-
-	"schnet1": {
-		"name": "SchNetA",
+	"id2": {
+		"name": "SCHNET A",
 		"type": "schnet",
-		"depth": 3,
-		"embeddingDimension": 128,
-		"readoutSize": 1
+		"lossFunction": "MeanSquaredError",
+		"optimizer": "Adam",
+		"metric": "MeanAbsoluteError"
 	}
 }
