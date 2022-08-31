@@ -1,39 +1,26 @@
 import axios from 'axios'
+import io from 'socket.io-client'
 
 const defaultAddress = '127.0.0.1' // TODO: insert correct URL
 const defaultPort = '5000'
 
 let serverAddress = defaultAddress
 let serverPort = defaultPort
-let connected = false
 
 const api = axios.create({ baseURL: `http://${serverAddress}:${serverPort}` })
+let socket = io(`ws://${serverAddress}:${serverPort}`)
 
 let userID = ''
 
-setInterval(() => {
-  heartbeat()
-}, 10000)
-
-function heartbeat() {
-  api
-    .get(`/check`)
-    .then((response) => {
-      connected = response.status === 200
-    })
-    .catch(() => {
-      connected = false
-    })
-}
-
 function updateBaseURL() {
   api.defaults.baseURL = `http://${serverAddress}:${serverPort}`
-  heartbeat()
+  socket.disconnect()
+  socket = io(`ws://${serverAddress}:${serverPort}`)
 }
 
 export default {
   getConnectionStatus() {
-    return connected
+    return socket.connected
   },
 
   getServerAddress() {
@@ -162,5 +149,28 @@ export default {
       .then((response) => {
         return response.data
       })
+  },
+
+  async stopTraining() {
+    return api.delete(`/users/${userID}/train`).then((response) => {
+      return response.data
+    })
+  },
+
+  registerSocketListener(action, onAction) {
+    return socket.on(action, (res) => {
+      console.log(res)
+      if (res[userID]) {
+        onAction(res[userID])
+      }
+    })
+  },
+
+  unregisterSocketListener(action) {
+    return socket.off(action)
+  },
+
+  sendSocketMessage(action, ...args) {
+    return socket.emit(action, args)
   },
 }
