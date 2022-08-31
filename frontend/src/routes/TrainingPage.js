@@ -174,8 +174,6 @@ export default function TrainingPage() {
               },
               colors: [theme.palette.primary.main],
               yaxis: {
-                min: 0,
-                max: 100,
                 labels: {
                   formatter(val, opts) {
                     return val.toFixed(3)
