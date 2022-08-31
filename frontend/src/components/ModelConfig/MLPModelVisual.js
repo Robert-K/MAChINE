@@ -3,10 +3,10 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import * as vis from 'vis-data'
 import * as v from 'vis-network'
-import Layer from '../internal/Layer'
+import Layer from '../../internal/Layer'
 
-export default function ModelVisual(props) {
-  const [layers, setLayers] = React.useState(props.model.layers)
+export default function MLPModelVisual({ model }) {
+  const [layers, setLayers] = React.useState(model.layers)
   const [options] = React.useState({
     nodes: {
       borderWidth: 2,
@@ -196,6 +196,6 @@ export default function ModelVisual(props) {
   )
 }
 
-ModelVisual.propTypes = {
-  model: PropTypes.object,
+MLPModelVisual.propTypes = {
+  model: PropTypes.object.isRequired,
 }
