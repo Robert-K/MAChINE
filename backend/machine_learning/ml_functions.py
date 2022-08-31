@@ -4,39 +4,68 @@ from backend.utils import storage_handler as sh
 import backend.utils.api as api
 from backend.machine_learning import ml_dicts as mld
 
-abort = False
+live_trainings = dict()
+
+
+class Training:
+    def __init__(self, user_id, dataset_id, model_id, labels, epochs, batch_size):
+        model_summary = sh.get_model_summary(user_id, model_id)
+        base_model = sh.get_base_model(model_summary.get('baseModelID'))
+
+        self.user_id = user_id
+        self.dataset_id = dataset_id
+        self.model_id = model_id
+        self.epochs = int(epochs)
+        self.batch_size = int(batch_size)
+        self.labels = labels
+        self.model, self.ds = self.create_model_and_set(
+            base_model.get('type'),
+            model_summary.get('parameters'),
+            sh.get_dataset(dataset_id),
+            labels,
+            base_model.get('metrics')
+        )
+
+    def create_model_and_set(self, model_type, parameters, dataset, labels, metrics):
+        return mld.creation_functions.get(model_type)(parameters,
+                                                      dataset,
+                                                      labels,
+                                                      mld.losses.get(parameters.get('loss')),
+                                                      mld.optimizers.get(parameters.get('optimizer')),
+                                                      [mld.metrics.get(metric) for metric in metrics],
+                                                      self.batch_size)
+
+    def start_training(self):
+        train_size = int(0.8 * self.ds.cardinality().numpy())
+        training_set = self.ds.take(train_size)
+        validation_set = self.ds.skip(train_size)
+
+        # Trains the model
+        self.model.fit(training_set, validation_data=validation_set, epochs=self.epochs, batch_size=self.batch_size,
+                       callbacks=[LiveStats(self.user_id)], verbose=1)
+        # Saves the trained model
+        return sh.add_fitting(self.user_id, self.dataset_id, self.labels, self.epochs, 0, self.batch_size,
+                              self.model_id, self.model)
+
+    def stop_training(self):
+        self.model.stop_training = True
+        return self.model.stop_training
 
 
 def train(user_id, dataset_id, model_id, labels, epochs, batch_size):
-    # Creates a new model and datasets, gets all the needed parameters
-    dataset = sh.get_dataset(dataset_id)
-    model_summary = sh.get_model_summary(user_id, model_id)
-    parameters = model_summary.get('parameters')
-    base_model = sh.get_base_model(model_summary.get('baseModelID'))
-    metrics = base_model.get('metrics')
-    model, ds = mld.creation_functions.get(base_model.get('type'))(model_summary.get('parameters'),
-                                                                   dataset,
-                                                                   labels,
-                                                                   mld.losses.get(parameters.get('loss')),
-                                                                   mld.optimizers.get(parameters.get('optimizer')),
-                                                                   [mld.metrics.get(metric) for metric in metrics],
-                                                                   batch_size)
-    # Prints a model summary, can be removed
-    model.summary()
+    if live_trainings:  # Change this to allow for more than one training at the same time
+        return False, 503
+    new_training = Training(user_id, dataset_id, model_id, labels, epochs, batch_size)
+    live_trainings[user_id] = new_training
+    new_training.start_training()
+    return True, 200
 
-    # Split dataset into training and validation
-    dataset_size = len(dataset)
-    train_size = int(0.7 * dataset_size)
 
-    training_set = ds.take(train_size)
-    validation_set = ds.skip(train_size)
-    # Trains the model
-
-    model.fit(training_set, validation_data=validation_set, epochs=int(epochs), batch_size=int(batch_size), callbacks=[LiveStats(), Abort()], verbose=1)
-    api.notice_done()
-    # Saves the trained model
-    return sh.add_fitting(user_id, dataset_id, labels, epochs, 0, batch_size, model_id, model)
-
+def stop_training(user_id):
+    training = live_trainings.pop(user_id, None)
+    if training:
+        return training.stop_training()
+    return False, 404
 
 def analyze(user_id, fitting_id, smiles):
     # Gets required objects
@@ -61,26 +90,16 @@ def analyze(user_id, fitting_id, smiles):
     return formatted_analysis
 
 
-def get_abort():
-    return abort
-
-
-def set_abort(val):
-    global abort
-    abort = val
-
-
 class LiveStats(keras.callbacks.Callback):
+    def __init__(self, user_id):
+        super().__init__()
+        self.user_id = user_id
 
-    def on_epoch_end(self, epoch, logs={}):
-        api.update(logs)
+    def on_epoch_end(self, epoch, logs=None):
+        if logs is None:
+            logs = {}
+        api.update_training_logs(self.user_id, logs)
 
-
-class Abort(keras.callbacks.Callback):
-
-    def on_epoch_end(self, epoch, logs={}):
-        print(get_abort())
-        if get_abort():
-            self.model.stop_training = True
-            print("CHECK")
-            set_abort(False)
+    def on_train_end(self, logs=None):
+        live_trainings.pop(self.user_id, None)
+        api.notify_training_done(self.user_id)

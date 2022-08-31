@@ -4,11 +4,8 @@ import ModelDetailsCard from '../components/training/ModelDetailsCard'
 import DatasetDetailsCard from '../components/training/DatasetDetailsCard'
 import { useNavigate } from 'react-router-dom'
 import TrainingContext from '../context/TrainingContext'
-import io from 'socket.io-client'
 import api from '../api'
 import Chart from 'react-apexcharts'
-
-const socket = io(`ws://${api.getServerAddress()}:${api.getServerPort()}`)
 
 export default function TrainingPage() {
   const training = React.useContext(TrainingContext)
@@ -56,49 +53,35 @@ export default function TrainingPage() {
 
   const handleStartStop = () => {
     if (training.trainingStatus === true) {
-      socket.emit('abort')
+      api.stopTraining().then((r) => console.log('huh'))
     } else {
-      training.setTrainingStatus(true)
       setValues([1, 1])
-      api.trainModel(
-        training.selectedDataset.datasetID,
-        training.selectedModel.id,
-        training.selectedLabels,
-        training.selectedEpochs,
-        training.selectedBatchSize
-      )
+      api
+        .trainModel(
+          training.selectedDataset.datasetID,
+          training.selectedModel.id,
+          training.selectedLabels,
+          training.selectedEpochs,
+          training.selectedBatchSize
+        )
+        .then((r) => {
+          training.setTrainingStatus(r)
+        })
     }
   }
 
-  const [isConnected, setIsConnected] = React.useState(socket.connected)
   const [lastPong, setLastPong] = React.useState(null)
 
   React.useEffect(() => {
-    socket.on('connect', () => {
-      setIsConnected(true)
-    })
-
-    socket.on('disconnect', () => {
-      setIsConnected(false)
-    })
-
-    socket.on('pong', (answer) => {
+    api.registerSocketListener('pong', (answer) => {
       setLastPong(answer)
     })
-
-    socket.on('update', (data) => {
+    api.registerSocketListener('update', (data) => {
       addData(data)
     })
-
-    socket.on('done', () => {
+    api.registerSocketListener('done', () => {
       training.setTrainingStatus(false)
     })
-
-    return () => {
-      socket.off('connect')
-      socket.off('disconnect')
-      socket.off('pong')
-    }
   }, [])
 
   const addData = (data) => {
@@ -122,7 +105,7 @@ export default function TrainingPage() {
   }
 
   const sendPing = (text) => {
-    socket.emit('ping', text)
+    api.sendSocketMessage('ping', text)
   }
 
   const navigate = useNavigate()
@@ -202,7 +185,6 @@ export default function TrainingPage() {
             type="area"
           />
           {lastPong}
-          {isConnected}
         </Box>
         <Button
           variant="outlined"

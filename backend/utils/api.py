@@ -11,7 +11,7 @@ from backend.machine_learning import ml_functions as ml
 app = Flask(__name__)
 cors = CORS(app)
 api = Api(app)
-sio = SocketIO(app, cors_allowed_origins='*', async_mode="eventlet")
+sio = SocketIO(app, cors_allowed_origins='*', async_mode="eventlet", logger=True, engineio_logger=True)
 
 parser = reqparse.RequestParser()
 parser.add_argument('username')
@@ -207,6 +207,8 @@ class Train(Resource):
         labels = json.loads(args['labels'])
         return ml.train(user_id, args['datasetID'], args['modelID'], labels, args['epochs'], args['batchSize'])
 
+    def delete(self, user_id):
+        return ml.stop_training(user_id)
 
 class Check(Resource):
     def get(self):
@@ -234,27 +236,27 @@ def handle_ping(data):
     sio.emit('pong', data + 'copy')
 
 
-@sio.on('abort')
-def abort_training():
-    ml.set_abort(True)
-
-
-def update(logs):
-    sio.emit('update', logs)
+def update_training_logs(user_id, logs):
+    sio.emit('update', {user_id: logs})
     el.sleep(0)
 
 
-def notice_done():
-    sio.emit('done')
+def notify_training_done(user_id):
+    sio.emit('done', {user_id: True})
 
 
 def run(debug=True):
     # Lots of dummy data
     # TODO: Remove
     test_user = str(hashlib.sha1('Tom'.encode('utf-8'), usedforsecurity=False).hexdigest())
+    test_user2 = str(hashlib.sha1('Tim'.encode('utf-8'), usedforsecurity=False).hexdigest())
     # test_user = str(hash('yee'))
     sh.add_user_handler(test_user)
+    sh.add_user_handler(test_user2)
     sh.add_molecule(test_user, 'c1ccn2nncc2c1',
+                    '<cml xmlns=\"http://www.xml-cml.org/schema\"><molecule id=\"m1\"><atomArray><atom id=\"a1\" elementType=\"C\" x2=\"14.04999999999995\" y2=\"46.39999999999984\"/><atom id=\"a2\" elementType=\"C\" isotope=\"13\" x2=\"13.35999999999995\" y2=\"45.999999999999844\"/><atom id=\"a5\" elementType=\"C\" x2=\"14.739999999999949\" y2=\"45.19999999999985\"/><atom id=\"a6\" elementType=\"C\" x2=\"14.739999999999949\" y2=\"45.999999999999844\"/><atom id=\"a7\" elementType=\"R\" x2=\"15.43999999999995\" y2=\"46.39999999999984\"/></atomArray><bondArray><bond id=\"b1\" order=\"S\" atomRefs2=\"a1 a2\"/><bond id=\"b5\" order=\"S\" atomRefs2=\"a5 a6\"/><bond id=\"b6\" order=\"D\" atomRefs2=\"a6 a1\"/><bond id=\"b7\" order=\"S\" atomRefs2=\"a6 a7\"/></bondArray></molecule></cml>',
+                    'MySuperCoolMolecule')
+    sh.add_molecule(test_user2, 'c1ccn2nncc2c1',
                     '<cml xmlns=\"http://www.xml-cml.org/schema\"><molecule id=\"m1\"><atomArray><atom id=\"a1\" elementType=\"C\" x2=\"14.04999999999995\" y2=\"46.39999999999984\"/><atom id=\"a2\" elementType=\"C\" isotope=\"13\" x2=\"13.35999999999995\" y2=\"45.999999999999844\"/><atom id=\"a5\" elementType=\"C\" x2=\"14.739999999999949\" y2=\"45.19999999999985\"/><atom id=\"a6\" elementType=\"C\" x2=\"14.739999999999949\" y2=\"45.999999999999844\"/><atom id=\"a7\" elementType=\"R\" x2=\"15.43999999999995\" y2=\"46.39999999999984\"/></atomArray><bondArray><bond id=\"b1\" order=\"S\" atomRefs2=\"a1 a2\"/><bond id=\"b5\" order=\"S\" atomRefs2=\"a5 a6\"/><bond id=\"b6\" order=\"D\" atomRefs2=\"a6 a1\"/><bond id=\"b7\" order=\"S\" atomRefs2=\"a6 a7\"/></bondArray></molecule></cml>',
                     'MySuperCoolMolecule')
     # For testing purposes
@@ -268,7 +270,39 @@ def run(debug=True):
             'type': 'dense',
             'units': 256,
             'activation': 'relu',
-        }
+        },
+        {
+            'type': 'dense',
+            'units': 256,
+            'activation': 'relu',
+        },
+        {
+            'type': 'dense',
+            'units': 256,
+            'activation': 'relu',
+        },
+    ], 'loss': 'MeanSquaredError', 'optimizer': 'Adam'}, 'id')
+    model_id = sh.add_model(test_user2, 'MyCoolModel', {'layers': [
+        {
+            'type': 'dense',
+            'units': 256,
+            'activation': 'relu',
+        },
+        {
+            'type': 'dense',
+            'units': 256,
+            'activation': 'relu',
+        },
+        {
+            'type': 'dense',
+            'units': 256,
+            'activation': 'relu',
+        },
+        {
+            'type': 'dense',
+            'units': 256,
+            'activation': 'relu',
+        },
     ], 'loss': 'MeanSquaredError', 'optimizer': 'Adam'}, 'id')
     # fitting_id = ml.train(test_user, '1', model_id, ['HIV_active'], 0, 64)
     model_id_2 = sh.add_model(test_user, 'MyCoolSecondModel',
