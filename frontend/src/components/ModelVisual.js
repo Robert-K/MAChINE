@@ -172,7 +172,7 @@ export default function ModelVisual(props) {
    **/
   function addLayer(layer, index) {
     // TODO: rewrite to create new layer here given activation and unitNum
-    if (index && index >= 0 && index < layers.length - 1) {
+    if (index !== undefined && index >= 0 && index < layers.length - 1) {
       setLayers((layers) => [
         ...layers.slice(0, index + 1),
         layer,
