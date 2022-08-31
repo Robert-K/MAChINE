@@ -1,11 +1,14 @@
-import { Card, CardContent, useTheme } from '@mui/material'
+import { Card, CardContent, Popper, useTheme } from '@mui/material'
 import React from 'react'
 import PropTypes from 'prop-types'
 import * as vis from 'vis-data'
 import * as v from 'vis-network'
 import Layer from '../internal/Layer'
+import LayerConfigPopup from './LayerConfigPopup'
 
 export default function ModelVisual(props) {
+  const [open, setOpen] = React.useState(false)
+  const [offset, setOffset] = React.useState([0, 0])
   const [layers, setLayers] = React.useState(props.model.layers)
   const [options] = React.useState({
     nodes: {
@@ -64,6 +67,18 @@ export default function ModelVisual(props) {
       lastLeftNode = node
       return true
     })
+
+    // Popper handling, calculate offset and open
+    const canvasRect = document
+      .getElementById('network')
+      .getBoundingClientRect()
+    console.log(canvasRect)
+    console.log(eventProps.pointer.DOM)
+    const distance = eventProps.pointer.DOM.x - canvasRect.width
+    const skidding = -eventProps.pointer.DOM.y
+    setOffset([distance, skidding])
+    setOpen(true)
+
     addLayer(
       new Layer('Dense', 4, 'SoftMax'),
       parseInt(graph.nodes.get(lastLeftNode).group)
@@ -151,20 +166,6 @@ export default function ModelVisual(props) {
   }
 
   /**
-   * creates string representation of given layer
-   * @param layer consisting of units, type and activation
-   * @returns {string}
-
-  const layerToString = (layer) => {
-    let textualRep = `${layer.type}\n${layer.units} units`
-    if (layer.activation) {
-      textualRep = textualRep.concat('\n', `${layer.activation}-activation`)
-    }
-    return textualRep
-  }
-   */
-
-  /**
    * adds given layer to layers at index
    * can't replace first or last layer
    * @param layer to be inserted
@@ -182,7 +183,7 @@ export default function ModelVisual(props) {
   }
 
   return (
-    <Card>
+    <Card sx={{ m: 2 }}>
       <CardContent
         sx={{
           border: '1px',
@@ -191,6 +192,23 @@ export default function ModelVisual(props) {
         }}
       >
         <div id="network" style={{ height: '80vh' }}></div>
+        <Popper
+          id="popper"
+          open={open}
+          anchorEl={document.getElementById('network')}
+          placement="top-end"
+          modifiers={[
+            {
+              name: 'offset',
+              enabled: true,
+              options: {
+                offset,
+              },
+            },
+          ]}
+        >
+          <LayerConfigPopup />
+        </Popper>
       </CardContent>
     </Card>
   )
