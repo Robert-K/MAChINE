@@ -13,19 +13,26 @@ def train(user_id, dataset_id, model_id, labels, epochs, batch_size):
     model_summary = sh.get_model_summary(user_id, model_id)
     parameters = model_summary.get('parameters')
     base_model = sh.get_base_model(model_summary.get('baseModelID'))
+    metrics = base_model.get('metrics')
     model, ds = mld.creation_functions.get(base_model.get('type'))(model_summary.get('parameters'),
                                                                    dataset,
                                                                    labels,
                                                                    mld.losses.get(parameters.get('loss')),
                                                                    mld.optimizers.get(parameters.get('optimizer')),
-                                                                   mld.metrics.get(base_model.get('metric')),
+                                                                   [mld.metrics.get(metric) for metric in metrics],
                                                                    batch_size)
     # Prints a model summary, can be removed
     model.summary()
 
+    # Split dataset into training and validation
+    dataset_size = len(dataset)
+    train_size = int(0.7 * dataset_size)
+
+    training_set = ds.take(train_size)
+    validation_set = ds.skip(train_size)
     # Trains the model
 
-    model.fit(ds, epochs=int(epochs), batch_size=int(batch_size), callbacks=[LiveStats(), Abort()], verbose=1)
+    model.fit(training_set, validation_data=validation_set, epochs=int(epochs), batch_size=int(batch_size), callbacks=[LiveStats(), Abort()], verbose=1)
     api.notice_done()
     # Saves the trained model
     return sh.add_fitting(user_id, dataset_id, labels, epochs, 0, batch_size, model_id, model)

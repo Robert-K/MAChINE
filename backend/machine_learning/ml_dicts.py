@@ -1,4 +1,5 @@
 import tensorflow as tf
+import tensorflow_addons as tfa
 from backend.machine_learning.ml_gnns import create_schnet_with_dataset, smiles_to_schnet_input
 from backend.machine_learning.ml_fnns import create_fnn_with_dataset, smiles_to_fnn_input
 
@@ -12,6 +13,9 @@ losses = {
 
 metrics = {
     'MeanAbsoluteError': tf.keras.metrics.MeanAbsoluteError(),
+    'Accuracy': tf.keras.metrics.Accuracy(),
+    'MeanAbsolutePercentageError': tf.keras.metrics.MeanAbsolutePercentageError(),
+    'R2': tfa.metrics.RSquare(),
 }
 
 creation_functions = {
