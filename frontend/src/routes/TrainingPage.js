@@ -87,7 +87,6 @@ export default function TrainingPage() {
 
     socket.on('update', (data) => {
       addData(data)
-      console.log(data)
     })
 
     socket.on('done', () => {
@@ -102,7 +101,8 @@ export default function TrainingPage() {
   }, [])
 
   const addData = (data) => {
-    setValues((prevValues) => [...prevValues, data.mean_absolute_error * 1000])
+    setValues((prevValues) => [...prevValues, data.mean_absolute_error])
+    console.log(values)
   }
 
   const sendPing = (text) => {
@@ -173,15 +173,12 @@ export default function TrainingPage() {
                 },
               },
               colors: [theme.palette.primary.main],
-              xaxis: {
-                labels: { show: false },
-              },
               yaxis: {
                 min: 0,
                 max: 100,
                 labels: {
                   formatter(val, opts) {
-                    return val.toFixed(0)
+                    return val.toFixed(3)
                   },
                 },
               },
