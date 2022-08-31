@@ -49,6 +49,7 @@ def analyze(user_id, fitting_id, smiles):
 
     # Saves the new analysis
     sh.add_analysis(user_id, smiles, fitting_id, formatted_analysis)
+    return formatted_analysis
 
 
 class LiveStats(keras.callbacks.Callback):
