@@ -65,7 +65,10 @@ export default function TrainingPage() {
           training.selectedBatchSize
         )
         .then((r) => {
-          training.setTrainingStatus(r)
+          if (!r) {
+            // TODO: Add error when no training available
+            console.log('Add error message?')
+          }
         })
     }
   }
@@ -78,6 +81,9 @@ export default function TrainingPage() {
     })
     api.registerSocketListener('update', (data) => {
       addData(data)
+    })
+    api.registerSocketListener('started', () => {
+      training.setTrainingStatus(true)
     })
     api.registerSocketListener('done', () => {
       training.setTrainingStatus(false)
