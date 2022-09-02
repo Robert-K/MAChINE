@@ -104,6 +104,8 @@ class LiveStats(keras.callbacks.Callback):
     def on_epoch_end(self, epoch, logs=None):
         if logs is None:
             logs = {}
+
+        logs |= {"epoch": epoch}
         api.update_training_logs(self.user_id, logs)
 
     def on_train_begin(self, logs=None):

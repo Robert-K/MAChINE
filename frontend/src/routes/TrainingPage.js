@@ -85,6 +85,7 @@ export default function TrainingPage() {
 
   const addData = (data) => {
     setValues((prevValues) => {
+      training.setProgress((data.epoch / training.selectedEpochs) * 100) // TODO this means Progress bad stops working when leaving trainingpage
       if (
         prevValues[0] === initialState[0] &&
         prevValues[1] === initialState[1]

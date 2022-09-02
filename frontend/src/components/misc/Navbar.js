@@ -1,4 +1,4 @@
-import { AppBar, Box, IconButton, LinearProgress, Toolbar } from '@mui/material'
+import { AppBar, Box, IconButton, Toolbar } from '@mui/material'
 import { NavLink, useLocation, useNavigate } from 'react-router-dom'
 import * as React from 'react'
 import logo from '../../logo.svg'
@@ -7,6 +7,7 @@ import ServerStatusButton from './ServerStatusButton'
 import UserContext from '../../context/UserContext'
 import TrainingContext from '../../context/TrainingContext'
 import LogoutIcon from '@mui/icons-material/Logout'
+import ProgressBar from '../training/ProgressBar'
 
 const links = [
   { link: '/home', label: 'Home' },
@@ -20,29 +21,11 @@ export default function Navbar({ logoutFunction, darkModeButton }) {
   const locationName = useLocation().pathname
   const user = React.useContext(UserContext)
   const training = React.useContext(TrainingContext)
-  const [progress, setProgress] = React.useState(0)
 
   // Navigates the user to the start page on page reload
   const navigate = useNavigate()
   React.useEffect(() => {
     navigate('/')
-  }, [])
-
-  // TODO: Replace this dummy data with the actual training progress
-  React.useEffect(() => {
-    const timer = setInterval(() => {
-      setProgress((oldProgress) => {
-        if (oldProgress === 100) {
-          return 0
-        }
-        const diff = Math.random() * 10
-        return Math.min(oldProgress + diff, 100)
-      })
-    }, 500)
-
-    return () => {
-      clearInterval(timer)
-    }
   }, [])
 
   return (
@@ -84,11 +67,7 @@ export default function Navbar({ logoutFunction, darkModeButton }) {
             </NavLink>
             {!training.trainingStatus ? null : (
               <Box sx={{ width: '10%', ml: 1 }}>
-                <LinearProgress
-                  variant="determinate"
-                  color="inherit"
-                  value={progress}
-                />
+                <ProgressBar />
               </Box>
             )}
           </>

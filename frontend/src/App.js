@@ -105,6 +105,7 @@ export default function App() {
   const [selectedLabels, setSelectedLabels] = React.useState([])
   const [selectedEpochs, setSelectedEpochs] = React.useState(10)
   const [selectedBatchSize, setSelectedBatchSize] = React.useState(64)
+  const [progress, setProgress] = React.useState(0)
 
   const particlesInit = useCallback(async (engine) => {
     console.log(engine)
@@ -162,6 +163,8 @@ export default function App() {
               setSelectedEpochs,
               selectedBatchSize,
               setSelectedBatchSize,
+              progress,
+              setProgress,
             }}
           >
             <CssBaseline />
