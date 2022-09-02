@@ -53,7 +53,7 @@ class Training:
 
 
 def train(user_id, dataset_id, model_id, labels, epochs, batch_size):
-    if live_trainings:  # Change this to allow for more than one training at the same time
+    if is_training_running(user_id):  # Change this to allow for more than one training at the same time
         return False, 503
     new_training = Training(user_id, dataset_id, model_id, labels, epochs, batch_size)
     live_trainings[user_id] = new_training
@@ -66,6 +66,11 @@ def stop_training(user_id):
     if training:
         return training.stop_training()
     return False, 404
+
+
+def is_training_running(user_id):
+    # Change this to allow for more than one training at the same time
+    return live_trainings
 
 
 def analyze(user_id, fitting_id, smiles):

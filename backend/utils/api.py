@@ -3,15 +3,14 @@ from flask import Flask
 from flask_cors import CORS
 from flask_restful import reqparse, Api, Resource
 import hashlib
-import eventlet as el
-from flask_socketio import SocketIO, send, emit
+from flask_socketio import SocketIO
 from backend.utils import storage_handler as sh
 from backend.machine_learning import ml_functions as ml
 
 app = Flask(__name__)
 cors = CORS(app)
 api = Api(app)
-sio = SocketIO(app, cors_allowed_origins='*', async_mode="eventlet", logger=True, engineio_logger=True)
+sio = SocketIO(app, cors_allowed_origins='*', async_mode="threading", logger=True, engineio_logger=True)
 
 parser = reqparse.RequestParser()
 parser.add_argument('username')
@@ -223,7 +222,7 @@ class Train(Resource):
         return ml.train(user_id, args['datasetID'], args['modelID'], labels, args['epochs'], args['batchSize'])
 
     def delete(self, user_id):
-        return ml.stop_training(user_id)
+        return
 
 
 class Check(Resource):
@@ -252,19 +251,35 @@ def handle_ping(data):
     sio.emit('pong', data + 'copy')
 
 
+@sio.on('start_training')
+def start_training(user_id, dataset_id, model_id, labels, epochs, batch_size):
+    if ml.is_training_running(user_id):
+        return False
+    sio.start_background_task(target=ml.train,
+                              user_id=user_id,
+                              dataset_id=dataset_id,
+                              model_id=model_id,
+                              labels=labels,
+                              epochs=epochs,
+                              batch_size=batch_size)
+    return True
+
+
+@sio.on('stop_training')
+def stop_training(user_id):
+    ml.stop_training(user_id)
+
+
 def update_training_logs(user_id, logs):
     sio.emit('update', {user_id: logs})
-    el.sleep(0)
 
 
 def notify_training_done(user_id):
     sio.emit('done', {user_id: True})
-    el.sleep(0)
 
 
 def notify_training_start(user_id):
     sio.emit('started', {user_id: True})
-    el.sleep(0)
 
 
 def run(debug=True):
@@ -339,7 +354,7 @@ def run(debug=True):
     # sh.add_analysis(test_user, 'Clc(c(Cl)c(Cl)c1C(=O)O)c(Cl)c1Cl', fitting_id_1, {'lumo': -7.152523})
     # sh.add_analysis(test_user, 'Clc(c(Cl)c(Cl)c1C(=O)O)c(Cl)c1Cl', fitting_id_2, {'homo': 1.5254})
     print(test_user)
-    sio.run(app)
+    sio.run(app, allow_unsafe_werkzeug=True)
 
 
 if __name__ == '__main__':
