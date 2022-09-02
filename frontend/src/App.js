@@ -21,7 +21,6 @@ import { TrainingProvider } from './context/TrainingContext'
 import Particles from 'react-tsparticles'
 import { loadFull } from 'tsparticles'
 import { deepmerge } from '@mui/utils'
-import ChartsTestPage from './routes/ChartsTestPage'
 
 const themeBase = {
   palette: {
@@ -255,7 +254,6 @@ export default function App() {
                 ></Route>
                 <Route path="/base-models" element={<BaseModelsPage />}></Route>
                 <Route path="/datasets" element={<DatasetPage />}></Route>
-                <Route path="/charts" element={<ChartsTestPage />}></Route>
               </Routes>
             </BrowserRouter>
           </TrainingProvider>
