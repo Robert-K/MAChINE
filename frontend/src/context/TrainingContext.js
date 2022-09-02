@@ -13,6 +13,8 @@ const TrainingContext = React.createContext({
   setSelectedEpochs: () => {},
   selectedBatchSize: 0,
   setSelectedBatchSize: () => {},
+  progress: 0,
+  setProgress: () => {},
 })
 
 export const TrainingProvider = TrainingContext.Provider
