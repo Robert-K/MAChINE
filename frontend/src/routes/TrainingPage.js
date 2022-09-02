@@ -66,12 +66,7 @@ export default function TrainingPage() {
     }
   }
 
-  const [lastPong, setLastPong] = React.useState(null)
-
   React.useEffect(() => {
-    api.registerSocketListener('pong', (answer) => {
-      setLastPong(answer)
-    })
     api.registerSocketListener('update', (data) => {
       addData(data)
     })
@@ -102,10 +97,6 @@ export default function TrainingPage() {
     })
     console.log(data)
     console.log(values)
-  }
-
-  const sendPing = (text) => {
-    api.sendSocketMessage('ping', text)
   }
 
   const navigate = useNavigate()
@@ -184,7 +175,6 @@ export default function TrainingPage() {
             width="800"
             type="area"
           />
-          {lastPong}
         </Box>
         <Button
           variant="outlined"
@@ -200,15 +190,6 @@ export default function TrainingPage() {
           onClick={() => navigate('/molecules')}
         >
           Continue to Molecules
-        </Button>
-        <Button
-          variant="outlined"
-          sx={{ m: 2 }}
-          onClick={() => {
-            sendPing('hallo')
-          }}
-        >
-          ping
         </Button>
       </Grid>
     </Grid>

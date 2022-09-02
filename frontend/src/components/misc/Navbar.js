@@ -26,10 +26,6 @@ const links = {
     link: '/results',
     label: 'Scoreboards',
   },
-  chartsTest: {
-    link: '/charts',
-    label: 'Charts Test',
-  },
   training: {
     link: '/training',
     label: 'Training',
