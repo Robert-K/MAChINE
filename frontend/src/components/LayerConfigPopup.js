@@ -10,8 +10,9 @@ import {
 } from '@mui/material'
 import React from 'react'
 import Button from '@mui/material/Button'
+import PropTypes from 'prop-types'
 
-export default function LayerConfigPopup() {
+export default function LayerConfigPopup({ passConfig, cancelConfig }) {
   const [activation, setActivation] = React.useState('')
   const [units, setUnits] = React.useState(0)
   const activationFuncs = [
@@ -26,8 +27,12 @@ export default function LayerConfigPopup() {
     'Exponential',
   ]
 
-  const close = () => {
-    // TODO: trigger popper close
+  const handleSubmit = (event) => {
+    passConfig(units, activation)
+  }
+
+  const handeCancel = (event) => {
+    cancelConfig()
   }
 
   const handleSelect = (event) => {
@@ -66,21 +71,26 @@ export default function LayerConfigPopup() {
         <FormControl fullWidth>
           <TextField
             label="Units"
-            value={units}
+            value={units || ''}
             onChange={(e) => handleUnitInput(e)}
             sx={{ m: 1 }}
             required
           />
         </FormControl>
         <Box sx={{ display: 'flex', flexDirection: 'row' }}>
-          <Button sx={{ m: 1 }} onClick={close}>
+          <Button sx={{ m: 1 }} onClick={handeCancel}>
             Cancel
           </Button>
-          <Button sx={{ m: 1 }} onClick={close}>
+          <Button sx={{ m: 1 }} onClick={handleSubmit}>
             Create
           </Button>
         </Box>
       </CardContent>
     </Card>
   )
+}
+
+LayerConfigPopup.propTypes = {
+  passConfig: PropTypes.func.isRequired,
+  cancelConfig: PropTypes.func.isRequired,
 }
