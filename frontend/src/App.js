@@ -133,12 +133,12 @@ export default function App() {
   }
 
   const logout = () => {
+    api.stopTraining()
     api.logout().catch((e) => console.log(e))
     setUserName(null)
-    /* Delete all Data */
-    /* Delete trained models */
-    /* Delete molecules */
-    // TODO: Abort training
+    /* TODO: Delete all Data */
+    /* TODO: Delete trained models */
+    /* TODO: Delete molecules */
   }
 
   const changeDarkMode = (value) => {

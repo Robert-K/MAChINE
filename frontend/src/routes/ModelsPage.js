@@ -97,8 +97,7 @@ export default function ModelsPage() {
       }
 
       const abortTraining = () => {
-        training.setTrainingStatus(false)
-        // TODO: Send abort training command to backend
+        api.stopTraining()
         setShowDialog(false)
         training.setSelectedModel(selectedModel)
         navigate('/datasets')
