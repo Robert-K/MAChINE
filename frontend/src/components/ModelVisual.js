@@ -9,6 +9,7 @@ import LayerConfigPopup from './LayerConfigPopup'
 export default function ModelVisual(props) {
   const [open, setOpen] = React.useState(false)
   const [offset, setOffset] = React.useState([0, 0])
+  const [insertionIndex, setInsertionIndex] = React.useState(null)
   const [layers, setLayers] = React.useState(props.model.layers)
   const [options] = React.useState({
     nodes: {
@@ -47,18 +48,33 @@ export default function ModelVisual(props) {
     const graph = fillGraph()
     const container = document.getElementById('network')
     const network = new v.Network(container, graph, options)
-
     network.on('beforeDrawing', (ctx) => beforeDraw(ctx, network))
     network.on('doubleClick', (eventProps) =>
       onDoubleClick(eventProps, network, graph)
     )
   }, [options, layers])
 
+  /**
+   * Handles double click on network canvas
+   * does nothing if:
+   *   left of first or right of last layer, or if
+   *   a configuration is already in progress
+   * calculates insertionIndex
+   * triggers popup for layer configuration
+   * @param eventProps click event with extra canvas props
+   * @param network network of nodes
+   * @param graph depicted in network
+   */
   function onDoubleClick(eventProps, network, graph) {
     const clickPos = eventProps.pointer.canvas
-    if (clickPos.x < network.getPosition('0.1').x) {
+    if (
+      clickPos.x < network.getPosition('0.1').x ||
+      clickPos.x > network.getPosition(`${layers.length - 1}.1`).x ||
+      open
+    ) {
       return
     }
+    // calculate insertionIndex
     let lastLeftNode
     Object.entries(network.getPositions()).every(([node, pos]) => {
       if (pos.x > clickPos.x) {
@@ -67,22 +83,16 @@ export default function ModelVisual(props) {
       lastLeftNode = node
       return true
     })
+    setInsertionIndex(parseInt(graph.nodes.get(lastLeftNode).group))
 
     // Popper handling, calculate offset and open
     const canvasRect = document
       .getElementById('network')
       .getBoundingClientRect()
-    console.log(canvasRect)
-    console.log(eventProps.pointer.DOM)
     const distance = eventProps.pointer.DOM.x - canvasRect.width
     const skidding = -eventProps.pointer.DOM.y
     setOffset([distance, skidding])
     setOpen(true)
-
-    addLayer(
-      new Layer('Dense', 4, 'SoftMax'),
-      parseInt(graph.nodes.get(lastLeftNode).group)
-    ) // TODO: replace after addLayer rewrite
   }
 
   function beforeDraw(ctx, network) {
@@ -166,20 +176,27 @@ export default function ModelVisual(props) {
   }
 
   /**
-   * adds given layer to layers at index
-   * can't replace first or last layer
+   * adds given layer to layers at insertionIndex
    * @param layer to be inserted
-   * @param index of added layer after insertion
    **/
-  function addLayer(layer, index) {
+  function addLayer(layer) {
     // TODO: rewrite to create new layer here given activation and unitNum
-    if (index !== undefined && index >= 0 && index < layers.length - 1) {
+    if (insertionIndex !== undefined) {
       setLayers((layers) => [
-        ...layers.slice(0, index + 1),
+        ...layers.slice(0, insertionIndex + 1),
         layer,
-        ...layers.slice(index + 1, layers.length),
+        ...layers.slice(insertionIndex + 1, layers.length),
       ])
     }
+  }
+
+  function configureLayer(units, activation) {
+    addLayer(new Layer('Dense', units, activation))
+    setOpen(false)
+  }
+
+  function cancelConfig() {
+    setOpen(false)
   }
 
   return (
@@ -207,7 +224,11 @@ export default function ModelVisual(props) {
             },
           ]}
         >
-          <LayerConfigPopup />
+          <LayerConfigPopup
+            id="LayerConfig"
+            passConfig={configureLayer}
+            cancelConfig={cancelConfig}
+          />
         </Popper>
       </CardContent>
     </Card>
