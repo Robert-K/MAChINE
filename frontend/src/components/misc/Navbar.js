@@ -9,13 +9,33 @@ import TrainingContext from '../../context/TrainingContext'
 import LogoutIcon from '@mui/icons-material/Logout'
 import ProgressBar from '../training/ProgressBar'
 
-const links = [
-  { link: '/home', label: 'Home' },
-  { link: '/models', label: 'Models' },
-  { link: '/molecules', label: 'Molecules' },
-  { link: '/results', label: 'Scoreboards' },
-  { link: '/charts', label: 'Charts Test' },
-]
+const links = {
+  home: {
+    link: '/home',
+    label: 'Home',
+  },
+  models: {
+    link: '/models',
+    label: 'Models',
+  },
+  molecules: {
+    link: '/molecules',
+    label: 'Molecules',
+  },
+  results: {
+    link: '/results',
+    label: 'Scoreboards',
+  },
+  chartsTest: {
+    link: '/charts',
+    label: 'Charts Test',
+  },
+  training: {
+    link: '/training',
+    label: 'Training',
+    hidden: true,
+  },
+}
 
 export default function Navbar({ logoutFunction, darkModeButton }) {
   const locationName = useLocation().pathname
@@ -28,47 +48,41 @@ export default function Navbar({ logoutFunction, darkModeButton }) {
     navigate('/')
   }, [])
 
+  React.useEffect(() => {
+    locationName === links.training.link || training.trainingStatus
+      ? (links.training.hidden = false)
+      : (links.training.hidden = true)
+  }, [locationName, training.trainingStatus])
+
   return (
     <AppBar color="primary" position="sticky">
       <Toolbar>
         <img src={logo} height="30px" style={{ marginRight: 10 }} />
         {!(locationName !== '/' || user.userName) ? null : (
           <>
-            {links.map(({ link, label }) => (
-              <NavLink
-                to={link}
-                key={label}
-                style={({ isActive }) =>
-                  isActive
-                    ? { fontWeight: 600, paddingLeft: 10, paddingRight: 10 }
-                    : { paddingLeft: 10, paddingRight: 10 }
-                }
-              >
-                {label}
-              </NavLink>
+            {Object.entries(links).map(([key, value]) => (
+              <>
+                {value.hidden ? null : (
+                  <NavLink
+                    to={value.link}
+                    key={value.label}
+                    style={({ isActive }) =>
+                      isActive
+                        ? { fontWeight: 600, paddingLeft: 10, paddingRight: 10 }
+                        : { paddingLeft: 10, paddingRight: 10 }
+                    }
+                  >
+                    {value.label}
+                  </NavLink>
+                )}
+              </>
             ))}
-          </>
-        )}
-        {!(
-          (locationName === '/training' || training.trainingStatus) &&
-          user.userName
-        ) ? null : (
-          <>
-            <NavLink
-              to={'/training'}
-              key={'Training'}
-              style={({ isActive }) =>
-                isActive
-                  ? { fontWeight: 600, paddingLeft: 10, paddingRight: 10 }
-                  : { paddingLeft: 10, paddingRight: 10 }
-              }
-            >
-              Training
-            </NavLink>
             {!training.trainingStatus ? null : (
-              <Box sx={{ width: '10%', ml: 1 }}>
-                <ProgressBar />
-              </Box>
+              <>
+                <Box sx={{ width: '10%', ml: 1 }}>
+                  <ProgressBar />
+                </Box>
+              </>
             )}
           </>
         )}
