@@ -1,0 +1,23 @@
+{
+	"testA": {
+		"name": "Test A",
+		"type": "sequential",
+		"lossFunction": "MeanSquaredError",
+		"optimizer": "Adam",
+		"metrics": ["MeanAbsoluteError", "R2"],
+		"layers": [
+			{
+				"type": "Dense",
+				"units": 2,
+				"activation": "relu"
+			}
+			]
+	},
+	"testB": {
+		"name": "Test B",
+		"type": "schnet",
+		"lossFunction": "MeanSquaredError",
+		"optimizer": "Adam",
+		"metrics": ["MeanAbsoluteError", "R2"]
+	}
+}

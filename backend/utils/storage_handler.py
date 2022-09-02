@@ -15,7 +15,6 @@ __all__ = ['add_analysis',
            'delete_scoreboard_fitting',
            'delete_scoreboard_fittings',
            'delete_user_handler',
-           'get_analyses',
            'get_base_model',
            'get_base_models',
            'get_dataset',
@@ -79,9 +78,6 @@ class UserDataStorageHandler:
         if molecule:
             molecule.get('analyses')[fitting_id] = results
             self.__save_summary_file('molecules.json', self.molecules)
-
-    def get_analyses(self, smiles):
-        return self.molecules.get(smiles)
 
     # Models
     def add_model(self, name, parameters, base_model_id):
@@ -260,8 +256,6 @@ class StorageHandler:
     def add_analysis(self, user_id, smiles, fitting_id, results):
         self.get_user_handler(user_id).add_analysis(smiles, fitting_id, results)
 
-    def get_analyses(self, user_id, smiles):
-        return self.get_user_handler(user_id).get_analyses(smiles)
 
     # Models
     # model is the actual model, not a summary
@@ -343,7 +337,6 @@ class StorageHandler:
         dataset_summary = {'name': content.get('name'),
                            'size': content.get('size'),
                            'labelDescriptors': content.get('labels'),
-                           'fingerprintSizes': content.get('fingerprint_sizes'),
                            'datasetPath': str(dataset_path.absolute()),
                            'histograms': content.get('histograms')
                            }
@@ -390,7 +383,6 @@ add_user_handler = _inst.add_user_handler
 delete_scoreboard_fitting = _inst.delete_scoreboard_fitting
 delete_scoreboard_fittings = _inst.delete_scoreboard_fittings
 delete_user_handler = _inst.delete_user_handler
-get_analyses = _inst.get_analyses
 get_base_model = _inst.get_base_model
 get_base_models = _inst.get_base_models
 get_dataset = _inst.get_dataset
