@@ -207,16 +207,16 @@ class StorageHandler:
         self.scoreboard_summaries = self.__read_scoreboard_summaries()
 
     def add_user_handler(self, user_id, username) -> UserDataStorageHandler:
-        if self.user_storage_handler.get(user_id) is None:
-            self.user_storage_handler[user_id] = UserDataStorageHandler(user_id, username)
+        self.user_storage_handler[user_id] = UserDataStorageHandler(user_id, username)
         return self.user_storage_handler.get(user_id)
 
     def get_user_handler(self, user_id) -> UserDataStorageHandler | None:
         return self.user_storage_handler.get(user_id)
 
     def delete_user_handler(self, user_id):
-        handler = self.user_storage_handler.pop(user_id)
-        handler.clean_files()
+        handler = self.user_storage_handler.pop(user_id, None)
+        if handler:
+            handler.clean_files()
 
     # Datasets
     def get_dataset(self, dataset_id):
