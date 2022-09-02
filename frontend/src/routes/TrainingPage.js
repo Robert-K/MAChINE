@@ -53,23 +53,16 @@ export default function TrainingPage() {
 
   const handleStartStop = () => {
     if (training.trainingStatus === true) {
-      api.stopTraining().then((r) => console.log('huh'))
+      api.stopTraining()
     } else {
       setValues([1, 1])
-      api
-        .trainModel(
-          training.selectedDataset.datasetID,
-          training.selectedModel.id,
-          training.selectedLabels,
-          training.selectedEpochs,
-          training.selectedBatchSize
-        )
-        .then((r) => {
-          if (!r) {
-            // TODO: Add error when no training available
-            console.log('Add error message?')
-          }
-        })
+      api.trainModel(
+        training.selectedDataset.datasetID,
+        training.selectedModel.id,
+        training.selectedLabels,
+        training.selectedEpochs,
+        training.selectedBatchSize
+      )
     }
   }
 

@@ -8,14 +8,14 @@ let serverAddress = defaultAddress
 let serverPort = defaultPort
 
 const api = axios.create({ baseURL: `http://${serverAddress}:${serverPort}` })
-let socket = io(`ws://${serverAddress}:${serverPort}`)
+let socket = io(`ws://${serverAddress}:${serverPort}`, { timeout: 60000 })
 
 let userID = ''
 
 function updateBaseURL() {
   api.defaults.baseURL = `http://${serverAddress}:${serverPort}`
   socket.disconnect()
-  socket = io(`ws://${serverAddress}:${serverPort}`)
+  socket = io(`ws://${serverAddress}:${serverPort}`, { timeout: 60000 })
 }
 
 export default {
@@ -136,7 +136,17 @@ export default {
       })
   },
 
-  async trainModel(datasetID, modelID, labels, epochs, batchSize) {
+  trainModel(datasetID, modelID, labels, epochs, batchSize) {
+    socket.emit(
+      'start_training',
+      userID,
+      datasetID,
+      modelID,
+      labels,
+      epochs,
+      batchSize
+    )
+    /*
     console.log(labels)
     return api
       .post(`/users/${userID}/train`, {
@@ -148,13 +158,15 @@ export default {
       })
       .then((response) => {
         return response.data
-      })
+      }) */
   },
 
-  async stopTraining() {
+  stopTraining() {
+    socket.emit('stop_training', userID)
+    /*
     return api.delete(`/users/${userID}/train`).then((response) => {
       return response.data
-    })
+    }) */
   },
 
   registerSocketListener(action, onAction) {
@@ -170,7 +182,7 @@ export default {
     return socket.off(action)
   },
 
-  sendSocketMessage(action, ...args) {
-    return socket.emit(action, args)
+  sendSocketMessage(action, args) {
+    return socket.emit(action, userID, args)
   },
 }
