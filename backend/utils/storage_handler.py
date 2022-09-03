@@ -216,7 +216,7 @@ class StorageHandler:
 
     # Datasets
     def get_dataset(self, dataset_id):
-        summary = self.dataset_summaries.get(dataset_id)
+        summary = self.dataset_summaries.get(str(dataset_id))
         if summary and summary.get('datasetPath'):
             path = Path(summary.get('datasetPath'))
             if path.exists():
@@ -255,7 +255,6 @@ class StorageHandler:
     # Molecule Analyses
     def add_analysis(self, user_id, smiles, fitting_id, results):
         self.get_user_handler(user_id).add_analysis(smiles, fitting_id, results)
-
 
     # Models
     # model is the actual model, not a summary

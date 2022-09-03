@@ -1,13 +1,22 @@
+from pathlib import Path
+
 import pytest
 
 import backend.utils.storage_handler as sh
+import backend.tests.mocks.mock_models as mm
 
 _test_user_id = 'Wakawaka'
 
 
 @pytest.fixture(autouse=True)
 def delete_user_handler():
+    sh.add_user_handler(_test_user_id)
     sh.delete_user_handler(_test_user_id)
+
+
+@pytest.fixture
+def mock_deletion(mocker):
+    mocker.patch('backend.utils.storage_handler.UserDataStorageHandler.clean_files', return_value=None)
 
 
 def test_handler_creation():
@@ -31,6 +40,7 @@ def test_handler_deletion():
     assert sh.get_user_handler(_test_user_id) is None
     assert not handler.user_path.exists()
 
+
 @pytest.mark.parametrize(
     'test_smiles,test_cml,test_name',
     [
@@ -49,8 +59,7 @@ class TestBasicMoleculeGroup:
         assert molecule is not None, 'Expected UserSH to contain this molecule'
         assert molecule == {'name': test_name, 'cml': test_cml, 'analyses': dict()}
 
-    def test_molecule_loading(self, mocker, test_smiles, test_cml, test_name):
-        mocker.patch('backend.utils.storage_handler.UserDataStorageHandler.clean_files', return_value=None)
+    def test_molecule_loading(self, test_smiles, test_cml, test_name, *mock_deletion):
         handler = sh.add_user_handler(_test_user_id)
         sh.add_molecule(_test_user_id, test_smiles, test_cml, test_name)
         molecules = sh.get_molecules(_test_user_id)
@@ -73,13 +82,154 @@ class TestBasicMoleculeGroup:
         sh.add_analysis(_test_user_id, test_smiles, test_fitting_id2, test_results2)
         molecules = sh.get_molecules(_test_user_id)
         molecule = molecules.get(test_smiles)
-        assert len(molecules) == 1
+        assert len(molecules) == 1, 'User molecules should only contain just added molecule'
         assert molecule == {'name': test_name, 'cml': test_cml,
-                            'analyses': {test_fitting_id: test_results, test_fitting_id2: test_results2}}
+                            'analyses': {test_fitting_id: test_results,
+                                         test_fitting_id2: test_results2}}, 'Molecule should have the same analyses ' \
+                                                                            'as just added '
 
+
+@pytest.mark.parametrize(
+    'test_model_name, test_parameters, test_base_id',
+    [
+        ('Name', {'layers': [
+            {
+                'type': 'dense',
+                'units': 25,
+                'activation': 'relu',
+            },
+            {
+                'type': 'dense',
+                'units': 125,
+                'activation': 'relu',
+            },
+            {
+                'type': 'dense',
+                'units': 256,
+                'activation': 'relu',
+            },
+            {
+                'type': 'dense',
+                'units': 22,
+                'activation': 'relu',
+            },
+        ], 'loss': 'MeanSquaredError', 'optimizer': 'Adam'}, 'Test A'),
+        ('Name2', {'layers': [], 'loss': '', 'optimizer': ''}, 'Test A'),
+        ('Name B', {'embeddingDim': 256, 'depth': 3, 'readoutSize': 2, 'loss': 'MeanSquaredError', 'optimizer': 'Adam'},
+         'Test B'),
+        ('', {}, '')
+    ],
+)
 class TestBasicModelGroup:
-    def test_model_addition(self):
-        pass
+    def test_model_addition(self, test_model_name, test_parameters, test_base_id):
+        sh.add_user_handler(_test_user_id)
+        assert len(sh.get_model_summaries(_test_user_id)) == 0
+        test_model_id = sh.add_model(_test_user_id, test_model_name, test_parameters, test_base_id)
+        summary = sh.get_model_summary(_test_user_id, test_model_id)
+        assert len(sh.get_model_summaries(_test_user_id)) == 1
+        assert summary.get('name') == test_model_name, 'Name should not be modified'
+        assert summary.get('baseModelID') == test_base_id, 'Base-model ID should not be modified'
+        assert summary.get('parameters') == test_parameters, 'Parameters should not be modified'
+        assert summary.get('fittingIDs') == [], 'Fitting ID Array should be empty'
+
+    def test_model_loading(self, test_model_name, test_parameters, test_base_id, mock_deletion):
+        test_fitting_id = str(5125)
+        handler = sh.add_user_handler(_test_user_id)
+        model_id = sh.add_model(_test_user_id, test_model_name, test_parameters, test_base_id)
+        models = sh.get_model_summaries(_test_user_id)
+        model = sh.get_model_summary(_test_user_id, model_id)
+        sh.get_user_handler(_test_user_id).add_fitting_to_model(model_id, test_fitting_id)
+        new_handler = sh.add_user_handler(_test_user_id)
+        assert new_handler != handler, 'New Handler should be different'
+        loaded_models = sh.get_model_summaries(_test_user_id)
+        loaded_model = sh.get_model_summary(_test_user_id, model_id)
+        assert loaded_model is not None, 'Model should be loadable with same ID'
+        assert loaded_models == models, 'Loaded models should be the exact same'
+        assert loaded_model == model, 'Loaded model should be the same'
+
+
+@pytest.mark.parametrize(
+    'test_dataset_id, test_labels, test_epochs, test_accuracy, test_batch_size, test_fitting',
+    [
+        ('0', ['testy_boi'], 500, 5, 1285, mm.BasicMockModel('content and more'))
+    ],
+)
+class TestBasicFittingsGroup:
+
+    @pytest.fixture
+    def add_test_model(self):
+        test_model_name = 'test_model'
+        test_parameters = {'embeddingDim': 256, 'depth': 3, 'readoutSize': 2, 'loss': 'MeanSquaredError',
+                           'optimizer': 'Adam'}
+        test_basemodel_id = 'Test B'
+        sh.add_user_handler(_test_user_id)
+        added_model_id = sh.add_model(_test_user_id, test_model_name, test_parameters, test_basemodel_id)
+        return added_model_id
+
+    @pytest.fixture
+    def mock_keras_save(self, mocker):
+        mocker.patch('tensorflow.keras.models.load_model', mm.load_model)
+
+    def test_fitting_addition(self, test_dataset_id, test_labels, test_epochs, test_accuracy, test_batch_size,
+                              test_fitting,
+                              add_test_model, mock_keras_save):
+        assert add_test_model is not None, 'Test setup'
+        assert sh.get_model_summary(_test_user_id, add_test_model) != {}, 'Test setup'
+        assert len(sh.get_model_summaries(_test_user_id)) == 1, 'Test setup'
+        assert len(sh.get_fitting_summaries(_test_user_id)) == 0, 'Default state'
+        test_fitting_id = sh.add_fitting(_test_user_id, test_dataset_id, test_labels, test_epochs, test_accuracy,
+                                         test_batch_size, add_test_model, test_fitting)
+        assert len(sh.get_fitting_summaries(_test_user_id)) == 1, 'Fitting summary should exist'
+        assert test_fitting_id is not None, 'Should have a fitting ID'
+        fitting_summary = sh.get_fitting_summary(_test_user_id, test_fitting_id)
+        assert fitting_summary.get('datasetID') == test_dataset_id, 'DatasetID should not be modified in call'
+        assert fitting_summary.get('labels') == test_labels, 'labels should not be modified in call'
+        assert fitting_summary.get('epochs') == test_epochs, 'epochs should not be modified in call'
+        assert fitting_summary.get('accuracy') == test_accuracy, 'accuracy should not be modified in call'
+        assert fitting_summary.get('batchSize') == test_batch_size, 'batch_size should not be modified in call'
+        assert fitting_summary.get('fittingPath') is not None, 'fittingPath should exist'
+        assert fitting_summary.get('modelID') == add_test_model, 'modelID should be the same'
+        assert sh.get_model_summary(_test_user_id, add_test_model).get('fittingIDs') == [
+            test_fitting_id], 'Model should contain ' \
+                              'this one fitting '
+        assert (Path(sh.get_user_handler(
+            _test_user_id).user_fittings_path) / f'{test_fitting_id}_fitting').exists(), 'Fitting should get saved '
+        loaded_fitting = sh.get_fitting(_test_user_id, test_fitting_id)
+        assert type(loaded_fitting) == type(test_fitting), 'fitting should get loaded'
+
+    def test_fitting_loading(self, test_dataset_id, test_labels, test_epochs, test_accuracy, test_batch_size,
+                             test_fitting, add_test_model, mock_keras_save, mock_deletion):
+        assert add_test_model is not None, 'Test setup'
+        assert sh.get_model_summary(_test_user_id, add_test_model) != {}, 'Test setup'
+        assert len(sh.get_model_summaries(_test_user_id)) == 1, 'Test setup'
+        test_fitting_id = sh.add_fitting(_test_user_id, test_dataset_id, test_labels, test_epochs, test_accuracy,
+                                         test_batch_size, add_test_model, test_fitting)
+        fitting_summaries = sh.get_fitting_summaries(_test_user_id)
+        fitting_summary = sh.get_fitting_summary(_test_user_id, test_fitting_id)
+        fitting = sh.get_fitting(_test_user_id, test_fitting_id)
+        user_path = sh.get_user_handler(_test_user_id).user_path
+        sh.delete_user_handler(_test_user_id)
+        assert user_path.exists(), 'Test setup. NEEDS to exist after "deletion"'
+        sh.add_user_handler(_test_user_id)
+        assert type(sh.get_fitting(_test_user_id, test_fitting_id)) == type(fitting), 'Fittings should be same of type'
+        assert sh.get_fitting_summary(_test_user_id, test_fitting_id) == fitting_summary, 'Loaded fitting summary ' \
+                                                                                          'dict should be the exact ' \
+                                                                                          'same '
+        assert sh.get_fitting_summaries(_test_user_id) == fitting_summaries, 'Loaded fitting summaries dict should ' \
+                                                                             'bee the exact same '
+
+    def test_broken_fitting(self, test_dataset_id, test_labels, test_epochs, test_accuracy, test_batch_size,
+                            test_fitting, add_test_model, mock_keras_save):
+        assert add_test_model is not None, 'Test setup'
+        assert sh.get_model_summary(_test_user_id, add_test_model) != {}, 'Test setup'
+        assert len(sh.get_model_summaries(_test_user_id)) == 1, 'Test setup'
+        test_fitting = mm.BrokenMockModel('broke')
+        fitting_id = sh.add_fitting(_test_user_id, test_dataset_id, test_labels, test_epochs, test_accuracy,
+                                    test_batch_size, add_test_model, test_fitting)
+        assert fitting_id is None, 'Unsaved model cannot have an ID'
+        assert len(sh.get_fitting_summaries(_test_user_id)) == 0, 'Fitting summary not be saved'
+        assert sh.get_fitting_summary(_test_user_id, fitting_id) is None, 'Fitting summary not be saved'
+        assert sh.get_fitting(_test_user_id, fitting_id) is None, 'Fitting should not be saved'
 
 
 def test_dataset_reading():
@@ -105,12 +255,3 @@ def test_base_model_reading():
     # We will now assume that it read everything else correctly
     assert base_a.get('image') is not None
     assert base_b.get('image') is None
-
-
-if __name__ == '__main__':
-    test_handler_creation()
-    test_handler_double_creation()
-    test_handler_deletion()
-    TestBasicMoleculeGroup()
-    TestBasicModelGroup()
-    test_dataset_reading()
