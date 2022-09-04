@@ -31,7 +31,7 @@ def smiles_to_fingerprint(smiles, fingerprint_size=128, radius=2):
         mol = Chem.MolFromSmiles(smiles)
         fingerprint = AllChem.GetMorganFingerprintAsBitVect(mol, radius=radius, nBits=fingerprint_size)
         return list(fingerprint)
-    except (IndexError, ValueError):
+    except (IndexError, ValueError, TypeError):
         return None
 
 
@@ -62,5 +62,5 @@ def smiles_to_mol_graph(smiles):
         edge_features = dist_mat[edge_indices[:, 0], edge_indices[:, 1]][..., None]
 
         return node_features, edge_features, edge_indices
-    except (IndexError, ValueError):
+    except (IndexError, ValueError, TypeError):
         return None, None, None
