@@ -6,11 +6,11 @@ import * as v from 'vis-network'
 import LayerConfigPopup from './LayerConfigPopup'
 import Layer from '../../../internal/Layer'
 
-export default function ModelVisual(props) {
+export default function ModelVisual({ model, defaultActivation }) {
   const [open, setOpen] = React.useState(false)
   const [offset, setOffset] = React.useState([0, 0])
   const [insertionIndex, setInsertionIndex] = React.useState(null)
-  const [layers, setLayers] = React.useState(props.model.layers)
+  const [layers, setLayers] = React.useState(model.layers)
   const [options] = React.useState({
     nodes: {
       borderWidth: 2,
@@ -225,6 +225,7 @@ export default function ModelVisual(props) {
             id="LayerConfig"
             passConfig={configureLayer}
             cancelConfig={cancelConfig}
+            defaultActivation={defaultActivation}
           />
         </Popper>
       </CardContent>
@@ -233,5 +234,6 @@ export default function ModelVisual(props) {
 }
 
 ModelVisual.propTypes = {
-  model: PropTypes.object,
+  model: PropTypes.object.isRequired,
+  defaultActivation: PropTypes.string,
 }

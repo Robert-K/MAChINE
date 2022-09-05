@@ -12,20 +12,25 @@ import React from 'react'
 import Button from '@mui/material/Button'
 import PropTypes from 'prop-types'
 
-export default function LayerConfigPopup({ passConfig, cancelConfig }) {
+export const activationFuncs = [
+  'Relu',
+  'Sigmoid',
+  'Softmax',
+  'Softplus',
+  'Softsign',
+  'Tanh',
+  'Selu',
+  'Elu',
+  'Exponential',
+]
+
+export default function LayerConfigPopup({
+  passConfig,
+  cancelConfig,
+  defaultActivation,
+}) {
   const [activation, setActivation] = React.useState('')
   const [units, setUnits] = React.useState(0)
-  const activationFuncs = [
-    'Relu',
-    'Sigmoid',
-    'Softmax',
-    'Softplus',
-    'Softsign',
-    'Tanh',
-    'Selu',
-    'Elu',
-    'Exponential',
-  ]
 
   const handleSubmit = (event) => {
     passConfig(units, activation)
@@ -55,7 +60,7 @@ export default function LayerConfigPopup({ passConfig, cancelConfig }) {
           <InputLabel sx={{ m: 1 }}>Activation Function</InputLabel>
           <Select
             label="Activation Function"
-            value={activation}
+            value={activation || defaultActivation}
             onChange={(event) => handleSelect(event)}
             sx={{ m: 1 }}
           >
@@ -93,4 +98,5 @@ export default function LayerConfigPopup({ passConfig, cancelConfig }) {
 LayerConfigPopup.propTypes = {
   passConfig: PropTypes.func.isRequired,
   cancelConfig: PropTypes.func.isRequired,
+  defaultActivation: PropTypes.string,
 }
