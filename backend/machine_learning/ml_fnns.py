@@ -14,10 +14,10 @@ _fingerprint_size = 512
 
 def create_fnn_with_dataset(parameters, dataset, labels, loss, optimizer, metrics, batch_size):
     layers_param = parameters.get('layers')
-    label = labels[0]
 
     # Create thingies for dataset
-    x, y = zip(*[(mol["x"].get("fingerprints")[str(_fingerprint_size)], mol["y"][label]) for mol in dataset])
+    x, y = zip(*[(mol["x"].get("fingerprints")[str(_fingerprint_size)],
+                  list(mol.get("y").get(k) for k in labels)) for mol in dataset])
     x, y = tf.constant(x), tf.constant(y)
 
     model = tf.keras.models.Sequential()

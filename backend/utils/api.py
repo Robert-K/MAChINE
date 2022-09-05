@@ -326,7 +326,7 @@ def run(debug=True):
             'activation': 'relu',
         },
     ], 'loss': 'MeanSquaredError', 'optimizer': 'Adam'}, 'id')
-    # fitting_id = ml.train(test_user, '1', model_id, ['HIV_active'], 0, 64)
+    fitting_id = ml.train(test_user, '2', model_id, ['lumo', 'homo'], 0, 64)
     model_id_2 = sh.add_model(test_user, 'MyCoolSecondModel',
                               {'loss': 'MeanSquaredError', 'optimizer': 'Adam', 'embeddingDim': 128, 'readoutSize': 1,
                                'depth': 2}, 'id2')
