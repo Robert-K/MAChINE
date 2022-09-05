@@ -29,7 +29,6 @@ const links = {
   training: {
     link: '/training',
     label: 'Training',
-    hidden: true,
   },
 }
 
@@ -37,6 +36,7 @@ export default function Navbar({ logoutFunction, darkModeButton }) {
   const locationName = useLocation().pathname
   const user = React.useContext(UserContext)
   const training = React.useContext(TrainingContext)
+  const [hideTraining, setHideTraining] = React.useState(true)
 
   // Navigates the user to the start page on page reload
   const navigate = useNavigate()
@@ -46,8 +46,8 @@ export default function Navbar({ logoutFunction, darkModeButton }) {
 
   React.useEffect(() => {
     locationName === links.training.link || training.trainingStatus
-      ? (links.training.hidden = false)
-      : (links.training.hidden = true)
+      ? setHideTraining(false)
+      : setHideTraining(true)
   }, [locationName, training.trainingStatus])
 
   return (
@@ -58,7 +58,7 @@ export default function Navbar({ logoutFunction, darkModeButton }) {
           <>
             {Object.entries(links).map(([key, value]) => (
               <>
-                {value.hidden ? null : (
+                {key === 'training' && hideTraining ? null : (
                   <NavLink
                     to={value.link}
                     key={value.label}
