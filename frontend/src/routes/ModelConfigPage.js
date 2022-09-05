@@ -1,6 +1,6 @@
 import React from 'react'
 import { useLocation } from 'react-router-dom'
-import ModelVisual from '../components/ModelVisual'
+import MLPModelVisual from '../components/ModelConfig/MLPModelVisual'
 import Grid from '@mui/material/Grid'
 import { Box, FormControl, InputLabel, MenuItem, Select } from '@mui/material'
 
@@ -29,7 +29,7 @@ export default function ModelConfigPage() {
     <div>
       <Grid container>
         <Grid item xs={8}>
-          <ModelVisual model={baseModel} />
+          <MLPModelVisual model={baseModel} />
         </Grid>
         <Grid item xs={4}>
           {Object.entries(settableParameters).map(([key, value], i) => {

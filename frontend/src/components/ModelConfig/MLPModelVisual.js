@@ -3,8 +3,8 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import * as vis from 'vis-data'
 import * as v from 'vis-network'
-import Layer from '../internal/Layer'
 import LayerConfigPopup from './LayerConfigPopup'
+import Layer from '../../internal/Layer'
 
 export default function ModelVisual(props) {
   const [open, setOpen] = React.useState(false)
@@ -41,8 +41,6 @@ export default function ModelVisual(props) {
   // TODO: style: node opacity, pick colors, make boxes pretty
   // TODO: fix dark mode interaction
   // TODO: add layer box labels
-  // TODO: popup(?) to set unitNum and activation when adding. Idea: separate react component placed on top
-  // TODO: update graph when adding layers
 
   React.useEffect(() => {
     const graph = fillGraph()
