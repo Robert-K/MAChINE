@@ -10,6 +10,8 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  ListItem,
+  ListItemText,
 } from '@mui/material'
 import FittingCard from '../components/models/FittingCard'
 import Button from '@mui/material/Button'
@@ -83,7 +85,7 @@ export default function FittingsPage() {
                     <Button
                       fullWidth
                       variant="contained"
-                      sx={{ mb: 1 }}
+                      sx={{ mb: 2 }}
                       onClick={() => {
                         api
                           .analyzeMolecule(fitting.id, selectedSmiles)
@@ -95,10 +97,13 @@ export default function FittingsPage() {
                     >
                       Choose this model
                     </Button>
-                    Labels: <br />
-                    {/** todo might have to adjust the line breaks when we want to enable multi-label fittings */}
+                    Labels:
                     {fitting.labels.map((label) => {
-                      return label
+                      return (
+                        <ListItem key={label}>
+                          <ListItemText primary={`${label}`} />
+                        </ListItem>
+                      )
                     })}
                   </>,
                   event.currentTarget !== anchor || !open
