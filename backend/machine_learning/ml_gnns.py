@@ -4,7 +4,7 @@ from backend.machine_learning.models.schnet import make_schnet
 
 
 def create_schnet_with_dataset(parameters, dataset, labels, loss, optimizer, metrics, batch_size):
-    label = labels[0]
+    label = labels[0]  # Schnets do not support multiple labels
     x, y = zip(*[(mol["x"]['mol_graph'], mol["y"][label]) for mol in dataset])
     nodes, edges, edges_i = zip(*x)
 
@@ -36,7 +36,7 @@ def smiles_to_schnet_input(smiles):
     node_dim = nodes.shape[-1]
     edge_dim = edges.shape[-1]
 
-    nodes = tf.RaggedTensor.from_tensor(tf.constant(nodes, dtype="float32", shape=[1,  len(nodes), node_dim ]))
+    nodes = tf.RaggedTensor.from_tensor(tf.constant(nodes, dtype="float32", shape=[1, len(nodes), node_dim]))
     edges = tf.RaggedTensor.from_tensor(tf.constant(edges, dtype="float32", shape=[1, len(edges), edge_dim]))
     edges_i = tf.RaggedTensor.from_tensor(tf.constant(edges_i, dtype="int32", shape=[1, len(edges_i), 2]))
     return [nodes, edges, edges_i]
