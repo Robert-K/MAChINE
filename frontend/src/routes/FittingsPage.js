@@ -4,14 +4,13 @@
 
 import React from 'react'
 import {
-  Container,
+  Box,
   Dialog,
   DialogActions,
   DialogContent,
   DialogContentText,
   DialogTitle,
 } from '@mui/material'
-import Grid from '@mui/material/Grid'
 import FittingCard from '../components/models/FittingCard'
 import Button from '@mui/material/Button'
 import DetailsPopper from '../components/shared/DetailsPopper'
@@ -55,38 +54,57 @@ export default function FittingsPage() {
     navigate('/molecules')
   }
 
-  let analysisKey
+  const [analysis, setAnalysis] = React.useState('')
+
+  const handleAnalysis = (response) => {
+    setAnalysis(response)
+  }
 
   return (
-    <Container>
-      <Grid container spacing={4} marginTop={1} marginBottom={5}>
+    <Box sx={{ m: 5 }}>
+      <Box
+        sx={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(4,1fr)',
+          gap: 5,
+        }}
+      >
         {fittingArray.map((fitting) => (
-          <div key={fitting.id}>
+          <React.Fragment key={fitting.id}>
             <FittingCard
               fitting={fitting}
               key={fitting.id}
+              sx={{ width: 500 }}
               clickFunc={(event) => {
                 handlePopper(
                   event.currentTarget,
-                  <Button
-                    fullWidth
-                    variant="contained"
-                    onClick={() => {
-                      handleClickOpenDialog()
-                      api
-                        .analyzeMolecule(fitting.id, selectedSmiles)
-                        .then((response) => {
-                          console.log(response)
-                          analysisKey = response
-                        })
-                    }}
-                  >
-                    Choose this model
-                  </Button>,
+                  <>
+                    <Button
+                      fullWidth
+                      variant="contained"
+                      sx={{ mb: 1 }}
+                      onClick={() => {
+                        api
+                          .analyzeMolecule(fitting.id, selectedSmiles)
+                          .then((response) => {
+                            handleAnalysis(`${Object.entries(response)}`)
+                            handleClickOpenDialog()
+                          })
+                      }}
+                    >
+                      Choose this model
+                    </Button>
+                    Labels: <br />
+                    {/** todo might have to adjust the line breaks when we want to enable multi-label fittings */}
+                    {fitting.labels.map((label) => {
+                      return label
+                    })}
+                  </>,
                   event.currentTarget !== anchor || !open
                 )
               }}
             />
+
             <Dialog
               open={openDialog}
               onClose={handleCloseDialog}
@@ -98,20 +116,20 @@ export default function FittingsPage() {
               </DialogTitle>
               <DialogContent>
                 <DialogContentText id="alert-dialog-description">
-                  {analysisKey}
+                  {`Result: ${analysis}`}
                 </DialogContentText>
               </DialogContent>
               <DialogActions>
-                <Button onClick={handleCloseDialog}>Remain on this page</Button>
+                <Button onClick={handleCloseDialog}>Remain here</Button>
                 <Button onClick={handleGoToMol} autoFocus>
-                  Go back to Molecules Page
+                  Go to Molecules
                 </Button>
               </DialogActions>
             </Dialog>
-          </div>
+          </React.Fragment>
         ))}
         <DetailsPopper anchor={anchor} open={open} content={content} />
-      </Grid>
-    </Container>
+      </Box>
+    </Box>
   )
 }
