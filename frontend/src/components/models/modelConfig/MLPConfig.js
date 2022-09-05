@@ -11,9 +11,11 @@ import {
 } from '@mui/material'
 import MLPModelVisual from './MLPModelVisual'
 import PropTypes from 'prop-types'
+import { activationFuncs } from './LayerConfigPopup'
 
 export default function MLPConfig({ model }) {
-  const [funcs, setFuncs] = React.useState(['', ''])
+  const [funcs, setFuncs] = React.useState(['', '', ''])
+
   const handleChange = (event, i) => {
     const funcsClone = [...funcs]
     funcsClone[i] = event.target.value
@@ -27,18 +29,19 @@ export default function MLPConfig({ model }) {
       'Mean Absolute Error',
       'Mean Squared Error',
     ],
+    'Default Activation': activationFuncs,
   }
   return (
     <Grid container>
       <Grid item xs={8}>
-        <MLPModelVisual model={model} />
+        <MLPModelVisual model={model} defaultActivation={funcs[2]} />
       </Grid>
       <Grid item xs={2}>
         <Card sx={{ m: 2, width: '100%' }}>
           <CardContent>
             {Object.entries(settableParameters).map(([key, value], i) => {
               return (
-                <Box key={i} sx={{ minWidth: 120, m: 2 }}>
+                <Box key={i} sx={{ m: 2 }}>
                   <FormControl required fullWidth>
                     <InputLabel id="select-function-label">{key}</InputLabel>
                     <Select
