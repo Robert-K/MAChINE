@@ -29,12 +29,12 @@ export default function MLPConfig({ model }) {
     ],
   }
   return (
-    <Grid container sx={{ m: 2 }}>
+    <Grid container>
       <Grid item xs={8}>
         <MLPModelVisual model={model} />
       </Grid>
       <Grid item xs={2}>
-        <Card>
+        <Card sx={{ m: 2, width: '100%' }}>
           <CardContent>
             {Object.entries(settableParameters).map(([key, value], i) => {
               return (
