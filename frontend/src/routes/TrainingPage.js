@@ -172,7 +172,7 @@ export default function TrainingPage() {
               },
             }}
             series={[{ data: values }]}
-            width="800"
+            width="100%"
             type="area"
           />
         </Box>
