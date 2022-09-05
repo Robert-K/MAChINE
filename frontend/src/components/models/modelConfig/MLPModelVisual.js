@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 import * as vis from 'vis-data'
 import * as v from 'vis-network'
 import LayerConfigPopup from './LayerConfigPopup'
-import Layer from '../../internal/Layer'
+import Layer from '../../../internal/Layer'
 
 export default function ModelVisual(props) {
   const [open, setOpen] = React.useState(false)
@@ -178,7 +178,6 @@ export default function ModelVisual(props) {
    * @param layer to be inserted
    **/
   function addLayer(layer) {
-    // TODO: rewrite to create new layer here given activation and unitNum
     if (insertionIndex !== undefined) {
       setLayers((layers) => [
         ...layers.slice(0, insertionIndex + 1),

@@ -1,10 +1,7 @@
 import React from 'react'
 import { useLocation } from 'react-router-dom'
-import MLPModelVisual from '../components/ModelConfig/MLPModelVisual'
-import SchNetConfig from '../components/ModelConfig/SchNetConfig'
-import MLPConfig from '../components/ModelConfig/MLPConfig'
-import Grid from '@mui/material/Grid'
-import { Box, FormControl, InputLabel, MenuItem, Select } from '@mui/material'
+import SchNetConfig from '../components/models/modelConfig/SchNetConfig'
+import MLPConfig from '../components/models/modelConfig/MLPConfig'
 
 export default function ModelConfigPage() {
   const { state } = useLocation()
