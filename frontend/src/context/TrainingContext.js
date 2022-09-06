@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import api from '../api'
 
 const TrainingContext = React.createContext({
-  trainingStatus: false,
+  trainingStatus: true,
   setTrainingStatus: () => {},
   selectedModel: null,
   setSelectedModel: () => {},
@@ -19,7 +19,7 @@ const TrainingContext = React.createContext({
 })
 
 export const TrainingProvider = ({ children }) => {
-  const [trainingStatus, setTrainingStatus] = React.useState(false)
+  const [trainingStatus, setTrainingStatus] = React.useState(true)
   const [selectedModel, setSelectedModel] = React.useState({})
   const [selectedDataset, setSelectedDataset] = React.useState({})
   const [selectedLabels, setSelectedLabels] = React.useState([])
@@ -32,6 +32,7 @@ export const TrainingProvider = ({ children }) => {
   )
 
   React.useEffect(() => {
+    setTrainingStatus(false)
     api.registerSocketListener('started', () => {
       setTrainingStatus(true)
       dispatchTrainingData({ type: 'reset' })
