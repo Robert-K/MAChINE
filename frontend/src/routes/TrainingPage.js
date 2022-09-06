@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { Box, Button, Grid, TextField, useTheme } from '@mui/material'
 import ModelDetailsCard from '../components/training/ModelDetailsCard'
 import DatasetDetailsCard from '../components/training/DatasetDetailsCard'
@@ -13,10 +13,6 @@ export default function TrainingPage() {
   const [epochsError, setEpochsError] = React.useState(false)
 
   const theme = useTheme()
-
-  const initialState = [1, 1]
-
-  const [values, setValues] = useState(initialState)
 
   const handleEpochsChange = (event) => {
     const tempEpochs = event.target.value
@@ -55,7 +51,6 @@ export default function TrainingPage() {
     if (training.trainingStatus === true) {
       api.stopTraining()
     } else {
-      setValues([1, 1])
       api.trainModel(
         training.selectedDataset.datasetID,
         training.selectedModel.id,
@@ -64,39 +59,6 @@ export default function TrainingPage() {
         training.selectedBatchSize
       )
     }
-  }
-
-  React.useEffect(() => {
-    api.registerSocketListener('update', (data) => {
-      addData(data)
-    })
-    api.registerSocketListener('started', () => {
-      training.setTrainingStatus(true)
-    })
-    api.registerSocketListener('done', () => {
-      training.setTrainingStatus(false)
-    })
-  }, [])
-
-  const addData = (data) => {
-    setValues((prevValues) => {
-      training.setProgress((data.epoch / training.selectedEpochs) * 100) // TODO this means Progress bad stops working when leaving trainingpage
-      if (
-        prevValues[0] === initialState[0] &&
-        prevValues[1] === initialState[1]
-      ) {
-        return [data.r_square, data.val_r_square]
-      } else if (
-        prevValues[0] === initialState[0] &&
-        prevValues[1] !== initialState[1]
-      ) {
-        return [prevValues[1], data.val_r_square]
-      } else {
-        return [...prevValues, data.val_r_square]
-      }
-    })
-    console.log(data)
-    console.log(values)
   }
 
   const navigate = useNavigate()
@@ -171,7 +133,7 @@ export default function TrainingPage() {
                 },
               },
             }}
-            series={[{ data: values }]}
+            series={[{ data: training.trainingData.val_r_square }]}
             width="100%"
             type="area"
           />

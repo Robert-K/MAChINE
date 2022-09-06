@@ -98,13 +98,6 @@ const themeDark = createTheme(
 export default function App() {
   const [darkMode, setDarkMode] = React.useState(false)
   const [userName, setUserName] = React.useState(null)
-  const [trainingStatus, setTrainingStatus] = React.useState(false)
-  const [selectedModel, setSelectedModel] = React.useState({})
-  const [selectedDataset, setSelectedDataset] = React.useState({})
-  const [selectedLabels, setSelectedLabels] = React.useState([])
-  const [selectedEpochs, setSelectedEpochs] = React.useState(10)
-  const [selectedBatchSize, setSelectedBatchSize] = React.useState(64)
-  const [progress, setProgress] = React.useState(0)
 
   const particlesInit = useCallback(async (engine) => {
     console.log(engine)
@@ -148,24 +141,7 @@ export default function App() {
     <div className="App">
       <ThemeProvider theme={darkMode ? themeDark : themeLight}>
         <UserProvider value={{ userName }}>
-          <TrainingProvider
-            value={{
-              trainingStatus,
-              setTrainingStatus,
-              selectedModel,
-              setSelectedModel,
-              selectedDataset,
-              setSelectedDataset,
-              selectedLabels,
-              setSelectedLabels,
-              selectedEpochs,
-              setSelectedEpochs,
-              selectedBatchSize,
-              setSelectedBatchSize,
-              progress,
-              setProgress,
-            }}
-          >
+          <TrainingProvider>
             <CssBaseline />
             <BrowserRouter>
               <Navbar
