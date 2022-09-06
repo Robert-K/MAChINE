@@ -37,12 +37,12 @@ const gridHeight = '80vh'
 export default function ModelsPage() {
   const [selectedIndex, setSelectedIndex] = React.useState(-1)
   const [modelList, setModelList] = React.useState([])
-  const [showDialog, setShowDialog] = React.useState(false)
-  const training = React.useContext(TrainingContext)
+  const [showDialog, setShowDialog] = React.useState(true)
   const user = React.useContext(UserContext)
 
   React.useEffect(() => {
     api.getModelList().then((models) => setModelList(models))
+    setShowDialog(false)
   }, [user])
 
   const updateSelection = (index) => {
@@ -50,6 +50,15 @@ export default function ModelsPage() {
   }
 
   const navigate = useNavigate()
+
+  const handleCloseDialog = () => {
+    setShowDialog(false)
+  }
+
+  const abortTraining = () => {
+    handleCloseDialog()
+    api.stopTraining()
+  }
 
   return (
     <Box sx={{ m: 5 }}>
@@ -71,101 +80,98 @@ export default function ModelsPage() {
           ></SelectionList>
         </Grid>
         <Grid item xs={9}>
-          <ModelDescription />
+          <ModelDescription
+            selectedModel={modelList[selectedIndex]}
+            onActiveTraining={() => setShowDialog(true)}
+          />
         </Grid>
       </Grid>
+      <Dialog
+        open={showDialog}
+        onClose={handleCloseDialog}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+          {'Abort current training?'}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            To start a new training, you have to abort the current training
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog}>Cancel</Button>
+          <Button onClick={abortTraining}>Abort</Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   )
+}
 
-  function ModelDescription() {
-    if (selectedIndex < 0) {
-      // no model selected
-      return (
-        <Card>
-          <CardContent>
-            <Typography align="center" color="lightgrey">
-              Select a Model.
-            </Typography>
-          </CardContent>
-        </Card>
-      )
-    } else {
-      const selectedModel = modelList[selectedIndex]
+function ModelDescription({ selectedModel, onActiveTraining }) {
+  const { setSelectedModel, trainingStatus } = React.useContext(TrainingContext)
+  const navigate = useNavigate()
 
-      const handleCloseDialog = () => {
-        setShowDialog(false)
-      }
-
-      const abortTraining = () => {
-        api.stopTraining()
-        setShowDialog(false)
-        training.setSelectedModel(selectedModel)
-        navigate('/datasets')
-      }
-
-      return (
-        <Card sx={{ maxHeight: gridHeight, height: gridHeight }}>
-          <CardContent
-            sx={{ flexDirection: 'column', height: '100%', display: 'flex' }}
-          >
-            <CardHeader
-              title={selectedModel.name}
-              subheader={`Base Model: ${selectedModel.baseModel}`}
-            ></CardHeader>
-            <Divider />
-            <Typography variant="h6" sx={{ pl: 2, pt: 2 }}>
-              Trained fittings:
-            </Typography>
-            {/* Adds a fitting for each fitting saved in the model */}
-            <List sx={{ flexGrow: 1, overflow: 'auto' }}>
-              {selectedModel.fittings.map((fitting, index) => (
-                <RenderFitting
-                  fitting={fitting}
-                  key={`${fitting.id}-${index}`}
-                ></RenderFitting>
-              ))}
-            </List>
-            <CardActions>
-              <Grid container justifyContent="center">
-                <Button
-                  onClick={() => {
-                    if (!training.trainingStatus) {
-                      training.setSelectedModel(selectedModel)
-                      navigate('/datasets')
-                    } else {
-                      setShowDialog(true)
-                    }
-                  }}
-                >
-                  Select Training Data
-                </Button>
-                <Dialog
-                  open={showDialog}
-                  onClose={handleCloseDialog}
-                  aria-labelledby="alert-dialog-title"
-                  aria-describedby="alert-dialog-description"
-                >
-                  <DialogTitle id="alert-dialog-title">
-                    {'Abort current training?'}
-                  </DialogTitle>
-                  <DialogContent>
-                    <DialogContentText id="alert-dialog-description">
-                      To start a new training, you have to abort the current
-                      training
-                    </DialogContentText>
-                  </DialogContent>
-                  <DialogActions>
-                    <Button onClick={handleCloseDialog}>Cancel</Button>
-                    <Button onClick={abortTraining}>Continue</Button>
-                  </DialogActions>
-                </Dialog>
-              </Grid>
-            </CardActions>
-          </CardContent>
-        </Card>
-      )
-    }
+  if (!selectedModel) {
+    // no model selected
+    return (
+      <Card>
+        <CardContent>
+          <Typography align="center" color="lightgrey">
+            Select a Model.
+          </Typography>
+        </CardContent>
+      </Card>
+    )
+  } else {
+    return (
+      <Card sx={{ maxHeight: gridHeight, height: gridHeight }}>
+        <CardContent
+          sx={{ flexDirection: 'column', height: '100%', display: 'flex' }}
+        >
+          <CardHeader
+            title={selectedModel.name}
+            subheader={`Base Model: ${selectedModel.baseModel}`}
+          ></CardHeader>
+          <Divider />
+          <Typography variant="h6" sx={{ pl: 2, pt: 2 }}>
+            Trained fittings:
+          </Typography>
+          {/* Adds a fitting for each fitting saved in the model */}
+          <List sx={{ flexGrow: 1, overflow: 'auto' }}>
+            {selectedModel.fittings.map((fitting, index) => (
+              <RenderFitting
+                fitting={fitting}
+                key={`${fitting.id}-${index}`}
+              ></RenderFitting>
+            ))}
+          </List>
+          <CardActions>
+            <Grid container justifyContent="center">
+              <Button
+                onClick={() => {
+                  if (!trainingStatus) {
+                    setSelectedModel(selectedModel)
+                    navigate('/datasets')
+                  } else {
+                    onActiveTraining()
+                  }
+                }}
+              >
+                Select Training Data
+              </Button>
+            </Grid>
+          </CardActions>
+        </CardContent>
+      </Card>
+    )
   }
+}
+
+ModelDescription.propTypes = {
+  selectedModel: PropTypes.any,
+  onActiveTraining: PropTypes.any,
 }
 
 /**
