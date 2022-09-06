@@ -57,7 +57,7 @@ export default function Navbar({ logoutFunction, darkModeButton }) {
         {!(locationName !== '/' || user.userName) ? null : (
           <>
             {Object.entries(links).map(([key, value]) => (
-              <>
+              <React.Fragment key={key}>
                 {key === 'training' && hideTraining ? null : (
                   <NavLink
                     to={value.link}
@@ -71,7 +71,7 @@ export default function Navbar({ logoutFunction, darkModeButton }) {
                     {value.label}
                   </NavLink>
                 )}
-              </>
+              </React.Fragment>
             ))}
             {!training.trainingStatus ? null : (
               <>

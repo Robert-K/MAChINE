@@ -118,10 +118,10 @@ export default function ModelsPage() {
             </Typography>
             {/* Adds a fitting for each fitting saved in the model */}
             <List sx={{ flexGrow: 1, overflow: 'auto' }}>
-              {selectedModel.fittings.map((fitting) => (
+              {selectedModel.fittings.map((fitting, index) => (
                 <RenderFitting
                   fitting={fitting}
-                  key={fitting.id}
+                  key={`${fitting.id}-${index}`}
                 ></RenderFitting>
               ))}
             </List>
