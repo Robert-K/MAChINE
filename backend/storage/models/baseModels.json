@@ -1,5 +1,12 @@
 {
-	"id": {
+	"id2": {
+		"name": "SchnetA",
+		"type": "schnet",
+		"embedding_dim": 10,
+		"readout_size": 1,
+		"depth": 3
+	},
+	"id3": {
 		"name": "SequentialA",
 		"type": "sequential",
 		"lossFunction": "Mean Squared Error",
