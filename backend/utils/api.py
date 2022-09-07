@@ -206,6 +206,7 @@ class BaseModels(Resource):
                     processed_model_parameters['embeddingDimension'] = current.get('embeddingDimension')
                     processed_model_parameters['readoutSize'] = current.get('readoutSize')
 
+                processed_model['parameters'] = processed_model_parameters
                 processed_models.append(processed_model)
         return processed_models
 
