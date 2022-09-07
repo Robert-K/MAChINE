@@ -305,6 +305,33 @@ def run(debug=True):
         },
         {
             'type': 'dense',
+            'units': 128,
+            'activation': 'relu',
+        },
+        {
+            'type': 'dense',
+            'units': 512,
+            'activation': 'relu',
+        },
+        {
+            'type': 'dense',
+            'units': 256,
+            'activation': 'relu',
+        },
+        {
+            'type': 'dense',
+            'units': 32,
+            'activation': 'relu',
+        },
+    ], 'loss': 'Huber Loss', 'optimizer': 'Nadam'}, 'id')
+    model_id2 = sh.add_model(test_user2, 'MyCoolModel', {'layers': [
+        {
+            'type': 'dense',
+            'units': 256,
+            'activation': 'relu',
+        },
+        {
+            'type': 'dense',
             'units': 256,
             'activation': 'relu',
         },
@@ -318,29 +345,7 @@ def run(debug=True):
             'units': 256,
             'activation': 'relu',
         },
-    ], 'loss': 'MeanSquaredError', 'optimizer': 'Adam'}, 'id')
-    model_id = sh.add_model(test_user2, 'MyCoolModel', {'layers': [
-        {
-            'type': 'dense',
-            'units': 256,
-            'activation': 'relu',
-        },
-        {
-            'type': 'dense',
-            'units': 256,
-            'activation': 'relu',
-        },
-        {
-            'type': 'dense',
-            'units': 256,
-            'activation': 'relu',
-        },
-        {
-            'type': 'dense',
-            'units': 256,
-            'activation': 'relu',
-        },
-    ], 'loss': 'MeanSquaredError', 'optimizer': 'Adam'}, 'id')
+    ], 'loss': 'Huber Loss', 'optimizer': 'Stochastic Gradient Descent'}, 'id')
     fitting_id = ml.train(test_user, '2', model_id, ['lumo', 'homo'], 0, 64)
     model_id_2 = sh.add_model(test_user, 'MyCoolSecondModel',
                               {'loss': 'MeanSquaredError', 'optimizer': 'Adam', 'embeddingDim': 128, 'readoutSize': 1,

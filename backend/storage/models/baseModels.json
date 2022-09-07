@@ -2,7 +2,7 @@
 	"id": {
 		"name": "SequentialA",
 		"type": "sequential",
-		"lossFunction": "MeanSquaredError",
+		"lossFunction": "Mean Squared Error",
 		"optimizer": "Adam",
 		"metrics": ["MeanAbsoluteError", "R2"],
 		"layers": [
@@ -30,8 +30,8 @@
 	"id2": {
 		"name": "SCHNET A",
 		"type": "schnet",
-		"lossFunction": "MeanSquaredError",
-		"optimizer": "Adam",
+		"lossFunction": "Mean Squared Error",
+		"optimizer": "NAdam",
 		"metrics": ["MeanAbsoluteError", "R2"]
 	}
 }

@@ -5,10 +5,16 @@ from backend.machine_learning.ml_fnns import create_fnn_with_dataset, smiles_to_
 
 optimizers = {
     'Adam': tf.keras.optimizers.Adam(),
+    'Adamax': tf.keras.optimizers.Adamax(),
+    'Stochastic Gradient Descent': tf.keras.optimizers.SGD(),
+    'Nadam': tf.keras.optimizers.Nadam(),
 }
 
 losses = {
-    'MeanSquaredError': tf.keras.losses.MeanSquaredError(),
+    'Mean Absolute Error': tf.keras.losses.MeanAbsoluteError(),
+    'Mean Squared Error': tf.keras.losses.MeanSquaredError(),
+    'Binary Cross Entropy': tf.keras.losses.BinaryCrossentropy(),
+    'Huber Loss': tf.keras.losses.Huber(),
 }
 
 metrics = {
