@@ -14,7 +14,7 @@ import DatasetDetailsCard from '../components/training/DatasetDetailsCard'
 import { useNavigate } from 'react-router-dom'
 import TrainingContext from '../context/TrainingContext'
 import api from '../api'
-import PrettyChart from '../components/misc/PrettyChart'
+import PrettyChart from '../components/training/PrettyChart'
 
 export default function TrainingPage() {
   const training = React.useContext(TrainingContext)
