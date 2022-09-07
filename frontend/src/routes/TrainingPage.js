@@ -1,18 +1,16 @@
 import React, { useEffect } from 'react'
-import { Box, Button, Grid, TextField, useTheme } from '@mui/material'
+import { Box, Button, Grid, TextField } from '@mui/material'
 import ModelDetailsCard from '../components/training/ModelDetailsCard'
 import DatasetDetailsCard from '../components/training/DatasetDetailsCard'
 import { useNavigate } from 'react-router-dom'
 import TrainingContext from '../context/TrainingContext'
 import api from '../api'
-import Chart from 'react-apexcharts'
+import PrettyChart from '../components/misc/PrettyChart'
 
 export default function TrainingPage() {
   const training = React.useContext(TrainingContext)
 
   const [epochsError, setEpochsError] = React.useState(false)
-
-  const theme = useTheme()
 
   const handleEpochsChange = (event) => {
     const tempEpochs = event.target.value
@@ -63,6 +61,22 @@ export default function TrainingPage() {
 
   const navigate = useNavigate()
 
+  function filterData(data) {
+    // Change this to exclude more data
+    const excludedPoints = ['epoch']
+    const newData = []
+    Object.entries(data).forEach(([dataName, values], index) => {
+      if (excludedPoints.indexOf(dataName) === -1) {
+        console.log('aah')
+        if (values.length === 1) {
+          values = [...values, ...values]
+        }
+        newData.push({ name: dataName, data: values })
+      }
+    })
+    return newData
+  }
+
   return (
     <Grid container>
       <Grid item xs={6}>
@@ -98,45 +112,7 @@ export default function TrainingPage() {
       </Grid>
       <Grid item xs={6}>
         <Box>
-          <Chart
-            options={{
-              stroke: { curve: 'smooth' },
-              dataLabels: { enabled: false },
-              fill: {
-                type: 'gradient',
-                gradient: {
-                  shade: theme.apexcharts.shade,
-                  shadeIntensity: 1,
-                  opacityFrom: 0.7,
-                  opacityTo: 0.9,
-                  stops: [0, 90, 100],
-                },
-              },
-              theme: { mode: theme.apexcharts.shade },
-              chart: {
-                background: 'transparent',
-                toolbar: { show: false },
-                animations: {
-                  enabled: true,
-                  easing: 'linear',
-                  dynamicAnimation: {
-                    speed: 1000,
-                  },
-                },
-              },
-              colors: [theme.palette.primary.main],
-              yaxis: {
-                labels: {
-                  formatter(val, opts) {
-                    return val.toFixed(3)
-                  },
-                },
-              },
-            }}
-            series={[{ data: training.trainingData.val_r_square }]}
-            width="100%"
-            type="area"
-          />
+          <PrettyChart data={filterData(training.trainingData)} />
         </Box>
         <Button
           variant="outlined"
