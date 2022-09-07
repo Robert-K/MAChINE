@@ -188,20 +188,21 @@ class BaseModels(Resource):
                 processed_model['type'] = processed_model_type
 
                 # add type-specific entries
+                processed_model_parameters = dict()
                 if current.get('type') == 'sequential':
                     layers = current.get('layers')
                     if layers:
                         processed_model['taskType'] = 'regression' if layers[len(layers) - 1].get(
                             'units') == 1 else 'classification'
-                        processed_model['layers'] = layers
-                    processed_model['lossFunction'] = current.get('lossFunction')
-                    processed_model['optimizer'] = current.get('optimizer')
+                        processed_model_parameters['layers'] = layers
+                    processed_model_parameters['lossFunction'] = current.get('lossFunction')
+                    processed_model_parameters['optimizer'] = current.get('optimizer')
 
                 elif current.get('type') == 'schnet':
                     processed_model['taskType'] = 'regression'
-                    processed_model['depth'] = current.get('depth')
-                    processed_model['embeddingDimension'] = current.get('embeddingDimension')
-                    processed_model['readoutSize'] = current.get('readoutSize')
+                    processed_model_parameters['depth'] = current.get('depth')
+                    processed_model_parameters['embeddingDimension'] = current.get('embeddingDimension')
+                    processed_model_parameters['readoutSize'] = current.get('readoutSize')
 
                 processed_models.append(processed_model)
         return processed_models
