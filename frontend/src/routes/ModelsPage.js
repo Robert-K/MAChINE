@@ -37,12 +37,11 @@ const gridHeight = '80vh'
 export default function ModelsPage() {
   const [selectedIndex, setSelectedIndex] = React.useState(-1)
   const [modelList, setModelList] = React.useState([])
-  const [showDialog, setShowDialog] = React.useState(true)
+  const [showDialog, setShowDialog] = React.useState(false)
   const user = React.useContext(UserContext)
 
   React.useEffect(() => {
     api.getModelList().then((models) => setModelList(models))
-    setShowDialog(false)
   }, [user])
 
   const updateSelection = (index) => {
@@ -110,7 +109,8 @@ export default function ModelsPage() {
 }
 
 function ModelDescription({ selectedModel, onActiveTraining }) {
-  const { setSelectedModel, trainingStatus } = React.useContext(TrainingContext)
+  const { setSelectedModel, trainingStatus, resetContext } =
+    React.useContext(TrainingContext)
   const navigate = useNavigate()
 
   if (!selectedModel) {
@@ -152,6 +152,7 @@ function ModelDescription({ selectedModel, onActiveTraining }) {
               <Button
                 onClick={() => {
                   if (!trainingStatus) {
+                    resetContext()
                     setSelectedModel(selectedModel)
                     navigate('/datasets')
                   } else {

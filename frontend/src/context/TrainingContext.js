@@ -16,6 +16,7 @@ const TrainingContext = React.createContext({
   selectedBatchSize: 0,
   setSelectedBatchSize: () => {},
   trainingData: {},
+  resetContext: () => {},
 })
 
 export const TrainingProvider = ({ children }) => {
@@ -68,6 +69,16 @@ export const TrainingProvider = ({ children }) => {
     return {}
   }
 
+  function resetContext() {
+    setTrainingStatus(false)
+    setSelectedModel({})
+    setSelectedDataset({})
+    setSelectedLabels([])
+    setSelectedEpochs(10)
+    setSelectedBatchSize(64)
+    dispatchTrainingData({ type: 'reset' })
+  }
+
   return (
     <TrainingContext.Provider
       value={{
@@ -84,6 +95,7 @@ export const TrainingProvider = ({ children }) => {
         selectedBatchSize,
         setSelectedBatchSize,
         trainingData,
+        resetContext,
       }}
     >
       {children}
