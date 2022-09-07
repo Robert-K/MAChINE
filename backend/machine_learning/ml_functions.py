@@ -36,16 +36,31 @@ class Training:
                                                       self.batch_size)
 
     def start_training(self):
-        train_size = int(0.8 * self.ds.cardinality().numpy())
+        train_size = int(0.7 * self.ds.cardinality().numpy())
+        validation_size = int(0.2 * self.ds.cardinality().numpy())
         training_set = self.ds.take(train_size)
-        validation_set = self.ds.skip(train_size)
+        validation_set = self.ds.skip(train_size).take(validation_size)
+        test_set = self.ds.skip(train_size + validation_size)
 
         # Trains the model
-        self.model.fit(training_set, validation_data=validation_set, epochs=self.epochs, batch_size=self.batch_size,
+        self.model.fit(training_set, validation_data=validation_set, epochs=self.epochs,
+                       batch_size=self.batch_size,
                        callbacks=[LiveStats(self.user_id)], verbose=1)
+
+        results = self.model.evaluate(test_set)
+        names = self.model.metrics_names
+
+        # Evaluates the model, saves result with metric names
+        evaluation = dict(zip(names, results))
+
+        # R2 is our replacement for accuracy
+        # Thus every model needs to have R2 as a metric
+        accuracy = evaluation.get('r_square')
+
         # Saves the trained model
-        return sh.add_fitting(self.user_id, self.dataset_id, self.labels, self.epochs, 0, self.batch_size,
-                              self.model_id, self.model)
+        if sh.get_user_handler(self.user_id):
+            sh.add_fitting(self.user_id, self.dataset_id, self.labels, self.epochs, accuracy, self.batch_size,
+                           self.model_id, self.model)
 
     def stop_training(self):
         self.model.stop_training = True
