@@ -25,5 +25,13 @@
 				"units": 1
 			}
 		]
+	},
+
+	"schnet1": {
+		"name": "SchNetA",
+		"type": "schnet",
+		"depth": 3,
+		"embeddingDimension": 128,
+		"readoutSize": 1
 	}
 }

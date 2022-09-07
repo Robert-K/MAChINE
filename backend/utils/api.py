@@ -176,20 +176,34 @@ class BaseModels(Resource):
         processed_models = []
         for model_id in models.keys():
             current = models.get(model_id)
-            layers = current.get('layers')
-            if current and layers:
-                processed_models.append({
-                    'name': current.get('name'),
-                    'id': model_id,
-                    'type': {
-                        'name': current.get('type'),
-                        'image': current.get('image'),
-                    },
-                    'taskType': 'regression' if layers[len(layers) - 1].get('units') == 1 else 'classification',
-                    'lossFunction': current.get('lossFunction'),
-                    'optimizer': current.get('optimizer'),
-                    'layers': current.get('layers'),
-                })
+            if current:
+                processed_model = dict()
+
+                # add type-universal entries
+                processed_model['name'] = current.get('name')
+                processed_model['id'] = model_id
+                processed_model_type = dict()
+                processed_model_type['name'] = current.get('type')
+                processed_model_type['image'] = current.get('image')
+                processed_model['type'] = processed_model_type
+
+                # add type-specific entries
+                if current.get('type') == 'sequential':
+                    layers = current.get('layers')
+                    if layers:
+                        processed_model['taskType'] = 'regression' if layers[len(layers) - 1].get(
+                            'units') == 1 else 'classification'
+                        processed_model['layers'] = layers
+                    processed_model['lossFunction'] = current.get('lossFunction')
+                    processed_model['optimizer'] = current.get('optimizer')
+
+                elif current.get('type') == 'schnet':
+                    processed_model['taskType'] = 'regression'
+                    processed_model['depth'] = current.get('depth')
+                    processed_model['embeddingDimension'] = current.get('embeddingDimension')
+                    processed_model['readoutSize'] = current.get('readoutSize')
+
+                processed_models.append(processed_model)
         return processed_models
 
 
