@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react'
-import { Box, Button, Grid, TextField } from '@mui/material'
+import React from 'react'
+import { Box, Button, CircularProgress, Grid, TextField } from '@mui/material'
 import ModelDetailsCard from '../components/training/ModelDetailsCard'
 import DatasetDetailsCard from '../components/training/DatasetDetailsCard'
 import { useNavigate } from 'react-router-dom'
@@ -9,9 +9,9 @@ import PrettyChart from '../components/misc/PrettyChart'
 
 export default function TrainingPage() {
   const training = React.useContext(TrainingContext)
+  const [loadTraining, setLoadTraining] = React.useState(false)
 
   const [epochsError, setEpochsError] = React.useState(false)
-
   const handleEpochsChange = (event) => {
     const tempEpochs = event.target.value
     training.setSelectedEpochs(tempEpochs)
@@ -37,7 +37,7 @@ export default function TrainingPage() {
 
   const [startStopButton, setStartStopButton] = React.useState('Start')
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (training.trainingStatus === true) {
       setStartStopButton('Stop')
     } else {
@@ -49,6 +49,7 @@ export default function TrainingPage() {
     if (training.trainingStatus === true) {
       api.stopTraining()
     } else {
+      setLoadTraining(true)
       api.trainModel(
         training.selectedDataset.datasetID,
         training.selectedModel.id,
@@ -58,6 +59,12 @@ export default function TrainingPage() {
       )
     }
   }
+
+  React.useEffect(() => {
+    if (training.trainingStatus) {
+      setLoadTraining(false)
+    }
+  })
 
   const navigate = useNavigate()
 
@@ -121,7 +128,11 @@ export default function TrainingPage() {
           onClick={handleStartStop}
         >
           {startStopButton}
+          {!loadTraining ? null : (
+            <CircularProgress size="16px" sx={{ ml: 1 }} />
+          )}
         </Button>
+        <Box sx={{ flexGrow: 1 }}></Box>
         <Button
           variant="outlined"
           sx={{ m: 2 }}
