@@ -1,31 +1,41 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import {
-  Box,
-  Card,
-  CardContent,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
-} from '@mui/material'
+import { Box, Button, Card, CardContent, TextField } from '@mui/material'
 import Grid from '@mui/material/Grid'
+import SaveIcon from '@mui/icons-material/Save'
 
 export default function SchNetConfig({ model }) {
-  const [funcs, setFuncs] = React.useState(['', ''])
-  const handleChange = (event, i) => {
-    const funcsClone = [...funcs]
-    funcsClone[i] = event.target.value
-    setFuncs(funcsClone)
-  }
   const settableParameters = {
-    Optimizer: ['Adam', 'Adamax', 'Stochastic Gradient Descent'],
-    Loss: [
-      'Binary Cross Entropy',
-      'Huber Loss',
-      'Mean Absolute Error',
-      'Mean Squared Error',
-    ],
+    Depth: {
+      default: 2,
+      min: 1,
+    },
+    EmbeddingDimension: {
+      default: 128,
+      min: 1,
+    },
+    ReadoutSize: {
+      default: 1,
+      min: 1,
+    },
+  }
+
+  const [sizes, setSizes] = React.useState([
+    settableParameters.Depth.default,
+    settableParameters.EmbeddingDimension.default,
+    settableParameters.ReadoutSize.default,
+  ])
+  const [sizesError, setSizesError] = React.useState([false, false, false])
+  const handleChange = (event, i, min) => {
+    const tempSizesError = event.target.value
+    const sizesErrorClone = [...sizesError]
+    sizesErrorClone[i] = tempSizesError < min
+    setSizesError(sizesErrorClone)
+    if (tempSizesError >= min) {
+      const sizesClone = [...sizes]
+      sizesClone[i] = event.target.value
+      setSizes(sizesClone)
+    }
   }
 
   return (
@@ -36,30 +46,42 @@ export default function SchNetConfig({ model }) {
       <Grid item xs={2}>
         <Card sx={{ m: 2, width: '100%' }}>
           <CardContent>
-            {Object.entries(settableParameters).map(([key, value], i) => {
-              return (
-                <Box key={i} sx={{ minWidth: 120, m: 2 }}>
-                  <FormControl required fullWidth>
-                    <InputLabel id="select-function-label">{key}</InputLabel>
-                    <Select
-                      labelId="select-function"
-                      id={i.toString()}
-                      value={funcs[i]}
-                      label={key}
-                      onChange={(e) => handleChange(e, i)}
-                    >
-                      {value.map((valueEntry, i) => {
-                        return (
-                          <MenuItem key={valueEntry} value={valueEntry}>
-                            {valueEntry}
-                          </MenuItem>
-                        )
-                      })}
-                    </Select>
-                  </FormControl>
-                </Box>
-              )
-            })}
+            <React.Fragment>
+              {Object.entries(settableParameters).map(([key, value], i) => {
+                return (
+                  <TextField
+                    key={i}
+                    required
+                    id="outlined-number"
+                    label={key}
+                    type="number"
+                    defaultValue={value.default}
+                    error={sizesError[i]}
+                    helperText={sizesError[i] ? 'Must be above zero!' : ''}
+                    onChange={(e) => handleChange(e, i, value.min)}
+                    InputLabelProps={{
+                      shrink: true,
+                    }}
+                    sx={{
+                      mb: 2,
+                    }}
+                  />
+                )
+              })}
+              <Box sx={{ display: 'flex', justifyContent: 'flex-end', mr: 1 }}>
+                <Button
+                  size="large"
+                  variant="outlined"
+                  type="submit"
+                  endIcon={<SaveIcon />}
+                  // todo make this prettier
+                  disabled={sizesError[0] || sizesError[1] || sizesError[2]}
+                >
+                  {/** todo implement saving of model */}
+                  Save
+                </Button>
+              </Box>
+            </React.Fragment>
           </CardContent>
         </Card>
       </Grid>
