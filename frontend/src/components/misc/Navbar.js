@@ -86,7 +86,14 @@ export default function Navbar({ logoutFunction, darkModeButton }) {
         {!user.userName ? null : (
           <>
             {user.userName}
-            <NavLink key="logout" to="/" onClick={() => logoutFunction()}>
+            <NavLink
+              key="logout"
+              to="/"
+              onClick={() => {
+                logoutFunction()
+                training.resetContext()
+              }}
+            >
               <IconButton sx={{ color: 'white' }}>
                 <LogoutIcon />
               </IconButton>

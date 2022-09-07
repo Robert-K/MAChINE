@@ -128,6 +128,7 @@ export default function App() {
     api.stopTraining()
     api.logout().catch((e) => console.log(e))
     setUserName(null)
+    // TrainingsContext is reset in Navbar
     /* TODO: Delete all Data */
     /* TODO: Delete trained models */
     /* TODO: Delete molecules */
