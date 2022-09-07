@@ -1,5 +1,14 @@
 import React from 'react'
-import { Box, Button, CircularProgress, Grid, TextField } from '@mui/material'
+import {
+  Box,
+  Button,
+  CircularProgress,
+  Dialog,
+  DialogActions,
+  DialogTitle,
+  Grid,
+  TextField,
+} from '@mui/material'
 import ModelDetailsCard from '../components/training/ModelDetailsCard'
 import DatasetDetailsCard from '../components/training/DatasetDetailsCard'
 import { useNavigate } from 'react-router-dom'
@@ -10,6 +19,7 @@ import PrettyChart from '../components/misc/PrettyChart'
 export default function TrainingPage() {
   const training = React.useContext(TrainingContext)
   const [loadTraining, setLoadTraining] = React.useState(false)
+  const [showDialog, setShowDialog] = React.useState(false)
 
   const [epochsError, setEpochsError] = React.useState(false)
   const handleEpochsChange = (event) => {
@@ -38,16 +48,18 @@ export default function TrainingPage() {
   const [startStopButton, setStartStopButton] = React.useState('Start')
 
   React.useEffect(() => {
-    if (training.trainingStatus === true) {
+    if (training.trainingStatus) {
+      setLoadTraining(false)
       setStartStopButton('Stop')
     } else {
+      setShowDialog(false)
       setStartStopButton('Start')
     }
   }, [training.trainingStatus])
 
   const handleStartStop = () => {
-    if (training.trainingStatus === true) {
-      api.stopTraining()
+    if (training.trainingStatus) {
+      setShowDialog(true)
     } else {
       setLoadTraining(true)
       api.trainModel(
@@ -60,11 +72,14 @@ export default function TrainingPage() {
     }
   }
 
-  React.useEffect(() => {
-    if (training.trainingStatus) {
-      setLoadTraining(false)
-    }
-  })
+  const handleCloseDialog = () => {
+    setShowDialog(false)
+  }
+
+  const abortTraining = () => {
+    api.stopTraining()
+    handleCloseDialog()
+  }
 
   const navigate = useNavigate()
 
@@ -132,6 +147,13 @@ export default function TrainingPage() {
             <CircularProgress size="16px" sx={{ ml: 1 }} />
           )}
         </Button>
+        <Dialog open={showDialog} onClose={handleCloseDialog}>
+          <DialogTitle>{'Abort current training?'}</DialogTitle>
+          <DialogActions>
+            <Button onClick={handleCloseDialog}>Cancel</Button>
+            <Button onClick={abortTraining}>Abort</Button>
+          </DialogActions>
+        </Dialog>
         <Box sx={{ flexGrow: 1 }}></Box>
         <Button
           variant="outlined"
