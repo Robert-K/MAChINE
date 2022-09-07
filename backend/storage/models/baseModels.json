@@ -33,5 +33,8 @@
 		"lossFunction": "Mean Squared Error",
 		"optimizer": "NAdam",
 		"metrics": ["MeanAbsoluteError", "R2"]
+		"depth": 3,
+		"embeddingDimension": 128,
+		"readoutSize": 1
 	}
 }
