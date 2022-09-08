@@ -32,7 +32,7 @@ parser.add_argument('modelID')
 parser.add_argument('fittingID')
 parser.add_argument('labels')
 parser.add_argument('epochs', type=int)
-parser.add_argument('accuracy')
+parser.add_argument('accuracy', type=float) # Not used
 parser.add_argument('batchSize', type=int)
 parser.add_argument('baseModelID')
 parser.add_argument('parameters', type=dict)
