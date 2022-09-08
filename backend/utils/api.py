@@ -92,7 +92,7 @@ class Models(Resource):
         :return: string of added model's ID
         """
         args = parser.parse_args()
-        return sh.add_model(user_id, args['name'], args['parameters'], args['baseModelID'])
+        return sh.add_model(user_id, args['name'], args['parameters'], args['baseModelID']), 201
 
 
 class Molecules(Resource):

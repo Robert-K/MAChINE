@@ -84,6 +84,51 @@ class TestModelRequestGroup:
         mocker.patch('backend.utils.api.sh.add_model', return_value=model_id)
         response = client.patch(f'/users/{_test_user_id}/models',
                                 json={'name': model_name, 'parameters': parameters, 'baseModel': base_model})
-        assert response.status_code == 200, 'Request should have worked'
+        assert response.status_code == 201, 'Request should have worked'
         assert response.is_json, 'Response should be a json, just containing the model_id'
         assert response.json == model_id, 'Response should be the expected model_id'
+
+
+class TestMoleculeRequestGroup:
+    def test_molecule_get_response_format(self, client, mocker):
+        mocker.patch('backend.utils.api.sh.get_molecules', return_value={})
+        response = client.get(f'/users/{_test_user_id}/molecules')
+        assert response.status_code == 200, 'Request should have worked'
+        assert response.is_json, 'Response should be a json'
+        assert type(response.json) == list, 'Response json should be a list'
+        assert len(response.json) == 0, 'List should be empty'
+
+    @pytest.mark.parametrize(
+        'sh_molecules, sh_fitting_summary, sh_model_summary ,expected_molecules_output',
+        [
+            ({'c1ccn2nncc2c1': {'name': 'MyTestMolecule', 'cml': '<cml></cml>', 'analyses': {}}}, {}, {},
+             [{'name': 'MyTestMolecule', 'smiles': 'c1ccn2nncc2c1', 'cml': '<cml></cml>', 'analyses': []}]),
+            ({'COOOOOO': {'name': 'test_name', 'cml': '<cml code>', 'analyses': {'50252': {'lumo': -7.152523}}}},
+             {'modelID': 'test_model_id'},
+             {'name': 'test_model'},
+             [{'name': 'test_name', 'smiles': 'COOOOOO', 'cml': '<cml code>',
+               'analyses': [{'modelName': 'test_model', 'fittingID': '50252', 'results': {'lumo': -7.152523}}]}])
+        ]
+    )
+    def test_molecule_get(self, sh_molecules, sh_fitting_summary, sh_model_summary, expected_molecules_output, client,
+                          mocker):
+        mocker.patch('backend.utils.api.sh.get_molecules', return_value=sh_molecules)
+        mocker.patch('backend.utils.api.sh.get_fitting_summary', return_value=sh_fitting_summary)
+        mocker.patch('backend.utils.api.sh.get_model_summary', return_value=sh_model_summary)
+        response = client.get(f'/users/{_test_user_id}/molecules')
+        assert response.status_code == 200, 'Request should have worked'
+        assert type(response.json) == list, 'Response json should be a list'
+        assert response.json == expected_molecules_output, 'Response json should be formatted like expected_output'
+
+    @pytest.mark.parametrize(
+        'test_mol_name, test_smiles, test_cml',
+        [
+            ('Aaaah', 'COOOOOOOOOO', '<While not a valid cml code, it is still just string>')
+        ]
+    )
+    def test_molecule_patch(self, test_mol_name, test_smiles, test_cml, client, mocker):
+        mocker.patch('backend.utils.api.sh.add_molecule', return_value=None)
+        response = client.patch(f'/users/{_test_user_id}/molecules',
+                                json={'name': test_mol_name, 'smiles': test_smiles, 'cml': test_cml})
+        assert response.status_code == 201, 'Request should have worked'
+        assert response.json is None, 'Response json should be None'
