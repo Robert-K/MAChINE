@@ -30,17 +30,21 @@ class Training:
         return mld.creation_functions.get(model_type)(parameters,
                                                       dataset,
                                                       labels,
-                                                      mld.losses.get(parameters.get('loss')),
-                                                      mld.optimizers.get(parameters.get('optimizer')),
-                                                      [mld.metrics.get(metric) for metric in metrics],
+                                                      mld.losses.get(parameters.get('loss'))(),
+                                                      mld.optimizers.get(parameters.get('optimizer'))(),
+                                                      [mld.metrics.get(metric)() for metric in metrics],
                                                       self.batch_size)
 
     def start_training(self):
-        train_size = int(0.7 * self.ds.cardinality().numpy())
-        validation_size = int(0.2 * self.ds.cardinality().numpy())
-        training_set = self.ds.take(train_size)
-        validation_set = self.ds.skip(train_size).take(validation_size)
-        test_set = self.ds.skip(train_size + validation_size)
+        ds_length = self.ds.cardinality().numpy()
+        ds = self.ds.shuffle(int(ds_length * 0.1))
+
+        train_size = int(0.7 * ds_length)
+        validation_size = int(0.2 * ds_length)
+
+        training_set = ds.take(train_size)
+        validation_set = ds.skip(train_size).take(validation_size)
+        test_set = ds.skip(train_size + validation_size)
 
         # Trains the model
         self.model.fit(training_set, validation_data=validation_set, epochs=self.epochs,
