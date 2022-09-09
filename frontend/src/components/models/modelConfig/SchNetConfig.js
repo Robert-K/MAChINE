@@ -31,7 +31,7 @@ export default function SchNetConfig({ model }) {
   return (
     <Grid container>
       <Grid item xs={8}>
-        Insert GNN image here
+        Insert GNN image here.
       </Grid>
       <Grid item xs={2}>
         <Card sx={{ m: 2, width: '100%' }}>
