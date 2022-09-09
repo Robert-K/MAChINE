@@ -6,11 +6,64 @@ import * as v from 'vis-network'
 import LayerConfigPopup from './LayerConfigPopup'
 import Layer from '../../../internal/Layer'
 
+/**
+ * Draws a rounded rectangle using the current state of the canvas.
+ * If you omit the last three params, it will draw a rectangle
+ * outline with a 5 pixel border radius
+ * @param {CanvasRenderingContext2D} ctx
+ * @param {Number} x The top left x coordinate
+ * @param {Number} y The top left y coordinate
+ * @param {Number} width The width of the rectangle
+ * @param {Number} height The height of the rectangle
+ * @param {Number} [radius = 5] The corner radius; It can also be an object
+ *                 to specify different radii for corners
+ * @param {Number} [radius.tl = 0] Top left
+ * @param {Number} [radius.tr = 0] Top right
+ * @param {Number} [radius.br = 0] Bottom right
+ * @param {Number} [radius.bl = 0] Bottom left
+ * @param {Boolean} [fill = false] Whether to fill the rectangle.
+ * @param {Boolean} [stroke = true] Whether to stroke the rectangle.
+ */
+function roundRect(
+  ctx,
+  x,
+  y,
+  width,
+  height,
+  radius = 5,
+  fill = false,
+  stroke = true
+) {
+  if (typeof radius === 'number') {
+    radius = { tl: radius, tr: radius, br: radius, bl: radius }
+  } else {
+    radius = { ...{ tl: 0, tr: 0, br: 0, bl: 0 }, ...radius }
+  }
+  ctx.beginPath()
+  ctx.moveTo(x + radius.tl, y)
+  ctx.lineTo(x + width - radius.tr, y)
+  ctx.quadraticCurveTo(x + width, y, x + width, y + radius.tr)
+  ctx.lineTo(x + width, y + height - radius.br)
+  ctx.quadraticCurveTo(x + width, y + height, x + width - radius.br, y + height)
+  ctx.lineTo(x + radius.bl, y + height)
+  ctx.quadraticCurveTo(x, y + height, x, y + height - radius.bl)
+  ctx.lineTo(x, y + radius.tl)
+  ctx.quadraticCurveTo(x, y, x + radius.tl, y)
+  ctx.closePath()
+  if (fill) {
+    ctx.fill()
+  }
+  if (stroke) {
+    ctx.stroke()
+  }
+}
+
 export default function MLPModelVisual({
   modelLayers,
   defaultActivation,
   updateFunc,
 }) {
+  const theme = useTheme()
   const [open, setOpen] = React.useState(false)
   const [offset, setOffset] = React.useState([0, 0])
   const [insertionIndex, setInsertionIndex] = React.useState(null)
@@ -18,6 +71,17 @@ export default function MLPModelVisual({
   const [options] = React.useState({
     nodes: {
       borderWidth: 2,
+      font: {
+        face: 'Poppins',
+        color: theme.modelVisual.fontColor,
+        size: 20,
+        vadjust: 3,
+      },
+      shape: 'box',
+      color: {
+        background: theme.modelVisual.nodeColor,
+      },
+      size: 39,
     },
     groups: {},
     layout: {
@@ -30,18 +94,6 @@ export default function MLPModelVisual({
     },
   })
 
-  const theme = useTheme()
-  const layerBorderColors = {
-    red: 'rgb(255, 0, 0)',
-    blue: 'rgb(0, 255, 0)',
-    green: 'rgb(0, 0, 255)',
-  }
-  const layerBackgroundColors = {
-    red: 'rgba(255, 0, 0, 1)',
-    blue: 'rgba(0, 255, 0, 1)',
-    green: 'rgba(0, 0, 255, 1)',
-  }
-  const colors = ['red', 'blue', 'green']
   // TODO: style: node opacity, pick colors, make boxes pretty
   // TODO: fix dark mode interaction
   // TODO: add layer box labels
@@ -102,17 +154,17 @@ export default function MLPModelVisual({
     layers.forEach((layer, index) => {
       const topNodePos = network.getPosition(`${index}.1`)
       const lowestNodePos = network.getPosition(`${index}.${layer.units}`)
-      ctx.strokeStyle = Object.values(options.groups)[index].color.border
-      ctx.beginPath()
-      ctx.rect(
+      ctx.strokeStyle = theme.modelVisual.borderColor
+      roundRect(
+        ctx,
         topNodePos.x - 50,
         topNodePos.y - 50,
         100,
-        lowestNodePos.y - topNodePos.y + 100
+        lowestNodePos.y - topNodePos.y + 100,
+        7,
+        false,
+        true
       )
-      ctx.closePath()
-      ctx.stroke()
-      // TODO: find html canvas shape library, this here is trash
     })
   }
 
@@ -126,12 +178,6 @@ export default function MLPModelVisual({
     // const newOptions = Object.assign({}, options)
     layers.forEach((layer, index) => {
       // add new group for layer
-      options.groups[index.toString()] = {
-        color: {
-          background: layerBackgroundColors[colors[index % colors.length]],
-          border: layerBorderColors[colors[index % colors.length]],
-        },
-      }
       const graphLayer = []
       if (layer.units < 10) {
         for (let i = 1; i <= layer.units; i++) {
@@ -150,11 +196,11 @@ export default function MLPModelVisual({
         })
         graphLayer.push({
           id: `${index}.${2}`,
-          label: 'nodes',
+          label: '.\n.\n.',
           group: index.toString(),
-          shape: 'image',
-          // TODO: toggle white/black dots and node color with dark/light theme
-          image: 'http://127.0.0.1:3000/more_vert.svg',
+          font: {
+            vadjust: -2.57,
+          },
         })
         graphLayer.push({
           id: `${index}.${layer.units}`,

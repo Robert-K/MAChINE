@@ -60,6 +60,11 @@ const themeLight = createTheme(
     apexcharts: {
       shade: 'light',
     },
+    modelVisual: {
+      borderColor: '#c4c4c4',
+      fontColor: 'black',
+      nodeColor: '#ffffff',
+    },
   })
 )
 
@@ -91,6 +96,11 @@ const themeDark = createTheme(
     },
     apexcharts: {
       shade: 'dark',
+    },
+    modelVisual: {
+      borderColor: '#707070',
+      fontColor: 'black',
+      nodeColor: '#242424',
     },
   })
 )
