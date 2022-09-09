@@ -132,3 +132,73 @@ class TestMoleculeRequestGroup:
                                 json={'name': test_mol_name, 'smiles': test_smiles, 'cml': test_cml})
         assert response.status_code == 201, 'Request should have worked'
         assert response.json is None, 'Response json should be None'
+
+
+class TestFittingRequestGroup:
+    def test_fitting_get_response_format(self, client, mocker):
+        mocker.patch('backend.utils.api.sh', backend.tests.mocks.mock_sh.MockSH())
+        response = client.get(f'/users/{_test_user_id}/fittings')
+        assert response.status_code == 200, 'Request should have succeeded'
+        assert response.is_json, 'Response should be a json'
+        assert type(response.json) is list, 'Response should be a list'
+        assert len(response.json) == 0, 'List should be empty'
+
+    @pytest.mark.parametrize(
+        'sh_models, sh_fittings, expected_fittings_output',
+        [
+            ({
+                 'test_model_id': {
+                     'name': 'test_model',
+                     'baseModelID': 'Test A',
+                     'parameters': '',
+                     'fittingIDs': ['test_fitting_id']
+                 }
+             }, {
+                 'test_fitting_id': {
+                     'datasetID': 'dataset_id',
+                     'labels': ['labels', 'labels2'],
+                     'epochs': 5,
+                     'accuracy': 1,
+                     'batchSize': 212,
+                     'fittingPath': 'X',
+                     'modelID': 'test_model_id',
+                 },
+                 'test_fitting_id2': {
+                     'datasetID': 'dataset_id',
+                     'labels': ['label'],
+                     'epochs': 524,
+                     'accuracy': 0.000200,
+                     'batchSize': 212,
+                     'fittingPath': 'X2',
+                     'modelID': 'test_model_id',
+                 }
+             }, [
+                 {'id': 'test_fitting_id',
+                  'modelID': 'test_model_id',
+                  'modelName': 'test_model',
+                  'datasetID': 'dataset_id',
+                  'labels': ['labels', 'labels2'],
+                  'epochs': 5,
+                  'batchSize': 212,
+                  'accuracy': 1},
+                 {'id': 'test_fitting_id2',
+                  'modelID': 'test_model_id',
+                  'modelName': 'test_model',
+                  'datasetID': 'dataset_id',
+                  'labels': ['label'],
+                  'epochs': 524,
+                  'batchSize': 212,
+                  'accuracy': 0.0002},
+             ]),
+            ({}, {}, [])
+        ]
+    )
+    def test_fitting_get_response(self, sh_models, sh_fittings, expected_fittings_output, client, mocker):
+        mocker.patch('backend.utils.api.sh', backend.tests.mocks.mock_sh.MockSH(fittings=sh_fittings, models=sh_models))
+        response = client.get(f'/users/{_test_user_id}/fittings')
+        assert response.status_code == 200, 'Request should have succeeded'
+        assert response.json == expected_fittings_output, 'Response json should match the expected output'
+
+class TestUserRequestGroup:
+    def test_add_user_response_format(self):
+        pass
