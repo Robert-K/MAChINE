@@ -5,12 +5,13 @@ import {
   Button,
   Card,
   CardContent,
+  Popper,
   TextField,
-  Typography,
+  useTheme,
 } from '@mui/material'
 import Grid from '@mui/material/Grid'
 import SaveIcon from '@mui/icons-material/Save'
-import Popover from '@mui/material/Popover'
+import HelpIcon from '@mui/icons-material/Help'
 
 export default function SchNetConfig({ model }) {
   let delay = null
@@ -51,22 +52,24 @@ export default function SchNetConfig({ model }) {
   }
 
   const [anchorEl, setAnchorEl] = React.useState(null)
-  const [popoverContent, setPopoverContent] = React.useState('')
+  const [popperContent, setPopperContent] = React.useState('')
 
-  const handlePopoverOpen = (event, content) => {
+  const handlePopperOpen = (event, content) => {
     setAnchorEl(event.currentTarget)
-    setPopoverContent(content)
+    setPopperContent(content)
   }
 
-  const handlePopoverClose = () => {
+  const handlePopperClose = () => {
     setAnchorEl(null)
-    // setPopoverContent('')
+    // setPopperContent('')
   }
 
-  // const open = Boolean(anchorEl)
+  const open = Boolean(anchorEl)
 
-  function handlePopoverOpenDelay(event, explanation) {
-    handlePopoverOpen(event, explanation)
+  const theme = useTheme()
+
+  function handlePopperOpenDelay(event, explanation) {
+    handlePopperOpen(event, explanation)
     console.log('Delayyyyyy')
     console.log(explanation)
     console.log(event)
@@ -75,7 +78,7 @@ export default function SchNetConfig({ model }) {
   return (
     <Grid container>
       <Grid item xs={8}>
-        Insert GNN image here.
+        Insert GNN image here
       </Grid>
       <Grid item xs={2}>
         <Card sx={{ m: 2, width: '100%' }}>
@@ -96,7 +99,7 @@ export default function SchNetConfig({ model }) {
                       onChange={(e) => handleChange(e, i, value.min)}
                       onMouseOver={(e) => {
                         delay = setTimeout(
-                          handlePopoverOpenDelay(e, value.explanation),
+                          handlePopperOpenDelay(e, value.explanation),
 
                           100000
                         )
@@ -107,7 +110,7 @@ export default function SchNetConfig({ model }) {
                         // clearTimeout(delay)
                         console.log('Leave:')
                         console.log(delay)
-                        handlePopoverClose()
+                        handlePopperClose()
                       }}
                       InputLabelProps={{
                         shrink: true,
@@ -116,26 +119,22 @@ export default function SchNetConfig({ model }) {
                         mb: 2,
                       }}
                     />
-                    <Popover
-                      id="mouse-over-popover"
+                    <Popper
+                      id="mouse-over-popper"
                       sx={{
                         pointerEvents: 'none',
                       }}
-                      open={Boolean(anchorEl)}
+                      open={open}
                       anchorEl={anchorEl}
-                      anchorOrigin={{
-                        vertical: 'center',
-                        horizontal: 'right',
-                      }}
-                      transformOrigin={{
-                        vertical: 'center',
-                        horizontal: 'left',
-                      }}
-                      onClose={handlePopoverClose}
+                      placement={'right'}
+                      onClose={handlePopperClose}
                       disableRestoreFocus
                     >
-                      <Typography sx={{ p: 1 }}>{popoverContent}</Typography>
-                    </Popover>
+                      <Box sx={{ border: 1 }}>
+                        <HelpIcon />
+                        {popperContent}
+                      </Box>
+                    </Popper>
                   </React.Fragment>
                 )
               })}
