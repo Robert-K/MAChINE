@@ -1,5 +1,4 @@
 import React from 'react'
-import { useLocation } from 'react-router-dom'
 import SchNetConfig from '../components/models/modelConfig/SchNetConfig'
 import MLPConfig from '../components/models/modelConfig/MLPConfig'
 import PropTypes from 'prop-types'
