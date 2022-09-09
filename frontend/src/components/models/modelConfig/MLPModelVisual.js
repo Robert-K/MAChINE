@@ -6,11 +6,15 @@ import * as v from 'vis-network'
 import LayerConfigPopup from './LayerConfigPopup'
 import Layer from '../../../internal/Layer'
 
-export default function MLPModelVisual({ model, defaultActivation }) {
+export default function MLPModelVisual({
+  modelLayers,
+  defaultActivation,
+  updateFunc,
+}) {
   const [open, setOpen] = React.useState(false)
   const [offset, setOffset] = React.useState([0, 0])
   const [insertionIndex, setInsertionIndex] = React.useState(null)
-  const [layers, setLayers] = React.useState(model.parameters.layers)
+  const [layers, setLayers] = React.useState(modelLayers)
   const [options] = React.useState({
     nodes: {
       borderWidth: 2,
@@ -41,6 +45,7 @@ export default function MLPModelVisual({ model, defaultActivation }) {
   // TODO: style: node opacity, pick colors, make boxes pretty
   // TODO: fix dark mode interaction
   // TODO: add layer box labels
+  // TODO: [optional] onSelectNode -> LayerConfigPopup to change unitCount/activation
 
   React.useEffect(() => {
     const graph = fillGraph()
@@ -179,16 +184,19 @@ export default function MLPModelVisual({ model, defaultActivation }) {
    **/
   function addLayer(layer) {
     if (insertionIndex !== undefined) {
-      setLayers((layers) => [
+      const newLayers = [
         ...layers.slice(0, insertionIndex + 1),
         layer,
         ...layers.slice(insertionIndex + 1, layers.length),
-      ])
+      ]
+      updateFunc(newLayers)
+      setLayers(newLayers)
     }
   }
 
   function configureLayer(units, activation) {
-    addLayer(new Layer('Dense', units, activation))
+    const layer = new Layer('Dense', units, activation)
+    addLayer(layer)
     setOpen(false)
   }
 
@@ -234,6 +242,7 @@ export default function MLPModelVisual({ model, defaultActivation }) {
 }
 
 MLPModelVisual.propTypes = {
-  model: PropTypes.object.isRequired,
+  modelLayers: PropTypes.array.isRequired,
   defaultActivation: PropTypes.string,
+  updateFunc: PropTypes.func.isRequired,
 }

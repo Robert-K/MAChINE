@@ -29,6 +29,7 @@ import { useNavigate } from 'react-router-dom'
 import api from '../api'
 import TrainingContext from '../context/TrainingContext'
 import UserContext from '../context/UserContext'
+import BaseModelsPage from './BaseModelsPage'
 
 const gridHeight = '80vh'
 /**
@@ -38,20 +39,48 @@ export default function ModelsPage() {
   const [selectedIndex, setSelectedIndex] = React.useState(-1)
   const [modelList, setModelList] = React.useState([])
   const [showDialog, setShowDialog] = React.useState(false)
+  const [creatingModel, setCreatingModel] = React.useState(false)
   const user = React.useContext(UserContext)
 
   React.useEffect(() => {
-    api.getModelList().then((models) => setModelList(models))
+    refreshModels()
   }, [user])
+
+  function refreshModels() {
+    api.getModelList().then((models) => setModelList(models))
+  }
+
+  function saveModel(model) {
+    // Find a duplicate
+    const duplicate = modelList.find((savedModel) => {
+      return model.name === savedModel.name
+    })
+
+    if (duplicate) {
+      return 'duplicate'
+    } else if (!model) {
+      return 'error'
+    } else {
+      api.addModelConfig(model).then(refreshModels)
+      setCreatingModel(false)
+      return 0
+    }
+  }
 
   const updateSelection = (index) => {
     setSelectedIndex(index)
   }
 
-  const navigate = useNavigate()
+  const initiateCreation = () => {
+    setCreatingModel(true)
+  }
 
   const handleCloseDialog = () => {
     setShowDialog(false)
+  }
+
+  const handleOpenDialog = () => {
+    setShowDialog(true)
   }
 
   const abortTraining = () => {
@@ -59,53 +88,57 @@ export default function ModelsPage() {
     api.stopTraining()
   }
 
-  return (
-    <Box sx={{ m: 5 }}>
-      <Grid
-        container
-        direction="row"
-        justifyContent="center"
-        alignItems="stretch"
-        columnSpacing={2}
-      >
-        <Grid item xs={3}>
-          <SelectionList
-            updateFunc={updateSelection}
-            elements={modelList}
-            elementType="model"
-            usePopper={false}
-            addFunc={() => navigate('/base-models')}
-            height={gridHeight}
-          ></SelectionList>
+  if (creatingModel) {
+    return <BaseModelsPage addFunc={saveModel} />
+  } else {
+    return (
+      <Box sx={{ m: 5 }}>
+        <Grid
+          container
+          direction="row"
+          justifyContent="center"
+          alignItems="stretch"
+          columnSpacing={2}
+        >
+          <Grid item xs={3}>
+            <SelectionList
+              updateFunc={updateSelection}
+              elements={modelList}
+              elementType="model"
+              usePopper={false}
+              addFunc={initiateCreation}
+              height={gridHeight}
+            ></SelectionList>
+          </Grid>
+          <Grid item xs={9}>
+            <ModelDescription
+              selectedModel={modelList.at(selectedIndex)}
+              onActiveTraining={handleOpenDialog}
+            />
+          </Grid>
         </Grid>
-        <Grid item xs={9}>
-          <ModelDescription
-            selectedModel={modelList[selectedIndex]}
-            onActiveTraining={() => setShowDialog(true)}
-          />
-        </Grid>
-      </Grid>
-      <Dialog
-        open={showDialog}
-        onClose={handleCloseDialog}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">
-          {'Abort current training?'}
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            To start a new training, you have to abort the current training
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDialog}>Cancel</Button>
-          <Button onClick={abortTraining}>Abort</Button>
-        </DialogActions>
-      </Dialog>
-    </Box>
-  )
+        <Dialog
+          open={showDialog}
+          onClose={handleCloseDialog}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">
+            {'Abort current training?'}
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              To start a new training, you have to abort the current training
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={abortTraining}>Abort</Button>
+            <Button onClick={handleCloseDialog}>Cancel</Button>
+          </DialogActions>
+        </Dialog>
+      </Box>
+    )
+  }
 }
 
 function ModelDescription({ selectedModel, onActiveTraining }) {
