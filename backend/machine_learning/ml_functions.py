@@ -4,6 +4,7 @@ from backend.utils import storage_handler as sh
 import backend.utils.api as api
 from backend.machine_learning import ml_dicts as mld
 
+# Dictionary containing all current active training sessions
 live_trainings = dict()
 
 
@@ -59,7 +60,7 @@ class Training:
 
         # R2 is our replacement for accuracy
         # Thus every model needs to have R2 as a metric
-        accuracy = evaluation.get('r_square')
+        accuracy = round(evaluation.get('r_square') * 100, 3)
 
         # Saves the trained model
         if sh.get_user_handler(self.user_id):
