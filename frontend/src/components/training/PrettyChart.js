@@ -16,9 +16,10 @@ export default function PrettyChart({ data }) {
           type: 'gradient',
           gradient: {
             shade: theme.apexcharts.shade,
+            type: 'diagonal2',
             shadeIntensity: 1,
-            opacityFrom: 0.7,
-            opacityTo: 0.9,
+            opacityFrom: 0.2,
+            opacityTo: 0.5,
             stops: [0, 90, 100],
           },
         },
@@ -36,11 +37,10 @@ export default function PrettyChart({ data }) {
         },
         colors: [theme.palette.primary.main],
         yaxis: {
-          labels: {
-            formatter(val, opts) {
-              return val !== undefined ? val.toFixed(3) : 0
-            },
-          },
+          min: -2,
+          max: 2,
+          forceNiceScale: true,
+          decimalsInFloat: 3,
         },
       }}
       series={displayedData}
