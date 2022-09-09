@@ -267,7 +267,7 @@ class User(Resource):
                                                 'optimizer': 'Stochastic Gradient Descent'}, '1')
         
             return {'userID': user_id}, 201
-        return 404
+        return None, 404
 
     def delete(self, user_id):
         """
@@ -277,8 +277,8 @@ class User(Resource):
         """
         if sh.get_user_handler(user_id):
             sh.delete_user_handler(user_id)
-            return 200 if sh.get_user_handler(user_id) is None else 500
-        return 404
+            return (None, 200) if sh.get_user_handler(user_id) is None else (None, 500)
+        return None, 404
 
 
 class Datasets(Resource):

@@ -19,3 +19,18 @@ class MockSH:
 
     def get_fitting_summary(self, user_id, fitting_id):
         return self.fitting_summaries.get(fitting_id)
+
+
+class MockUserDelSH:
+
+    def __init__(self, delete_handler=True):
+        self.deleted = False
+        self.delete_handler = delete_handler
+
+    def get_user_handler(self, user_id):
+        if self.deleted:
+            return None
+        return {'Handler is not None, so this counts'}
+
+    def delete_user_handler(self, user_id):
+        self.deleted = self.delete_handler

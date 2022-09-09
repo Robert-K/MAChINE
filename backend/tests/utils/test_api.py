@@ -1,3 +1,4 @@
+import hashlib
 import json
 
 import backend.utils.api as api
@@ -199,6 +200,43 @@ class TestFittingRequestGroup:
         assert response.status_code == 200, 'Request should have succeeded'
         assert response.json == expected_fittings_output, 'Response json should match the expected output'
 
+
 class TestUserRequestGroup:
-    def test_add_user_response_format(self):
-        pass
+
+    @pytest.mark.parametrize(
+        'test_username',
+        [
+            'Tom',
+            'WADawd',
+        ]
+    )
+    def test_add_user_response(self, test_username, client, mocker):
+        mocker.patch('backend.utils.api.sh.add_user_handler', return_value={'This represents a handler'})
+        response = client.post(f'/users', json={'username': test_username})
+        user_id = str(hashlib.sha1(test_username.encode('utf-8'), usedforsecurity=False).hexdigest())
+        assert response.status_code == 201, 'Request should have worked'
+        assert response.is_json, 'Response should be a json'
+        assert response.json == {'userID': user_id}, 'json should contain the user id'
+
+    def test_add_user_error(self, client, mocker):
+        mocker.patch('backend.utils.api.sh.add_user_handler', return_value=None)
+        response = client.post(f'/users', json={'username': 'test'})
+        assert response.status_code == 404, 'User shouldn\'t have been created'
+
+    def test_delete_user_response(self, client, mocker):
+        mocker.patch('backend.utils.api.sh', backend.tests.mocks.mock_sh.MockUserDelSH())
+        response = client.delete(f'/users/{_test_user_id}')
+        assert response.status_code == 200, 'Request should have worked'
+        assert response.json is None, 'Response should have a json'
+
+    def test_delete_user_internal_error_response(self, client, mocker):
+        mocker.patch('backend.utils.api.sh', backend.tests.mocks.mock_sh.MockUserDelSH(delete_handler=False))
+        response = client.delete(f'/users/{_test_user_id}')
+        assert response.status_code == 500, 'Expected to respond with internal server error'
+        assert response.json is None, 'Response should have a json'
+
+    def test_delete_non_user_error_response(self, client, mocker):
+        mocker.patch('backend.utils.api.sh.get_user_handler', return_value=None)
+        response = client.delete(f'/users/{_test_user_id}')
+        assert response.status_code == 404, 'Expected to respond with "not found"'
+        assert response.json is None, 'Response should have a json'
