@@ -240,3 +240,45 @@ class TestUserRequestGroup:
         response = client.delete(f'/users/{_test_user_id}')
         assert response.status_code == 404, 'Expected to respond with "not found"'
         assert response.json is None, 'Response should have a json'
+
+
+class TestDatasetRequestGroup:
+
+    def test_dataset_get_response_format(self, client, mocker):
+        mocker.patch('backend.utils.api.sh.get_dataset_summaries', return_value={})
+        response = client.get(f'/datasets')
+        assert response.status_code == 200, 'Request should have succeeded'
+        assert response.is_json, 'Response should be a json'
+        assert type(response.json) == list, 'Response JSON should be a list'
+        assert len(response.json) == 0, 'List should be empty'
+
+    @pytest.mark.parametrize(
+        'sh_datasets, expected_dataset_output',
+        [
+            ({}, []),
+            ({'dataset_id': {'name': 'dataset_name',
+                             'size': 12515,
+                             'labelDescriptors': ['label', 'label2', 'label3'],
+                             'datasetPath': 'X',
+                             'image': None,
+                             }},
+             [{
+                 'name': 'dataset_name',
+                 'datasetID': 'dataset_id',
+                 'size': 12515,
+                 'labelDescriptors': ['label', 'label2', 'label3'],
+                 'image': None,
+             }])
+
+        ]
+    )
+    def test_dataset_get_response_format(self, sh_datasets, expected_dataset_output, client, mocker):
+        mocker.patch('backend.utils.api.sh.get_dataset_summaries', return_value=sh_datasets)
+        response = client.get(f'/datasets')
+        assert response.status_code == 200, 'Request should have succeeded'
+        assert response.json == expected_dataset_output, 'Expected output to match'
+
+class TestBaseModelRequestGroup:
+    def test_base_model_get_response_format(self, client, mocker):
+        mocker.patch('backend.utils.api.sh.get_base_model', return_value={})
+        response = client.get(f'/baseModels')
