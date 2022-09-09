@@ -309,7 +309,7 @@ def run(debug=True):
             'activation': 'relu',
         },
     ], 'loss': 'Huber Loss', 'optimizer': 'Nadam'}, 'id')
-    model_id2 = sh.add_model(test_user2, 'MyCoolModel', {'layers': [
+    model_id2 = sh.add_model(test_user2, 'MyCoolModel2', {'layers': [
         {
             'type': 'dense',
             'units': 256,
@@ -333,7 +333,7 @@ def run(debug=True):
     ], 'loss': 'Huber Loss', 'optimizer': 'Stochastic Gradient Descent'}, 'id')
     fitting_id = ml.train(test_user, '2', model_id, ['lumo', 'homo'], 0, 64)
     model_id_2 = sh.add_model(test_user, 'MyCoolSecondModel',
-                              {'loss': 'MeanSquaredError', 'optimizer': 'Adam', 'embeddingDim': 128, 'readoutSize': 1,
+                              {'loss': 'Mean Squared Error', 'optimizer': 'Adam', 'embeddingDim': 128, 'readoutSize': 1,
                                'depth': 2}, 'id2')
     # fitting_id2 = ml.train(test_user, '1', model_id_2, ['HIV_active'], 5, 128)
     # ml.analyze(test_user, fitting_id, 'c1ccn2nncc2c1')
