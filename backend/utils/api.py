@@ -27,6 +27,7 @@ parser.add_argument('epochs', type=int)
 parser.add_argument('accuracy')
 parser.add_argument('batchSize', type=int)
 parser.add_argument('baseModel')
+parser.add_argument('parameters', type=dict)
 
 
 # modelList
