@@ -4,6 +4,9 @@
 // learn more: https://github.com/testing-library/jest-dom
 import '@testing-library/jest-dom'
 
+// Override the default setImmediate function, because jest is a horrible piece of software
+global.setImmediate = jest.useRealTimers
+
 // Mock used Kekule classes and functions as it does not load properly in a test environment
 jest.mock('kekule', () => ({
   Kekule: {
@@ -52,3 +55,6 @@ jest.spyOn(global.console, 'warn').mockImplementationOnce((message) => {
     global.console.warn(message)
   }
 })
+
+// Uncomment to mock api (test without backend)
+jest.mock('./api')
