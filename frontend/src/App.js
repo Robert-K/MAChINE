@@ -68,6 +68,7 @@ const themeLight = createTheme(
     home: {
       mascot: 'molele.svg',
     },
+    darkTheme: false,
   })
 )
 
@@ -108,6 +109,7 @@ const themeDark = createTheme(
     home: {
       mascot: 'molele-dark.svg',
     },
+    darkMode: true,
   })
 )
 
