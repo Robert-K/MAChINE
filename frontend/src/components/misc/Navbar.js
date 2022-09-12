@@ -45,10 +45,12 @@ export default function Navbar({ logoutFunction, darkModeButton }) {
   }, [])
 
   React.useEffect(() => {
-    locationName === links.training.link || training.trainingStatus
+    locationName === links.training.link ||
+    training.trainingStatus ||
+    training.trainingFinished
       ? setHideTraining(false)
       : setHideTraining(true)
-  }, [locationName, training.trainingStatus])
+  }, [locationName, training.trainingStatus, training.trainingFinished])
 
   return (
     <AppBar color="primary" position="sticky">
@@ -73,7 +75,10 @@ export default function Navbar({ logoutFunction, darkModeButton }) {
                 )}
               </React.Fragment>
             ))}
-            {!training.trainingStatus ? null : (
+            {!(
+              training.trainingStatus ||
+              (training.trainingFinished && !training.trainingStopped)
+            ) ? null : (
               <>
                 <Box sx={{ width: '10%', ml: 1 }}>
                   <ProgressBar />

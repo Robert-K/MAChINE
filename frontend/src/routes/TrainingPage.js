@@ -57,6 +57,12 @@ export default function TrainingPage() {
     }
   }, [training.trainingStatus])
 
+  React.useEffect(() => {
+    return () => {
+      training.setTrainingFinished(false)
+    }
+  }, [])
+
   const handleStartStop = () => {
     if (training.trainingStatus) {
       setShowDialog(true)
@@ -77,7 +83,7 @@ export default function TrainingPage() {
   }
 
   const abortTraining = () => {
-    api.stopTraining()
+    training.stopTraining()
     handleCloseDialog()
   }
 
@@ -108,7 +114,7 @@ export default function TrainingPage() {
           id="epochs"
           label="Epochs"
           type="number"
-          defaultValue={training.selectedEpochs}
+          value={training.selectedEpochs}
           disabled={training.trainingStatus}
           onChange={handleEpochsChange}
           error={epochsError}
@@ -120,7 +126,7 @@ export default function TrainingPage() {
           id="batchsize"
           label="Batch Size"
           type="number"
-          defaultValue={training.selectedBatchSize}
+          value={training.selectedBatchSize}
           disabled={training.trainingStatus}
           onChange={handleBatchSizeChange}
           error={batchSizeError}
