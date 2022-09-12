@@ -21,6 +21,7 @@ import { TrainingProvider } from './context/TrainingContext'
 import Particles from 'react-tsparticles'
 import { loadFull } from 'tsparticles'
 import { deepmerge } from '@mui/utils'
+import { handleErrors } from './utils'
 
 const themeBase = {
   palette: {
@@ -164,6 +165,8 @@ export default function App() {
   const changeDarkMode = (value) => {
     setDarkMode(value)
   }
+
+  handleErrors()
 
   return (
     <div className="App">
