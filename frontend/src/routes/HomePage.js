@@ -145,7 +145,7 @@ export default function HomePage() {
           </Card>
         </Box>
       </Box>
-      <style jsx>{`
+      <style>{`
         .swing {
           animation: swing 5s ease-in-out infinite;
         }
