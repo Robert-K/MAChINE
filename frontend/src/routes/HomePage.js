@@ -114,9 +114,9 @@ export default function HomePage() {
           <Card>
             <CardMedia
               component="img"
-              height="230"
               image="aimat_logo_purple.png"
               alt="dark purple"
+              sx={{ p: 2, background: 'white' }}
             />
             <CardContent>
               <Typography gutterBottom variant="h5" component="div">
