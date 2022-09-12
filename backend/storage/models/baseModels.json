@@ -2,10 +2,10 @@
 	"id": {
 		"name": "SequentialA",
 		"type": "sequential",
-		"lossFunction": "Mean Squared Error",
-		"optimizer": "Adam",
-		"metrics": ["MeanAbsoluteError", "R2"],
-		"layers": [
+		"parameters": {
+			"lossFunction": "Mean Squared Error",
+			"optimizer": "Adam",
+			"layers": [
 			{
 				"type": "Dense",
 				"units": 256,
@@ -26,6 +26,8 @@
 				"units": 1
 			}
 		]
+		},
+		"metrics": ["MeanAbsoluteError", "R2"]
 	},
 	"id2": {
 		"name": "SCHNET A",
