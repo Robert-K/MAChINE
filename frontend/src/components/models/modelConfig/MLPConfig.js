@@ -114,8 +114,8 @@ export default function MLPConfig({ model, addFunc }) {
                   label="Model Name"
                   value={name}
                   onChange={(e) => handleNameInput(e)}
-                  sx={{ m: 1 }}
                   required
+                  fullWidth
                 ></TextField>
               </FormControl>
               <Button onClick={(e) => saveModel(e)}>Save</Button>
