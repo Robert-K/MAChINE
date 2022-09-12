@@ -1,4 +1,3 @@
-import json
 from flask import Flask
 from flask_cors import CORS
 from flask_restful import reqparse, Api, Resource
@@ -198,44 +197,20 @@ class Analyze(Resource):
         args = parser.parse_args()
         return ml.analyze(user_id, args['fittingID'], args['smiles'])
 
-
-# Creates a new fitting, adds that fitting to model
-class Train(Resource):
-    def post(self, user_id):
-        args = parser.parse_args()
-        labels = json.loads(args['labels'])
-        return ml.train(user_id, args['datasetID'], args['modelID'], labels, args['epochs'], args['batchSize'])
-
-    def delete(self, user_id):
-        return
-
-
-class Check(Resource):
-    def get(self):
-        return
-
-
 # Actually set up the Api resource routing here
 api.add_resource(AddUser, '/users')
 api.add_resource(DeleteUser, '/users/<user_id>')
-api.add_resource(Check, '/check')
 api.add_resource(Models, '/users/<user_id>/models')
 api.add_resource(Molecules, '/users/<user_id>/molecules')
 api.add_resource(Fittings, '/users/<user_id>/fittings')
 # Training & Analyzing
 api.add_resource(Analyze, '/users/<user_id>/analyze')
-api.add_resource(Train, '/users/<user_id>/train')
 # Non-user-specific resources
 api.add_resource(Datasets, '/datasets')
 api.add_resource(BaseModels, '/baseModels')
 
 
 # SocketIO event listeners
-@sio.on('ping')
-def handle_ping(data):
-    sio.emit('pong', data + 'copy')
-
-
 @sio.on('start_training')
 def start_training(user_id, dataset_id, model_id, labels, epochs, batch_size):
     if ml.is_training_running(user_id):
@@ -252,7 +227,7 @@ def start_training(user_id, dataset_id, model_id, labels, epochs, batch_size):
 
 @sio.on('stop_training')
 def stop_training(user_id):
-    ml.stop_training(user_id)
+    return ml.stop_training(user_id)
 
 
 def update_training_logs(user_id, logs):
