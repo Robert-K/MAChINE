@@ -16,6 +16,7 @@
     "@testing-library/react": "^13.2.0",
     "@testing-library/user-event": "^13.5.0",
     "axios": "^0.27.2",
+    "eslint-plugin-unused-imports": "^2.0.0",
     "kekule": "^0.9.7",
     "mui-image": "^1.0.5",
     "node-polyfill-webpack-plugin": "^2.0.0",
