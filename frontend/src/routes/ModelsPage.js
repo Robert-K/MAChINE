@@ -39,6 +39,7 @@ export default function ModelsPage() {
   const [modelList, setModelList] = React.useState([])
   const [showDialog, setShowDialog] = React.useState(false)
   const user = React.useContext(UserContext)
+  const training = React.useContext(TrainingContext)
 
   React.useEffect(() => {
     api.getModelList().then((models) => setModelList(models))
@@ -55,8 +56,8 @@ export default function ModelsPage() {
   }
 
   const abortTraining = () => {
+    training.stopTraining()
     handleCloseDialog()
-    api.stopTraining()
   }
 
   return (

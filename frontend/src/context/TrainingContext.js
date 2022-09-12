@@ -5,6 +5,10 @@ import api from '../api'
 const TrainingContext = React.createContext({
   trainingStatus: true,
   setTrainingStatus: () => {},
+  trainingStopped: false,
+  setTrainingStopped: () => {},
+  trainingFinished: false,
+  setTrainingFinished: () => {},
   selectedModel: null,
   setSelectedModel: () => {},
   selectedDataset: null,
@@ -17,10 +21,13 @@ const TrainingContext = React.createContext({
   setSelectedBatchSize: () => {},
   trainingData: {},
   resetContext: () => {},
+  stopTraining: () => {},
 })
 
 export const TrainingProvider = ({ children }) => {
   const [trainingStatus, setTrainingStatus] = React.useState(true)
+  const [trainingStopped, setTrainingStopped] = React.useState(false)
+  const [trainingFinished, setTrainingFinished] = React.useState(false)
   const [selectedModel, setSelectedModel] = React.useState({})
   const [selectedDataset, setSelectedDataset] = React.useState({})
   const [selectedLabels, setSelectedLabels] = React.useState([])
@@ -36,6 +43,8 @@ export const TrainingProvider = ({ children }) => {
     setTrainingStatus(false)
     api.registerSocketListener('started', () => {
       setTrainingStatus(true)
+      setTrainingStopped(false)
+      setTrainingFinished(false)
       dispatchTrainingData({ type: 'reset' })
     })
     api.registerSocketListener('update', (data) => {
@@ -43,6 +52,7 @@ export const TrainingProvider = ({ children }) => {
     })
     api.registerSocketListener('done', () => {
       setTrainingStatus(false)
+      setTrainingFinished(true)
     })
   }, [])
 
@@ -71,6 +81,8 @@ export const TrainingProvider = ({ children }) => {
 
   function resetContext() {
     setTrainingStatus(false)
+    setTrainingStopped(false)
+    setTrainingFinished(false)
     setSelectedModel({})
     setSelectedDataset({})
     setSelectedLabels([])
@@ -79,11 +91,24 @@ export const TrainingProvider = ({ children }) => {
     dispatchTrainingData({ type: 'reset' })
   }
 
+  function stopTraining() {
+    api.stopTraining()
+    setTrainingStopped(true)
+    const trainedEpochs = trainingData.epoch
+      ? trainingData.epoch.length * 1.0
+      : 0.0
+    setSelectedEpochs(trainedEpochs)
+  }
+
   return (
     <TrainingContext.Provider
       value={{
         trainingStatus,
         setTrainingStatus,
+        trainingStopped,
+        setTrainingStopped,
+        trainingFinished,
+        setTrainingFinished,
         selectedModel,
         setSelectedModel,
         selectedDataset,
@@ -96,6 +121,7 @@ export const TrainingProvider = ({ children }) => {
         setSelectedBatchSize,
         trainingData,
         resetContext,
+        stopTraining,
       }}
     >
       {children}
