@@ -9,7 +9,7 @@ import CardContent from '@mui/material/CardContent'
  * A base model card is utilized in the process of the user creating a model.
  * It displays one base model's name, image, and basic information.
  * @param baseModel The data from a base model
- * @param addFunction callback to add a model
+ * @param clickFunc callback for onClick
  * @returns {JSX.Element} The the element for the website.
  * @constructor
  */
