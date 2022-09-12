@@ -61,7 +61,8 @@ class TestModelRequestGroup:
         response_json = response.json
         for model_id, model in sh_models.items():
             converted_fittings = list()
-            for fitting_id, fitting in { fitting_id: sh_fittings[fitting_id] for fitting_id in model.get('fittingIDs', {}) }.items():
+            for fitting_id, fitting in {fitting_id: sh_fittings[fitting_id] for fitting_id in
+                                        model.get('fittingIDs', {})}.items():
                 converted_fitting = dict()
                 converted_fitting |= {'id': fitting_id}
                 converted_fitting |= {'modelID': fitting['modelID']}
@@ -362,10 +363,37 @@ class TestBaseModelRequestGroup:
 
 
 class TestAnalyzeRequestGroup:
-    def test_analyze_post_response_format(self, client, mocker):
-        pass
+    @pytest.mark.parametrize(
+        'test_analysis',
+        [
+            {'test': -5125.2},
+            {'awdawd': 25170.12124},
+            {}
+        ]
+    )
+    def test_analyze_post_response(self, test_analysis, client, mocker):
+        mocker.patch('backend.utils.api.ml.analyze', return_value=test_analysis)
+        response = client.post(f'/users/{_test_user_id}/analyze', json={})
+        assert response.status_code == 200, 'Response should have worked'
+        assert response.is_json, 'Response should be a json'
+        assert response.json == test_analysis, 'Response json should match analysis'
 
 
 class TestTrainRequestGroup:
-    def test_train_response_format(self, client, mocker):
-        pass
+    def test_train_response(self, client, mocker):
+        mocker.patch('backend.utils.api.ml.train', return_value=(True, 200))
+        response = client.post(f'/users/{_test_user_id}/train', json={'labels': json.dumps(['awdhawd', 'adnoj'])})
+        assert response.status_code == 200, 'Status code should match'
+        assert response.json, 'When request fails, json should be True'
+
+    def test_train_response_error(self, client, mocker):
+        mocker.patch('backend.utils.api.ml.train', return_value=(False, 503))
+        response = client.post(f'/users/{_test_user_id}/train', json={'labels': json.dumps(['awdhawd', 'adnoj'])})
+        assert response.status_code == 503, 'Status code should match'
+        assert not response.json, 'When request fails, json should be False'
+
+
+class TestCheckRequestGroup:
+    def test_check_response(self, client):
+        response = client.get('/check')
+        assert response.status_code == 200, 'Response should have worked'
