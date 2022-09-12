@@ -48,5 +48,5 @@ export default function BaseModelsPage({ addFunc }) {
 }
 
 BaseModelsPage.propTypes = {
-  addFunc: PropTypes.func.isRequired,
+  addFunc: PropTypes.func,
 }
