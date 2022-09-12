@@ -167,7 +167,10 @@ export default function App() {
               <Navbar
                 logoutFunction={logout}
                 darkModeButton={
-                  <DarkModeButton setModeFunction={changeDarkMode} />
+                  <DarkModeButton
+                    initialDarkMode={darkMode}
+                    setModeFunction={changeDarkMode}
+                  />
                 }
               />
               <Particles
