@@ -107,7 +107,7 @@ export default function HomePage() {
           </Card>
         </Box>
 
-        <Box sx={{ mt: 12 }}>
+        <Box sx={{ mt: 13 }}>
           <Typography variant="h4" color="text.primary" paragraph>
             for:
           </Typography>
