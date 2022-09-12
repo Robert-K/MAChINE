@@ -23,7 +23,7 @@ export default function HomePage() {
           mb: 5,
         }}
       >
-        <Box>
+        <Box className="swing">
           <Image
             sx={{
               maxWidth: 250,
@@ -145,6 +145,31 @@ export default function HomePage() {
           </Card>
         </Box>
       </Box>
+      <style jsx>{`
+        .swing {
+          animation: swing 5s ease-in-out infinite;
+        }
+        @keyframes swing {
+          0% {
+            transform: rotate(0deg);
+          }
+          4% {
+            transform: rotate(15deg);
+          }
+          8% {
+            transform: rotate(-10deg);
+          }
+          12% {
+            transform: rotate(5deg);
+          }
+          16% {
+            transform: rotate(-5deg);
+          }
+          20% {
+            transform: rotate(0deg);
+          }
+        }
+      `}</style>
     </Box>
   )
 }
