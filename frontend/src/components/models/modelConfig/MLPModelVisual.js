@@ -94,7 +94,6 @@ export default function MLPModelVisual({
     },
   })
 
-  // TODO: style: node opacity, pick colors, make boxes pretty
   // TODO: fix dark mode interaction
   // TODO: add layer box labels
   // TODO: [optional] onSelectNode -> LayerConfigPopup to change unitCount/activation
@@ -288,7 +287,7 @@ export default function MLPModelVisual({
 }
 
 MLPModelVisual.propTypes = {
-  modelLayers: PropTypes.array.isRequired,
+  modelLayers: PropTypes.array,
   defaultActivation: PropTypes.string,
-  updateFunc: PropTypes.func.isRequired,
+  updateFunc: PropTypes.func,
 }
