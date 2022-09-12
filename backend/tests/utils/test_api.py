@@ -280,5 +280,86 @@ class TestDatasetRequestGroup:
 
 class TestBaseModelRequestGroup:
     def test_base_model_get_response_format(self, client, mocker):
-        mocker.patch('backend.utils.api.sh.get_base_model', return_value={})
+        mocker.patch('backend.utils.api.sh.get_base_models', return_value={})
         response = client.get(f'/baseModels')
+        assert response.status_code == 200, 'Request should have succeeded'
+        assert response.is_json, 'Response should be a json list'
+        assert type(response.json) == list, 'Response should be a list'
+        assert len(response.json) == 0, 'Response should be an empty list'
+
+    # TODO: Rewrite when ModelVis is merged
+    @pytest.mark.parametrize(
+        'sh_base_models',
+        [
+            ({"id2": {
+                "name": "Test Schnet",
+                "type": "schnet",
+                "lossFunction": "Mean Squared Error",
+                "optimizer": "NAdam",
+                "metrics": [
+                    "MeanAbsoluteError",
+                    "R2"
+                ],
+                "image": "None"
+            }}),
+            ({
+                "test id": {
+                    "name": "Test A",
+                    "type": "sequential",
+                    "lossFunction": "Mean Squared Error",
+                    "optimizer": "Adam",
+                    "metrics": [
+                        "MeanAbsoluteError",
+                        "R2"
+                    ],
+                    "layers": [
+                        {
+                            "type": "Dense",
+                            "units": 5,
+                            "activation": "relu"
+                        },
+                    ],
+                    "image": "X"
+                },
+                "id2": {
+                    "name": "Test Schnet",
+                    "type": "schnet",
+                    "lossFunction": "Mean Squared Error",
+                    "optimizer": "NAdam",
+                    "metrics": [
+                        "MeanAbsoluteError",
+                        "R2"
+                    ],
+                    "image": "None"
+                }
+            }),
+        ]
+    )
+    def test_base_model_get_response(self, sh_base_models, client, mocker):
+        mocker.patch('backend.utils.api.sh.get_base_models', return_value=sh_base_models)
+        response = client.get(f'/baseModels')
+        for model_id, model in sh_base_models.items():
+            layers = model.get('layers')
+            if model and layers:
+                comparative_model = dict()
+                comparative_model |= {'name': model.get('name')}
+                comparative_model |= {'id': model_id}
+                comparative_model |= {'type': {'name': model.get('type'), 'image': model.get('image')}}
+                comparative_model |= {
+                    'taskType': ('regression' if layers[len(layers) - 1].get('units') == 1 else 'classification')}
+                comparative_model |= {'lossFunction': model.get('lossFunction')}
+                comparative_model |= {'lossFunction': model.get('lossFunction')}
+                comparative_model |= {'optimizer': model.get('optimizer')}
+                comparative_model |= {'layers': model.get('layers')}
+                response_list = response.json
+                assert comparative_model in response_list, 'Basemodel in SH should bee in response, formatted like this'
+
+
+class TestAnalyzeRequestGroup:
+    def test_analyze_post_response_format(self, client, mocker):
+        pass
+
+
+class TestTrainRequestGroup:
+    def test_train_response_format(self, client, mocker):
+        pass
