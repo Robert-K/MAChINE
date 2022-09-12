@@ -1,6 +1,7 @@
 import React from 'react'
 import {
   Alert,
+  Backdrop,
   Box,
   Button,
   Card,
@@ -151,6 +152,12 @@ function MoleculeView({ selectedMolecule, onSave }) {
             height={editorHeight}
           />
         )}
+        <Backdrop
+          sx={{ color: 'white', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+          open={selectedMolecule === null}
+        >
+          Select a molecule on the left to view & edit it here.
+        </Backdrop>
       </CardContent>
       <CardActions>
         <Box
