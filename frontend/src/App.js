@@ -106,8 +106,17 @@ const themeDark = createTheme(
 )
 
 export default function App() {
-  const [darkMode, setDarkMode] = React.useState(false)
+  const [darkMode, setDarkMode] = React.useState(
+    window.matchMedia &&
+      window.matchMedia('(prefers-color-scheme: dark)').matches
+  )
   const [userName, setUserName] = React.useState(null)
+
+  window
+    .matchMedia('(prefers-color-scheme: dark)')
+    .addEventListener('change', (event) => {
+      setDarkMode(event.matches ? 'dark' : 'light')
+    })
 
   const particlesInit = useCallback(async (engine) => {
     console.log(engine)
