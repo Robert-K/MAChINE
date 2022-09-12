@@ -23,7 +23,8 @@
     "testing-library",
     "jest",
     "jest-dom",
-    "prettier"
+    "prettier",
+    "unused-imports"
   ],
   "rules": {
     "testing-library/no-render-in-setup": "warn",
@@ -41,6 +42,17 @@
       "error",
       {
         "endOfLine": "auto"
+      }
+    ],
+    "no-unused-vars": "off",
+    "unused-imports/no-unused-imports": "error",
+    "unused-imports/no-unused-vars": [
+      "warn",
+      {
+        "vars": "all",
+        "varsIgnorePattern": "^_",
+        "args": "after-used",
+        "argsIgnorePattern": "^_"
       }
     ]
   }
