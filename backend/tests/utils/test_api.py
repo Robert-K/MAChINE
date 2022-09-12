@@ -249,7 +249,6 @@ class TestUserRequestGroup:
 
 
 class TestDatasetRequestGroup:
-
     def test_dataset_get_response_format(self, client, mocker):
         mocker.patch('backend.utils.api.sh.get_dataset_summaries', return_value={})
         response = client.get(f'/datasets')
@@ -270,7 +269,7 @@ class TestDatasetRequestGroup:
                              }})
         ]
     )
-    def test_dataset_get_response_format(self, sh_datasets, client, mocker):
+    def test_dataset_get_response(self, sh_datasets, client, mocker):
         mocker.patch('backend.utils.api.sh.get_dataset_summaries', return_value=sh_datasets)
         response = client.get(f'/datasets')
         response_json = response.json
