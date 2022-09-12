@@ -23,11 +23,6 @@ def socket():
     return socket
 
 
-def test_check_response(client):
-    response = client.get('/check')
-    assert response.status_code == 200, 'Response should have Status code 200'
-
-
 class TestModelRequestGroup:
 
     def test_model_get_response_format(self, client, mocker):
@@ -385,31 +380,7 @@ class TestAnalyzeRequestGroup:
         assert response.json == test_analysis, 'Response json should match analysis'
 
 
-class TestTrainRequestGroup:
-    def test_train_response(self, client, mocker):
-        mocker.patch('backend.utils.api.ml.train', return_value=(True, 200))
-        response = client.post(f'/users/{_test_user_id}/train', json={'labels': json.dumps(['awdhawd', 'adnoj'])})
-        assert response.status_code == 200, 'Status code should match'
-        assert response.json, 'When request fails, json should be True'
-
-    def test_train_response_error(self, client, mocker):
-        mocker.patch('backend.utils.api.ml.train', return_value=(False, 503))
-        response = client.post(f'/users/{_test_user_id}/train', json={'labels': json.dumps(['awdhawd', 'adnoj'])})
-        assert response.status_code == 503, 'Status code should match'
-        assert not response.json, 'When request fails, json should be False'
-
-
-class TestCheckRequestGroup:
-    def test_check_response(self, client):
-        response = client.get('/check')
-        assert response.status_code == 200, 'Response should have worked'
-
-
 class TestSocketGroup:
-    def test_handle_ping(self, socket):
-        response = socket.emit('ping', 'aah', callback=True)
-        assert response is None, 'Not expecting a response'
-        assert socket.is_connected(), 'Socket is supposed to be connected though'
 
     def test_start_training(self, socket, mocker):
         mocker.patch('backend.utils.api.ml.train', return_value='Rawr')
@@ -417,7 +388,7 @@ class TestSocketGroup:
         assert response, 'Expected request to succeed'
 
     def test_start_training_busy(self, socket, mocker):
-        mocker.patch('backend.utils.api.ml.is_training_running', return_value=True)
+        mocker.patch('backend.utils.api.ml.is_training_running', return_value=False)
         response = socket.emit('start_training', _test_user_id, 'dataset_id', 'model_id', 'labels', 'epochs', 'batch_size', callback=True)
         assert response, 'Expected request to fail'
 
