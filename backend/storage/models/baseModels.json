@@ -1,12 +1,5 @@
 {
-	"id2": {
-		"name": "SchnetA",
-		"type": "schnet",
-		"embedding_dim": 10,
-		"readout_size": 1,
-		"depth": 3
-	},
-	"id3": {
+	"id": {
 		"name": "SequentialA",
 		"type": "sequential",
 		"lossFunction": "Mean Squared Error",
@@ -37,11 +30,13 @@
 	"id2": {
 		"name": "SCHNET A",
 		"type": "schnet",
-		"lossFunction": "Mean Squared Error",
-		"optimizer": "NAdam",
-		"metrics": ["MeanAbsoluteError", "R2"],
-		"depth": 3,
-		"embeddingDimension": 128,
-		"readoutSize": 1
+		"parameters": {
+			"lossFunction": "Mean Squared Error",
+			"optimizer": "NAdam",
+			"depth": 3,
+			"embeddingDimension": 128,
+			"readoutSize": 1
+		},
+		"metrics": ["MeanAbsoluteError", "R2"]
 	}
 }
