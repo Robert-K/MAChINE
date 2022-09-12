@@ -87,7 +87,6 @@ export default function SchNetConfig({ schnetParams, updateFunc }) {
         anchorEl={anchorEl}
         placement={'right'}
         onClose={handlePopperClose}
-        disableRestoreFocus
       >
         <Box sx={{ border: 1 }}>
           <HelpIcon />
