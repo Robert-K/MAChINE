@@ -9,11 +9,18 @@ import pytest_mock
 _test_user_id = 'test_user'
 
 
-@pytest.fixture(autouse=True)
+@pytest.fixture
 def client():
     api.app.config['TESTING'] = True
     with api.app.test_client() as client:
         yield client
+
+
+@pytest.fixture
+def socket():
+    socket = api.sio.test_client(api.app)
+    assert socket.is_connected()
+    return socket
 
 
 def test_check_response(client):
@@ -396,3 +403,30 @@ class TestCheckRequestGroup:
     def test_check_response(self, client):
         response = client.get('/check')
         assert response.status_code == 200, 'Response should have worked'
+
+
+class TestSocketGroup:
+    def test_handle_ping(self, socket):
+        response = socket.emit('ping', 'aah', callback=True)
+        assert response is None, 'Not expecting a response'
+        assert socket.is_connected(), 'Socket is supposed to be connected though'
+
+    def test_start_training(self, socket, mocker):
+        mocker.patch('backend.utils.api.ml.train', return_value='Rawr')
+        response = socket.emit('start_training', _test_user_id, 'dataset_id', 'model_id', 'labels', 'epochs', 'batch_size', callback=True)
+        assert response, 'Expected request to succeed'
+
+    def test_start_training_busy(self, socket, mocker):
+        mocker.patch('backend.utils.api.ml.is_training_running', return_value=True)
+        response = socket.emit('start_training', _test_user_id, 'dataset_id', 'model_id', 'labels', 'epochs', 'batch_size', callback=True)
+        assert response, 'Expected request to fail'
+
+    def test_stop_training(self, socket, mocker):
+        mocker.patch('backend.utils.api.ml.stop_training', return_value=True)
+        response = socket.emit('stop_training', _test_user_id, callback=True)
+        assert response, 'Expected request to succeed'
+
+    def test_stop_training_fail(self, socket, mocker):
+        mocker.patch('backend.utils.api.ml.stop_training', return_value=False)
+        response = socket.emit('stop_training', _test_user_id, callback=True)
+        assert not response, 'Expected request to "fail"'
