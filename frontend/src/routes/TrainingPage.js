@@ -57,11 +57,18 @@ export default function TrainingPage() {
     }
   }, [training.trainingStatus])
 
+  const initialMount = React.useRef(true)
+
   React.useEffect(() => {
+    if (initialMount.current) {
+      initialMount.current = false
+    } else {
+      training.setTrainingFinished(false)
+    }
     return () => {
       training.setTrainingFinished(false)
     }
-  }, [])
+  }, [training.selectedEpochs, training.selectedBatchSize])
 
   const handleStartStop = () => {
     if (training.trainingStatus) {
