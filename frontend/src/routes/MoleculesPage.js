@@ -147,7 +147,7 @@ function MoleculeView({ selectedMolecule, onSave }) {
           ) : (
             <Box
               sx={{
-                filter: theme.darkMode ? 'invert(1)' : false,
+                filter: theme.darkMode ? 'invert(.86)' : false,
               }}
             >
               <MoleculeEditor
