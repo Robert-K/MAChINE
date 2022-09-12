@@ -65,6 +65,9 @@ const themeLight = createTheme(
       fontColor: 'black',
       nodeColor: '#ffffff',
     },
+    home: {
+      mascot: 'molele.svg',
+    },
   })
 )
 
@@ -101,6 +104,9 @@ const themeDark = createTheme(
       borderColor: '#707070',
       fontColor: 'black',
       nodeColor: '#242424',
+    },
+    home: {
+      mascot: 'molele-dark.svg',
     },
   })
 )
