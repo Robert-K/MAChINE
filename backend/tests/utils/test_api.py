@@ -31,7 +31,7 @@ class TestModelRequestGroup:
         assert len(response.json) == 0, 'Response list should be empty'
 
     @pytest.mark.parametrize(
-        'sh_models, sh_fittings, expected_models_output',
+        'sh_models, sh_fittings',
         [
             ({
                  'test_model_id': {
@@ -50,29 +50,36 @@ class TestModelRequestGroup:
                      'fittingPath': 'X',
                      'modelID': 'test_model_id',
                  }
-             }, [{'id': 'test_model_id',
-                  'name': 'test_model',
-                  'baseModel': 'Test A',
-                  'parameters': '',
-                  'fittings': [
-                      {'id': 'test_fitting_id',
-                       'modelID': 'test_model_id',
-                       'modelName': 'test_model',
-                       'datasetID': 'dataset_id',
-                       'labels': ['labels', 'labels2'],
-                       'epochs': 5,
-                       'batchSize': 212,
-                       'accuracy': 1}
-                  ]}
-                 ])
+             })
         ]
     )
-    def test_model_get_response(self, sh_models, sh_fittings, expected_models_output, client, mocker):
+    def test_model_get_response(self, sh_models, sh_fittings, client, mocker):
         mocker.patch('backend.utils.api.sh', backend.tests.mocks.mock_sh.MockSH(sh_models, sh_fittings))
         response = client.get(f'/users/{_test_user_id}/models')
         assert response.status_code == 200, 'Request should have worked'
         assert type(response.json) == list, 'Response json should be a list'
-        assert response.json == expected_models_output, 'Format & content of response json should match expected value'
+        response_json = response.json
+        for model_id, model in sh_models.items():
+            converted_fittings = list()
+            for fitting_id, fitting in { fitting_id: sh_fittings[fitting_id] for fitting_id in model.get('fittingIDs', {}) }.items():
+                converted_fitting = dict()
+                converted_fitting |= {'id': fitting_id}
+                converted_fitting |= {'modelID': fitting['modelID']}
+                converted_fitting |= {'modelName': model['name']}
+                converted_fitting |= {'datasetID': fitting['datasetID']}
+                converted_fitting |= {'labels': fitting['labels']}
+                converted_fitting |= {'epochs': fitting['epochs']}
+                converted_fitting |= {'batchSize': fitting['batchSize']}
+                converted_fitting |= {'accuracy': fitting['accuracy']}
+                converted_fittings.append(converted_fitting)
+            assert len(converted_fittings) == len(model.get('fittingIDs', {})), 'Model should contain every fitting'
+            converted_model = dict()
+            converted_model |= {'id': model_id}
+            converted_model |= {'name': model['name']}
+            converted_model |= {'baseModel': model['baseModelID']}
+            converted_model |= {'parameters': model['parameters']}
+            converted_model |= {'fittings': converted_fittings}
+            assert converted_model in response_json, 'Response json should contain every model formatted like this'
 
     @pytest.mark.parametrize(
         'model_name, parameters, base_model',
@@ -124,7 +131,7 @@ class TestMoleculeRequestGroup:
     @pytest.mark.parametrize(
         'test_mol_name, test_smiles, test_cml',
         [
-            ('Aaaah', 'COOOOOOOOOO', '<While not a valid cml code, it is still just string>')
+            ('Aaaah', 'COOOOOOOOOO', '<While not a valid cml code, they\'re still just strings>')
         ]
     )
     def test_molecule_patch(self, test_mol_name, test_smiles, test_cml, client, mocker):
@@ -145,7 +152,7 @@ class TestFittingRequestGroup:
         assert len(response.json) == 0, 'List should be empty'
 
     @pytest.mark.parametrize(
-        'sh_models, sh_fittings, expected_fittings_output',
+        'sh_models, sh_fittings',
         [
             ({
                  'test_model_id': {
@@ -173,32 +180,30 @@ class TestFittingRequestGroup:
                      'fittingPath': 'X2',
                      'modelID': 'test_model_id',
                  }
-             }, [
-                 {'id': 'test_fitting_id',
-                  'modelID': 'test_model_id',
-                  'modelName': 'test_model',
-                  'datasetID': 'dataset_id',
-                  'labels': ['labels', 'labels2'],
-                  'epochs': 5,
-                  'batchSize': 212,
-                  'accuracy': 1},
-                 {'id': 'test_fitting_id2',
-                  'modelID': 'test_model_id',
-                  'modelName': 'test_model',
-                  'datasetID': 'dataset_id',
-                  'labels': ['label'],
-                  'epochs': 524,
-                  'batchSize': 212,
-                  'accuracy': 0.0002},
-             ]),
-            ({}, {}, [])
+             }),
+            ({}, {})
         ]
     )
-    def test_fitting_get_response(self, sh_models, sh_fittings, expected_fittings_output, client, mocker):
+    def test_fitting_get_response(self, sh_models, sh_fittings, client, mocker):
         mocker.patch('backend.utils.api.sh', backend.tests.mocks.mock_sh.MockSH(fittings=sh_fittings, models=sh_models))
         response = client.get(f'/users/{_test_user_id}/fittings')
         assert response.status_code == 200, 'Request should have succeeded'
-        assert response.json == expected_fittings_output, 'Response json should match the expected output'
+        response_json = response.json
+        for fitting_id, fitting in sh_fittings.items():
+            model_name = 'n/a'
+            model = sh_models.get(fitting.get('modelID'))
+            if model:
+                model_name = model.get('name')
+            converted_fitting = dict()
+            converted_fitting |= {'id': fitting_id}
+            converted_fitting |= {'modelID': fitting['modelID']}
+            converted_fitting |= {'modelName': model_name}
+            converted_fitting |= {'datasetID': fitting['datasetID']}
+            converted_fitting |= {'labels': fitting['labels']}
+            converted_fitting |= {'epochs': fitting['epochs']}
+            converted_fitting |= {'batchSize': fitting['batchSize']}
+            converted_fitting |= {'accuracy': fitting['accuracy']}
+            assert converted_fitting in response_json, 'Response should contain every fitting properly formatted'
 
 
 class TestUserRequestGroup:
@@ -253,30 +258,31 @@ class TestDatasetRequestGroup:
         assert len(response.json) == 0, 'List should be empty'
 
     @pytest.mark.parametrize(
-        'sh_datasets, expected_dataset_output',
+        'sh_datasets',
         [
-            ({}, []),
+            ({}),
             ({'dataset_id': {'name': 'dataset_name',
                              'size': 12515,
                              'labelDescriptors': ['label', 'label2', 'label3'],
                              'datasetPath': 'X',
                              'image': None,
-                             }},
-             [{
-                 'name': 'dataset_name',
-                 'datasetID': 'dataset_id',
-                 'size': 12515,
-                 'labelDescriptors': ['label', 'label2', 'label3'],
-                 'image': None,
-             }])
-
+                             }})
         ]
     )
-    def test_dataset_get_response_format(self, sh_datasets, expected_dataset_output, client, mocker):
+    def test_dataset_get_response_format(self, sh_datasets, client, mocker):
         mocker.patch('backend.utils.api.sh.get_dataset_summaries', return_value=sh_datasets)
         response = client.get(f'/datasets')
+        response_json = response.json
         assert response.status_code == 200, 'Request should have succeeded'
-        assert response.json == expected_dataset_output, 'Expected output to match'
+        for dataset_id, dataset in sh_datasets.items():
+            converted_set = dict()
+            converted_set |= {'name': dataset.get('name')}
+            converted_set |= {'datasetID': dataset_id}
+            converted_set |= {'size': dataset.get('size')}
+            converted_set |= {'labelDescriptors': dataset.get('labelDescriptors')}
+            converted_set |= {'image': dataset.get('image')}
+            assert converted_set in response_json, 'Dataset to be in Response'
+
 
 class TestBaseModelRequestGroup:
     def test_base_model_get_response_format(self, client, mocker):
