@@ -16,6 +16,7 @@ import {
   TextField,
 } from '@mui/material'
 import Button from '@mui/material/Button'
+import SchNetVisual from '../components/models/modelConfig/SchNetVisual'
 
 export const standardParameters = {
   optimizer: [
@@ -71,7 +72,7 @@ export default function ModelConfigPage({ baseModel, addFunc }) {
           embeddingDimension: parameters.embeddingDimension,
           readoutSize: parameters.readoutSize,
         }
-        children.visual = <div>Nothing to see here</div>
+        children.visual = <SchNetVisual />
         children.config = (
           <SchNetConfig
             schnetParams={schnetParams}
