@@ -21,6 +21,7 @@ import { TrainingProvider } from './context/TrainingContext'
 import Particles from 'react-tsparticles'
 import { loadFull } from 'tsparticles'
 import { deepmerge } from '@mui/utils'
+import HelpModeSwitch from './components/misc/HelpModeSwitch'
 
 const themeBase = {
   palette: {
@@ -118,6 +119,8 @@ export default function App() {
     window.matchMedia &&
       window.matchMedia('(prefers-color-scheme: dark)').matches
   )
+
+  const [helpMode, setHelpMode] = React.useState(false)
   const [userName, setUserName] = React.useState(null)
 
   window
@@ -165,6 +168,10 @@ export default function App() {
     setDarkMode(value)
   }
 
+  const changeHelpMode = (value) => {
+    setHelpMode(value)
+  }
+
   return (
     <div className="App">
       <ThemeProvider theme={darkMode ? themeDark : themeLight}>
@@ -178,6 +185,12 @@ export default function App() {
                   <DarkModeButton
                     initialDarkMode={darkMode}
                     setModeFunction={changeDarkMode}
+                  />
+                }
+                helpModeSwitch={
+                  <HelpModeSwitch
+                    initialHelpMode={helpMode}
+                    setModeFunction={changeHelpMode}
                   />
                 }
               />

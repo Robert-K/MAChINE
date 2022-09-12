@@ -1,8 +1,8 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { Box, Popper, TextField } from '@mui/material'
-import HelpIcon from '@mui/icons-material/Help'
+import { Popper, TextField } from '@mui/material'
 import { toNaturalString } from '../../../routes/ModelConfigPage'
+import HelpPopper from '../../shared/HelpPopper'
 
 const settableSizes = {
   depth: {
@@ -47,6 +47,7 @@ export default function SchNetConfig({ schnetParams, updateFunc }) {
 
   const handlePopperClose = () => {
     setAnchorEl(null)
+    // setPopperContent('')
   }
 
   const open = Boolean(anchorEl)
@@ -66,7 +67,9 @@ export default function SchNetConfig({ schnetParams, updateFunc }) {
             helperText={sizesError[i] ? 'Must be above zero!' : ''}
             onChange={(e) => handleChange(e, i, value.min)}
             onMouseOver={(e) => {
+              // if (HelpModeSwitch.getHelpMode()) {
               handlePopperOpen(e, value.explanation)
+              // }
             }}
             onMouseLeave={handlePopperClose}
             InputLabelProps={{
@@ -82,17 +85,14 @@ export default function SchNetConfig({ schnetParams, updateFunc }) {
         id="mouse-over-popper"
         sx={{
           pointerEvents: 'none',
+          padding: 3,
         }}
         open={open}
         anchorEl={anchorEl}
         placement={'right'}
         onClose={handlePopperClose}
-        disableRestoreFocus
       >
-        <Box sx={{ border: 1 }}>
-          <HelpIcon />
-          {popperContent}
-        </Box>
+        <HelpPopper id="helpPopper" helpPopperContent={popperContent} />
       </Popper>
     </div>
   )
