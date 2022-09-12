@@ -25,7 +25,7 @@ export const standardParameters = {
     'RMSprop',
     'Adadelta',
     'Adagrad',
-    'Nadam',
+    'NAdam',
     'Ftrl',
   ],
   lossFunction: [
