@@ -74,18 +74,18 @@ class Training:
 
 def train(user_id, dataset_id, model_id, labels, epochs, batch_size):
     if is_training_running(user_id):  # Change this to allow for more than one training at the same time
-        return False, 503
+        return False
     new_training = Training(user_id, dataset_id, model_id, labels, epochs, batch_size)
     live_trainings[user_id] = new_training
     new_training.start_training()
-    return True, 200
+    return True
 
 
 def stop_training(user_id):
     training = live_trainings.pop(user_id, None)
     if training:
         return training.stop_training()
-    return False, 404
+    return False
 
 
 def is_training_running(user_id):

@@ -146,27 +146,10 @@ export default {
       epochs,
       batchSize
     )
-    /*
-    console.log(labels)
-    return api
-      .post(`/users/${userID}/train`, {
-        datasetID,
-        modelID,
-        labels: JSON.stringify(labels),
-        epochs,
-        batchSize,
-      })
-      .then((response) => {
-        return response.data
-      }) */
   },
 
   stopTraining() {
     socket.emit('stop_training', userID)
-    /*
-    return api.delete(`/users/${userID}/train`).then((response) => {
-      return response.data
-    }) */
   },
 
   registerSocketListener(action, onAction) {
