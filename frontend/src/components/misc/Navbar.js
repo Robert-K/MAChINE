@@ -8,6 +8,7 @@ import UserContext from '../../context/UserContext'
 import TrainingContext from '../../context/TrainingContext'
 import LogoutIcon from '@mui/icons-material/Logout'
 import ProgressBar from '../training/ProgressBar'
+import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 
 const links = {
   home: {
@@ -80,9 +81,10 @@ export default function Navbar({ logoutFunction, darkModeButton }) {
               (training.trainingFinished && !training.trainingStopped)
             ) ? null : (
               <>
-                <Box sx={{ width: '10%', ml: 1 }}>
+                <Box sx={{ width: '10%', mx: 1 }}>
                   <ProgressBar />
                 </Box>
+                {training.trainingStatus ? null : <CheckCircleIcon />}
               </>
             )}
           </>
