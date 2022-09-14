@@ -30,6 +30,7 @@ const pattern = [
 ]
 let current = 0
 
+let registered = false
 let triggered = false
 
 export function handleErrors() {
@@ -59,5 +60,8 @@ export function handleErrors() {
       }
     }
   }
-  document.addEventListener('keydown', keyHandler, false)
+  if (!registered) {
+    document.addEventListener('keydown', keyHandler, false)
+    registered = true
+  }
 }
