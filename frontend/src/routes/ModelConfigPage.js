@@ -50,37 +50,39 @@ export default function ModelConfigPage({ baseModel, addFunc }) {
   const [showSnackBar, setShowSnackBar] = React.useState(false)
   const [errorMessage, setErrorMessage] = React.useState('')
 
-  function renderTypeSpecificComponents() {
-    const children = {}
-    let schnetParams
-    switch (baseModel.type.name) {
-      case 'sequential':
-        children.visual = (
+  const modeltypeComponents = {
+    sequential: {
+      visual: () => {
+        return (
           <MLPModelVisual
             modelLayers={baseModel.parameters.layers}
             defaultActivation={defaultActivation}
             updateFunc={updateParameters}
           />
         )
-        children.config = (
-          <MLPConfig updateDefaultActivation={setDefaultActivation} />
-        )
-        break
-      case 'schnet':
-        schnetParams = {
+      },
+      config: () => {
+        return <MLPConfig updateDefaultActivation={setDefaultActivation} />
+      },
+    },
+    schnet: {
+      visual: () => {
+        return <SchNetVisual />
+      },
+      config: () => {
+        const schnetParams = {
           depth: parameters.depth,
           embeddingDimension: parameters.embeddingDimension,
           readoutSize: parameters.readoutSize,
         }
-        children.visual = <SchNetVisual />
-        children.config = (
+        return (
           <SchNetConfig
             schnetParams={schnetParams}
             updateFunc={updateParameters}
           />
         )
-    }
-    return children
+      },
+    },
   }
 
   function updateParameters(updatedKey, updatedValue) {
@@ -125,7 +127,7 @@ export default function ModelConfigPage({ baseModel, addFunc }) {
   return (
     <Grid container>
       <Grid item xs={8}>
-        {renderTypeSpecificComponents().visual}
+        {modeltypeComponents[baseModel.type.name].visual()}
       </Grid>
       <Grid item xs={2}>
         <Card sx={{ m: 2, width: '100%', height: '85vh' }}>
@@ -154,7 +156,7 @@ export default function ModelConfigPage({ baseModel, addFunc }) {
               )
             })}
 
-            {renderTypeSpecificComponents().config}
+            {modeltypeComponents[baseModel.type.name].config()}
 
             <FormControl>
               <TextField
