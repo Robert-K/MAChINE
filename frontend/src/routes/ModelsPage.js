@@ -42,6 +42,7 @@ export default function ModelsPage() {
   const [creatingModel, setCreatingModel] = React.useState(false)
   const user = React.useContext(UserContext)
   const training = React.useContext(TrainingContext)
+  const navigate = useNavigate()
 
   React.useEffect(() => {
     refreshModels()
@@ -129,29 +130,29 @@ export default function ModelsPage() {
             onActiveTraining={() => setShowDialog(true)}
           />
         </Grid>
-      </Grid>
-      <Dialog
-        open={showDialog}
-        onClose={handleCloseDialog}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">
-          {'Abort current training?'}
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            To start a new training, you have to abort the current training
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDialog}>Cancel</Button>
-          <Button onClick={abortAndShowTraining}>Abort & Show Results</Button>
-          <Button onClick={abortTraining}>Abort</Button>
-        </DialogActions>
-      </Dialog>
-    </Box>
-  )
+        <Dialog
+          open={showDialog}
+          onClose={handleCloseDialog}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">
+            {'Abort current training?'}
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              To start a new training, you have to abort the current training
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleCloseDialog}>Cancel</Button>
+            <Button onClick={abortAndShowTraining}>Abort & Show Results</Button>
+            <Button onClick={abortTraining}>Abort</Button>
+          </DialogActions>
+        </Dialog>
+      </Box>
+    )
+  }
 }
 
 function ModelDescription({ selectedModel, onActiveTraining }) {
