@@ -13,15 +13,15 @@ import Button from '@mui/material/Button'
 import PropTypes from 'prop-types'
 
 export const activationFuncs = [
-  'Relu',
-  'Sigmoid',
-  'Softmax',
-  'Softplus',
-  'Softsign',
-  'Tanh',
-  'Selu',
-  'Elu',
-  'Exponential',
+  'relu',
+  'sigmoid',
+  'softmax',
+  'softplus',
+  'softsign',
+  'tanh',
+  'selu',
+  'elu',
+  'exponential',
 ]
 
 export default function LayerConfigPopup({
@@ -75,7 +75,9 @@ export default function LayerConfigPopup({
         </FormControl>
         <FormControl fullWidth>
           <TextField
+            type="number"
             label="Units"
+            helperText={'This needs to be a number > 0.'}
             value={units || ''}
             onChange={(e) => handleUnitInput(e)}
             sx={{ m: 1 }}
