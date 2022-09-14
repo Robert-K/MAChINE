@@ -64,7 +64,7 @@ export default function SchNetConfig({ schnetParams, updateFunc }) {
             type="number"
             defaultValue={sizes[i]}
             error={sizesError[i]}
-            helperText={sizesError[i] ? 'Must be above zero!' : ''}
+            helperText={sizesError[i] ? 'Must be a number above zero!' : ''}
             onChange={(e) => handleChange(e, i, key, value.min)}
             onMouseOver={(e) => {
               handlePopperOpen(e, value.explanation)
