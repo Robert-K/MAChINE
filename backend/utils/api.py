@@ -8,6 +8,7 @@ import hashlib
 from flask_socketio import SocketIO
 from backend.utils import storage_handler as sh
 from backend.machine_learning import ml_functions as ml
+from backend.utils import molecule_formats as mf
 
 app = Flask(__name__)
 cors = CORS(app)
@@ -106,7 +107,10 @@ class Molecules(Resource):
 
     def patch(self, user_id):
         args = parser.parse_args()
-        return sh.add_molecule(user_id, args['smiles'], args['cml'], args['name']), 201
+        smiles = args['smiles']
+        if mf.is_valid_molecule(smiles):
+            return sh.add_molecule(user_id, args['smiles'], args['cml'], args['name']), 201
+        return None, 422
 
 
 class Fittings(Resource):

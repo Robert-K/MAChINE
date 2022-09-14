@@ -3,6 +3,13 @@ from rdkit import Chem
 from rdkit.Chem import AllChem
 from scipy.spatial.distance import squareform, pdist
 
+def is_valid_molecule(smiles):
+    m = Chem.MolFromSmiles(smiles, sanitize=False)
+    if m is None:
+        return False
+    else:
+        return Chem.SanitizeMol(m, catchErrors=True) == 0
+
 
 def smiles_to_fingerprint(smiles, fingerprint_size=128, radius=2):
     try:

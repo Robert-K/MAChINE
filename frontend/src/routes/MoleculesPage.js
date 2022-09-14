@@ -27,9 +27,9 @@ const gridHeight = '85vh'
 export default function MoleculesPage() {
   const [molecules, setMolecules] = React.useState([])
   const [selectedMolecule, setSelectedMolecule] = React.useState(null)
-  const [errorMessage, setErrorMessage] = React.useState('')
+  const [snackMessage, setSnackMessage] = React.useState('')
   const [showSnackBar, setShowSnackBar] = React.useState(false)
-
+  const [snackSeverity, setSnackSeverity] = React.useState('warning')
   const user = React.useContext(UserContext)
 
   React.useEffect(() => {
@@ -55,9 +55,10 @@ export default function MoleculesPage() {
     }
   }
 
-  function showSnackError(message) {
+  function showSnackMessage(message, severity) {
     setShowSnackBar(true)
-    setErrorMessage(message)
+    setSnackMessage(message)
+    setSnackSeverity(severity)
   }
 
   function saveMolecule(molName, smiles, cml) {
@@ -67,11 +68,22 @@ export default function MoleculesPage() {
     })
 
     if (duplicate) {
-      showSnackError(`Molecule already saved as "${duplicate.name}"`)
+      showSnackMessage(
+        `Molecule already saved as "${duplicate.name}"`,
+        'warning'
+      )
     } else if (!molName || !smiles || !cml) {
-      showSnackError(`Can't save molecule.`)
+      showSnackMessage(`Can't save molecule.`, 'error')
     } else {
-      api.addMolecule(smiles, cml, molName).then(refreshMolecules)
+      api
+        .addMolecule(smiles, cml, molName)
+        .then(refreshMolecules)
+        .catch(() =>
+          showSnackMessage(
+            `Can't save invalid Molecule. Check for Errors in the Editor`,
+            'error'
+          )
+        )
     }
   }
 
@@ -102,9 +114,10 @@ export default function MoleculesPage() {
         </Grid>
       </Grid>
       <SnackBarAlert
-        message={errorMessage}
+        message={snackMessage}
         onClose={() => setShowSnackBar(false)}
         open={showSnackBar}
+        severity={snackSeverity}
       />
     </Box>
   )
