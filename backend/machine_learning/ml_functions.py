@@ -89,8 +89,8 @@ def stop_training(user_id):
 
 
 def is_training_running(user_id):
-    # Change this to allow for more than one training at the same time
-    return bool(live_trainings)
+    # Change this & live_trainings dict to allow for more than one training at the same time
+    return bool(live_trainings.get(user_id))
 
 
 def analyze(user_id, fitting_id, smiles):
