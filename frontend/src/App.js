@@ -55,6 +55,8 @@ const themeLight = createTheme(
           root: {
             backgroundColor: 'rgba(255, 255, 255, .2)',
             backdropFilter: 'blur(5px)',
+            boxShadow:
+              '0px 7px 8px -4px rgb(0 0 0 / 10%), 0px 12px 17px 2px rgb(0 0 0 / 8%), 0px 5px 22px 4px rgb(0 0 0 / 6%)',
           },
         },
       },
