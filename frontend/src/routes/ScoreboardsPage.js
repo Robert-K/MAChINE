@@ -1,93 +1,89 @@
-import React from 'react'
-import {
-  Box,
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Typography,
-} from '@mui/material'
+import * as React from 'react'
+import { Box, Typography } from '@mui/material'
+import { DataGrid } from '@mui/x-data-grid'
+import Api from '../api'
 
 export default function ScoreboardsPage() {
-  prepareContent()
+  const [fittingrows, setFittingRows] = React.useState([])
+  Api.getFittings().then((data) => {
+    setFittingRows(data)
+  })
+
   return (
     <div align="center">
       <Box sx={{ mx: 5, mb: 5, mt: 2 }}>
         <Typography sx={{ fontSize: 20 }}>Best Models</Typography>
-        {table(modelColumns, modelRows)}
+        {DataTable(fittingcolumns, fittingrows)}
         <Typography sx={{ mt: 5, fontSize: 20 }}>Best Molecules</Typography>
-        {table(moleculeColumns, moleculeRows)}
+        {DataTable(moleculecolumns, moleculerows)}
       </Box>
     </div>
   )
 }
 
-const modelColumns = [
-  { id: 'place', label: 'Place', align: 'center' },
-  { id: 'name', label: 'Name', align: 'center' },
-  { id: 'accuracy', label: 'Accuracy', align: 'center' },
-  { id: 'epochs', label: 'Epochs', align: 'center' },
-  { id: 'batch size', label: 'Batch Size', align: 'center' },
+const fittingcolumns = [
+  { field: 'id', headerName: 'ID', sortable: false, width: 180 },
+  { field: 'modelID', headerName: 'Model ID', type: 'number', width: 180 },
+  { field: 'modelName', headerName: 'Model Name', sortable: false, width: 140 },
+  {
+    field: 'datasetID',
+    headerName: 'Dataset ID',
+    type: 'number',
+    width: 90,
+  },
+  {
+    field: 'epochs',
+    headerName: 'Epochs',
+
+    width: 70,
+  },
+  {
+    field: 'batchSize',
+    headerName: 'Batch Size',
+    width: 85,
+  },
+  {
+    field: 'accuracy',
+    headerName: 'Accuracy',
+    width: 70,
+  },
 ]
 
-const moleculeColumns = [
-  { id: 'place', label: 'Place', align: 'center' },
-  { id: 'name', label: 'Name', align: 'center' },
-  { id: 'toxicity', label: 'Toxicity', align: 'center' },
-  { id: 'conductivity', label: 'Conductivity', align: 'center' },
+const moleculecolumns = [
+  {
+    field: 'name',
+    headerName: 'Name',
+    sortable: false,
+    width: 120,
+  },
+  {
+    field: 'smiles',
+    headerName: 'Smiles Code',
+    sortable: false,
+    width: 120,
+  },
+  {
+    field: 'cml',
+    headerName: 'CML Code',
+    sortable: false,
+    width: 130,
+  },
 ]
 
-function createModelData(place, name, accuracy, epochs, batchSize) {
-  return { place, name, accuracy, epochs, batchSize }
-}
+let moleculerows = []
+Api.getMoleculeList().then((data) => {
+  moleculerows = data
+})
 
-function createMoleculeData(place, name, toxicity, conductivity) {
-  return { place, name, toxicity, conductivity }
-}
-
-const modelRows = [createModelData(1, 'ModelTest', 100, 20, 15)]
-
-const moleculeRows = [createMoleculeData(1, 'MoleculeTest', 200, 10)]
-
-function prepareContent() {
-  // modelRows = api.getModelList()
-  // moleculeRows = api.getMoleculeList()
-}
-
-function table(tableColumns, tableRows) {
+function DataTable(columns, rows) {
   return (
-    <Paper>
-      <TableContainer sx={{ maxHeight: 250 }}>
-        <Table stickyHeader aria-label="sticky table">
-          <TableHead>
-            <TableRow>
-              {tableColumns.map((column) => (
-                <TableCell key={column.id} align={column.align}>
-                  {column.label}
-                </TableCell>
-              ))}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {tableRows.map((row) => {
-              return (
-                <TableRow hover role="checkbox" key={row.name}>
-                  {tableColumns.map((column) => {
-                    return (
-                      <TableCell key={column.id} align={column.align}>
-                        {row[column.id]}
-                      </TableCell>
-                    )
-                  })}
-                </TableRow>
-              )
-            })}
-          </TableBody>
-        </Table>
-      </TableContainer>
-    </Paper>
+    <div style={{ height: 600, width: '100%' }}>
+      <DataGrid
+        rows={rows}
+        columns={columns}
+        pageSize={10}
+        hideFooterPagination={true}
+      />
+    </div>
   )
 }
