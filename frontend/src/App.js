@@ -1,7 +1,6 @@
 import React, { useCallback } from 'react'
 import ScoreboardsPage from './routes/ScoreboardsPage.js'
 import ModelsPage from './routes/ModelsPage.js'
-import ModelConfigPage from './routes/ModelConfigPage.js'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import SwaggerPage from './routes/SwaggerPage'
 import '@fontsource/roboto'
@@ -12,7 +11,6 @@ import MoleculesPage from './routes/MoleculesPage'
 import StartPage from './routes/StartPage'
 import TrainingPage from './routes/TrainingPage'
 import DarkModeButton from './components/misc/DarkModeButton'
-import BaseModelsPage from './routes/BaseModelsPage'
 import DatasetPage from './routes/DatasetPage'
 import FittingsPage from './routes/FittingsPage'
 import api from './api'
@@ -252,10 +250,6 @@ export default function App() {
               <Routes>
                 <Route path="/" element={<StartPage onLogin={login} />}></Route>
                 <Route path="/home" element={<HomePage />}></Route>
-                <Route
-                  path="/modelconfig"
-                  element={<ModelConfigPage />}
-                ></Route>
                 <Route path="/models" element={<ModelsPage />}></Route>
                 <Route path="/molecules" element={<MoleculesPage />}></Route>
                 <Route path="/results" element={<ScoreboardsPage />}></Route>
@@ -265,7 +259,6 @@ export default function App() {
                   path="/trained-models"
                   element={<FittingsPage />}
                 ></Route>
-                <Route path="/base-models" element={<BaseModelsPage />}></Route>
                 <Route path="/datasets" element={<DatasetPage />}></Route>
               </Routes>
             </BrowserRouter>
