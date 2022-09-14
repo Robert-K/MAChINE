@@ -96,7 +96,10 @@ export default function ModelConfigPage({ baseModel, addFunc }) {
     setParameters(newParams)
   }
 
-  function saveModel(e) {
+  function saveModel() {
+    if (baseModel.type.name === 'sequential') {
+      parameters.layers.pop()
+    }
     const newModel = {
       name,
       baseModel: baseModel.id,
@@ -176,7 +179,7 @@ export default function ModelConfigPage({ baseModel, addFunc }) {
             </FormControl>
           </CardContent>
           <CardActions>
-            <Button onClick={(e) => saveModel(e)}>Save</Button>
+            <Button onClick={saveModel}>Save</Button>
           </CardActions>
         </Card>
         <Snackbar
