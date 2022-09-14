@@ -7,15 +7,16 @@ import HelpPopper from '../../shared/HelpPopper'
 const settableSizes = {
   depth: {
     min: 1,
-    explanation: 'How many layers the net will have',
+    explanation: 'This defines how many layers your net will have',
   },
   embeddingDimension: {
     min: 1,
-    explanation: 'Dimension of node embedding space',
+    explanation: 'This defines how many values each node corresponds to',
   },
   readoutSize: {
     min: 1,
-    explanation: 'Dimension of last layer?',
+    // todo ask andre
+    explanation: 'ask Andre',
   },
 }
 
@@ -26,8 +27,8 @@ export default function SchNetConfig({ schnetParams, updateFunc }) {
     schnetParams.readoutSize,
   ])
   const [sizesError, setSizesError] = React.useState([false, false, false])
-  const [anchorEl, setAnchorEl] = React.useState(null)
-  const [popperContent, setPopperContent] = React.useState('')
+  const [helpAnchorEl, setHelpAnchorEl] = React.useState(null)
+  const [helpPopperContent, setHelpPopperContent] = React.useState('')
 
   const handleChange = (event, i, min) => {
     const sizesErrorClone = [...sizesError]
@@ -40,17 +41,17 @@ export default function SchNetConfig({ schnetParams, updateFunc }) {
     }
   }
 
-  const handlePopperOpen = (event, content) => {
-    setAnchorEl(event.currentTarget)
-    setPopperContent(content)
+  const handleHelpPopperOpen = (event, content) => {
+    setHelpAnchorEl(event.currentTarget)
+    setHelpPopperContent(content)
   }
 
-  const handlePopperClose = () => {
-    setAnchorEl(null)
-    // setPopperContent('')
+  const handleHelpPopperClose = () => {
+    setHelpAnchorEl(null)
+    // setHelpPopperContent('')
   }
 
-  const open = Boolean(anchorEl)
+  const open = Boolean(helpAnchorEl)
 
   return (
     <div>
@@ -68,10 +69,10 @@ export default function SchNetConfig({ schnetParams, updateFunc }) {
             onChange={(e) => handleChange(e, i, value.min)}
             onMouseOver={(e) => {
               // if (HelpModeButton.getHelpMode()) {
-              handlePopperOpen(e, value.explanation)
+              handleHelpPopperOpen(e, value.explanation)
               // }
             }}
-            onMouseLeave={handlePopperClose}
+            onMouseLeave={handleHelpPopperClose}
             InputLabelProps={{
               shrink: true,
             }}
@@ -88,11 +89,11 @@ export default function SchNetConfig({ schnetParams, updateFunc }) {
           padding: 3,
         }}
         open={open}
-        anchorEl={anchorEl}
+        anchorEl={helpAnchorEl}
         placement={'right'}
-        onClose={handlePopperClose}
+        onClose={handleHelpPopperClose}
       >
-        <HelpPopper id="helpPopper" helpPopperContent={popperContent} />
+        <HelpPopper id="helpPopper" helpPopperContent={helpPopperContent} />
       </Popper>
     </div>
   )

@@ -1,12 +1,21 @@
 import React from 'react'
-import { Box, Card, CardContent, useTheme } from '@mui/material'
+import { Box, Card, CardContent, Typography, useTheme } from '@mui/material'
 import HelpIcon from '@mui/icons-material/Help'
 import PropTypes from 'prop-types'
 
 export default function HelpPopper({ helpPopperContent }) {
   const theme = useTheme()
   return (
-    <Card sx={{ border: 1, borderColor: theme.palette.primary.main }}>
+    <Card
+      sx={{
+        maxWidth: 300,
+        border: 1,
+        borderColor: theme.palette.primary.main,
+        backgroundColor:
+          theme.components.MuiCard.styleOverrides.root.backgroundColor,
+        boxShadow: 0,
+      }}
+    >
       <CardContent>
         <Box
           display="flex"
@@ -16,7 +25,9 @@ export default function HelpPopper({ helpPopperContent }) {
         >
           <HelpIcon />
         </Box>
-        {helpPopperContent}
+        <Typography style={{ textAlign: 'center' }}>
+          {helpPopperContent}
+        </Typography>
       </CardContent>
     </Card>
   )

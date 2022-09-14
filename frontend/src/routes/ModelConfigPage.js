@@ -11,29 +11,37 @@ import {
   FormControl,
   InputLabel,
   MenuItem,
+  Popper,
   Select,
   Snackbar,
   TextField,
 } from '@mui/material'
 import Button from '@mui/material/Button'
+import HelpPopper from '../components/shared/HelpPopper'
 
 export const standardParameters = {
-  optimizer: [
-    'Adam',
-    'Adamax',
-    'Stochastic Gradient Descent',
-    'RMSprop',
-    'Adadelta',
-    'Adagrad',
-    'NAdam',
-    'Ftrl',
-  ],
-  lossFunction: [
-    'Binary Cross Entropy',
-    'Huber Loss',
-    'Mean Absolute Error',
-    'Mean Squared Error',
-  ],
+  optimizer: {
+    options: [
+      'Adam',
+      'Adamax',
+      'Stochastic Gradient Descent',
+      'RMSprop',
+      'Adadelta',
+      'Adagrad',
+      'NAdam',
+      'Ftrl',
+    ],
+    explanation: 'todo opt',
+  },
+  lossFunction: {
+    options: [
+      'Binary Cross Entropy',
+      'Huber Loss',
+      'Mean Absolute Error',
+      'Mean Squared Error',
+    ],
+    explanation: 'todo loss',
+  },
 }
 
 export const toNaturalString = (str) => {
@@ -48,6 +56,8 @@ export default function ModelConfigPage({ baseModel, addFunc }) {
   const [name, setName] = React.useState('')
   const [showSnackBar, setShowSnackBar] = React.useState(false)
   const [errorMessage, setErrorMessage] = React.useState('')
+  const [helpAnchorEl, setHelpAnchorEl] = React.useState(null)
+  const [helpPopperContent, setHelpPopperContent] = React.useState('')
 
   function renderTypeSpecificComponents() {
     const children = {}
@@ -71,7 +81,11 @@ export default function ModelConfigPage({ baseModel, addFunc }) {
           embeddingDimension: parameters.embeddingDimension,
           readoutSize: parameters.readoutSize,
         }
-        children.visual = <div>Nothing to see here</div>
+        children.visual = (
+          <div>
+            <img src={`graph.png`} alt="" />
+          </div>
+        )
         children.config = (
           <SchNetConfig
             schnetParams={schnetParams}
@@ -121,6 +135,18 @@ export default function ModelConfigPage({ baseModel, addFunc }) {
     setName(e.target.value)
   }
 
+  const handleHelpPopperOpen = (event, content) => {
+    setHelpAnchorEl(event.currentTarget)
+    setHelpPopperContent(content)
+  }
+
+  const handleHelpPopperClose = () => {
+    setHelpAnchorEl(null)
+    // setHelpPopperContent('')
+  }
+
+  const open = Boolean(helpAnchorEl)
+
   return (
     <Grid container>
       <Grid item xs={8}>
@@ -131,25 +157,48 @@ export default function ModelConfigPage({ baseModel, addFunc }) {
           <CardContent>
             {Object.entries(standardParameters).map(([param, value], i) => {
               return (
-                <FormControl key={i} fullWidth>
-                  <InputLabel sx={{ m: 2 }}>
-                    {toNaturalString(param)}
-                  </InputLabel>
-                  <Select
-                    value={parameters[param] || ''}
-                    label={toNaturalString(param)}
-                    onChange={(event) => handleChange(event, param)}
-                    sx={{ m: 2 }}
+                <React.Fragment key={param}>
+                  <FormControl key={i} fullWidth>
+                    <InputLabel sx={{ m: 2 }}>
+                      {toNaturalString(param)}
+                    </InputLabel>
+                    <Select
+                      value={parameters[param] || ''}
+                      label={toNaturalString(param)}
+                      onChange={(event) => handleChange(event, param)}
+                      sx={{ m: 2 }}
+                      /** onMouseOver={(e) => {
+                        handleHelpPopperOpen(e, value.explanation)
+                      }}
+                      onMouseLeave={handleHelpPopperClose} */
+                    >
+                      {value.options.map((valueEntry, i) => {
+                        return (
+                          <MenuItem key={i} value={valueEntry}>
+                            {valueEntry}
+                          </MenuItem>
+                        )
+                      })}
+                    </Select>
+                  </FormControl>
+                  <Popper
+                    id="mouse-over-popper-standard"
+                    sx={{
+                      pointerEvents: 'none',
+                      padding: 3,
+                      boxShadow: 0,
+                    }}
+                    open={open}
+                    anchorEl={helpAnchorEl}
+                    placement={'right'}
+                    onClose={handleHelpPopperClose}
                   >
-                    {value.map((valueEntry, i) => {
-                      return (
-                        <MenuItem key={i} value={valueEntry}>
-                          {valueEntry}
-                        </MenuItem>
-                      )
-                    })}
-                  </Select>
-                </FormControl>
+                    <HelpPopper
+                      id="helpPopper-standard"
+                      helpPopperContent={helpPopperContent}
+                    />
+                  </Popper>
+                </React.Fragment>
               )
             })}
 
