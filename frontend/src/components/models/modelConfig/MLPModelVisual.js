@@ -76,14 +76,11 @@ export default function MLPModelVisual({
       borderWidth: 2,
       font: {
         face: 'Poppins',
-        color: theme.modelVisual.fontColor,
+        color: 'black',
         size: 20,
         vadjust: 3,
       },
       shape: 'box',
-      color: {
-        background: theme.modelVisual.nodeColor,
-      },
       size: 39,
     },
     groups: {},
