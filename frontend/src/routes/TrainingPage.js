@@ -23,10 +23,11 @@ export default function TrainingPage() {
 
   const [epochsError, setEpochsError] = React.useState(false)
   const handleEpochsChange = (event) => {
-    const tempEpochs = event.target.value
-    training.setSelectedEpochs(tempEpochs)
-    if (tempEpochs > 0) {
-      // TODO: Add allowed range of values
+    training.setSelectedEpochs(event.target.value)
+  }
+
+  const checkEpochs = (epochs) => {
+    if (epochs > 0) {
       setEpochsError(false)
     } else {
       setEpochsError(true)
@@ -35,15 +36,31 @@ export default function TrainingPage() {
 
   const [batchSizeError, setBatchSizeError] = React.useState(false)
   const handleBatchSizeChange = (event) => {
-    const tempBatchSize = event.target.value
-    training.setSelectedBatchSize(tempBatchSize)
-    if (tempBatchSize > 0) {
-      // TODO: Add allowed range of values
+    training.setSelectedBatchSize(event.target.value)
+  }
+
+  const checkBatchSize = (batchSize) => {
+    if (batchSize > 0) {
       setBatchSizeError(false)
     } else {
       setBatchSizeError(true)
     }
   }
+
+  const initialMount = React.useRef(true)
+
+  React.useEffect(() => {
+    checkEpochs(training.selectedEpochs)
+    checkBatchSize(training.selectedBatchSize)
+    if (initialMount.current) {
+      initialMount.current = false
+    } else {
+      training.setTrainingFinished(false)
+    }
+    return () => {
+      training.setTrainingFinished(false)
+    }
+  }, [training.selectedEpochs, training.selectedBatchSize])
 
   const [startStopButton, setStartStopButton] = React.useState('Start')
 
@@ -56,19 +73,6 @@ export default function TrainingPage() {
       setStartStopButton('Start')
     }
   }, [training.trainingStatus])
-
-  const initialMount = React.useRef(true)
-
-  React.useEffect(() => {
-    if (initialMount.current) {
-      initialMount.current = false
-    } else {
-      training.setTrainingFinished(false)
-    }
-    return () => {
-      training.setTrainingFinished(false)
-    }
-  }, [training.selectedEpochs, training.selectedBatchSize])
 
   const handleStartStop = () => {
     if (training.trainingStatus) {
