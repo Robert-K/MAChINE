@@ -104,7 +104,7 @@ export default function MLPModelVisual({
     network.on('doubleClick', (eventProps) =>
       onDoubleClick(eventProps, network, graph)
     )
-  }, [options, layers])
+  }, [options, layers, theme.darkMode])
 
   /**
    * Handles double click on network canvas
