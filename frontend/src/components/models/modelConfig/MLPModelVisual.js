@@ -1,4 +1,4 @@
-import { Card, CardContent, Popper, useTheme } from '@mui/material'
+import { Popper, useTheme } from '@mui/material'
 import React from 'react'
 import PropTypes from 'prop-types'
 import * as vis from 'vis-data'
@@ -254,39 +254,31 @@ export default function MLPModelVisual({
   }
 
   return (
-    <Card sx={{ m: 2 }}>
-      <CardContent
-        sx={{
-          border: '1px',
-          borderColor: theme.palette.primary.main,
-          width: '100%',
-        }}
-      >
-        <div id="network" style={{ height: '80vh' }}></div>
-        <Popper
-          id="popper"
-          open={open}
-          anchorEl={document.getElementById('network')}
-          placement="top-end"
-          modifiers={[
-            {
-              name: 'offset',
-              enabled: true,
-              options: {
-                offset,
-              },
+    <div style={{ height: '100%' }}>
+      <div id="network" style={{ height: '100%' }}></div>
+      <Popper
+        id="popper"
+        open={open}
+        anchorEl={document.getElementById('network')}
+        placement="top-end"
+        modifiers={[
+          {
+            name: 'offset',
+            enabled: true,
+            options: {
+              offset,
             },
-          ]}
-        >
-          <LayerConfigPopup
-            id="LayerConfig"
-            passConfig={configureLayer}
-            cancelConfig={cancelConfig}
-            defaultActivation={defaultActivation}
-          />
-        </Popper>
-      </CardContent>
-    </Card>
+          },
+        ]}
+      >
+        <LayerConfigPopup
+          id="LayerConfig"
+          passConfig={configureLayer}
+          cancelConfig={cancelConfig}
+          defaultActivation={defaultActivation}
+        />
+      </Popper>
+    </div>
   )
 }
 
