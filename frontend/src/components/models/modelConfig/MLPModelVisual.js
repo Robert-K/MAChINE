@@ -148,7 +148,7 @@ export default function MLPModelVisual({
   }
 
   function beforeDraw(ctx, network) {
-    ctx.font = 'Poppins'
+    ctx.font = '18px Poppins'
     ctx.textAlign = 'center'
     ctx.fillStyle = theme.darkMode ? '#ffffff' : '#000000'
     layers.forEach((layer, index) => {
