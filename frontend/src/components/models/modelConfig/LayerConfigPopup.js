@@ -13,6 +13,7 @@ import Button from '@mui/material/Button'
 import PropTypes from 'prop-types'
 
 export const activationFuncs = [
+  'linear',
   'relu',
   'sigmoid',
   'softmax',
@@ -59,6 +60,7 @@ export default function LayerConfigPopup({
         <FormControl fullWidth>
           <InputLabel sx={{ m: 1 }}>Activation Function</InputLabel>
           <Select
+            required
             label="Activation Function"
             value={activation || defaultActivation}
             onChange={(event) => handleSelect(event)}
