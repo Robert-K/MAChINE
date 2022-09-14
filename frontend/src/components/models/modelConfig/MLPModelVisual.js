@@ -238,7 +238,7 @@ export default function MLPModelVisual({
         layer,
         ...layers.slice(insertionIndex + 1, layers.length),
       ]
-      updateFunc(newLayers)
+      updateFunc('layers', newLayers)
       setLayers(newLayers)
     }
   }
