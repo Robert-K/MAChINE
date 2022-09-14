@@ -46,18 +46,32 @@ export default function HomePage() {
           can:
         </Typography>
         <Typography variant="h6" color="text.secondary" paragraph>
-          - Train a model to predict the binding affinity of a ligand to a
-          protein
+          -{' '}
+          <Box display="inline" color="text.primary">
+            Draw
+          </Box>{' '}
+          any molecule imaginable and preview it in 3D
         </Typography>
         <Typography variant="h6" color="text.secondary" paragraph>
-          - Predict the binding affinity of a ligand to a protein
+          -{' '}
+          <Box display="inline" color="text.primary">
+            Configure
+          </Box>{' '}
+          and train machine learning models to predict properties of molecules
         </Typography>
         <Typography variant="h6" color="text.secondary" paragraph>
-          - Visualize the binding site of a ligand to a protein
+          -{' '}
+          <Box display="inline" color="text.primary">
+            Analyze
+          </Box>{' '}
+          your molecules for various properties with the models you trained
         </Typography>
         <Typography variant="h6" color="text.secondary" paragraph>
-          - Compare the binding affinity of a ligand to a protein with other
-          ligands
+          -{' '}
+          <Box display="inline" color="text.primary">
+            Compare
+          </Box>{' '}
+          your molecules and models to other users&apos; creations
         </Typography>
       </Box>
       <Box
