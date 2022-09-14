@@ -94,8 +94,6 @@ export default function MLPModelVisual({
     },
   })
 
-  // TODO: fix dark mode interaction
-  // TODO: add layer box labels
   // TODO: [optional] onSelectNode -> LayerConfigPopup to change unitCount/activation
 
   React.useEffect(() => {
@@ -150,6 +148,9 @@ export default function MLPModelVisual({
   }
 
   function beforeDraw(ctx, network) {
+    ctx.font = 'Poppins'
+    ctx.textAlign = 'center'
+    ctx.fillStyle = theme.darkMode ? '#ffffff' : '#000000'
     layers.forEach((layer, index) => {
       const topNodePos = network.getPosition(`${index}.1`)
       const lowestNodePos = network.getPosition(`${index}.${layer.units}`)
@@ -164,6 +165,9 @@ export default function MLPModelVisual({
         false,
         true
       )
+      if (layer.activation) {
+        ctx.fillText(layer.activation, topNodePos.x, topNodePos.y - 60)
+      }
     })
   }
 
