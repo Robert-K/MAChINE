@@ -67,7 +67,7 @@ export default function SchNetConfig({ schnetParams, updateFunc }) {
             helperText={sizesError[i] ? 'Must be above zero!' : ''}
             onChange={(e) => handleChange(e, i, value.min)}
             onMouseOver={(e) => {
-              // if (HelpModeSwitch.getHelpMode()) {
+              // if (HelpModeButton.getHelpMode()) {
               handlePopperOpen(e, value.explanation)
               // }
             }}
