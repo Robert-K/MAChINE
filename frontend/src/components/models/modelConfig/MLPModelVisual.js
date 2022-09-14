@@ -39,6 +39,8 @@ function roundRect(
   } else {
     radius = { ...{ tl: 0, tr: 0, br: 0, bl: 0 }, ...radius }
   }
+  ctx.shadowColor = 'rgba(0, 0, 0, 0.1)'
+  ctx.shadowBlur = 40
   ctx.beginPath()
   ctx.moveTo(x + radius.tl, y)
   ctx.lineTo(x + width - radius.tr, y)
@@ -56,6 +58,7 @@ function roundRect(
   if (stroke) {
     ctx.stroke()
   }
+  ctx.shadowColor = 'rgba(0, 0, 0, 0)'
 }
 
 export default function MLPModelVisual({
@@ -150,11 +153,11 @@ export default function MLPModelVisual({
   function beforeDraw(ctx, network) {
     ctx.font = '18px Poppins'
     ctx.textAlign = 'center'
-    ctx.fillStyle = theme.darkMode ? '#ffffff' : '#000000'
     layers.forEach((layer, index) => {
       const topNodePos = network.getPosition(`${index}.1`)
       const lowestNodePos = network.getPosition(`${index}.${layer.units}`)
       ctx.strokeStyle = theme.modelVisual.borderColor
+      ctx.fillStyle = theme.modelVisual.backgroundColor
       roundRect(
         ctx,
         topNodePos.x - 50,
@@ -162,10 +165,11 @@ export default function MLPModelVisual({
         100,
         lowestNodePos.y - topNodePos.y + 100,
         7,
-        false,
+        true,
         true
       )
       if (layer.activation) {
+        ctx.fillStyle = theme.modelVisual.fontColor
         ctx.fillText(layer.activation, topNodePos.x, topNodePos.y - 60)
       }
     })
