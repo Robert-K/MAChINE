@@ -97,16 +97,16 @@ export default function HomePage() {
             />
             <CardContent>
               <Typography gutterBottom varian="h5" component="div">
-                Medium-sized GECKOs
+                Medium-sized Geckos
               </Typography>
               <Typography
                 varaint="body2"
                 color="text.secondary"
                 sx={{ maxWidth: 300 }}
               >
-                Dieses Projekt wurde von der Gruppe <q>Medium-sized Geckos</q>{' '}
-                erstellt, die größtenteils aus Mitgliedern der O-Phasengruppe{' '}
-                <q>Team GECKO</q> besteht
+                This PSE project was created by the &apos;Medium-sized
+                Geckos&apos; group, which consists mostly of members of the
+                O-Phase group &apos;Team Gecko&apos;.
               </Typography>
             </CardContent>
             <CardActions>
@@ -141,10 +141,9 @@ export default function HomePage() {
                 color="text.secondary"
                 sx={{ maxWidth: 300 }}
               >
-                Die AiMat (Artificial Intelligence for Materials Sciences)
-                Gruppe des KIT entwickelt KI and machine learning Lösungen für
-                die Materialwissenschaften und ist Auftraggeber für diese
-                Webanwendung
+                The AiMat (Artificial Intelligence for Materials sciences) group
+                of KIT develops AI and machine learning solutions for the
+                materials sciences and is the client for this web application.
               </Typography>
             </CardContent>
             <CardActions>
