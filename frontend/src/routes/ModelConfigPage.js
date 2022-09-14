@@ -55,7 +55,7 @@ export default function ModelConfigPage({ baseModel, addFunc }) {
   const [showSnackBar, setShowSnackBar] = React.useState(false)
   const [errorMessage, setErrorMessage] = React.useState('')
 
-  const modeltypeComponents = {
+  const modelTypeSpecificComponents = {
     sequential: {
       visual: () => {
         return (
@@ -136,7 +136,7 @@ export default function ModelConfigPage({ baseModel, addFunc }) {
     <Grid sx={{ p: 2, height: '85vh' }} container>
       <Grid item xs={8} sx={{ height: '100%' }}>
         <Card sx={{ height: '100%' }}>
-          {modeltypeComponents[baseModel.type.name].visual()}
+          {modelTypeSpecificComponents[baseModel.type.name].visual()}
         </Card>
       </Grid>
       <Grid item xs={4}>
@@ -166,7 +166,7 @@ export default function ModelConfigPage({ baseModel, addFunc }) {
               )
             })}
 
-            {modeltypeComponents[baseModel.type.name].config()}
+            {modelTypeSpecificComponents[baseModel.type.name].config()}
 
             <FormControl>
               <TextField
