@@ -84,7 +84,8 @@ export default function TrainingPage() {
         training.selectedModel.id,
         training.selectedLabels,
         training.selectedEpochs,
-        training.selectedBatchSize
+        training.selectedBatchSize,
+        setLoadTraining
       )
     }
   }
