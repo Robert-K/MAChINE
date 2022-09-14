@@ -30,13 +30,14 @@ export default function SchNetConfig({ schnetParams, updateFunc }) {
   const [helpAnchorEl, setHelpAnchorEl] = React.useState(null)
   const [helpPopperContent, setHelpPopperContent] = React.useState('')
 
-  const handleChange = (event, i, min) => {
+  const handleChange = (event, i, key, min) => {
     const sizesErrorClone = [...sizesError]
     sizesErrorClone[i] = event.target.value < min
     setSizesError(sizesErrorClone)
     if (event.target.value >= min) {
       const sizesClone = [...sizes]
       sizesClone[i] = event.target.value
+      updateFunc(key, event.target.value)
       setSizes(sizesClone)
     }
   }
@@ -66,7 +67,7 @@ export default function SchNetConfig({ schnetParams, updateFunc }) {
             defaultValue={sizes[i]}
             error={sizesError[i]}
             helperText={sizesError[i] ? 'Must be above zero!' : ''}
-            onChange={(e) => handleChange(e, i, value.min)}
+            onChange={(e) => handleChange(e, i, key, value.min)}
             onMouseOver={(e) => {
               // if (HelpModeButton.getHelpMode()) {
               handleHelpPopperOpen(e, value.explanation)
