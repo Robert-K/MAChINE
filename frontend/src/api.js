@@ -136,7 +136,7 @@ export default {
       })
   },
 
-  trainModel(datasetID, modelID, labels, epochs, batchSize) {
+  trainModel(datasetID, modelID, labels, epochs, batchSize, callback) {
     socket.emit(
       'start_training',
       userID,
@@ -144,7 +144,8 @@ export default {
       modelID,
       labels,
       epochs,
-      batchSize
+      batchSize,
+      callback
     )
   },
 
