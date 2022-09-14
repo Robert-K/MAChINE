@@ -86,10 +86,6 @@ export default function ModelsPage() {
     navigate('/training')
   }
 
-  const handleOpenDialog = () => {
-    setShowDialog(true)
-  }
-
   const abortTraining = () => {
     training.stopTraining()
     handleCloseDialog()
@@ -119,16 +115,10 @@ export default function ModelsPage() {
           </Grid>
           <Grid item xs={9}>
             <ModelDescription
-              selectedModel={modelList.at(selectedIndex)}
-              onActiveTraining={handleOpenDialog}
+              selectedModel={modelList[selectedIndex]}
+              onActiveTraining={() => setShowDialog(true)}
             />
           </Grid>
-        </Grid>
-        <Grid item xs={9}>
-          <ModelDescription
-            selectedModel={modelList[selectedIndex]}
-            onActiveTraining={() => setShowDialog(true)}
-          />
         </Grid>
         <Dialog
           open={showDialog}
