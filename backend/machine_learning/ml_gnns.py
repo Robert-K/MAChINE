@@ -21,7 +21,7 @@ def create_schnet_with_dataset(parameters, dataset, labels, loss, optimizer, met
     model = make_schnet(
         input_node_shape=[None, node_dim],
         input_edge_shape=[None, edge_dim],
-        embedding_dim=int(parameters.get('embeddingDim')),
+        embedding_dim=int(parameters.get('embeddingDimension')),
         readout_size=int(parameters.get('readoutSize')),
         depth=int(parameters.get('depth')),
     )
