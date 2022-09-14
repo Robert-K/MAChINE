@@ -108,7 +108,7 @@ const themeDark = createTheme(
     modelVisual: {
       borderColor: '#707070',
       fontColor: 'white',
-      backgroundColor: '#242424',
+      backgroundColor: '#2b2b2b',
     },
     home: {
       mascot: 'molele-dark.svg',
