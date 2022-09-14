@@ -55,6 +55,11 @@ export default function ModelsPage() {
     setShowDialog(false)
   }
 
+  const abortAndShowTraining = () => {
+    abortTraining()
+    navigate('/training')
+  }
+
   const abortTraining = () => {
     training.stopTraining()
     handleCloseDialog()
@@ -102,6 +107,7 @@ export default function ModelsPage() {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseDialog}>Cancel</Button>
+          <Button onClick={abortAndShowTraining}>Abort & Show Results</Button>
           <Button onClick={abortTraining}>Abort</Button>
         </DialogActions>
       </Dialog>
