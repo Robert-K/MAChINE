@@ -17,6 +17,7 @@ import {
   ListItem,
   ListItemButton,
   ListItemText,
+  Popper,
   Typography,
   useTheme,
 } from '@mui/material'
@@ -30,6 +31,8 @@ import api from '../api'
 import TrainingContext from '../context/TrainingContext'
 import UserContext from '../context/UserContext'
 import BaseModelsPage from './BaseModelsPage'
+import HelpPopper from '../components/shared/HelpPopper'
+import HelpContext from '../context/HelpContext'
 
 const gridHeight = '80vh'
 /**
@@ -40,9 +43,14 @@ export default function ModelsPage() {
   const [modelList, setModelList] = React.useState([])
   const [showDialog, setShowDialog] = React.useState(false)
   const [creatingModel, setCreatingModel] = React.useState(false)
+  const [helpAnchorEl, setHelpAnchorEl] = React.useState(null)
+
+  const [helpPopperContent, setHelpPopperContent] = React.useState('')
+
   const user = React.useContext(UserContext)
   const training = React.useContext(TrainingContext)
   const navigate = useNavigate()
+  const helpMode = React.useContext(HelpContext)
 
   React.useEffect(() => {
     refreshModels()
@@ -91,6 +99,18 @@ export default function ModelsPage() {
     handleCloseDialog()
   }
 
+  const handleHelpPopperOpen = (event, content) => {
+    setHelpAnchorEl(event.currentTarget)
+    setHelpPopperContent(content)
+  }
+
+  const handleHelpPopperClose = () => {
+    setHelpAnchorEl(null)
+    // setHelpPopperContent('')
+  }
+
+  const open = Boolean(helpAnchorEl)
+
   if (creatingModel) {
     return <BaseModelsPage addFunc={saveModel} />
   } else {
@@ -103,7 +123,20 @@ export default function ModelsPage() {
           alignItems="stretch"
           columnSpacing={2}
         >
-          <Grid item xs={3}>
+          <Grid
+            item
+            xs={3}
+            onMouseOver={(e) => {
+              if (helpMode) {
+                console.log(helpMode)
+                handleHelpPopperOpen(
+                  e,
+                  "This is a list of all models you have created so far. Click on any one of them to get more information about it, or click on 'Add a model' to add a new one to the list!"
+                )
+              }
+            }}
+            onMouseLeave={handleHelpPopperClose}
+          >
             <SelectionList
               updateFunc={updateSelection}
               elements={modelList}
@@ -113,7 +146,17 @@ export default function ModelsPage() {
               height={gridHeight}
             ></SelectionList>
           </Grid>
-          <Grid item xs={9}>
+          <Grid
+            item
+            xs={9}
+            onMouseOver={(e) => {
+              handleHelpPopperOpen(
+                e,
+                "Here you see all relevant information of your model. On the top, you can see the model's name, as well as which base model was used to create it. Since you can train every model multiple times, you can see all of its trained models listed here. For each trained model, you can see which dataset was used to train it, how long it was trained (epochs), how big the data bundles were that were fed into the network (batch size), and how good the it is (accuracy). To start a new training with your selected model, simply click on 'Select training data'!"
+              )
+            }}
+            onMouseLeave={handleHelpPopperClose}
+          >
             <ModelDescription
               selectedModel={modelList[selectedIndex]}
               onActiveTraining={() => setShowDialog(true)}
@@ -140,6 +183,19 @@ export default function ModelsPage() {
             <Button onClick={abortTraining}>Abort</Button>
           </DialogActions>
         </Dialog>
+        <Popper
+          id="mouse-over-popper"
+          sx={{
+            pointerEvents: 'none',
+            padding: 3,
+          }}
+          open={open}
+          anchorEl={helpAnchorEl}
+          placement={'right'}
+          onClose={handleHelpPopperClose}
+        >
+          <HelpPopper id="helpPopper" helpPopperContent={helpPopperContent} />
+        </Popper>
       </Box>
     )
   }
@@ -230,7 +286,7 @@ function RenderFitting({ fitting }) {
           {open ? <ExpandLess /> : <ExpandMore />}
           <ListItemText
             primary={`Dataset ID: ${fitting.datasetID}`}
-            secondary={`Fitting ID: ${fitting.id}`}
+            secondary={`Trained model ID: ${fitting.id}`}
             sx={{ color: theme.palette.primary.main }}
           ></ListItemText>
         </ListItemButton>
