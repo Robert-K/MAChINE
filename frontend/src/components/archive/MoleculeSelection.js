@@ -9,7 +9,7 @@ import {
   ListItemButton,
   ListItemText,
 } from '@mui/material'
-import stringToColor from '../../utils'
+import { stringToColor } from '../../utils'
 import Button from '@mui/material/Button'
 import PropTypes from 'prop-types'
 import DetailsPopper from '../shared/DetailsPopper'

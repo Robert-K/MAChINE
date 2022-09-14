@@ -21,6 +21,8 @@ import { TrainingProvider } from './context/TrainingContext'
 import Particles from 'react-tsparticles'
 import { loadFull } from 'tsparticles'
 import { deepmerge } from '@mui/utils'
+import { handleErrors } from './utils'
+import '@fontsource/poppins'
 
 const themeBase = {
   palette: {
@@ -53,6 +55,8 @@ const themeLight = createTheme(
           root: {
             backgroundColor: 'rgba(255, 255, 255, .2)',
             backdropFilter: 'blur(5px)',
+            boxShadow:
+              '0px 7px 8px -4px rgb(0 0 0 / 10%), 0px 12px 17px 2px rgb(0 0 0 / 8%), 0px 5px 22px 4px rgb(0 0 0 / 6%)',
           },
         },
       },
@@ -60,6 +64,15 @@ const themeLight = createTheme(
     apexcharts: {
       shade: 'light',
     },
+    modelVisual: {
+      borderColor: '#c4c4c4',
+      fontColor: 'black',
+      nodeColor: '#ffffff',
+    },
+    home: {
+      mascot: 'molele.svg',
+    },
+    darkTheme: false,
   })
 )
 
@@ -92,12 +105,30 @@ const themeDark = createTheme(
     apexcharts: {
       shade: 'dark',
     },
+    modelVisual: {
+      borderColor: '#707070',
+      fontColor: 'black',
+      nodeColor: '#242424',
+    },
+    home: {
+      mascot: 'molele-dark.svg',
+    },
+    darkMode: true,
   })
 )
 
 export default function App() {
-  const [darkMode, setDarkMode] = React.useState(false)
+  const [darkMode, setDarkMode] = React.useState(
+    window.matchMedia &&
+      window.matchMedia('(prefers-color-scheme: dark)').matches
+  )
   const [userName, setUserName] = React.useState(null)
+
+  window
+    .matchMedia('(prefers-color-scheme: dark)')
+    .addEventListener('change', (event) => {
+      setDarkMode(event.matches ? 'dark' : 'light')
+    })
 
   const particlesInit = useCallback(async (engine) => {
     console.log(engine)
@@ -138,6 +169,8 @@ export default function App() {
     setDarkMode(value)
   }
 
+  handleErrors()
+
   return (
     <div className="App">
       <ThemeProvider theme={darkMode ? themeDark : themeLight}>
@@ -148,7 +181,10 @@ export default function App() {
               <Navbar
                 logoutFunction={logout}
                 darkModeButton={
-                  <DarkModeButton setModeFunction={changeDarkMode} />
+                  <DarkModeButton
+                    initialDarkMode={darkMode}
+                    setModeFunction={changeDarkMode}
+                  />
                 }
               />
               <Particles

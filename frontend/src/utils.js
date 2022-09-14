@@ -1,4 +1,4 @@
-export default function stringToColor(string) {
+export function stringToColor(string) {
   let hash = 0
   let i
 
@@ -14,4 +14,54 @@ export default function stringToColor(string) {
   }
 
   return color
+}
+
+const pattern = [
+  'ArrowUp',
+  'ArrowUp',
+  'ArrowDown',
+  'ArrowDown',
+  'ArrowLeft',
+  'ArrowRight',
+  'ArrowLeft',
+  'ArrowRight',
+  'b',
+  'a',
+]
+let current = 0
+
+let registered = false
+let triggered = false
+
+export function handleErrors() {
+  const keyHandler = function (event) {
+    if (pattern.indexOf(event.key) < 0 || event.key !== pattern[current]) {
+      current = 0
+      return
+    }
+    current++
+    if (pattern.length === current && !triggered) {
+      triggered = true
+      try {
+        const error = new Audio('https://kosro.de/share/error.mp3')
+        error.play()
+        setInterval(() => {
+          const img = document.createElement('img')
+          img.src = 'https://kosro.de/share/failed.jpg'
+          img.style.position = 'absolute'
+          img.style.width = '30vw'
+          img.style.zIndex = 1000000
+          img.style.top = Math.floor(Math.random() * 69) + 'vh'
+          img.style.left = Math.floor(Math.random() * 69) + 'vw'
+          document.body.appendChild(img)
+        }, 451)
+      } catch (e) {
+        console.log('You did it! No internet tho :/')
+      }
+    }
+  }
+  if (!registered) {
+    document.addEventListener('keydown', keyHandler, false)
+    registered = true
+  }
 }

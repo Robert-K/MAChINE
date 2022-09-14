@@ -9,11 +9,13 @@ import React from 'react'
 import { Container } from '@mui/material'
 import BaseModelCard from '../components/models/BaseModelCard'
 import Grid from '@mui/material/Grid'
-import PropTypes from 'prop-types'
 import api from '../api'
+import PropTypes from 'prop-types'
+import ModelConfigPage from './ModelConfigPage'
 
-export default function BaseModelsPage() {
+export default function BaseModelsPage({ addFunc }) {
   const [modelArray, setModelArray] = React.useState([])
+  const [selectedModel, setSelectedModel] = React.useState(null)
 
   React.useEffect(() => {
     api.getBaseModels().then((sentModels) => {
@@ -22,17 +24,29 @@ export default function BaseModelsPage() {
     })
   }, [])
 
-  return (
-    <Container>
-      <Grid container spacing={4} marginTop={1} marginBottom={5}>
-        {modelArray.map((baseModel) => (
-          <BaseModelCard baseModel={baseModel} key={baseModel.id} />
-        ))}
-      </Grid>
-    </Container>
-  )
+  const handleClick = (baseModel) => {
+    setSelectedModel(baseModel)
+  }
+
+  if (selectedModel) {
+    return <ModelConfigPage baseModel={selectedModel} addFunc={addFunc} />
+  } else {
+    return (
+      <Container>
+        <Grid container spacing={4} marginTop={1} marginBottom={5}>
+          {modelArray.map((baseModel) => (
+            <BaseModelCard
+              baseModel={baseModel}
+              key={baseModel.id}
+              clickFunc={handleClick}
+            />
+          ))}
+        </Grid>
+      </Container>
+    )
+  }
 }
 
 BaseModelsPage.propTypes = {
-  baseModels: PropTypes.array,
+  addFunc: PropTypes.func,
 }

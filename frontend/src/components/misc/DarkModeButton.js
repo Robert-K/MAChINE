@@ -4,8 +4,8 @@ import LightModeIcon from '@mui/icons-material/LightMode'
 import React from 'react'
 import PropTypes from 'prop-types'
 
-export default function DarkModeButton({ setModeFunction }) {
-  const [darkMode, setDarkMode] = React.useState(false)
+export default function DarkModeButton({ initialDarkMode, setModeFunction }) {
+  const [darkMode, setDarkMode] = React.useState(initialDarkMode)
 
   const changeDarkMode = (value) => {
     setDarkMode(value)
@@ -26,5 +26,6 @@ export default function DarkModeButton({ setModeFunction }) {
 }
 
 DarkModeButton.propTypes = {
+  initialDarkMode: PropTypes.bool,
   setModeFunction: PropTypes.func,
 }
