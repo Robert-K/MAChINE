@@ -1,13 +1,11 @@
 import React from 'react'
 import {
-  Alert,
   Box,
   Button,
   Card,
   CardActions,
   CardContent,
   Grid,
-  Snackbar,
   TextField,
 } from '@mui/material'
 import SelectionList from '../components/shared/SelectionList'
@@ -21,6 +19,7 @@ import PropTypes from 'prop-types'
 import MoleculeEditor from '../components/molecules/MoleculeEditor'
 import MoleculeRenderer from '../components/molecules/MoleculeRenderer'
 import Molecule from '../internal/Molecule'
+import SnackBarAlert from '../components/misc/SnackBarAlert'
 
 const gridHeight = '85vh'
 export default function MoleculesPage() {
@@ -100,19 +99,11 @@ export default function MoleculesPage() {
           />
         </Grid>
       </Grid>
-      <Snackbar
-        open={showSnackBar}
+      <SnackBarAlert
+        message={errorMessage}
         onClose={() => setShowSnackBar(false)}
-        key="error-snack"
-      >
-        <Alert
-          onClose={() => setShowSnackBar(false)}
-          severity="warning"
-          sx={{ width: '100%' }}
-        >
-          {errorMessage}
-        </Alert>
-      </Snackbar>
+        open={showSnackBar}
+      />
     </Box>
   )
 }
