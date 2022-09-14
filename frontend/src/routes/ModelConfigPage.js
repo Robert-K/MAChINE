@@ -20,22 +20,26 @@ import Button from '@mui/material/Button'
 import SchNetVisual from '../components/models/modelConfig/SchNetVisual'
 
 export const standardParameters = {
-  optimizer: [
-    'Adam',
-    'Adamax',
-    'Stochastic Gradient Descent',
-    'RMSprop',
-    'Adadelta',
-    'Adagrad',
-    'NAdam',
-    'Ftrl',
-  ],
-  lossFunction: [
-    'Binary Cross Entropy',
-    'Huber Loss',
-    'Mean Absolute Error',
-    'Mean Squared Error',
-  ],
+  optimizer: {
+    options: [
+      'Adam',
+      'Adamax',
+      'Stochastic Gradient Descent',
+      'RMSprop',
+      'Adadelta',
+      'Nadam',
+      'Adagrad',
+      'Ftrl',
+    ],
+  },
+  lossFunction: {
+    options: [
+      'Binary Cross Entropy',
+      'Huber Loss',
+      'Mean Absolute Error',
+      'Mean Squared Error',
+    ],
+  },
 }
 
 export const toNaturalString = (str) => {

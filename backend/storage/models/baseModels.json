@@ -34,7 +34,7 @@
 		"type": "schnet",
 		"parameters": {
 			"lossFunction": "Mean Squared Error",
-			"optimizer": "NAdam",
+			"optimizer": "Nadam",
 			"depth": 3,
 			"embeddingDimension": 128,
 			"readoutSize": 1
