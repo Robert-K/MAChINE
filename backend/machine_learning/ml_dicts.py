@@ -11,7 +11,7 @@ optimizers = {
     'RMSprop': tf.keras.optimizers.RMSprop,
     'Adadelta': tf.keras.optimizers.Adadelta,
     'Adagrad': tf.keras.optimizers.Adagrad,
-    'Frtl': tf.keras.optimizers.Frtl,
+    'Ftrl': tf.keras.optimizers.Ftrl,
 }
 
 losses = {
