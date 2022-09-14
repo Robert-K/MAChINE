@@ -19,7 +19,11 @@ const settableSizes = {
   },
 }
 
-export default function SchNetConfig({ schnetParams, updateFunc }) {
+export default function SchNetConfig({
+  schnetParams,
+  updateFunc,
+  errorSignal,
+}) {
   const [sizes, setSizes] = React.useState([
     schnetParams.depth,
     schnetParams.embeddingDimension,
@@ -28,6 +32,10 @@ export default function SchNetConfig({ schnetParams, updateFunc }) {
   const [sizesError, setSizesError] = React.useState([false, false, false])
   const [anchorEl, setAnchorEl] = React.useState(null)
   const [popperContent, setPopperContent] = React.useState('')
+
+  React.useEffect(() => {
+    errorSignal(sizesError.includes(true))
+  }, [sizesError])
 
   const handleChange = (event, i, key, min) => {
     const sizesErrorClone = [...sizesError]
@@ -101,4 +109,5 @@ export default function SchNetConfig({ schnetParams, updateFunc }) {
 SchNetConfig.propTypes = {
   schnetParams: PropTypes.object.isRequired,
   updateFunc: PropTypes.func.isRequired,
+  errorSignal: PropTypes.func,
 }

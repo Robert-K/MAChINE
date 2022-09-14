@@ -48,6 +48,7 @@ export default function ModelConfigPage({ baseModel, addFunc }) {
   const [parameters, setParameters] = React.useState(baseModel.parameters)
   const [defaultActivation, setDefaultActivation] = React.useState('')
   const [name, setName] = React.useState('')
+  const [isInvalidConfig, setIsInvalidConfig] = React.useState(false)
   const [showSnackBar, setShowSnackBar] = React.useState(false)
   const [errorMessage, setErrorMessage] = React.useState('')
 
@@ -80,6 +81,7 @@ export default function ModelConfigPage({ baseModel, addFunc }) {
           <SchNetConfig
             schnetParams={schnetParams}
             updateFunc={updateParameters}
+            errorSignal={setIsInvalidConfig}
           />
         )
       },
@@ -145,6 +147,7 @@ export default function ModelConfigPage({ baseModel, addFunc }) {
                     {toNaturalString(param)}
                   </InputLabel>
                   <Select
+                    required
                     value={parameters[param] || ''}
                     label={toNaturalString(param)}
                     onChange={(event) => handleChange(event, param)}
@@ -175,7 +178,9 @@ export default function ModelConfigPage({ baseModel, addFunc }) {
             </FormControl>
           </CardContent>
           <CardActions>
-            <Button onClick={saveModel}>Save</Button>
+            <Button disabled={isInvalidConfig || !name} onClick={saveModel}>
+              Save
+            </Button>
           </CardActions>
         </Card>
         <Snackbar
