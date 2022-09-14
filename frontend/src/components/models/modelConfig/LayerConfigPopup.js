@@ -32,21 +32,25 @@ export default function LayerConfigPopup({
 }) {
   const [activation, setActivation] = React.useState('')
   const [units, setUnits] = React.useState(0)
+  const [error, setError] = React.useState(false)
 
-  const handleSubmit = (event) => {
+  const handleSubmit = () => {
     passConfig(units, activation)
   }
 
-  const handeCancel = (event) => {
+  const handleCancel = () => {
     cancelConfig()
+  }
+
+  const handleUnitInput = (e) => {
+    setError(e.target.value < 1)
+    if (e.target.value > 0) {
+      setUnits(e.target.value)
+    }
   }
 
   const handleSelect = (event) => {
     setActivation(event.target.value)
-  }
-
-  const handleUnitInput = (event) => {
-    setUnits(event.target.value)
   }
 
   return (
@@ -79,18 +83,23 @@ export default function LayerConfigPopup({
           <TextField
             type="number"
             label="Units"
-            helperText={'This needs to be a number > 0.'}
-            value={units || ''}
+            error={error}
+            helperText={error ? 'This needs to be a number > 0.' : ''}
+            defaultValue={1}
             onChange={(e) => handleUnitInput(e)}
             sx={{ m: 1 }}
             required
           />
         </FormControl>
         <Box sx={{ display: 'flex', flexDirection: 'row' }}>
-          <Button sx={{ m: 1 }} onClick={handeCancel}>
+          <Button sx={{ m: 1 }} onClick={handleCancel}>
             Cancel
           </Button>
-          <Button sx={{ m: 1 }} onClick={handleSubmit}>
+          <Button
+            disabled={!activation || !units || error}
+            sx={{ m: 1 }}
+            onClick={handleSubmit}
+          >
             Create
           </Button>
         </Box>
