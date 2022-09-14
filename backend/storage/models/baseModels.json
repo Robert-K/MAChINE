@@ -9,17 +9,17 @@
 			{
 				"type": "Dense",
 				"units": 256,
-				"activation": "Relu"
+				"activation": "relu"
 			},
 			{
 				"type": "Dense",
 				"units": 256,
-				"activation": "Relu"
+				"activation": "relu"
 			},
 			{
 				"type": "Dense",
 				"units": 256,
-				"activation": "Relu"
+				"activation": "relu"
 			},
 			{
 				"type": "Dense",
