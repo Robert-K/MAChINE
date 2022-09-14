@@ -125,12 +125,14 @@ export default function ModelConfigPage({ baseModel, addFunc }) {
   }
 
   return (
-    <Grid container>
-      <Grid item xs={8}>
-        {modeltypeComponents[baseModel.type.name].visual()}
+    <Grid sx={{ p: 2, height: '85vh' }} container>
+      <Grid item xs={8} sx={{ height: '100%' }}>
+        <Card sx={{ height: '100%' }}>
+          {modeltypeComponents[baseModel.type.name].visual()}
+        </Card>
       </Grid>
-      <Grid item xs={2}>
-        <Card sx={{ m: 2, width: '100%', height: '85vh' }}>
+      <Grid item xs={4}>
+        <Card sx={{ height: '100%', ml: 2 }}>
           <CardContent>
             {Object.entries(standardParameters).map(([param, value], i) => {
               return (
