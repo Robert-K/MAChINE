@@ -15,11 +15,13 @@ import { useNavigate } from 'react-router-dom'
 import TrainingContext from '../context/TrainingContext'
 import api from '../api'
 import PrettyChart from '../components/training/PrettyChart'
+import SnackBarAlert from '../components/misc/SnackBarAlert'
 
 export default function TrainingPage() {
   const training = React.useContext(TrainingContext)
   const [loadTraining, setLoadTraining] = React.useState(false)
   const [showDialog, setShowDialog] = React.useState(false)
+  const [openSnackError, setOpenSnackError] = React.useState(false)
 
   const [epochsError, setEpochsError] = React.useState(false)
   const handleEpochsChange = (event) => {
@@ -85,7 +87,10 @@ export default function TrainingPage() {
         training.selectedLabels,
         training.selectedEpochs,
         training.selectedBatchSize,
-        setLoadTraining
+        (response) => {
+          setOpenSnackError(!response)
+          setLoadTraining(response)
+        }
       )
     }
   }
@@ -181,6 +186,12 @@ export default function TrainingPage() {
           Continue to Molecules
         </Button>
       </Grid>
+      <SnackBarAlert
+        open={openSnackError}
+        onClose={() => setOpenSnackError(false)}
+        severity="error"
+        message="Someone is already training right now. Please try again later"
+      />
     </Grid>
   )
 }
