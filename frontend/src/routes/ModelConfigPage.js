@@ -7,6 +7,7 @@ import MLPModelVisual from '../components/models/modelConfig/MLPModelVisual'
 import {
   Alert,
   Card,
+  CardActions,
   CardContent,
   FormControl,
   InputLabel,
@@ -169,8 +170,10 @@ export default function ModelConfigPage({ baseModel, addFunc }) {
                 required
               />
             </FormControl>
-            <Button onClick={(e) => saveModel(e)}>Save</Button>
           </CardContent>
+          <CardActions>
+            <Button onClick={(e) => saveModel(e)}>Save</Button>
+          </CardActions>
         </Card>
         <Snackbar
           open={showSnackBar}
