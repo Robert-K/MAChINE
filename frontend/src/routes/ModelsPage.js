@@ -223,6 +223,7 @@ function RenderFitting({ fitting }) {
     setOpen(!open)
   }
   const theme = useTheme()
+  // secondary={`Fitting ID: ${fitting.id}`}
   return (
     <ListItem key={fitting.id}>
       <Box sx={{ width: 1 }}>
@@ -230,7 +231,6 @@ function RenderFitting({ fitting }) {
           {open ? <ExpandLess /> : <ExpandMore />}
           <ListItemText
             primary={`Dataset ID: ${fitting.datasetID}`}
-            secondary={`Fitting ID: ${fitting.id}`}
             sx={{ color: theme.palette.primary.main }}
           ></ListItemText>
         </ListItemButton>
