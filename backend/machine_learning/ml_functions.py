@@ -31,7 +31,7 @@ class Training:
         return mld.creation_functions.get(model_type)(parameters,
                                                       dataset,
                                                       labels,
-                                                      mld.losses.get(parameters.get('loss'))(),
+                                                      mld.losses.get(parameters.get('lossFunction'))(),
                                                       mld.optimizers.get(parameters.get('optimizer'))(),
                                                       [mld.metrics.get(metric)() for metric in metrics],
                                                       self.batch_size)
