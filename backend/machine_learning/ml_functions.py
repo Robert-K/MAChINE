@@ -38,7 +38,7 @@ class Training:
 
     def start_training(self):
         ds_length = self.ds.cardinality().numpy()
-        ds = self.ds.shuffle(int(ds_length * 0.1))
+        ds = self.ds.shuffle(max(int(ds_length * 0.1), 1))
 
         train_size = int(0.7 * ds_length)
         validation_size = int(0.2 * ds_length)
