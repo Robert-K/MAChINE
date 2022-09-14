@@ -143,7 +143,7 @@ function ModelDescription({ selectedModel, onActiveTraining }) {
           ></CardHeader>
           <Divider />
           <Typography variant="h6" sx={{ pl: 2, pt: 2 }}>
-            Trained fittings:
+            Trained models:
           </Typography>
           {/* Adds a fitting for each fitting saved in the model */}
           <List sx={{ flexGrow: 1, overflow: 'auto' }}>
