@@ -22,6 +22,7 @@ import Particles from 'react-tsparticles'
 import { loadFull } from 'tsparticles'
 import { deepmerge } from '@mui/utils'
 import { handleErrors } from './utils'
+import '@fontsource/poppins'
 
 const themeBase = {
   palette: {
