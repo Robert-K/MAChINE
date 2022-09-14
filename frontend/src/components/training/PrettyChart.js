@@ -37,10 +37,8 @@ export default function PrettyChart({ data }) {
         },
         colors: [theme.palette.primary.main],
         yaxis: {
-          min: -2,
-          max: 2,
           forceNiceScale: true,
-          decimalsInFloat: 3,
+          decimalsInFloat: 2,
         },
       }}
       series={displayedData}
