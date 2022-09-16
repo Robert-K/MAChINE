@@ -19,14 +19,12 @@ import SnackBarAlert from '../components/misc/SnackBarAlert'
 
 export default function TrainingPage() {
   const training = React.useContext(TrainingContext)
+  const [epochsError, setEpochsError] = React.useState(false)
+  const [batchSizeError, setBatchSizeError] = React.useState(false)
+  const [startStopButton, setStartStopButton] = React.useState('Start')
   const [loadTraining, setLoadTraining] = React.useState(false)
   const [showDialog, setShowDialog] = React.useState(false)
   const [openSnackError, setOpenSnackError] = React.useState(false)
-
-  const [epochsError, setEpochsError] = React.useState(false)
-  const handleEpochsChange = (event) => {
-    training.setSelectedEpochs(event.target.value)
-  }
 
   const checkEpochs = (epochs) => {
     if (epochs > 0) {
@@ -34,11 +32,6 @@ export default function TrainingPage() {
     } else {
       setEpochsError(true)
     }
-  }
-
-  const [batchSizeError, setBatchSizeError] = React.useState(false)
-  const handleBatchSizeChange = (event) => {
-    training.setSelectedBatchSize(event.target.value)
   }
 
   const checkBatchSize = (batchSize) => {
@@ -134,7 +127,7 @@ export default function TrainingPage() {
           type="number"
           value={training.selectedEpochs}
           disabled={training.trainingStatus}
-          onChange={handleEpochsChange}
+          onChange={(event) => training.setSelectedEpochs(event.target.value)}
           error={epochsError}
           helperText={epochsError ? 'Required!' : ' '}
         />
@@ -146,7 +139,9 @@ export default function TrainingPage() {
           type="number"
           value={training.selectedBatchSize}
           disabled={training.trainingStatus}
-          onChange={handleBatchSizeChange}
+          onChange={(event) =>
+            training.setSelectedBatchSize(event.target.value)
+          }
           error={batchSizeError}
           helperText={batchSizeError ? 'Required!' : ' '}
         />
