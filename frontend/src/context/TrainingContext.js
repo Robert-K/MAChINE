@@ -9,6 +9,8 @@ const TrainingContext = React.createContext({
   setTrainingStopped: () => {},
   trainingFinished: false,
   setTrainingFinished: () => {},
+  trainingID: 0,
+  setTrainingID: () => {},
   selectedModel: null,
   setSelectedModel: () => {},
   selectedDataset: null,
@@ -20,14 +22,15 @@ const TrainingContext = React.createContext({
   selectedBatchSize: 0,
   setSelectedBatchSize: () => {},
   trainingData: {},
-  resetContext: () => {},
   stopTraining: () => {},
+  resetContext: () => {},
 })
 
 export const TrainingProvider = ({ children }) => {
   const [trainingStatus, setTrainingStatus] = React.useState(true)
   const [trainingStopped, setTrainingStopped] = React.useState(false)
   const [trainingFinished, setTrainingFinished] = React.useState(false)
+  const [trainingID, setTrainingID] = React.useState(0)
   const [selectedModel, setSelectedModel] = React.useState({})
   const [selectedDataset, setSelectedDataset] = React.useState({})
   const [selectedLabels, setSelectedLabels] = React.useState([])
@@ -53,6 +56,7 @@ export const TrainingProvider = ({ children }) => {
     api.registerSocketListener('done', () => {
       setTrainingStatus(false)
       setTrainingFinished(true)
+      // TODO: setTrainingID
     })
   }, [])
 
@@ -83,6 +87,7 @@ export const TrainingProvider = ({ children }) => {
     setTrainingStatus(false)
     setTrainingStopped(false)
     setTrainingFinished(false)
+    setTrainingID(0)
     setSelectedModel({})
     setSelectedDataset({})
     setSelectedLabels([])
@@ -109,6 +114,8 @@ export const TrainingProvider = ({ children }) => {
         setTrainingStopped,
         trainingFinished,
         setTrainingFinished,
+        trainingID,
+        setTrainingID,
         selectedModel,
         setSelectedModel,
         selectedDataset,
@@ -120,8 +127,8 @@ export const TrainingProvider = ({ children }) => {
         selectedBatchSize,
         setSelectedBatchSize,
         trainingData,
-        resetContext,
         stopTraining,
+        resetContext,
       }}
     >
       {children}
