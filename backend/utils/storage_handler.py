@@ -25,7 +25,8 @@ __all__ = ['add_analysis',
            'get_model_summary',
            'get_model_summaries',
            'get_molecules',
-           'get_user_handler']
+           'get_user_handler',
+           'update_fitting']
 
 _storage_path = Path.cwd() / 'storage'
 _user_data_path = _storage_path / 'user_data'
@@ -87,16 +88,7 @@ class UserDataStorageHandler:
     # Saves a fitting, creates a summary, updates the model summary
     def add_fitting(self, dataset_id, labels, epochs, accuracy, batch_size, model_id, fitting):
         fitting_id = str(hash(fitting) ^ hash(epochs) ^ hash(accuracy) ^ hash(batch_size))
-        path = self.user_fittings_path / f'{fitting_id}_fitting'
-        try:
-            fitting.save(path)
-        except NotImplementedError:
-            print('Cannot save this model. Please write serialisation functions')
-            # Potential Fallback
-            # file = path.open('wb')
-            # pickle.dump(fitting, file)
-            # file.close()
-            return None
+        path = self.save_fitting(fitting_id, fitting)
         self.fitting_summaries[fitting_id] = {'datasetID': dataset_id,
                                               'labels': labels,
                                               'epochs': epochs,
@@ -113,6 +105,22 @@ class UserDataStorageHandler:
         summary = self.get_model_summaries().get(model_id)
         summary.get('fittingIDs').append(fitting_id)
         self.__save_summary_file('models.json', self.model_summaries)
+
+    def update_fitting(self, fitting_id, epochs, accuracy, fitting):
+        self.save_fitting(fitting_id, fitting)
+        summary = self.fitting_summaries[fitting_id]
+        summary['epochs'] = summary.get('epochs') + epochs
+        summary['accuracy'] = accuracy
+        self.__save_summary_file('fittings.json', self.fitting_summaries)
+
+    def save_fitting(self, fitting_id, fitting):
+        path = self.user_fittings_path / f'{fitting_id}_fitting'
+        try:
+            fitting.save(path)
+            return path
+        except NotImplementedError:
+            print('Cannot save this model. Please write serialisation functions')
+            return None
 
     def get_fitting(self, fitting_id):
         summary = self.fitting_summaries.get(fitting_id)
@@ -239,6 +247,9 @@ class StorageHandler:
         return self.get_user_handler(user_id).add_fitting(dataset_id, labels, epochs, accuracy, batch_size, model_id,
                                                           fitting)
 
+    def update_fitting(self, user_id, fitting_id, epochs, accuracy, fitting):
+        return self.get_user_handler(user_id).update_fitting(fitting_id, epochs, accuracy, fitting)
+
     def get_fitting(self, user_id, fitting_id):
         return self.get_user_handler(user_id).get_fitting(fitting_id)
 
@@ -324,3 +335,4 @@ get_model_summary = _inst.get_model_summary
 get_model_summaries = _inst.get_model_summaries
 get_molecules = _inst.get_molecules
 get_user_handler = _inst.get_user_handler
+update_fitting = _inst.update_fitting

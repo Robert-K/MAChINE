@@ -1,3 +1,6 @@
+import json
+from time import sleep
+
 from flask import Flask
 from flask_cors import CORS
 from flask_restful import reqparse, Api, Resource
@@ -212,6 +215,42 @@ class Analyze(Resource):
         args = parser.parse_args()
         return ml.analyze(user_id, args['fittingID'], args['smiles'])
 
+
+class Train(Resource):
+    def post(self, user_id):
+        if ml.is_training_running(user_id):
+            return False, 503
+        args = parser.parse_args()
+        labels = json.loads(args['labels'])
+        sio.start_background_task(target=ml.train,
+                                  user_id=user_id,
+                                  dataset_id=args['datasetID'],
+                                  model_id=args['modelID'],
+                                  labels=labels,
+                                  epochs=args['epochs'],
+                                  batch_size=args['batchSize'])
+        return True, 200
+
+    def patch(self, user_id):
+        args = parser.parse_args()
+
+        if ml.is_training_running(user_id):
+            return 0, 503
+
+        fitting_summary = sh.get_fitting_summary(args['fittingID'])
+        if not bool(fitting_summary):
+            return 0, 404
+
+        sio.start_background_task(target=ml.continue_training,
+                                  user_id=user_id,
+                                  fitting_id=args['fittingID'],
+                                  epochs=args['epochs'])
+        return (fitting_summary.get('epochs') + args['epochs']), 200
+
+    def delete(self, user_id):
+        return (True, 200) if ml.stop_training(user_id) else (False, 404)
+
+
 # Actually set up the Api resource routing here
 api.add_resource(AddUser, '/users')
 api.add_resource(DeleteUser, '/users/<user_id>')
@@ -220,31 +259,13 @@ api.add_resource(Molecules, '/users/<user_id>/molecules')
 api.add_resource(Fittings, '/users/<user_id>/fittings')
 # Training & Analyzing
 api.add_resource(Analyze, '/users/<user_id>/analyze')
+api.add_resource(Train, '/users/<user_id>/train')
 # Non-user-specific resources
 api.add_resource(Datasets, '/datasets')
 api.add_resource(BaseModels, '/baseModels')
 
 
-# SocketIO event listeners
-@sio.on('start_training')
-def start_training(user_id, dataset_id, model_id, labels, epochs, batch_size):
-    if ml.is_training_running(user_id):
-        return False
-    sio.start_background_task(target=ml.train,
-                              user_id=user_id,
-                              dataset_id=dataset_id,
-                              model_id=model_id,
-                              labels=labels,
-                              epochs=epochs,
-                              batch_size=batch_size)
-    return True
-
-
-@sio.on('stop_training')
-def stop_training(user_id):
-    return ml.stop_training(user_id)
-
-
+# SocketIO event listeners/senders
 def update_training_logs(user_id, logs):
     sio.emit('update', {user_id: logs})
 
@@ -321,9 +342,10 @@ def run(debug=True):
             'activation': 'relu',
         },
     ], 'lossFunction': 'Huber Loss', 'optimizer': 'Stochastic Gradient Descent'}, 'id')
-    fitting_id = ml.train(test_user, '2', model_id, ['lumo', 'homo'], 0, 64)
+    ml.train(test_user, '2', model_id, ['lumo', 'homo'], 0, 64)
     model_id_2 = sh.add_model(test_user, 'MyCoolSecondModel',
-                              {'lossFunction': 'Mean Squared Error', 'optimizer': 'Adam', 'embeddingDimension': 128, 'readoutSize': 1,
+                              {'lossFunction': 'Mean Squared Error', 'optimizer': 'Adam', 'embeddingDimension': 128,
+                               'readoutSize': 1,
                                'depth': 2}, 'id2')
     # fitting_id2 = ml.train(test_user, '1', model_id_2, ['HIV_active'], 5, 128)
     # ml.analyze(test_user, fitting_id, 'c1ccn2nncc2c1')

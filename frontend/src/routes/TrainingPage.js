@@ -81,17 +81,18 @@ export default function TrainingPage() {
       setShowDialog(true)
     } else {
       setLoadTraining(true)
-      api.trainModel(
-        training.selectedDataset.datasetID,
-        training.selectedModel.id,
-        training.selectedLabels,
-        training.selectedEpochs,
-        training.selectedBatchSize,
-        (response) => {
+      api
+        .trainModel(
+          training.selectedDataset.datasetID,
+          training.selectedModel.id,
+          training.selectedLabels,
+          training.selectedEpochs,
+          training.selectedBatchSize
+        )
+        .then((response) => {
           setOpenSnackError(!response)
           setLoadTraining(response)
-        }
-      )
+        })
     }
   }
 
