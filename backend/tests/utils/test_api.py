@@ -380,24 +380,31 @@ class TestAnalyzeRequestGroup:
         assert response.json == test_analysis, 'Response json should match analysis'
 
 
-class TestSocketGroup:
+# TODO: Implement
+class TestTrainRequestGroup:
+    @pytest.mark.parametrize(
+        '',
+        [
+            ()
+        ]
+    )
+    def test_train_post_response(self, client, mocker):
+        pass
 
-    def test_start_training(self, socket, mocker):
-        mocker.patch('backend.utils.api.ml.train', return_value='Rawr')
-        response = socket.emit('start_training', _test_user_id, 'dataset_id', 'model_id', 'labels', 'epochs', 'batch_size', callback=True)
-        assert response, 'Expected request to succeed'
+    def test_train_busy_post_response(self, client, mocker):
+        pass
 
-    def test_start_training_busy(self, socket, mocker):
-        mocker.patch('backend.utils.api.ml.is_training_running', return_value=False)
-        response = socket.emit('start_training', _test_user_id, 'dataset_id', 'model_id', 'labels', 'epochs', 'batch_size', callback=True)
-        assert response, 'Expected request to fail'
+    def test_train_patch_response(self, client, mocker):
+        pass
 
-    def test_stop_training(self, socket, mocker):
-        mocker.patch('backend.utils.api.ml.stop_training', return_value=True)
-        response = socket.emit('stop_training', _test_user_id, callback=True)
-        assert response, 'Expected request to succeed'
+    def test_train_busy_patch_response(self, client, mocker):
+        pass
 
-    def test_stop_training_fail(self, socket, mocker):
-        mocker.patch('backend.utils.api.ml.stop_training', return_value=False)
-        response = socket.emit('stop_training', _test_user_id, callback=True)
-        assert not response, 'Expected request to "fail"'
+    def test_train_fail_patch_response(self, client, mocker):
+        pass
+
+    def test_train_delete_response(self, client, mocker):
+        pass
+
+    def test_train_fail_delete_response(self, client, mocker):
+        pass
