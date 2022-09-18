@@ -3,49 +3,101 @@ import { Box, Typography } from '@mui/material'
 import { DataGrid } from '@mui/x-data-grid'
 import Api from '../api'
 
+let loaded = false
+
 export default function ScoreboardsPage() {
   const [fittingrows, setFittingRows] = React.useState([])
-  Api.getFittings().then((data) => {
-    setFittingRows(data)
-  })
-
+  if (!loaded) {
+    Api.getFittings().then((data) => {
+      setFittingRows(data)
+      loaded = true // quick fix to spot infinite requests
+    })
+  }
   return (
     <div align="center">
       <Box sx={{ mx: 5, mb: 5, mt: 2 }}>
         <Typography sx={{ fontSize: 20 }}>Best Models</Typography>
-        {DataTable(fittingcolumns, fittingrows)}
+        <Box sx={{ maxWidth: 1000 }}>
+          {DataTable(fittingcolumns, fittingrows)}
+        </Box>
+
         <Typography sx={{ mt: 5, fontSize: 20 }}>Best Molecules</Typography>
-        {DataTable(moleculecolumns, moleculerows)}
+        <Box sx={{ maxWidth: 1000 }}>
+          {DataTable(moleculecolumns, moleculerows)}
+        </Box>
       </Box>
     </div>
   )
 }
 
 const fittingcolumns = [
-  { field: 'id', headerName: 'ID', sortable: false, width: 180 },
-  { field: 'modelID', headerName: 'Model ID', type: 'number', width: 180 },
-  { field: 'modelName', headerName: 'Model Name', sortable: false, width: 140 },
+  {
+    field: 'id',
+    headerName: 'ID',
+    headerAlign: 'center',
+    align: 'center',
+    sortable: false,
+    flex: 4,
+    minWidth: 180,
+  },
+  {
+    field: 'modelID',
+    headerName: 'Model ID',
+    headerAlign: 'center',
+    align: 'center',
+    type: 'number',
+    flex: 4,
+    minWidth: 180,
+  },
+  {
+    field: 'modelName',
+    headerName: 'Model Name',
+    headerAlign: 'center',
+    align: 'right',
+    sortable: false,
+    flex: 3,
+    minWidth: 140,
+  },
   {
     field: 'datasetID',
     headerName: 'Dataset ID',
+    headerAlign: 'center',
+    align: 'right',
     type: 'number',
-    width: 90,
+    flex: 2,
+    minWidth: 90,
+  },
+  {
+    field: 'labels',
+    headerName: 'Label',
+    headerAlign: 'center',
+    align: 'center',
+    flex: 2,
+    minWIdth: 90,
   },
   {
     field: 'epochs',
     headerName: 'Epochs',
-
-    width: 70,
+    headerAlign: 'center',
+    align: 'right',
+    flex: 2,
+    minWidth: 70,
   },
   {
     field: 'batchSize',
     headerName: 'Batch Size',
-    width: 85,
+    headerAlign: 'center',
+    align: 'right',
+    flex: 2,
+    minWidth: 85,
   },
   {
     field: 'accuracy',
     headerName: 'Accuracy',
-    width: 70,
+    headerAlign: 'center',
+    align: 'right',
+    flex: 2,
+    minWidth: 70,
   },
 ]
 
@@ -83,6 +135,7 @@ function DataTable(columns, rows) {
         columns={columns}
         pageSize={10}
         hideFooterPagination={true}
+        experimentalFeatures={{ columnGrouping: true }}
       />
     </div>
   )
