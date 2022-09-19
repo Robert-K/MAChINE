@@ -15,11 +15,16 @@ import { useNavigate } from 'react-router-dom'
 import TrainingContext from '../context/TrainingContext'
 import api from '../api'
 import PrettyChart from '../components/training/PrettyChart'
+import HelpContext from '../context/HelpContext'
+import HelpPopper from '../components/shared/HelpPopper'
 
 export default function TrainingPage() {
   const training = React.useContext(TrainingContext)
   const [loadTraining, setLoadTraining] = React.useState(false)
   const [showDialog, setShowDialog] = React.useState(false)
+  const [helpAnchorEl, setHelpAnchorEl] = React.useState(null)
+  const [helpPopperContent, setHelpPopperContent] = React.useState('')
+  const help = React.useContext(HelpContext)
 
   const [epochsError, setEpochsError] = React.useState(false)
   const handleEpochsChange = (event) => {
@@ -83,6 +88,17 @@ export default function TrainingPage() {
 
   const navigate = useNavigate()
 
+  const handleHelpPopperOpen = (event, content) => {
+    setHelpAnchorEl(event.currentTarget)
+    setHelpPopperContent(content)
+  }
+
+  const handleHelpPopperClose = () => {
+    setHelpAnchorEl(null)
+  }
+
+  const helpOpen = Boolean(helpAnchorEl)
+
   function filterData(data) {
     // Change this to exclude more data
     const excludedPoints = ['epoch']
@@ -99,6 +115,7 @@ export default function TrainingPage() {
     return newData
   }
 
+  // todo add actual text for helppopper
   return (
     <Grid container>
       <Grid item xs={6}>
@@ -163,6 +180,13 @@ export default function TrainingPage() {
           Continue to Molecules
         </Button>
       </Grid>
+      <HelpPopper
+        id="helpPopper"
+        helpPopperContent={helpPopperContent}
+        open={helpOpen}
+        anchorEl={helpAnchorEl}
+        onClose={handleHelpPopperClose}
+      />
     </Grid>
   )
 }
