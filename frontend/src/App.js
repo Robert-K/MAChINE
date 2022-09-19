@@ -172,16 +172,17 @@ export default function App() {
   const changeDarkMode = (value) => {
     setDarkMode(value)
   }
-
-  handleErrors()
   const changeHelpMode = (value) => {
     setHelpMode(value)
   }
+
+  handleErrors()
+
   return (
     <div className="App">
       <ThemeProvider theme={darkMode ? themeDark : themeLight}>
         <UserProvider value={{ userName }}>
-          <HelpProvider value={{ helpMode }}>
+          <HelpProvider value={{ helpMode, setHelpMode }}>
             <TrainingProvider>
               <CssBaseline />
               <BrowserRouter>
@@ -193,7 +194,7 @@ export default function App() {
                       setModeFunction={changeDarkMode}
                     />
                   }
-                  helpModeSwitch={
+                  helpModeButton={
                     <HelpModeButton
                       initialHelpMode={helpMode}
                       setModeFunction={changeHelpMode}

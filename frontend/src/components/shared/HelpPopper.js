@@ -13,7 +13,6 @@ export default function HelpPopper({ helpPopperContent }) {
         borderColor: theme.palette.primary.main,
         backgroundColor:
           theme.components.MuiCard.styleOverrides.root.backgroundColor,
-        boxShadow: 0,
       }}
     >
       <CardContent>

@@ -24,6 +24,7 @@ import MoleculeRenderer from '../components/molecules/MoleculeRenderer'
 import Molecule from '../internal/Molecule'
 import HelpPopper from '../components/shared/HelpPopper'
 import SnackBarAlert from '../components/misc/SnackBarAlert'
+import HelpContext from '../context/HelpContext'
 
 const gridHeight = '85vh'
 export default function MoleculesPage() {
@@ -35,6 +36,7 @@ export default function MoleculesPage() {
   const [helpPopperContent, setHelpPopperContent] = React.useState('')
 
   const user = React.useContext(UserContext)
+  const helpMode = React.useContext(HelpContext).helpMode
 
   const handleHelpPopperOpen = (event, content) => {
     setHelpAnchorEl(event.currentTarget)
@@ -104,10 +106,12 @@ export default function MoleculesPage() {
           item
           md={3}
           onMouseOver={(e) => {
-            handleHelpPopperOpen(
-              e,
-              "This shows all molecules you have created so far. Click on the i-Icon to see more information about a molecule, or click on 'Add a molecule' to add a new one to the list!"
-            )
+            if (helpMode) {
+              handleHelpPopperOpen(
+                e,
+                "This shows all molecules you have created so far. Click on the i-Icon to see more information about a molecule, or click on 'Add a molecule' to add a new one to the list!"
+              )
+            }
           }}
           onMouseLeave={handleHelpPopperClose}
         >
@@ -125,10 +129,12 @@ export default function MoleculesPage() {
           md={9}
           key="molecule-view"
           onMouseOver={(e) => {
-            handleHelpPopperOpen(
-              e,
-              "This is your molecule sandbox! Let your creativity flow and create the molecule of your dreams. Click on the line-icon on the left to create new bonds, or on the C-icon to change an atom, or on the eraser-icon to delete things. When you're happy with your molecule, give it a name and save it! Saved molecules can be analyzed by the models you have trained. To do that, simply click on the button 'Analyze' in the bottom right corner."
-            )
+            if (helpMode) {
+              handleHelpPopperOpen(
+                e,
+                "This is your molecule sandbox! Let your creativity flow and create the molecule of your dreams. Click on the line-icon on the left to create new bonds, or on the C-icon to change an atom, or on the eraser-icon to delete things. When you're happy with your molecule, give it a name and save it! Saved molecules can be analyzed by the models you have trained. To do that, simply click on the button 'Analyze' in the bottom right corner."
+              )
+            }
           }}
           onMouseLeave={handleHelpPopperClose}
         >
