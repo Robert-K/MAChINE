@@ -45,7 +45,6 @@ export default function TrainingPage() {
   const initialMount = React.useRef(true)
 
   React.useEffect(() => {
-    checkEpochs(training.selectedEpochs)
     checkBatchSize(training.selectedBatchSize)
     if (initialMount.current) {
       initialMount.current = false
@@ -55,9 +54,11 @@ export default function TrainingPage() {
     return () => {
       training.setTrainingFinished(false)
     }
-  }, [training.selectedEpochs, training.selectedBatchSize])
+  }, [training.selectedBatchSize])
 
-  const [startStopButton, setStartStopButton] = React.useState('Start')
+  React.useEffect(() => {
+    checkEpochs(training.selectedEpochs)
+  }, [training.selectedEpochs])
 
   React.useEffect(() => {
     if (training.trainingStatus) {
@@ -87,6 +88,12 @@ export default function TrainingPage() {
           setLoadTraining(response)
         })
     }
+  }
+
+  const handleAdditionalTraining = () => {
+    setLoadTraining(true)
+    // TODO: Start additional training
+    // TODO: training.selectedEpochs auf den Wert der insgesamt trainierten Epochen setzen
   }
 
   const handleCloseDialog = () => {
@@ -173,6 +180,16 @@ export default function TrainingPage() {
             <Button onClick={abortTraining}>Abort</Button>
           </DialogActions>
         </Dialog>
+        {!training.trainingFinished ? null : (
+          <Button
+            variant="outlined"
+            disabled={epochsError}
+            sx={{ m: 2 }}
+            onClick={handleAdditionalTraining}
+          >
+            Train additional {training.selectedEpochs} epochs
+          </Button>
+        )}
         <Box sx={{ flexGrow: 1 }}></Box>
         <Button
           variant="outlined"
