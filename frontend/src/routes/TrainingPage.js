@@ -74,6 +74,7 @@ export default function TrainingPage() {
     if (training.trainingStatus) {
       setShowDialog(true)
     } else {
+      training.softResetContext()
       setLoadTraining(true)
       api
         .trainModel(
@@ -92,6 +93,12 @@ export default function TrainingPage() {
 
   const handleAdditionalTraining = () => {
     setLoadTraining(true)
+    api
+      .continueTraining(training.trainingID, training.selectedEpochs)
+      .then((response) => {
+        setOpenSnackError(!response)
+        setLoadTraining(response)
+      })
     // TODO: Start additional training
     // TODO: training.selectedEpochs auf den Wert der insgesamt trainierten Epochen setzen
   }

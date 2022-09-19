@@ -109,7 +109,7 @@ class UserDataStorageHandler:
     def update_fitting(self, fitting_id, epochs, accuracy, fitting):
         self.save_fitting(fitting_id, fitting)
         summary = self.fitting_summaries[fitting_id]
-        summary['epochs'] = summary.get('epochs') + epochs
+        summary['epochs'] = epochs
         summary['accuracy'] = accuracy
         self.__save_summary_file('fittings.json', self.fitting_summaries)
         return fitting_id

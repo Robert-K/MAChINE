@@ -16,7 +16,6 @@ class Training:
         self.user_id = user_id
         self.dataset_id = dataset_id
         self.model_id = model_id
-        self.epochs = int(epochs)
         self.batch_size = int(batch_size)
         self.labels = labels
         self.model, ds = self.create_model_and_set(
@@ -27,9 +26,12 @@ class Training:
             base_model.get('metrics')
         )
         self.training_set, self.validation_set, self.test_set = self.split_dataset(ds)
+        self.initial_epoch = 0
         self.fitting_id = fitting_id
-        if fitting_id:
+        if fitting_id and sh.get_fitting_summary(user_id, fitting_id):
             self.model = sh.get_fitting(user_id, fitting_id)
+            self.initial_epoch = sh.get_fitting_summary(user_id, fitting_id).get('epochs')
+        self.epochs = int(epochs) + self.initial_epoch
 
     def create_model_and_set(self, model_type, parameters, dataset, labels, metrics):
         return mld.creation_functions.get(model_type)(parameters,
@@ -54,7 +56,9 @@ class Training:
         # Trains the model
         self.model.fit(self.training_set, validation_data=self.validation_set, epochs=self.epochs,
                        batch_size=self.batch_size,
-                       callbacks=[LiveStats(self.user_id)], verbose=1)
+                       callbacks=[LiveStats(self.user_id)],
+                       initial_epoch=self.initial_epoch,
+                       verbose=1)
 
     def evaluate_model(self):
         results = self.model.evaluate(self.test_set)
@@ -129,11 +133,12 @@ class LiveStats(keras.callbacks.Callback):
     def __init__(self, user_id):
         super().__init__()
         self.user_id = user_id
+        self.last_epoch = 0
 
     def on_epoch_end(self, epoch, logs=None):
         if logs is None:
             logs = {}
-
+        self.last_epoch = epoch
         logs |= {"epoch": epoch}
         api.update_training_logs(self.user_id, logs)
 
@@ -147,15 +152,15 @@ class LiveStats(keras.callbacks.Callback):
         # Saves the trained model
         if sh.get_user_handler(self.user_id):
             if finished_training.fitting_id:
-                fitting_id = sh.update_fitting(self.user_id, finished_training.fitting_id, finished_training.epochs,
+                fitting_id = sh.update_fitting(self.user_id, finished_training.fitting_id, self.last_epoch,
                                                accuracy, self.model)
             else:
                 fitting_id = sh.add_fitting(self.user_id,
                                             finished_training.dataset_id,
                                             finished_training.labels,
-                                            finished_training.epochs,
+                                            self.last_epoch,
                                             accuracy,
                                             finished_training.batch_size,
                                             finished_training.model_id,
                                             self.model)
-        api.notify_training_done(self.user_id, fitting_id)
+        api.notify_training_done(self.user_id, fitting_id, self.last_epoch)

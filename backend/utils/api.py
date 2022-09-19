@@ -237,7 +237,7 @@ class Train(Resource):
         if ml.is_training_running(user_id):
             return 0, 503
 
-        fitting_summary = sh.get_fitting_summary(args['fittingID'])
+        fitting_summary = sh.get_fitting_summary(user_id, args['fittingID'])
         if not bool(fitting_summary):
             return 0, 404
 
@@ -270,8 +270,8 @@ def update_training_logs(user_id, logs):
     sio.emit('update', {user_id: logs})
 
 
-def notify_training_done(user_id, fitting_id):
-    sio.emit('done', {user_id: fitting_id})
+def notify_training_done(user_id, fitting_id, last_epoch):
+    sio.emit('done', {user_id: {'fittingID': fitting_id, 'epochs': last_epoch}})
 
 
 def notify_training_start(user_id):

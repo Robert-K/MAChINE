@@ -150,9 +150,9 @@ export default {
       })
   },
 
-  async continueTraining(fittingID) {
+  async continueTraining(fittingID, epochs) {
     return api
-      .patch(`/users/${userID}/train`, { fittingID })
+      .patch(`/users/${userID}/train`, { fittingID, epochs })
       .then((response) => {
         return response.data
       })

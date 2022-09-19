@@ -24,6 +24,7 @@ const TrainingContext = React.createContext({
   trainingData: {},
   stopTraining: () => {},
   resetContext: () => {},
+  softResetContext: () => {},
 })
 
 export const TrainingProvider = ({ children }) => {
@@ -48,7 +49,6 @@ export const TrainingProvider = ({ children }) => {
       setTrainingStatus(true)
       setTrainingStopped(false)
       setTrainingFinished(false)
-      dispatchTrainingData({ type: 'reset' })
     })
     api.registerSocketListener('update', (data) => {
       dispatchTrainingData({ type: 'update', payload: data })
@@ -56,8 +56,8 @@ export const TrainingProvider = ({ children }) => {
     api.registerSocketListener('done', (response) => {
       setTrainingStatus(false)
       setTrainingFinished(true)
-      setTrainingID(response)
-      console.log(response)
+      setTrainingID(response.fittingID)
+      // Get trained epochs with response.epochs
     })
   }, [])
 
@@ -84,17 +84,21 @@ export const TrainingProvider = ({ children }) => {
     return {}
   }
 
-  function resetContext() {
+  function softResetContext() {
     setTrainingStatus(false)
     setTrainingStopped(false)
     setTrainingFinished(false)
     setTrainingID('0')
+    dispatchTrainingData({ type: 'reset' })
+  }
+
+  function resetContext() {
+    softResetContext()
     setSelectedModel({})
     setSelectedDataset({})
     setSelectedLabels([])
     setSelectedEpochs(10)
     setSelectedBatchSize(64)
-    dispatchTrainingData({ type: 'reset' })
   }
 
   function stopTraining() {
@@ -130,6 +134,7 @@ export const TrainingProvider = ({ children }) => {
         trainingData,
         stopTraining,
         resetContext,
+        softResetContext,
       }}
     >
       {children}
