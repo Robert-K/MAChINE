@@ -177,7 +177,7 @@ export default function App() {
     <div className="App">
       <ThemeProvider theme={darkMode ? themeDark : themeLight}>
         <UserProvider value={{ userName }}>
-          <HelpProvider value={{ helpMode }}>
+          <HelpProvider value={{ helpMode, setHelpMode }}>
             <TrainingProvider>
               <CssBaseline />
               <BrowserRouter>
@@ -189,7 +189,7 @@ export default function App() {
                       setModeFunction={changeDarkMode}
                     />
                   }
-                  helpModeSwitch={
+                  helpModeButton={
                     <HelpModeButton
                       initialHelpMode={helpMode}
                       setModeFunction={changeHelpMode}

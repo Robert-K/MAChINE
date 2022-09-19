@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import { Popper, TextField } from '@mui/material'
 import { toNaturalString } from '../../../routes/ModelConfigPage'
 import HelpPopper from '../../shared/HelpPopper'
+import HelpContext from '../../../context/HelpContext'
 
 const settableSizes = {
   depth: {
@@ -29,6 +30,7 @@ export default function SchNetConfig({ schnetParams, updateFunc }) {
   const [sizesError, setSizesError] = React.useState([false, false, false])
   const [helpAnchorEl, setHelpAnchorEl] = React.useState(null)
   const [helpPopperContent, setHelpPopperContent] = React.useState('')
+  const help = React.useContext(HelpContext)
 
   const handleChange = (event, i, min) => {
     const sizesErrorClone = [...sizesError]
@@ -68,9 +70,9 @@ export default function SchNetConfig({ schnetParams, updateFunc }) {
             helperText={sizesError[i] ? 'Must be above zero!' : ''}
             onChange={(e) => handleChange(e, i, value.min)}
             onMouseOver={(e) => {
-              // if (HelpModeButton.getHelpMode()) {
-              handleHelpPopperOpen(e, value.explanation)
-              // }
+              if (help.helpMode) {
+                handleHelpPopperOpen(e, value.explanation)
+              }
             }}
             onMouseLeave={handleHelpPopperClose}
             InputLabelProps={{

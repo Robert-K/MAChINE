@@ -13,12 +13,14 @@ import api from '../api'
 import PropTypes from 'prop-types'
 import ModelConfigPage from './ModelConfigPage'
 import HelpPopper from '../components/shared/HelpPopper'
+import HelpContext from '../context/HelpContext'
 
 export default function BaseModelsPage({ addFunc }) {
   const [modelArray, setModelArray] = React.useState([])
   const [selectedModel, setSelectedModel] = React.useState(null)
   const [helpAnchorEl, setHelpAnchorEl] = React.useState(null)
   const [helpPopperContent, setHelpPopperContent] = React.useState('')
+  const help = React.useContext(HelpContext)
 
   React.useEffect(() => {
     api.getBaseModels().then((sentModels) => {
@@ -53,14 +55,16 @@ export default function BaseModelsPage({ addFunc }) {
               baseModel={baseModel}
               key={baseModel.id}
               clickFunc={handleClick}
-              onMouseOver={(e) => {
-                console.log('MouseOver')
-                handleHelpPopperOpen(
-                  e,
-                  "Click here to select this base model. Don't worry, you'll get to configure its parameters on the next page!"
-                )
+              hoverFunc={(e) => {
+                console.log('hovering')
+                if (help.helpMode) {
+                  handleHelpPopperOpen(
+                    e,
+                    "Click here to select this base model. Don't worry, you'll get to configure its parameters on the next page!"
+                  )
+                }
               }}
-              onMouseLeave={handleHelpPopperClose}
+              leaveFunc={handleHelpPopperClose}
             />
           ))}
         </Grid>

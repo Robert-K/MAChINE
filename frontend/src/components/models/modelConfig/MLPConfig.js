@@ -9,11 +9,13 @@ import {
 import PropTypes from 'prop-types'
 import { activationFuncs } from './LayerConfigPopup'
 import HelpPopper from '../../shared/HelpPopper'
+import HelpContext from '../../../context/HelpContext'
 
 export default function MLPConfig({ updateDefaultActivation }) {
   const [activation, setActivation] = React.useState('')
   const [helpAnchorEl, setHelpAnchorEl] = React.useState(null)
   const [helpPopperContent, setHelpPopperContent] = React.useState('')
+  const help = React.useContext(HelpContext)
 
   const handleHelpPopperOpen = (event, content) => {
     setHelpAnchorEl(event.currentTarget)
@@ -39,10 +41,12 @@ export default function MLPConfig({ updateDefaultActivation }) {
         }}
         sx={{ m: 2 }}
         onMouseOver={(e) => {
-          handleHelpPopperOpen(
-            e,
-            'The standard activation function for this model. Think of an activation function as the way a neuron decides whether to act on an incoming signal and if so, how much it will react!'
-          )
+          if (help.helpMode) {
+            handleHelpPopperOpen(
+              e,
+              'The standard activation function for this model. Think of an activation function as the way a neuron decides whether to act on an incoming signal and if so, how much it will react!'
+            )
+          }
         }}
         onMouseLeave={handleHelpPopperClose}
       >

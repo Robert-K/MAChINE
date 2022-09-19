@@ -35,7 +35,7 @@ const links = {
 export default function Navbar({
   logoutFunction,
   darkModeButton,
-  helpModeSwitch,
+  helpModeButton,
 }) {
   const locationName = useLocation().pathname
   const user = React.useContext(UserContext)
@@ -118,7 +118,7 @@ export default function Navbar({
           </>
         )}
         <ServerStatusButton />
-        {helpModeSwitch}
+        {helpModeButton}
         {darkModeButton}
       </Toolbar>
       <style jsx="true">{`
@@ -146,5 +146,5 @@ export default function Navbar({
 Navbar.propTypes = {
   logoutFunction: PropTypes.func.isRequired,
   darkModeButton: PropTypes.element,
-  helpModeSwitch: PropTypes.element,
+  helpModeButton: PropTypes.element,
 }

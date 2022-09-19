@@ -10,18 +10,29 @@ import CardContent from '@mui/material/CardContent'
  * It displays one base model's name, image, and basic information.
  * @param baseModel The data from a base model
  * @param clickFunc callback for onClick
+ * @param hoverFunc callback for onMouseOver
+ * @param leaveFunc callback for onMouseLeave
  * @returns {JSX.Element} The the element for the website.
  * @constructor
  */
 
-export default function BaseModelCard({ baseModel, clickFunc }) {
+export default function BaseModelCard({
+  baseModel,
+  clickFunc,
+  hoverFunc,
+  leaveFunc,
+}) {
   return (
     <Grid item xs={4} md={3}>
       {/* ^ The grid has a total width of  12. The xs defines how much of that width each component of the grid gets,
       and as such also how many elements each row of the grid can fit. If xs=3, then four elements can fit in one
        row of width 3*4=12 */}
       <Card>
-        <CardActionArea onClick={() => clickFunc(baseModel)}>
+        <CardActionArea
+          onClick={() => clickFunc(baseModel)}
+          onMouseOver={(e) => hoverFunc(e)}
+          onMouseLeave={() => leaveFunc()}
+        >
           <CardMedia
             component="img"
             height="155px"
@@ -53,4 +64,6 @@ export default function BaseModelCard({ baseModel, clickFunc }) {
 BaseModelCard.propTypes = {
   baseModel: PropTypes.object.isRequired,
   clickFunc: PropTypes.func.isRequired,
+  hoverFunc: PropTypes.func,
+  leaveFunc: PropTypes.func,
 }

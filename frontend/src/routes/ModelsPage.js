@@ -48,7 +48,7 @@ export default function ModelsPage() {
   const [helpPopperContent, setHelpPopperContent] = React.useState('')
 
   const user = React.useContext(UserContext)
-  const helpMode = React.useContext(HelpContext)
+  const help = React.useContext(HelpContext)
 
   React.useEffect(() => {
     refreshModels()
@@ -124,8 +124,7 @@ export default function ModelsPage() {
             item
             xs={3}
             onMouseOver={(e) => {
-              if (helpMode) {
-                console.log(helpMode)
+              if (help.helpMode) {
                 handleHelpPopperOpen(
                   e,
                   "This is a list of all models you have created so far. Click on any one of them to get more information about it, or click on 'Add a model' to add a new one to the list!"
@@ -147,10 +146,12 @@ export default function ModelsPage() {
             item
             xs={9}
             onMouseOver={(e) => {
-              handleHelpPopperOpen(
-                e,
-                "Here you see all relevant information of your model. On the top, you can see the model's name, as well as which base model was used to create it. Since you can train every model multiple times, you can see all of its trained models listed here. For each trained model, you can see which dataset was used to train it, how long it was trained (epochs), how big the data bundles were that were fed into the network (batch size), and how good the it is (accuracy). To start a new training with your selected model, simply click on 'Select training data'!"
-              )
+              if (help.helpMode) {
+                handleHelpPopperOpen(
+                  e,
+                  "Here you see all relevant information of your model. On the top, you can see the model's name, as well as which base model was used to create it. Since you can train every model multiple times, you can see all of its trained models listed here. For each trained model, you can see which dataset was used to train it, how long it was trained (epochs), how big the data bundles were that were fed into the network (batch size), and how good the it is (accuracy). To start a new training with your selected model, simply click on 'Select training data'!"
+                )
+              }
             }}
             onMouseLeave={handleHelpPopperClose}
           >

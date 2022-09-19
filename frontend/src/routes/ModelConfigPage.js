@@ -17,6 +17,8 @@ import {
   TextField,
 } from '@mui/material'
 import Button from '@mui/material/Button'
+import SchNetVisual from '../components/models/modelConfig/SchNetVisual'
+import HelpContext from '../context/HelpContext'
 import HelpPopper from '../components/shared/HelpPopper'
 
 export const standardParameters = {
@@ -31,7 +33,8 @@ export const standardParameters = {
       'NAdam',
       'Ftrl',
     ],
-    explanation: 'todo opt',
+    explanation:
+      'The optimizer plays an important part in training your model. It decides how the parameters of your net will be tweaked to make the net better!',
   },
   lossFunction: {
     options: [
@@ -40,7 +43,8 @@ export const standardParameters = {
       'Mean Absolute Error',
       'Mean Squared Error',
     ],
-    explanation: 'todo loss',
+    explanation:
+      "The loss of your net describes now 'bad' your net is, that is, how big the difference between the actual output and the desired output is. The loss function determines how this loss is calculated.",
   },
 }
 
@@ -58,6 +62,7 @@ export default function ModelConfigPage({ baseModel, addFunc }) {
   const [errorMessage, setErrorMessage] = React.useState('')
   const [helpAnchorEl, setHelpAnchorEl] = React.useState(null)
   const [helpPopperContent, setHelpPopperContent] = React.useState('')
+  const help = React.useContext(HelpContext)
 
   function renderTypeSpecificComponents() {
     const children = {}
@@ -157,48 +162,31 @@ export default function ModelConfigPage({ baseModel, addFunc }) {
           <CardContent>
             {Object.entries(standardParameters).map(([param, value], i) => {
               return (
-                <React.Fragment key={param}>
-                  <FormControl key={i} fullWidth>
-                    <InputLabel sx={{ m: 2 }}>
-                      {toNaturalString(param)}
-                    </InputLabel>
-                    <Select
-                      value={parameters[param] || ''}
-                      label={toNaturalString(param)}
-                      onChange={(event) => handleChange(event, param)}
-                      sx={{ m: 2 }}
-                      /** onMouseOver={(e) => {
+                <FormControl key={i} fullWidth>
+                  <InputLabel sx={{ m: 2 }}>
+                    {toNaturalString(param)}
+                  </InputLabel>
+                  <Select
+                    value={parameters[param] || ''}
+                    label={toNaturalString(param)}
+                    onChange={(event) => handleChange(event, param)}
+                    sx={{ m: 2 }}
+                    onMouseOver={(e) => {
+                      if (help.helpMode) {
                         handleHelpPopperOpen(e, value.explanation)
-                      }}
-                      onMouseLeave={handleHelpPopperClose} */
-                    >
-                      {value.options.map((valueEntry, i) => {
-                        return (
-                          <MenuItem key={i} value={valueEntry}>
-                            {valueEntry}
-                          </MenuItem>
-                        )
-                      })}
-                    </Select>
-                  </FormControl>
-                  <Popper
-                    id="mouse-over-popper-standard"
-                    sx={{
-                      pointerEvents: 'none',
-                      padding: 3,
-                      boxShadow: 0,
+                      }
                     }}
-                    open={open}
-                    anchorEl={helpAnchorEl}
-                    placement={'right'}
-                    onClose={handleHelpPopperClose}
+                    onMouseLeave={handleHelpPopperClose}
                   >
-                    <HelpPopper
-                      id="helpPopper-standard"
-                      helpPopperContent={helpPopperContent}
-                    />
-                  </Popper>
-                </React.Fragment>
+                    {value.options.map((valueEntry, i) => {
+                      return (
+                        <MenuItem key={i} value={valueEntry}>
+                          {valueEntry}
+                        </MenuItem>
+                      )
+                    })}
+                  </Select>
+                </FormControl>
               )
             })}
 
@@ -229,6 +217,23 @@ export default function ModelConfigPage({ baseModel, addFunc }) {
             {errorMessage}
           </Alert>
         </Snackbar>
+        <Popper
+          id="mouse-over-popper-standard"
+          sx={{
+            pointerEvents: 'none',
+            padding: 3,
+            boxShadow: 0,
+          }}
+          open={open}
+          anchorEl={helpAnchorEl}
+          placement={'right'}
+          onClose={handleHelpPopperClose}
+        >
+          <HelpPopper
+            id="helpPopper-standard"
+            helpPopperContent={helpPopperContent}
+          />
+        </Popper>
       </Grid>
     </Grid>
   )
