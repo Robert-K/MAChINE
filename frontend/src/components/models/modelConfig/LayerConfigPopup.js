@@ -56,7 +56,7 @@ export default function LayerConfigPopup({
   return (
     <Card
       sx={{
-        width: '15vw',
+        width: '250px',
         position: 'absolute',
       }}
     >
@@ -97,7 +97,7 @@ export default function LayerConfigPopup({
           </Button>
           <Button
             disabled={!activation || !units || error}
-            sx={{ m: 1 }}
+            sx={{ m: 1, ml: 'auto' }}
             onClick={handleSubmit}
           >
             Create

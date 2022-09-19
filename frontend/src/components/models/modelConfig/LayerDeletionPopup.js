@@ -1,17 +1,19 @@
 import React from 'react'
-import { Card, CardActions, CardContent, Typography } from '@mui/material'
+import { Box, Card, CardActions, CardContent, Typography } from '@mui/material'
 import Button from '@mui/material/Button'
 import PropTypes from 'prop-types'
 
 export default function LayerDeletionPopup({ deleteFunc, cancelFunc }) {
   return (
-    <Card>
-      <CardContent>
+    <Card sx={{ width: '185px' }}>
+      <CardContent sx={{ textAlign: 'center' }}>
         <Typography>Delete this layer?</Typography>
       </CardContent>
       <CardActions>
-        <Button onClick={cancelFunc}>No</Button>
-        <Button onClick={deleteFunc}>Yes</Button>
+        <Box sx={{ mx: 'auto' }}>
+          <Button onClick={cancelFunc}>No</Button>
+          <Button onClick={deleteFunc}>Yes</Button>
+        </Box>
       </CardActions>
     </Card>
   )
