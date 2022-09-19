@@ -69,8 +69,10 @@ export default function MLPModelVisual({
   const theme = useTheme()
   const [open, setOpen] = React.useState(false)
   const [offset, setOffset] = React.useState([0, 0])
-  const [insertionIndex, setInsertionIndex] = React.useState(null)
-  const [layers, setLayers] = React.useState(modelLayers)
+  const [insertionIndex, setInsertionIndex] = React.useState(-1)
+  const [visualizedLayers, setVisualizedLayers] = React.useState(
+    [{ type: 'Dense', units: 1 }].concat(modelLayers)
+  )
   const [options] = React.useState({
     nodes: {
       borderWidth: 2,
@@ -97,6 +99,7 @@ export default function MLPModelVisual({
   // TODO: [optional] onSelectNode -> LayerConfigPopup to change unitCount/activation
 
   React.useEffect(() => {
+    console.log(visualizedLayers)
     const graph = fillGraph()
     const container = document.getElementById('network')
     const network = new v.Network(container, graph, options)
@@ -104,7 +107,7 @@ export default function MLPModelVisual({
     network.on('doubleClick', (eventProps) =>
       onDoubleClick(eventProps, network, graph)
     )
-  }, [options, layers, theme.darkMode])
+  }, [options, visualizedLayers, theme.darkMode])
 
   /**
    * Handles double click on network canvas
@@ -121,7 +124,7 @@ export default function MLPModelVisual({
     const clickPos = eventProps.pointer.canvas
     if (
       clickPos.x < network.getPosition('0.1').x ||
-      clickPos.x > network.getPosition(`${layers.length - 1}.1`).x ||
+      clickPos.x > network.getPosition(`${visualizedLayers.length - 1}.1`).x ||
       open
     ) {
       return
@@ -130,12 +133,11 @@ export default function MLPModelVisual({
     let lastLeftNode
     Object.entries(network.getPositions()).every(([node, pos]) => {
       if (pos.x > clickPos.x) {
+        setInsertionIndex(parseInt(graph.nodes.get(node).group))
         return false
       }
-      lastLeftNode = node
       return true
     })
-    setInsertionIndex(parseInt(graph.nodes.get(lastLeftNode).group))
 
     // Popper handling, calculate offset and open
     const canvasRect = document
@@ -150,7 +152,7 @@ export default function MLPModelVisual({
   function beforeDraw(ctx, network) {
     ctx.font = '18px Poppins'
     ctx.textAlign = 'center'
-    layers.forEach((layer, index) => {
+    visualizedLayers.forEach((layer, index) => {
       const topNodePos = network.getPosition(`${index}.1`)
       const lowestNodePos = network.getPosition(`${index}.${layer.units}`)
       ctx.strokeStyle = theme.modelVisual.borderColor
@@ -180,7 +182,7 @@ export default function MLPModelVisual({
     const nodesByLayer = []
     const newEdges = []
     // const newOptions = Object.assign({}, options)
-    layers.forEach((layer, index) => {
+    visualizedLayers.forEach((layer, index) => {
       // add new group for layer
       const graphLayer = []
       if (layer.units < 10) {
@@ -188,7 +190,7 @@ export default function MLPModelVisual({
           // add nodes to layer
           graphLayer.push({
             id: `${index}.${i}`,
-            label: `${i}`,
+            label: index === 0 ? 'Input' : `${i}`,
             group: index.toString(),
           })
         }
@@ -229,18 +231,20 @@ export default function MLPModelVisual({
   }
 
   /**
-   * adds given layer to layers at insertionIndex
+   * adds given layer to visualized layers at insertionIndex
+   * updates layers of parent via updateFunc callback
    * @param layer to be inserted
    **/
   function addLayer(layer) {
     if (insertionIndex !== undefined) {
       const newLayers = [
-        ...layers.slice(0, insertionIndex + 1),
+        ...visualizedLayers.slice(0, insertionIndex),
         layer,
-        ...layers.slice(insertionIndex + 1, layers.length),
+        ...visualizedLayers.slice(insertionIndex, visualizedLayers.length),
       ]
-      updateFunc(newLayers)
-      setLayers(newLayers)
+      setVisualizedLayers([...newLayers])
+      newLayers.shift()
+      updateFunc('layers', newLayers)
     }
   }
 
