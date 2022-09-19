@@ -9,7 +9,7 @@ const TrainingContext = React.createContext({
   setTrainingStopped: () => {},
   trainingFinished: false,
   setTrainingFinished: () => {},
-  trainingID: 0,
+  trainingID: '0',
   setTrainingID: () => {},
   selectedModel: null,
   setSelectedModel: () => {},
@@ -30,7 +30,7 @@ export const TrainingProvider = ({ children }) => {
   const [trainingStatus, setTrainingStatus] = React.useState(true)
   const [trainingStopped, setTrainingStopped] = React.useState(false)
   const [trainingFinished, setTrainingFinished] = React.useState(false)
-  const [trainingID, setTrainingID] = React.useState(0)
+  const [trainingID, setTrainingID] = React.useState('0')
   const [selectedModel, setSelectedModel] = React.useState({})
   const [selectedDataset, setSelectedDataset] = React.useState({})
   const [selectedLabels, setSelectedLabels] = React.useState([])
@@ -53,10 +53,11 @@ export const TrainingProvider = ({ children }) => {
     api.registerSocketListener('update', (data) => {
       dispatchTrainingData({ type: 'update', payload: data })
     })
-    api.registerSocketListener('done', () => {
+    api.registerSocketListener('done', (response) => {
       setTrainingStatus(false)
       setTrainingFinished(true)
-      // TODO: setTrainingID
+      setTrainingID(response)
+      console.log(response)
     })
   }, [])
 
@@ -87,7 +88,7 @@ export const TrainingProvider = ({ children }) => {
     setTrainingStatus(false)
     setTrainingStopped(false)
     setTrainingFinished(false)
-    setTrainingID(0)
+    setTrainingID('0')
     setSelectedModel({})
     setSelectedDataset({})
     setSelectedLabels([])

@@ -112,6 +112,7 @@ class UserDataStorageHandler:
         summary['epochs'] = summary.get('epochs') + epochs
         summary['accuracy'] = accuracy
         self.__save_summary_file('fittings.json', self.fitting_summaries)
+        return fitting_id
 
     def save_fitting(self, fitting_id, fitting):
         path = self.user_fittings_path / f'{fitting_id}_fitting'

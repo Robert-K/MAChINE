@@ -270,8 +270,8 @@ def update_training_logs(user_id, logs):
     sio.emit('update', {user_id: logs})
 
 
-def notify_training_done(user_id):
-    sio.emit('done', {user_id: True})
+def notify_training_done(user_id, fitting_id):
+    sio.emit('done', {user_id: fitting_id})
 
 
 def notify_training_start(user_id):

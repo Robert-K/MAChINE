@@ -143,17 +143,19 @@ class LiveStats(keras.callbacks.Callback):
     def on_train_end(self, logs=None):
         finished_training = live_trainings.pop(self.user_id, None)
         accuracy = finished_training.evaluate_model()
+        fitting_id = finished_training.fitting_id
         # Saves the trained model
         if sh.get_user_handler(self.user_id):
             if finished_training.fitting_id:
-                sh.update_fitting(self.user_id, finished_training.fitting_id, finished_training.epochs, accuracy, self.model)
+                fitting_id = sh.update_fitting(self.user_id, finished_training.fitting_id, finished_training.epochs,
+                                               accuracy, self.model)
             else:
-                sh.add_fitting(self.user_id,
-                               finished_training.dataset_id,
-                               finished_training.labels,
-                               finished_training.epochs,
-                               accuracy,
-                               finished_training.batch_size,
-                               finished_training.model_id,
-                               self.model)
-        api.notify_training_done(self.user_id)
+                fitting_id = sh.add_fitting(self.user_id,
+                                            finished_training.dataset_id,
+                                            finished_training.labels,
+                                            finished_training.epochs,
+                                            accuracy,
+                                            finished_training.batch_size,
+                                            finished_training.model_id,
+                                            self.model)
+        api.notify_training_done(self.user_id, fitting_id)
