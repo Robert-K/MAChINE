@@ -19,6 +19,7 @@ import SnackBarAlert from '../components/misc/SnackBarAlert'
 
 export default function TrainingPage() {
   const training = React.useContext(TrainingContext)
+  const [localEpochs, setLocalEpochs] = React.useState(training.selectedEpochs)
   const [epochsError, setEpochsError] = React.useState(false)
   const [batchSizeError, setBatchSizeError] = React.useState(false)
   const [startStopButton, setStartStopButton] = React.useState('Start')
@@ -57,8 +58,8 @@ export default function TrainingPage() {
   }, [training.selectedBatchSize])
 
   React.useEffect(() => {
-    checkEpochs(training.selectedEpochs)
-  }, [training.selectedEpochs])
+    checkEpochs(localEpochs)
+  }, [localEpochs])
 
   React.useEffect(() => {
     if (training.trainingStatus) {
@@ -76,12 +77,13 @@ export default function TrainingPage() {
     } else {
       training.softResetContext()
       setLoadTraining(true)
+      training.setSelectedEpochs(localEpochs)
       api
         .trainModel(
           training.selectedDataset.datasetID,
           training.selectedModel.id,
           training.selectedLabels,
-          training.selectedEpochs,
+          localEpochs,
           training.selectedBatchSize
         )
         .then((response) => {
@@ -139,9 +141,9 @@ export default function TrainingPage() {
           id="epochs"
           label="Epochs"
           type="number"
-          value={training.selectedEpochs}
+          value={localEpochs}
           disabled={training.trainingStatus}
-          onChange={(event) => training.setSelectedEpochs(event.target.value)}
+          onChange={(event) => setLocalEpochs(event.target.value)}
           error={epochsError}
           helperText={epochsError ? 'Required!' : ' '}
         />
@@ -194,7 +196,7 @@ export default function TrainingPage() {
             sx={{ m: 2 }}
             onClick={handleAdditionalTraining}
           >
-            Train additional {training.selectedEpochs} epochs
+            Train additional {localEpochs} epochs
           </Button>
         )}
         <Box sx={{ flexGrow: 1 }}></Box>
