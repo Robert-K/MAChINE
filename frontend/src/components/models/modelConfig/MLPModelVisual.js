@@ -5,6 +5,7 @@ import * as vis from 'vis-data'
 import * as v from 'vis-network'
 import LayerConfigPopup from './LayerConfigPopup'
 import Layer from '../../../internal/Layer'
+import LayerDeletionPopup from './LayerDeletionPopup'
 
 /**
  * Draws a rounded rectangle using the current state of the canvas.
@@ -69,7 +70,8 @@ export default function MLPModelVisual({
   const theme = useTheme()
   const [open, setOpen] = React.useState(false)
   const [offset, setOffset] = React.useState([0, 0])
-  const [insertionIndex, setInsertionIndex] = React.useState(-1)
+  const [actionIndex, setActionIndex] = React.useState(-1)
+  const [popperContentKey, setPopperContentKey] = React.useState('')
   const [visualizedLayers, setVisualizedLayers] = React.useState(
     [{ type: 'Dense', units: 1 }].concat(modelLayers)
   )
@@ -96,10 +98,24 @@ export default function MLPModelVisual({
     },
   })
 
-  // TODO: [optional] onSelectNode -> LayerConfigPopup to change unitCount/activation
+  const popperContent = {
+    insertion: (
+      <LayerConfigPopup
+        id="LayerConfig"
+        passConfig={configureLayer}
+        cancelConfig={cancelDoubleClickAction}
+        defaultActivation={defaultActivation}
+      />
+    ),
+    deletion: (
+      <LayerDeletionPopup
+        deleteFunc={deleteLayer}
+        cancelFunc={cancelDoubleClickAction}
+      ></LayerDeletionPopup>
+    ),
+  }
 
   React.useEffect(() => {
-    console.log(visualizedLayers)
     const graph = fillGraph()
     const container = document.getElementById('network')
     const network = new v.Network(container, graph, options)
@@ -114,7 +130,7 @@ export default function MLPModelVisual({
    * does nothing if:
    *   left of first or right of last layer, or if
    *   a configuration is already in progress
-   * calculates insertionIndex
+   * calculates actionIndex
    * triggers popup for layer configuration
    * @param eventProps click event with extra canvas props
    * @param network network of nodes
@@ -129,15 +145,20 @@ export default function MLPModelVisual({
     ) {
       return
     }
-    // calculate insertionIndex
-    let lastLeftNode
-    Object.entries(network.getPositions()).every(([node, pos]) => {
-      if (pos.x > clickPos.x) {
-        setInsertionIndex(parseInt(graph.nodes.get(node).group))
-        return false
-      }
-      return true
-    })
+    // calculate actionIndex and determine action type
+    if (eventProps.nodes && eventProps.nodes.length !== 0) {
+      setPopperContentKey('deletion')
+      setActionIndex(graph.nodes.get(eventProps.nodes[0]).group)
+    } else {
+      Object.entries(network.getPositions()).every(([node, pos]) => {
+        if (pos.x > clickPos.x) {
+          setPopperContentKey('insertion')
+          setActionIndex(parseInt(graph.nodes.get(node).group))
+          return false
+        }
+        return true
+      })
+    }
 
     // Popper handling, calculate offset and open
     const canvasRect = document
@@ -231,16 +252,16 @@ export default function MLPModelVisual({
   }
 
   /**
-   * adds given layer to visualized layers at insertionIndex
+   * adds given layer to visualized layers at actionIndex
    * updates layers of parent via updateFunc callback
    * @param layer to be inserted
    **/
   function addLayer(layer) {
-    if (insertionIndex !== undefined) {
+    if (actionIndex !== undefined) {
       const newLayers = [
-        ...visualizedLayers.slice(0, insertionIndex),
+        ...visualizedLayers.slice(0, actionIndex),
         layer,
-        ...visualizedLayers.slice(insertionIndex, visualizedLayers.length),
+        ...visualizedLayers.slice(actionIndex, visualizedLayers.length),
       ]
       setVisualizedLayers([...newLayers])
       newLayers.shift()
@@ -254,7 +275,12 @@ export default function MLPModelVisual({
     setOpen(false)
   }
 
-  function cancelConfig() {
+  function deleteLayer() {
+    console.log('tbd')
+    setOpen(false)
+  }
+
+  function cancelDoubleClickAction() {
     setOpen(false)
   }
 
@@ -276,12 +302,7 @@ export default function MLPModelVisual({
           },
         ]}
       >
-        <LayerConfigPopup
-          id="LayerConfig"
-          passConfig={configureLayer}
-          cancelConfig={cancelConfig}
-          defaultActivation={defaultActivation}
-        />
+        {popperContent[popperContentKey]}
       </Popper>
     </div>
   )
