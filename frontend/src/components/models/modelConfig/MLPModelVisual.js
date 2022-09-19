@@ -103,14 +103,14 @@ export default function MLPModelVisual({
       <LayerConfigPopup
         id="LayerConfig"
         passConfig={configureLayer}
-        cancelConfig={cancelDoubleClickAction}
+        cancelConfig={cancelClickAction}
         defaultActivation={defaultActivation}
       />
     ),
     deletion: (
       <LayerDeletionPopup
         deleteFunc={deleteLayer}
-        cancelFunc={cancelDoubleClickAction}
+        cancelFunc={cancelClickAction}
       ></LayerDeletionPopup>
     ),
   }
@@ -287,7 +287,7 @@ export default function MLPModelVisual({
     setOpen(false)
   }
 
-  function cancelDoubleClickAction() {
+  function cancelClickAction() {
     setOpen(false)
   }
 
