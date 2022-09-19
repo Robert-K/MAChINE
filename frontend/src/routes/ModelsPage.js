@@ -17,7 +17,6 @@ import {
   ListItem,
   ListItemButton,
   ListItemText,
-  Popper,
   Typography,
   useTheme,
 } from '@mui/material'
@@ -103,10 +102,9 @@ export default function ModelsPage() {
 
   const handleHelpPopperClose = () => {
     setHelpAnchorEl(null)
-    // setHelpPopperContent('')
   }
 
-  const open = Boolean(helpAnchorEl)
+  const helpOpen = Boolean(helpAnchorEl)
 
   if (creatingModel) {
     return <BaseModelsPage addFunc={saveModel} />
@@ -125,6 +123,7 @@ export default function ModelsPage() {
             xs={3}
             onMouseOver={(e) => {
               if (help.helpMode) {
+                // todo make the infotext a bit more feingranular
                 handleHelpPopperOpen(
                   e,
                   "This is a list of all models you have created so far. Click on any one of them to get more information about it, or click on 'Add a model' to add a new one to the list!"
@@ -180,19 +179,13 @@ export default function ModelsPage() {
             <Button onClick={handleCloseDialog}>Cancel</Button>
           </DialogActions>
         </Dialog>
-        <Popper
-          id="mouse-over-popper"
-          sx={{
-            pointerEvents: 'none',
-            padding: 3,
-          }}
-          open={open}
+        <HelpPopper
+          id="helpPopper"
+          helpPopperContent={helpPopperContent}
+          open={helpOpen}
           anchorEl={helpAnchorEl}
-          placement={'right'}
           onClose={handleHelpPopperClose}
-        >
-          <HelpPopper id="helpPopper" helpPopperContent={helpPopperContent} />
-        </Popper>
+        />
       </Box>
     )
   }

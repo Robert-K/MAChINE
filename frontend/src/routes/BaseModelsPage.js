@@ -6,7 +6,7 @@
  */
 
 import React from 'react'
-import { Container, Popper } from '@mui/material'
+import { Container } from '@mui/material'
 import BaseModelCard from '../components/models/BaseModelCard'
 import Grid from '@mui/material/Grid'
 import api from '../api'
@@ -66,19 +66,13 @@ export default function BaseModelsPage({ addFunc }) {
             />
           ))}
         </Grid>
-        <Popper
-          id="mouse-over-popper"
-          sx={{
-            pointerEvents: 'none',
-            padding: 3,
-          }}
+        <HelpPopper
+          id="helpPopper"
+          helpPopperContent={helpPopperContent}
           open={helpOpen}
           anchorEl={helpAnchorEl}
-          placement={'right'}
           onClose={handleHelpPopperClose}
-        >
-          <HelpPopper id="helpPopper" helpPopperContent={helpPopperContent} />
-        </Popper>
+        />
       </Container>
     )
   }

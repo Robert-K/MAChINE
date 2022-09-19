@@ -1,5 +1,5 @@
 import React from 'react'
-import { Box, Popper } from '@mui/material'
+import { Box } from '@mui/material'
 import DatasetCard from '../components/datasets/DatasetCard'
 import PropTypes from 'prop-types'
 import DetailsPopper from '../components/shared/DetailsPopper'
@@ -78,7 +78,7 @@ export default function DatasetPage() {
               if (help.helpMode) {
                 handleHelpPopperOpen(
                   e,
-                  "Click here to select the label you want to train on. After confirming your choice, it's time to start training!"
+                  "Click to select the label you want to train on. After confirming your choice, it's time to start training!"
                 )
               }
             }}
@@ -91,19 +91,14 @@ export default function DatasetPage() {
           content={content}
           popperWidth={200}
         />
-        <Popper
-          id="mouse-over-popper"
-          sx={{
-            pointerEvents: 'none',
-            padding: 3,
-          }}
+
+        <HelpPopper
+          id="helpPopper"
+          helpPopperContent={helpPopperContent}
           open={helpOpen}
           anchorEl={helpAnchorEl}
-          placement={'right'}
           onClose={handleHelpPopperClose}
-        >
-          <HelpPopper id="helpPopper" helpPopperContent={helpPopperContent} />
-        </Popper>
+        />
       </Box>
     </Box>
   )

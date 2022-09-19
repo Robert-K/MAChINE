@@ -11,7 +11,6 @@ import {
   FormControl,
   InputLabel,
   MenuItem,
-  Popper,
   Select,
   Snackbar,
   TextField,
@@ -154,7 +153,7 @@ export default function ModelConfigPage({ baseModel, addFunc }) {
     setHelpAnchorEl(null)
   }
 
-  const open = Boolean(helpAnchorEl)
+  const helpOpen = Boolean(helpAnchorEl)
 
   return (
     <Grid container>
@@ -224,23 +223,13 @@ export default function ModelConfigPage({ baseModel, addFunc }) {
             {errorMessage}
           </Alert>
         </Snackbar>
-        <Popper
-          id="mouse-over-popper-standard"
-          sx={{
-            pointerEvents: 'none',
-            padding: 3,
-            boxShadow: 0,
-          }}
-          open={open}
+        <HelpPopper
+          id="helpPopper"
+          helpPopperContent={helpPopperContent}
+          open={helpOpen}
           anchorEl={helpAnchorEl}
-          placement={'right'}
           onClose={handleHelpPopperClose}
-        >
-          <HelpPopper
-            id="helpPopper-standard"
-            helpPopperContent={helpPopperContent}
-          />
-        </Popper>
+        />
       </Grid>
     </Grid>
   )
