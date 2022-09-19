@@ -120,13 +120,11 @@ export default function MLPModelVisual({
     const container = document.getElementById('network')
     const network = new v.Network(container, graph, options)
     network.on('beforeDrawing', (ctx) => beforeDraw(ctx, network))
-    network.on('doubleClick', (eventProps) =>
-      onDoubleClick(eventProps, network, graph)
-    )
+    network.on('click', (eventProps) => onClick(eventProps, network, graph))
   }, [options, visualizedLayers, theme.darkMode])
 
   /**
-   * Handles double click on network canvas
+   * Handles click on network canvas
    * does nothing if:
    *   left of first or right of last layer, or if
    *   a configuration is already in progress
@@ -136,7 +134,7 @@ export default function MLPModelVisual({
    * @param network network of nodes
    * @param graph depicted in network
    */
-  function onDoubleClick(eventProps, network, graph) {
+  function onClick(eventProps, network, graph) {
     const clickPos = eventProps.pointer.canvas
     if (
       clickPos.x < network.getPosition('0.1').x ||
@@ -146,6 +144,7 @@ export default function MLPModelVisual({
       return
     }
     // calculate actionIndex and determine action type
+    console.log(eventProps)
     if (eventProps.nodes && eventProps.nodes.length !== 0) {
       setPopperContentKey('deletion')
       setActionIndex(graph.nodes.get(eventProps.nodes[0]).group)
@@ -263,20 +262,28 @@ export default function MLPModelVisual({
         layer,
         ...visualizedLayers.slice(actionIndex, visualizedLayers.length),
       ]
-      setVisualizedLayers([...newLayers])
-      newLayers.shift()
-      updateFunc('layers', newLayers)
+      updateLayers(newLayers)
     }
+  }
+
+  function updateLayers(newLayers) {
+    setVisualizedLayers([...newLayers])
+    newLayers.shift()
+    updateFunc('layers', newLayers)
+  }
+
+  function deleteLayer() {
+    if (actionIndex >= 0) {
+      const newLayers = [...visualizedLayers]
+      newLayers.splice(actionIndex, 1)
+      updateLayers(newLayers)
+    }
+    setOpen(false)
   }
 
   function configureLayer(units, activation) {
     const layer = new Layer('Dense', units, activation)
     addLayer(layer)
-    setOpen(false)
-  }
-
-  function deleteLayer() {
-    console.log('tbd')
     setOpen(false)
   }
 
