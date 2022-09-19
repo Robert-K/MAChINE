@@ -76,7 +76,11 @@ export default function ModelConfigPage({ baseModel, addFunc }) {
           />
         )
         children.config = (
-          <MLPConfig updateDefaultActivation={setDefaultActivation} />
+          <MLPConfig
+            updateDefaultActivation={setDefaultActivation}
+            hoverFunc={handleHelpPopperOpen}
+            leaveFunc={handleHelpPopperClose}
+          />
         )
         break
       case 'schnet':
@@ -94,6 +98,8 @@ export default function ModelConfigPage({ baseModel, addFunc }) {
           <SchNetConfig
             schnetParams={schnetParams}
             updateFunc={updateParameters}
+            hoverFunc={handleHelpPopperOpen}
+            leaveFunc={handleHelpPopperClose}
           />
         )
     }
@@ -146,7 +152,6 @@ export default function ModelConfigPage({ baseModel, addFunc }) {
 
   const handleHelpPopperClose = () => {
     setHelpAnchorEl(null)
-    // setHelpPopperContent('')
   }
 
   const open = Boolean(helpAnchorEl)
@@ -175,7 +180,10 @@ export default function ModelConfigPage({ baseModel, addFunc }) {
                         handleHelpPopperOpen(e, value.explanation)
                       }
                     }}
-                    onMouseLeave={handleHelpPopperClose}
+                    // onMouseLeave={handleHelpPopperClose}
+                    // onMouseOutCapture={handleHelpPopperClose}
+                    onMouseOut={handleHelpPopperClose}
+                    onClose={handleHelpPopperClose}
                   >
                     {value.options.map((valueEntry, i) => {
                       return (

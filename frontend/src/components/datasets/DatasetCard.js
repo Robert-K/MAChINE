@@ -8,7 +8,13 @@ import {
 } from '@mui/material'
 import PropTypes from 'prop-types'
 
-export default function DatasetCard({ dataset, doubleClickFunc, clickFunc }) {
+export default function DatasetCard({
+  dataset,
+  doubleClickFunc,
+  clickFunc,
+  hoverFunc,
+  leaveFunc,
+}) {
   return (
     <Card>
       <CardActionArea
@@ -16,6 +22,10 @@ export default function DatasetCard({ dataset, doubleClickFunc, clickFunc }) {
         onClick={(e) => {
           clickFunc(e)
         }}
+        onMouseOver={(e) => {
+          hoverFunc(e)
+        }}
+        onMouseLeave={leaveFunc}
       >
         <CardMedia
           component="img"
@@ -40,4 +50,6 @@ DatasetCard.propTypes = {
   dataset: PropTypes.object.isRequired,
   doubleClickFunc: PropTypes.func.isRequired,
   clickFunc: PropTypes.func.isRequired,
+  hoverFunc: PropTypes.func,
+  leaveFunc: PropTypes.func,
 }

@@ -1,8 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { Popper, TextField } from '@mui/material'
+import { TextField } from '@mui/material'
 import { toNaturalString } from '../../../routes/ModelConfigPage'
-import HelpPopper from '../../shared/HelpPopper'
 import HelpContext from '../../../context/HelpContext'
 
 const settableSizes = {
@@ -21,15 +20,18 @@ const settableSizes = {
   },
 }
 
-export default function SchNetConfig({ schnetParams, updateFunc }) {
+export default function SchNetConfig({
+  schnetParams,
+  updateFunc,
+  hoverFunc,
+  leaveFunc,
+}) {
   const [sizes, setSizes] = React.useState([
     schnetParams.depth,
     schnetParams.embeddingDimension,
     schnetParams.readoutSize,
   ])
   const [sizesError, setSizesError] = React.useState([false, false, false])
-  const [helpAnchorEl, setHelpAnchorEl] = React.useState(null)
-  const [helpPopperContent, setHelpPopperContent] = React.useState('')
   const help = React.useContext(HelpContext)
 
   const handleChange = (event, i, min) => {
@@ -42,17 +44,6 @@ export default function SchNetConfig({ schnetParams, updateFunc }) {
       setSizes(sizesClone)
     }
   }
-
-  const handleHelpPopperOpen = (event, content) => {
-    setHelpAnchorEl(event.currentTarget)
-    setHelpPopperContent(content)
-  }
-
-  const handleHelpPopperClose = () => {
-    setHelpAnchorEl(null)
-  }
-
-  const open = Boolean(helpAnchorEl)
 
   return (
     <div>
@@ -70,10 +61,10 @@ export default function SchNetConfig({ schnetParams, updateFunc }) {
             onChange={(e) => handleChange(e, i, value.min)}
             onMouseOver={(e) => {
               if (help.helpMode) {
-                handleHelpPopperOpen(e, value.explanation)
+                hoverFunc(e, value.explanation)
               }
             }}
-            onMouseLeave={handleHelpPopperClose}
+            onMouseLeave={leaveFunc}
             InputLabelProps={{
               shrink: true,
             }}
@@ -83,19 +74,6 @@ export default function SchNetConfig({ schnetParams, updateFunc }) {
           />
         )
       })}
-      <Popper
-        id="mouse-over-popper"
-        sx={{
-          pointerEvents: 'none',
-          padding: 3,
-        }}
-        open={open}
-        anchorEl={helpAnchorEl}
-        placement={'right'}
-        onClose={handleHelpPopperClose}
-      >
-        <HelpPopper id="helpPopper" helpPopperContent={helpPopperContent} />
-      </Popper>
     </div>
   )
 }
@@ -103,4 +81,6 @@ export default function SchNetConfig({ schnetParams, updateFunc }) {
 SchNetConfig.propTypes = {
   schnetParams: PropTypes.object.isRequired,
   updateFunc: PropTypes.func.isRequired,
+  hoverFunc: PropTypes.func,
+  leaveFunc: PropTypes.func,
 }

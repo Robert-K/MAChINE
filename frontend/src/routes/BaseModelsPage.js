@@ -39,10 +39,9 @@ export default function BaseModelsPage({ addFunc }) {
 
   const handleHelpPopperClose = () => {
     setHelpAnchorEl(null)
-    // setHelpPopperContent('')
   }
 
-  const open = Boolean(helpAnchorEl)
+  const helpOpen = Boolean(helpAnchorEl)
 
   if (selectedModel) {
     return <ModelConfigPage baseModel={selectedModel} addFunc={addFunc} />
@@ -56,7 +55,6 @@ export default function BaseModelsPage({ addFunc }) {
               key={baseModel.id}
               clickFunc={handleClick}
               hoverFunc={(e) => {
-                console.log('hovering')
                 if (help.helpMode) {
                   handleHelpPopperOpen(
                     e,
@@ -74,7 +72,7 @@ export default function BaseModelsPage({ addFunc }) {
             pointerEvents: 'none',
             padding: 3,
           }}
-          open={open}
+          open={helpOpen}
           anchorEl={helpAnchorEl}
           placement={'right'}
           onClose={handleHelpPopperClose}
