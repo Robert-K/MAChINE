@@ -50,7 +50,6 @@ export default function SchNetConfig({ schnetParams, updateFunc }) {
 
   const handleHelpPopperClose = () => {
     setHelpAnchorEl(null)
-    // setHelpPopperContent('')
   }
 
   const open = Boolean(helpAnchorEl)

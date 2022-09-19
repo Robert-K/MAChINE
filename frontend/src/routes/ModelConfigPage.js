@@ -17,7 +17,6 @@ import {
   TextField,
 } from '@mui/material'
 import Button from '@mui/material/Button'
-import SchNetVisual from '../components/models/modelConfig/SchNetVisual'
 import HelpContext from '../context/HelpContext'
 import HelpPopper from '../components/shared/HelpPopper'
 
