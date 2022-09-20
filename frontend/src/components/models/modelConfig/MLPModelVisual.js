@@ -120,6 +120,7 @@ export default function MLPModelVisual({
     const container = document.getElementById('network')
     const network = new v.Network(container, graph, options)
     network.on('beforeDrawing', (ctx) => beforeDraw(ctx, network))
+    network.on('afterDrawing', (ctx) => afterDraw(ctx, network))
     network.on('click', (eventProps) => onClick(eventProps, network, graph))
   }, [options, visualizedLayers, theme.darkMode])
 
@@ -192,6 +193,21 @@ export default function MLPModelVisual({
         ctx.fillText(layer.activation, topNodePos.x, topNodePos.y - 60)
       }
     })
+  }
+
+  function afterDraw(ctx, network) {
+    for (let i = 0; i < visualizedLayers.length - 1; i++) {
+      ctx.strokeStyle = theme.modelVisual.borderColor
+      ctx.fillStyle = theme.modelVisual.backgroundColor
+      const x = network.getPosition(`${i}.1`).x + 100
+      const y = network.getPosition('0.1').y
+      roundRect(ctx, x - 20, y - 20, 40, 40, 7, true, true)
+      ctx.font = '30px Poppins'
+      ctx.textAlign = 'center'
+      ctx.textBaseline = 'middle'
+      ctx.fillStyle = theme.modelVisual.fontColor
+      ctx.fillText('+', x, y + 4)
+    }
   }
 
   function fillGraph() {
