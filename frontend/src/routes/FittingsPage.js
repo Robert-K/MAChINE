@@ -9,11 +9,13 @@ import FittingCard from '../components/models/FittingCard'
 import Button from '@mui/material/Button'
 import DetailsPopper from '../components/shared/DetailsPopper'
 import api from '../api'
-import UserContext from '../UserContext'
+import UserContext from '../context/UserContext'
+import { useLocation } from 'react-router-dom'
 
 export default function FittingsPage() {
   const [fittingArray, setFittingArray] = React.useState([])
-
+  const { state } = useLocation()
+  const { selectedSmiles } = state
   const user = React.useContext(UserContext)
 
   React.useEffect(() => {
@@ -41,7 +43,17 @@ export default function FittingsPage() {
             clickFunc={(event) => {
               handlePopper(
                 event.currentTarget,
-                <Button fullWidth variant="contained">
+                <Button
+                  fullWidth
+                  variant="contained"
+                  onClick={() => {
+                    api
+                      .analyzeMolecule(fitting.id, selectedSmiles)
+                      .then((response) => {
+                        console.log(response)
+                      })
+                  }}
+                >
                   Choose this model
                 </Button>,
                 event.currentTarget !== anchor || !open

@@ -10,17 +10,16 @@ import {
   ListItem,
 } from '@mui/material'
 import PropTypes from 'prop-types'
-import { useNavigate, useLocation } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked'
 import RadioButtonCheckedIcon from '@mui/icons-material/RadioButtonChecked'
+import TrainingContext from '../../context/TrainingContext'
 
 export default function DatasetInfo({ dataset }) {
   const [labelArray, setLabelArray] = React.useState([])
   const [disabledButton, setDisabledButton] = React.useState(true)
+  const training = React.useContext(TrainingContext)
 
-  // Gets the data sent over from /models
-  const { state } = useLocation()
-  const { selectedModel } = state
   const navigate = useNavigate()
 
   const handleChecked = (event) => {
@@ -41,13 +40,9 @@ export default function DatasetInfo({ dataset }) {
         sx={{ mb: 2 }}
         disabled={disabledButton}
         onClick={() => {
-          navigate('/training', {
-            state: {
-              selectedModel,
-              selectedDatasetID: dataset.datasetID,
-              selectedLabels: labelArray,
-            },
-          })
+          training.setSelectedDataset(dataset)
+          training.setSelectedLabels(labelArray)
+          navigate('/training')
         }}
       >
         {`${disabledButton ? 'Choose a label' : 'Start Training!'}`}

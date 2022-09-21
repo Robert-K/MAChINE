@@ -2,8 +2,9 @@
 	"id": {
 		"name": "SequentialA",
 		"type": "sequential",
-		"lossFunction": "MeanSquaredError",
+		"lossFunction": "Mean Squared Error",
 		"optimizer": "Adam",
+		"metrics": ["MeanAbsoluteError", "R2"],
 		"layers": [
 			{
 				"type": "Dense",
@@ -26,12 +27,11 @@
 			}
 		]
 	},
-
-	"schnet1": {
-		"name": "SchNetA",
+	"id2": {
+		"name": "SCHNET A",
 		"type": "schnet",
-		"depth": 3,
-		"embeddingDimension": 128,
-		"readoutSize": 1
+		"lossFunction": "Mean Squared Error",
+		"optimizer": "NAdam",
+		"metrics": ["MeanAbsoluteError", "R2"]
 	}
 }

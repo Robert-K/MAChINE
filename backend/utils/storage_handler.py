@@ -20,11 +20,13 @@ __all__ = ['add_analysis',
            'get_dataset',
            'get_dataset_summaries',
            'get_fitting',
+           'get_fitting_summary',
            'get_fitting_summaries',
-           'get_model',
+           'get_model_summary',
            'get_model_summaries',
            'get_molecules',
-           'get_user_handler']
+           'get_user_handler',
+           'update_fitting']
 
 _storage_path = Path.cwd() / 'storage'
 _user_data_path = _storage_path / 'user_data'
@@ -33,13 +35,13 @@ _dataset_images_path = _datasets_path / 'images'
 _base_models_path = _storage_path / 'models'
 _base_model_images_path = _base_models_path / 'images'
 MAX_THUMB_SIZE = (500, 500)
+_dataset_version = 3
 
 
 class UserDataStorageHandler:
 
     def __init__(self, user_id):
         self.user_path = _user_data_path / user_id
-        self.user_models_path = self.user_path / 'models'
         self.user_fittings_path = self.user_path / 'fittings'
         self.__build_folder_structure()
         self.molecules = self.__load_summary_file('molecules.json')
@@ -66,37 +68,29 @@ class UserDataStorageHandler:
         return self.molecules.get(smiles)
 
     # Models
-    def add_model(self, name, parameters, base_model_id, model):
-        model_id = str(hash(model) ^ hash(name))
-        path = self.user_models_path / f'{model_id}_model.h5'
-        model.save(path)
+    def add_model(self, name, parameters, base_model_id):
+        model_id = str(hash(str(parameters)) ^ hash(name) ^ hash(base_model_id))
         self.model_summaries[model_id] = {'name': name,
                                           'baseModelID': base_model_id,
                                           'parameters': parameters,
-                                          'modelPath': str(path),
                                           'fittingIDs': []
                                           }
         self.__save_summary_file('models.json', self.model_summaries)
         return model_id
 
-    # Models are pickled
-    def get_model(self, model_id):
-        summary = self.model_summaries.get(model_id)
-        if summary and summary.get('modelPath'):
-            path = Path(summary.get('modelPath'))
-            if path.exists():
-                return tf.keras.models.load_model(path)
+    def get_model_summary(self, model_id):
+        return self.model_summaries.get(model_id)
 
     def get_model_summaries(self):
         return self.model_summaries
 
     # Fittings
     # Saves a fitting, creates a summary, updates the model summary
-    def add_fitting(self, dataset_id, epochs, accuracy, batch_size, model_id, fitting):
+    def add_fitting(self, dataset_id, labels, epochs, accuracy, batch_size, model_id, fitting):
         fitting_id = str(hash(fitting) ^ hash(epochs) ^ hash(accuracy) ^ hash(batch_size))
-        path = self.user_fittings_path / f'{fitting_id}_fitting.h5'
-        fitting.save(path)
+        path = self.save_fitting(fitting_id, fitting)
         self.fitting_summaries[fitting_id] = {'datasetID': dataset_id,
+                                              'labels': labels,
                                               'epochs': epochs,
                                               'accuracy': accuracy,
                                               'batchSize': batch_size,
@@ -112,12 +106,32 @@ class UserDataStorageHandler:
         summary.get('fittingIDs').append(fitting_id)
         self.__save_summary_file('models.json', self.model_summaries)
 
+    def update_fitting(self, fitting_id, epochs, accuracy, fitting):
+        self.save_fitting(fitting_id, fitting)
+        summary = self.fitting_summaries[fitting_id]
+        summary['epochs'] = epochs
+        summary['accuracy'] = accuracy
+        self.__save_summary_file('fittings.json', self.fitting_summaries)
+        return fitting_id
+
+    def save_fitting(self, fitting_id, fitting):
+        path = self.user_fittings_path / f'{fitting_id}_fitting'
+        try:
+            fitting.save(path)
+            return path
+        except NotImplementedError:
+            print('Cannot save this model. Please write serialisation functions')
+            return None
+
     def get_fitting(self, fitting_id):
         summary = self.fitting_summaries.get(fitting_id)
         if summary and summary.get('fittingPath'):
             path = Path(summary.get('fittingPath'))
             if path.exists():
                 return tf.keras.models.load_model(path)
+
+    def get_fitting_summary(self, fitting_id):
+        return self.fitting_summaries.get(fitting_id)
 
     def get_fitting_summaries(self):
         return self.fitting_summaries
@@ -137,7 +151,11 @@ class UserDataStorageHandler:
         file_path = (self.user_path / filename)
         if file_path.exists():
             file = file_path.open('r')
-            content = json.load(file)
+            try:
+                content = json.load(file)
+            except json.decoder.JSONDecodeError:
+                print('Error reading', file.name)
+                content = {}
             file.close()
         return content
 
@@ -149,7 +167,6 @@ class UserDataStorageHandler:
 
     def __build_folder_structure(self):
         self.user_path.mkdir(parents=True, exist_ok=True)
-        self.user_models_path.mkdir(parents=True, exist_ok=True)
         self.user_fittings_path.mkdir(parents=True, exist_ok=True)
 
 
@@ -216,23 +233,29 @@ class StorageHandler:
 
     # Models
     # model is the actual model, not a summary
-    def add_model(self, user_id, name, parameters, base_model_id, model):
-        return self.get_user_handler(user_id).add_model(name, parameters, base_model_id, model)
+    def add_model(self, user_id, name, parameters, base_model_id):
+        return self.get_user_handler(user_id).add_model(name, parameters, base_model_id)
 
-    def get_model(self, user_id, model_id):
-        return self.get_user_handler(user_id).get_model(model_id)
+    def get_model_summary(self, user_id, model_id):
+        return self.get_user_handler(user_id).get_model_summary(model_id)
 
     def get_model_summaries(self, user_id):
         return self.get_user_handler(user_id).get_model_summaries()
 
     # Fittings
     # fitting is the actual, trained model, not a summary
-    def add_fitting(self, user_id, dataset_id, epochs, accuracy, batch_size, model_id, fitting):
-        return self.get_user_handler(user_id).add_fitting(dataset_id, epochs, accuracy, batch_size, model_id,
+    def add_fitting(self, user_id, dataset_id, labels, epochs, accuracy, batch_size, model_id, fitting):
+        return self.get_user_handler(user_id).add_fitting(dataset_id, labels, epochs, accuracy, batch_size, model_id,
                                                           fitting)
+
+    def update_fitting(self, user_id, fitting_id, epochs, accuracy, fitting):
+        return self.get_user_handler(user_id).update_fitting(fitting_id, epochs, accuracy, fitting)
 
     def get_fitting(self, user_id, fitting_id):
         return self.get_user_handler(user_id).get_fitting(fitting_id)
+
+    def get_fitting_summary(self, user_id, fitting_id):
+        return self.get_user_handler(user_id).get_fitting_summary(fitting_id)
 
     def get_fitting_summaries(self, user_id):
         return self.get_user_handler(user_id).get_fitting_summaries()
@@ -261,9 +284,14 @@ class StorageHandler:
         file = dataset_path.open('rb')
         content = pickle.load(file)
         file.close()
+        if content.get('version') != _dataset_version:
+            print(
+                f'Dataset {content.get("name")} not compatible. Current version: {_dataset_version}. Set version: {content.get("version")}')
+            return
         dataset_summary = {'name': content.get('name'),
                            'size': content.get('size'),
                            'labelDescriptors': content.get('labels'),
+                           'fingerprintSizes': content.get('fingerprint_sizes'),
                            'datasetPath': str(dataset_path.absolute()),
                            'image': self.__encode_image(_dataset_images_path / content.get('image_file')),
                            }
@@ -302,8 +330,10 @@ get_base_models = _inst.get_base_models
 get_dataset = _inst.get_dataset
 get_dataset_summaries = _inst.get_dataset_summaries
 get_fitting = _inst.get_fitting
+get_fitting_summary = _inst.get_fitting_summary
 get_fitting_summaries = _inst.get_fitting_summaries
-get_model = _inst.get_model
+get_model_summary = _inst.get_model_summary
 get_model_summaries = _inst.get_model_summaries
 get_molecules = _inst.get_molecules
 get_user_handler = _inst.get_user_handler
+update_fitting = _inst.update_fitting

@@ -16,7 +16,8 @@ import BaseModelsPage from './routes/BaseModelsPage'
 import DatasetPage from './routes/DatasetPage'
 import FittingsPage from './routes/FittingsPage'
 import api from './api'
-import { UserProvider } from './UserContext'
+import { UserProvider } from './context/UserContext'
+import { TrainingProvider } from './context/TrainingContext'
 import Particles from 'react-tsparticles'
 import { loadFull } from 'tsparticles'
 import { deepmerge } from '@mui/utils'
@@ -56,6 +57,9 @@ const themeLight = createTheme(
         },
       },
     },
+    apexcharts: {
+      shade: 'light',
+    },
   })
 )
 
@@ -84,6 +88,9 @@ const themeDark = createTheme(
           },
         },
       },
+    },
+    apexcharts: {
+      shade: 'dark',
     },
   })
 )
@@ -118,11 +125,13 @@ export default function App() {
   }
 
   const logout = () => {
+    api.stopTraining()
     api.logout().catch((e) => console.log(e))
     setUserName(null)
-    /* Delete all Data */
-    /* Delete trained models */
-    /* Delete molecules */
+    // TrainingsContext is reset in Navbar
+    /* TODO: Delete all Data */
+    /* TODO: Delete trained models */
+    /* TODO: Delete molecules */
   }
 
   const changeDarkMode = (value) => {
@@ -133,90 +142,98 @@ export default function App() {
     <div className="App">
       <ThemeProvider theme={darkMode ? themeDark : themeLight}>
         <UserProvider value={{ userName }}>
-          <CssBaseline />
-          <BrowserRouter>
-            <Navbar
-              logoutFunction={logout}
-              darkModeButton={
-                <DarkModeButton setModeFunction={changeDarkMode} />
-              }
-            />
-            <Particles
-              init={particlesInit}
-              options={{
-                fullScreen: {
-                  enable: true,
-                  zIndex: -1000000,
-                },
-                particles: {
-                  color: {
-                    value: '#aaaaaa',
-                  },
-                  links: {
-                    color: '#aaaaaa',
-                    distance: 111,
+          <TrainingProvider>
+            <CssBaseline />
+            <BrowserRouter>
+              <Navbar
+                logoutFunction={logout}
+                darkModeButton={
+                  <DarkModeButton setModeFunction={changeDarkMode} />
+                }
+              />
+              <Particles
+                init={particlesInit}
+                options={{
+                  fullScreen: {
                     enable: true,
-                    opacity: 0.3,
-                    width: 4,
+                    zIndex: -1000000,
                   },
-                  move: {
-                    direction: 'none',
-                    enable: true,
-                    outMode: 'bounce',
-                    random: false,
-                    speed: 0.2,
-                    straight: false,
-                  },
-                  number: {
-                    density: {
+                  particles: {
+                    color: {
+                      value: '#aaaaaa',
+                    },
+                    links: {
+                      color: '#aaaaaa',
+                      distance: 111,
                       enable: true,
-                      value_area: 800,
+                      opacity: 0.3,
+                      width: 4,
                     },
-                    value: 30,
-                  },
-                  opacity: {
-                    value: 0.3,
-                  },
-                  shape: {
-                    type: 'circle',
-                  },
-                  size: {
-                    random: true,
-                    value: 7,
-                  },
-                },
-                interactivity: {
-                  events: {
-                    onHover: {
+                    move: {
+                      direction: 'none',
                       enable: true,
-                      mode: 'repulse',
+                      outMode: 'bounce',
+                      random: false,
+                      speed: 0.2,
+                      straight: false,
                     },
-                    resize: true,
-                  },
-                  modes: {
-                    repulse: {
-                      distance: 200,
-                      factor: 0.77,
-                      easing: 'ease-out-quad',
+                    number: {
+                      density: {
+                        enable: true,
+                        value_area: 800,
+                      },
+                      value: 30,
+                    },
+                    opacity: {
+                      value: 0.3,
+                    },
+                    shape: {
+                      type: 'circle',
+                    },
+                    size: {
+                      random: true,
+                      value: 7,
                     },
                   },
-                },
-              }}
-            />
-            <Routes>
-              <Route path="/" element={<StartPage onLogin={login} />}></Route>
-              <Route path="/home" element={<HomePage />}></Route>
-              <Route path="/modelconfig" element={<ModelConfigPage />}></Route>
-              <Route path="/models" element={<ModelsPage />}></Route>
-              <Route path="/molecules" element={<MoleculesPage />}></Route>
-              <Route path="/results" element={<ScoreboardsPage />}></Route>
-              <Route path="/swagger" element={<SwaggerPage />}></Route>
-              <Route path="/training" element={<TrainingPage />}></Route>
-              <Route path="/trained-models" element={<FittingsPage />}></Route>
-              <Route path="/base-models" element={<BaseModelsPage />}></Route>
-              <Route path="/datasets" element={<DatasetPage />}></Route>
-            </Routes>
-          </BrowserRouter>
+                  interactivity: {
+                    events: {
+                      onHover: {
+                        enable: true,
+                        mode: 'repulse',
+                      },
+                      resize: true,
+                    },
+                    modes: {
+                      repulse: {
+                        distance: 200,
+                        factor: 0.77,
+                        easing: 'ease-out-quad',
+                      },
+                    },
+                  },
+                }}
+              />
+              <Routes>
+                <Route path="/" element={<StartPage onLogin={login} />}></Route>
+                <Route path="/home" element={<HomePage />}></Route>
+                <Route
+                  path="/modelconfig"
+                  element={<ModelConfigPage />}
+                ></Route>
+                <Route path="/models" element={<ModelsPage />}></Route>
+                <Route path="/molecules" element={<MoleculesPage />}></Route>
+                <Route path="/results" element={<ScoreboardsPage />}></Route>
+                <Route path="/swagger" element={<SwaggerPage />}></Route>
+                <Route path="/training" element={<TrainingPage />}></Route>
+                <Route
+                  path="/trained-models"
+                  element={<FittingsPage />}
+                ></Route>
+                <Route path="/base-models" element={<BaseModelsPage />}></Route>
+                <Route path="/datasets" element={<DatasetPage />}></Route>
+              </Routes>
+            </BrowserRouter>
+          </TrainingProvider>
         </UserProvider>
       </ThemeProvider>
     </div>
