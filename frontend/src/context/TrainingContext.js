@@ -45,10 +45,11 @@ export const TrainingProvider = ({ children }) => {
 
   React.useEffect(() => {
     setTrainingStatus(false)
-    api.registerSocketListener('started', () => {
+    api.registerSocketListener('started', (data) => {
       setTrainingStatus(true)
       setTrainingStopped(false)
       setTrainingFinished(false)
+      setSelectedEpochs(data)
     })
     api.registerSocketListener('update', (data) => {
       dispatchTrainingData({ type: 'update', payload: data })
@@ -104,10 +105,6 @@ export const TrainingProvider = ({ children }) => {
   function stopTraining() {
     api.stopTraining()
     setTrainingStopped(true)
-    const trainedEpochs = trainingData.epoch
-      ? trainingData.epoch.length * 1.0
-      : 0.0
-    setSelectedEpochs(trainedEpochs)
   }
 
   return (

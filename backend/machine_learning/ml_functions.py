@@ -133,17 +133,18 @@ class LiveStats(keras.callbacks.Callback):
     def __init__(self, user_id):
         super().__init__()
         self.user_id = user_id
-        self.last_epoch = 0
+        self.epochs_trained = 0
 
     def on_epoch_end(self, epoch, logs=None):
         if logs is None:
             logs = {}
-        self.last_epoch = epoch
+        self.epochs_trained = epoch + 1
         logs |= {"epoch": epoch}
         api.update_training_logs(self.user_id, logs)
 
     def on_train_begin(self, logs=None):
-        api.notify_training_start(self.user_id)
+        epochs = live_trainings.get(self.user_id).epochs
+        api.notify_training_start(self.user_id, epochs)
 
     def on_train_end(self, logs=None):
         finished_training = live_trainings.pop(self.user_id, None)
@@ -152,15 +153,15 @@ class LiveStats(keras.callbacks.Callback):
         # Saves the trained model
         if sh.get_user_handler(self.user_id):
             if finished_training.fitting_id:
-                fitting_id = sh.update_fitting(self.user_id, finished_training.fitting_id, self.last_epoch,
+                fitting_id = sh.update_fitting(self.user_id, finished_training.fitting_id, self.epochs_trained,
                                                accuracy, self.model)
             else:
                 fitting_id = sh.add_fitting(self.user_id,
                                             finished_training.dataset_id,
                                             finished_training.labels,
-                                            self.last_epoch,
+                                            self.epochs_trained,
                                             accuracy,
                                             finished_training.batch_size,
                                             finished_training.model_id,
                                             self.model)
-        api.notify_training_done(self.user_id, fitting_id, self.last_epoch)
+        api.notify_training_done(self.user_id, fitting_id, self.epochs_trained)
