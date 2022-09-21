@@ -80,6 +80,9 @@ class Training:
 def train(user_id, dataset_id, model_id, labels, epochs, batch_size, fitting_id=None):
     if is_training_running(user_id):  # Change this to allow for more than one training at the same time
         return False
+    # Placeholder here to ensure no other training can be started while we're initializing, as this takes a while
+    # This isn't great
+    live_trainings[user_id] = {'Placeholder'}
     new_training = Training(user_id, dataset_id, model_id, labels, epochs, batch_size, fitting_id)
     live_trainings[user_id] = new_training
     new_training.start_training()
@@ -103,7 +106,7 @@ def stop_training(user_id):
 
 def is_training_running(user_id):
     # Change this & live_trainings dict to allow for more than one training at the same time
-    return bool(live_trainings.get(user_id))
+    return bool(live_trainings)
 
 
 def analyze(user_id, fitting_id, smiles):
@@ -148,20 +151,21 @@ class LiveStats(keras.callbacks.Callback):
 
     def on_train_end(self, logs=None):
         finished_training = live_trainings.pop(self.user_id, None)
-        accuracy = finished_training.evaluate_model()
-        fitting_id = finished_training.fitting_id
-        # Saves the trained model
-        if sh.get_user_handler(self.user_id):
-            if finished_training.fitting_id:
-                fitting_id = sh.update_fitting(self.user_id, finished_training.fitting_id, self.epochs_trained,
-                                               accuracy, self.model)
-            else:
-                fitting_id = sh.add_fitting(self.user_id,
-                                            finished_training.dataset_id,
-                                            finished_training.labels,
-                                            self.epochs_trained,
-                                            accuracy,
-                                            finished_training.batch_size,
-                                            finished_training.model_id,
-                                            self.model)
-        api.notify_training_done(self.user_id, fitting_id, self.epochs_trained)
+        if finished_training:
+            accuracy = finished_training.evaluate_model()
+            fitting_id = finished_training.fitting_id
+            # Saves the trained model
+            if sh.get_user_handler(self.user_id):
+                if finished_training.fitting_id:
+                    fitting_id = sh.update_fitting(self.user_id, finished_training.fitting_id, self.epochs_trained,
+                                                   accuracy, self.model)
+                else:
+                    fitting_id = sh.add_fitting(self.user_id,
+                                                finished_training.dataset_id,
+                                                finished_training.labels,
+                                                self.epochs_trained,
+                                                accuracy,
+                                                finished_training.batch_size,
+                                                finished_training.model_id,
+                                                self.model)
+            api.notify_training_done(self.user_id, fitting_id, self.epochs_trained)
