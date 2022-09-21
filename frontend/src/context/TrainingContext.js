@@ -22,9 +22,9 @@ const TrainingContext = React.createContext({
   selectedBatchSize: 0,
   setSelectedBatchSize: () => {},
   trainingData: {},
-  stopTraining: () => {},
-  resetContext: () => {},
   softResetContext: () => {},
+  resetContext: () => {},
+  stopTraining: () => {},
 })
 
 export const TrainingProvider = ({ children }) => {
@@ -58,7 +58,7 @@ export const TrainingProvider = ({ children }) => {
       setTrainingStatus(false)
       setTrainingFinished(true)
       setTrainingID(response.fittingID)
-      // Get trained epochs with response.epochs
+      setSelectedEpochs(response.epochs)
     })
   }, [])
 
@@ -129,9 +129,9 @@ export const TrainingProvider = ({ children }) => {
         selectedBatchSize,
         setSelectedBatchSize,
         trainingData,
-        stopTraining,
-        resetContext,
         softResetContext,
+        resetContext,
+        stopTraining,
       }}
     >
       {children}

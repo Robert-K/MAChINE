@@ -62,6 +62,10 @@ export default function TrainingPage() {
   }, [localEpochs])
 
   React.useEffect(() => {
+    setLocalEpochs(training.selectedEpochs)
+  }, [training.selectedEpochs])
+
+  React.useEffect(() => {
     if (training.trainingStatus) {
       setLoadTraining(false)
       setStartStopButton('Stop')
@@ -99,7 +103,6 @@ export default function TrainingPage() {
       setOpenSnackError(!response)
       setLoadTraining(response)
     })
-    // TODO: training.selectedEpochs auf den Wert der insgesamt trainierten Epochen setzen
   }
 
   const handleCloseDialog = () => {
