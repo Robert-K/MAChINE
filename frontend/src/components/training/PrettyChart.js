@@ -6,7 +6,6 @@ import propTypes from 'prop-types'
 export default function PrettyChart({ data }) {
   const theme = useTheme()
   const displayedData = data || [{ data: [] }]
-  console.log(displayedData)
   return (
     <Chart
       options={{

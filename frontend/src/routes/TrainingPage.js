@@ -122,7 +122,6 @@ export default function TrainingPage() {
     const newData = []
     Object.entries(data).forEach(([dataName, values], index) => {
       if (excludedPoints.indexOf(dataName) === -1) {
-        console.log('aah')
         if (values.length === 1) {
           values = [...values, ...values]
         }
