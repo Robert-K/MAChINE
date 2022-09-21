@@ -145,7 +145,6 @@ export default function MLPModelVisual({
       return
     }
     // calculate actionIndex and determine action type
-    console.log(eventProps)
     if (eventProps.nodes && eventProps.nodes.length !== 0) {
       setPopperContentKey('deletion')
       setActionIndex(graph.nodes.get(eventProps.nodes[0]).group)

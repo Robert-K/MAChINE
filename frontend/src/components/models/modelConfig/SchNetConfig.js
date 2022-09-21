@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { Box, Popper, TextField } from '@mui/material'
 import HelpIcon from '@mui/icons-material/Help'
-import { toNaturalString } from '../../../routes/ModelConfigPage'
+import { camelToNaturalString } from '../../../utils'
 
 const settableSizes = {
   depth: {
@@ -68,7 +68,7 @@ export default function SchNetConfig({
             required
             key={i}
             id="outlined-number"
-            label={toNaturalString(key)}
+            label={camelToNaturalString(key)}
             type="number"
             defaultValue={sizes[i]}
             error={sizesError[i]}

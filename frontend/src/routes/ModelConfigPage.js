@@ -18,6 +18,7 @@ import {
 } from '@mui/material'
 import Button from '@mui/material/Button'
 import SchNetVisual from '../components/models/modelConfig/SchNetVisual'
+import { camelToNaturalString } from '../utils'
 
 export const standardParameters = {
   optimizer: [
@@ -38,12 +39,6 @@ export const standardParameters = {
   ],
 }
 
-export const toNaturalString = (str) => {
-  const splitAtCapitals = str.split(/(?=[A-Z])/)
-  const strWithSpaces = splitAtCapitals.join(' ')
-  return `${strWithSpaces.charAt(0).toUpperCase()}${strWithSpaces.slice(1)}`
-}
-
 export default function ModelConfigPage({ baseModel, addFunc }) {
   const [parameters, setParameters] = React.useState(baseModel.parameters)
   const [defaultActivation, setDefaultActivation] = React.useState('')
@@ -54,37 +49,28 @@ export default function ModelConfigPage({ baseModel, addFunc }) {
 
   const modelTypeSpecificComponents = {
     sequential: {
-      visual: () => {
-        return (
-          <MLPModelVisual
-            modelLayers={baseModel.parameters.layers}
-            defaultActivation={defaultActivation}
-            updateFunc={updateParameters}
-          />
-        )
-      },
-      config: () => {
-        return <MLPConfig updateDefaultActivation={setDefaultActivation} />
-      },
+      visual: (
+        <MLPModelVisual
+          modelLayers={baseModel.parameters.layers}
+          defaultActivation={defaultActivation}
+          updateFunc={updateParameters}
+        />
+      ),
+      config: <MLPConfig updateDefaultActivation={setDefaultActivation} />,
     },
     schnet: {
-      visual: () => {
-        return <SchNetVisual />
-      },
-      config: () => {
-        const schnetParams = {
-          depth: parameters.depth,
-          embeddingDimension: parameters.embeddingDimension,
-          readoutSize: parameters.readoutSize,
-        }
-        return (
-          <SchNetConfig
-            schnetParams={schnetParams}
-            updateFunc={updateParameters}
-            errorSignal={setIsInvalidConfig}
-          />
-        )
-      },
+      visual: <SchNetVisual />,
+      config: (
+        <SchNetConfig
+          schnetParams={{
+            depth: parameters.depth,
+            embeddingDimension: parameters.embeddingDimension,
+            readoutSize: parameters.readoutSize,
+          }}
+          updateFunc={updateParameters}
+          errorSignal={setIsInvalidConfig}
+        />
+      ),
     },
   }
 
@@ -110,8 +96,6 @@ export default function ModelConfigPage({ baseModel, addFunc }) {
       case 'error':
         showSnackError(`The model could not be saved.`)
         break
-      case 0:
-      // TODO: add snackbar confirm, "Model saved" or sth
     }
   }
 
@@ -134,7 +118,7 @@ export default function ModelConfigPage({ baseModel, addFunc }) {
     <Grid sx={{ p: 2, height: '85vh' }} container>
       <Grid item xs={8} sx={{ height: '100%' }}>
         <Card sx={{ height: '100%' }}>
-          {modelTypeSpecificComponents[baseModel.type.name].visual()}
+          {modelTypeSpecificComponents[baseModel.type.name].visual}
         </Card>
       </Grid>
       <Grid item xs={4}>
@@ -144,12 +128,12 @@ export default function ModelConfigPage({ baseModel, addFunc }) {
               return (
                 <FormControl key={i} fullWidth>
                   <InputLabel sx={{ m: 2 }}>
-                    {toNaturalString(param)}
+                    {camelToNaturalString(param)}
                   </InputLabel>
                   <Select
                     required
                     value={parameters[param] || ''}
-                    label={toNaturalString(param)}
+                    label={camelToNaturalString(param)}
                     onChange={(event) => handleChange(event, param)}
                     sx={{ m: 2 }}
                   >
@@ -165,7 +149,7 @@ export default function ModelConfigPage({ baseModel, addFunc }) {
               )
             })}
 
-            {modelTypeSpecificComponents[baseModel.type.name].config()}
+            {modelTypeSpecificComponents[baseModel.type.name].config}
 
             <FormControl>
               <TextField
