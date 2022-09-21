@@ -6,7 +6,7 @@ import Api from '../api'
 let loaded = false
 
 export default function ScoreboardsPage() {
-  const [fittingrows, setFittingRows] = React.useState([])
+  const [fittingRows, setFittingRows] = React.useState([])
   if (!loaded) {
     Api.getFittings().then((data) => {
       setFittingRows(data)
@@ -18,19 +18,19 @@ export default function ScoreboardsPage() {
       <Box sx={{ mx: 5, mb: 5, mt: 2 }}>
         <Typography sx={{ fontSize: 20 }}>Best Models</Typography>
         <Box sx={{ maxWidth: 1000 }}>
-          {DataTable(fittingcolumns, fittingrows)}
+          {DataTable(fittingColumns, fittingRows)}
         </Box>
 
         <Typography sx={{ mt: 5, fontSize: 20 }}>Best Molecules</Typography>
         <Box sx={{ maxWidth: 1000 }}>
-          {DataTable(moleculecolumns, moleculerows)}
+          {DataTable(moleculeColumns, moleculeRows)}
         </Box>
       </Box>
     </div>
   )
 }
 
-const fittingcolumns = [
+const fittingColumns = [
   {
     field: 'id',
     headerName: 'ID',
@@ -101,7 +101,7 @@ const fittingcolumns = [
   },
 ]
 
-const moleculecolumns = [
+const moleculeColumns = [
   {
     field: 'name',
     headerName: 'Name',
@@ -122,9 +122,9 @@ const moleculecolumns = [
   },
 ]
 
-let moleculerows = []
+let moleculeRows = []
 Api.getMoleculeList().then((data) => {
-  moleculerows = data
+  moleculeRows = data
 })
 
 function DataTable(columns, rows) {
