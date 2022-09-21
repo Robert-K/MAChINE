@@ -283,7 +283,6 @@ def run(debug=True):
     # TODO: Remove
     test_user = str(hashlib.sha1('Tom'.encode('utf-8'), usedforsecurity=False).hexdigest())
     test_user2 = str(hashlib.sha1('Tim'.encode('utf-8'), usedforsecurity=False).hexdigest())
-    # test_user = str(hash('yee'))
     sh.add_user_handler(test_user)
     sh.add_user_handler(test_user2)
     sh.add_molecule(test_user, 'c1ccn2nncc2c1',
@@ -347,14 +346,6 @@ def run(debug=True):
                               {'lossFunction': 'Mean Squared Error', 'optimizer': 'Adam', 'embeddingDimension': 128,
                                'readoutSize': 1,
                                'depth': 2}, 'id2')
-    # fitting_id2 = ml.train(test_user, '1', model_id_2, ['HIV_active'], 5, 128)
-    # ml.analyze(test_user, fitting_id, 'c1ccn2nncc2c1')
-    # ml.analyze(test_user, fitting_id2, 'c1ccn2nncc2c1')
-    # fitting_id_1 = sh.add_fitting(test_user, '0', 2, 0.25, 125, model_id, ml.train(test_user))
-    # fitting_id_2 = sh.add_fitting(test_user, '0', 6000, 5.05, 5, model_id, )
-    # print(fitting_id_1, fitting_id_2)
-    # sh.add_analysis(test_user, 'Clc(c(Cl)c(Cl)c1C(=O)O)c(Cl)c1Cl', fitting_id_1, {'lumo': -7.152523})
-    # sh.add_analysis(test_user, 'Clc(c(Cl)c(Cl)c1C(=O)O)c(Cl)c1Cl', fitting_id_2, {'homo': 1.5254})
     print(test_user)
     sio.run(app, allow_unsafe_werkzeug=True)
 

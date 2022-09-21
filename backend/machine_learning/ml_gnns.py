@@ -31,7 +31,6 @@ def create_schnet_with_dataset(parameters, dataset, labels, loss, optimizer, met
 
 
 def smiles_to_schnet_input(smiles):
-    # TODO: Convert molecule
     (nodes, edges, edges_i) = smiles_to_mol_graph(smiles)
     node_dim = nodes.shape[-1]
     edge_dim = edges.shape[-1]
