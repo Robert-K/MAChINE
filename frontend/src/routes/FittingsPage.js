@@ -16,7 +16,6 @@ export default function FittingsPage() {
   const [fittingArray, setFittingArray] = React.useState([])
   const { state } = useLocation()
   const { selectedSmiles } = state
-  console.log(selectedSmiles)
   const user = React.useContext(UserContext)
 
   React.useEffect(() => {
