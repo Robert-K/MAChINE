@@ -142,7 +142,7 @@ export default function TrainingPage() {
           label="Epochs"
           type="number"
           value={localEpochs}
-          disabled={training.trainingStatus}
+          disabled={training.trainingStatus || loadTraining}
           onChange={(event) => setLocalEpochs(event.target.value)}
           error={epochsError}
           helperText={epochsError ? 'Required!' : ' '}
@@ -154,7 +154,7 @@ export default function TrainingPage() {
           label="Batch Size"
           type="number"
           value={training.selectedBatchSize}
-          disabled={training.trainingStatus}
+          disabled={training.trainingStatus || loadTraining}
           onChange={(event) =>
             training.setSelectedBatchSize(event.target.value)
           }
@@ -192,7 +192,7 @@ export default function TrainingPage() {
         {!training.trainingFinished ? null : (
           <Button
             variant="outlined"
-            disabled={epochsError}
+            disabled={epochsError || loadTraining}
             sx={{ m: 2 }}
             onClick={handleAdditionalTraining}
           >
