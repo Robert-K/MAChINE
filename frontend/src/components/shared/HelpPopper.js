@@ -56,6 +56,6 @@ export default function HelpPopper({
 HelpPopper.propTypes = {
   helpPopperContent: PropTypes.string.isRequired,
   open: PropTypes.bool.isRequired,
-  anchorEl: PropTypes.element.isRequired,
+  anchorEl: PropTypes.element,
   onClose: PropTypes.func,
 }
