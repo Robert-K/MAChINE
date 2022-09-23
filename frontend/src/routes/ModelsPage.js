@@ -123,7 +123,6 @@ export default function ModelsPage() {
             xs={3}
             onMouseOver={(e) => {
               if (help.helpMode) {
-                // todo make the infotext a bit more feingranular
                 handleHelpPopperOpen(
                   e,
                   "This is a list of all models you have created so far. Click on any one of them to get more information about it, or click on 'Add a model' to add a new one to the list!"
@@ -141,22 +140,12 @@ export default function ModelsPage() {
               height={gridHeight}
             ></SelectionList>
           </Grid>
-          <Grid
-            item
-            xs={9}
-            onMouseOver={(e) => {
-              if (help.helpMode) {
-                handleHelpPopperOpen(
-                  e,
-                  "Here you see all relevant information of your model. On the top, you can see the model's name, as well as which base model was used to create it. Since you can train every model multiple times, you can see all of its trained models listed here. For each trained model, you can see which dataset was used to train it, how long it was trained (epochs), how big the data bundles were that were fed into the network (batch size), and how good the it is (accuracy). To start a new training with your selected model, simply click on 'Select training data'!"
-                )
-              }
-            }}
-            onMouseLeave={handleHelpPopperClose}
-          >
+          <Grid item xs={9}>
             <ModelDescription
               selectedModel={modelList.at(selectedIndex)}
               onActiveTraining={handleOpenDialog}
+              hoverFunc={handleHelpPopperOpen}
+              leaveFunc={handleHelpPopperClose}
             />
           </Grid>
         </Grid>
@@ -191,7 +180,12 @@ export default function ModelsPage() {
   }
 }
 
-function ModelDescription({ selectedModel, onActiveTraining }) {
+function ModelDescription({
+  selectedModel,
+  onActiveTraining,
+  hoverFunc,
+  leaveFunc,
+}) {
   const { setSelectedModel, trainingStatus, resetContext } =
     React.useContext(TrainingContext)
   const navigate = useNavigate()
@@ -216,6 +210,13 @@ function ModelDescription({ selectedModel, onActiveTraining }) {
           <CardHeader
             title={selectedModel.name}
             subheader={`Base Model: ${selectedModel.baseModel}`}
+            onMouseOver={(e) => {
+              hoverFunc(
+                e,
+                "Here you see all relevant information of your model. On the top, you can see the model's name, as well as which base model was used to create it. Since you can train every model multiple times, you can see all of its trained models listed below, too. To start a new training with your selected model, simply click on 'Select training data'!"
+              )
+            }}
+            onMouseLeave={leaveFunc}
           ></CardHeader>
           <Divider />
           <Typography variant="h6" sx={{ pl: 2, pt: 2 }}>
@@ -227,6 +228,8 @@ function ModelDescription({ selectedModel, onActiveTraining }) {
               <RenderFitting
                 fitting={fitting}
                 key={`${fitting.id}-${index}`}
+                hoverFunc={hoverFunc}
+                leaveFunc={leaveFunc}
               ></RenderFitting>
             ))}
           </List>
@@ -256,6 +259,8 @@ function ModelDescription({ selectedModel, onActiveTraining }) {
 ModelDescription.propTypes = {
   selectedModel: PropTypes.any,
   onActiveTraining: PropTypes.any,
+  hoverFunc: PropTypes.func,
+  leaveFunc: PropTypes.func,
 }
 
 /**
@@ -263,14 +268,23 @@ ModelDescription.propTypes = {
  * @param fitting the fitting to be rendered
  * @returns {JSX.Element}
  */
-function RenderFitting({ fitting }) {
+function RenderFitting({ fitting, hoverFunc, leaveFunc }) {
   const [open, setOpen] = React.useState(false)
   const toggleOpen = () => {
     setOpen(!open)
   }
   const theme = useTheme()
   return (
-    <ListItem key={fitting.id}>
+    <ListItem
+      key={fitting.id}
+      onMouseOver={(e) => {
+        hoverFunc(
+          e,
+          'Here you can see which dataset was used to train this trained model, how long the model was trained (epochs), how big the data bundles were that were fed into the network (batch size), and how good the it is (accuracy).'
+        )
+      }}
+      onMouseLeave={leaveFunc}
+    >
       <Box sx={{ width: 1 }}>
         <ListItemButton onClick={() => toggleOpen()}>
           {open ? <ExpandLess /> : <ExpandMore />}
@@ -319,4 +333,6 @@ function RenderFitting({ fitting }) {
 
 RenderFitting.propTypes = {
   fitting: PropTypes.object.isRequired,
+  hoverFunc: PropTypes.func,
+  leaveFunc: PropTypes.func,
 }
