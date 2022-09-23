@@ -56,7 +56,16 @@ export default function Navbar({ logoutFunction, darkModeButton }) {
   return (
     <AppBar color="primary" position="sticky">
       <Toolbar>
-        <img src={logo} height="30px" style={{ marginRight: 10 }} />
+        <img
+          src={logo}
+          height="30px"
+          style={{
+            marginRight: 10,
+            animation: training.trainingStatus
+              ? 'spin 2s linear infinite'
+              : 'none',
+          }}
+        />
         {!(locationName !== '/' || user.userName) ? null : (
           <>
             {Object.entries(links).map(([key, value]) => (
@@ -67,7 +76,11 @@ export default function Navbar({ logoutFunction, darkModeButton }) {
                     key={value.label}
                     style={({ isActive }) =>
                       isActive
-                        ? { fontWeight: 600, paddingLeft: 10, paddingRight: 10 }
+                        ? {
+                            fontWeight: 600,
+                            paddingLeft: 10,
+                            paddingRight: 10,
+                          }
                         : { paddingLeft: 10, paddingRight: 10 }
                     }
                   >
@@ -118,6 +131,14 @@ export default function Navbar({ logoutFunction, darkModeButton }) {
         }
         a.active {
           font-weight: bold;
+        }
+        @keyframes spin {
+          0% {
+            transform: rotate(0deg);
+          }
+          100% {
+            transform: rotate(360deg);
+          }
         }
       `}</style>
     </AppBar>

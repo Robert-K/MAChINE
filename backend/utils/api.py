@@ -26,7 +26,8 @@ parser.add_argument('labels')
 parser.add_argument('epochs', type=int)
 parser.add_argument('accuracy')
 parser.add_argument('batchSize', type=int)
-parser.add_argument('baseModel')
+parser.add_argument('baseModelID')
+parser.add_argument('parameters', type=dict)
 
 
 # modelList
@@ -57,7 +58,7 @@ class Models(Resource):
             model_configs.append({
                 'id': key,
                 'name': current_model['name'],
-                'baseModel': current_model['baseModelID'],
+                'baseModelID': current_model['baseModelID'],
                 'parameters': current_model['parameters'],
                 'fittings': model_fittings
             })
@@ -66,7 +67,7 @@ class Models(Resource):
     # called when a new configs is added
     def patch(self, user_id):
         args = parser.parse_args()
-        return sh.add_model(user_id, args['name'], args['parameters'], args['baseModel'])
+        return sh.add_model(user_id, args['name'], args['parameters'], args['baseModelID'])
 
 
 class Molecules(Resource):
@@ -176,35 +177,28 @@ class BaseModels(Resource):
     def get(self):
         models = sh.get_base_models()
         processed_models = []
-        for model_id in models.keys():
-            current = models.get(model_id)
+        for model_id, current in models.items():
             if current:
-                processed_model = dict()
-
-                # add type-universal entries
-                processed_model['name'] = current.get('name')
+                processed_model = dict(current)
                 processed_model['id'] = model_id
+                del processed_model['image']
+                del processed_model['metrics']
+
+                # add model type object
                 processed_model_type = dict()
                 processed_model_type['name'] = current.get('type')
                 processed_model_type['image'] = current.get('image')
                 processed_model['type'] = processed_model_type
 
-                # add type-specific entries
-                processed_model_parameters = dict()
+                # add task type
                 if current.get('type') == 'sequential':
                     layers = current.get('layers')
                     if layers:
                         processed_model['taskType'] = 'regression' if layers[len(layers) - 1].get(
                             'units') == 1 else 'classification'
-                        processed_model_parameters['layers'] = layers
-                    processed_model_parameters['lossFunction'] = current.get('lossFunction')
-                    processed_model_parameters['optimizer'] = current.get('optimizer')
 
                 elif current.get('type') == 'schnet':
                     processed_model['taskType'] = 'regression'
-                    processed_model_parameters['depth'] = current.get('depth')
-                    processed_model_parameters['embeddingDimension'] = current.get('embeddingDimension')
-                    processed_model_parameters['readoutSize'] = current.get('readoutSize')
 
                 processed_models.append(processed_model)
         return processed_models

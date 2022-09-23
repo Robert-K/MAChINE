@@ -26,33 +26,33 @@ import ExpandLess from '@mui/icons-material/ExpandLess'
 import ExpandMore from '@mui/icons-material/ExpandMore'
 import PropTypes from 'prop-types'
 import { useNavigate } from 'react-router-dom'
-import api from '../api'
 import TrainingContext from '../context/TrainingContext'
-import UserContext from '../context/UserContext'
 
 const gridHeight = '80vh'
 /**
  * Depicts a list of saved models and shows a description of the selected model on click
  */
-export default function ModelsPage() {
+export default function ModelsPage({ modelList }) {
   const [selectedIndex, setSelectedIndex] = React.useState(-1)
-  const [modelList, setModelList] = React.useState([])
   const [showDialog, setShowDialog] = React.useState(false)
-  const user = React.useContext(UserContext)
   const training = React.useContext(TrainingContext)
 
-  React.useEffect(() => {
-    api.getModelList().then((models) => setModelList(models))
-  }, [user])
+  const navigate = useNavigate()
 
   const updateSelection = (index) => {
     setSelectedIndex(index)
   }
 
-  const navigate = useNavigate()
+  const initiateCreation = () => {
+    navigate('base-models')
+  }
 
   const handleCloseDialog = () => {
     setShowDialog(false)
+  }
+
+  const handleOpenDialog = () => {
+    setShowDialog(true)
   }
 
   const abortAndShowTraining = () => {
@@ -64,7 +64,6 @@ export default function ModelsPage() {
     training.stopTraining()
     handleCloseDialog()
   }
-
   return (
     <Box sx={{ m: 5 }}>
       <Grid
@@ -80,14 +79,14 @@ export default function ModelsPage() {
             elements={modelList}
             elementType="model"
             usePopper={false}
-            addFunc={() => navigate('/base-models')}
+            addFunc={initiateCreation}
             height={gridHeight}
-          ></SelectionList>
+          />
         </Grid>
         <Grid item xs={9}>
           <ModelDescription
-            selectedModel={modelList[selectedIndex]}
-            onActiveTraining={() => setShowDialog(true)}
+            selectedModel={modelList.at(selectedIndex)}
+            onActiveTraining={handleOpenDialog}
           />
         </Grid>
       </Grid>
@@ -139,7 +138,7 @@ function ModelDescription({ selectedModel, onActiveTraining }) {
         >
           <CardHeader
             title={selectedModel.name}
-            subheader={`Base Model: ${selectedModel.baseModel}`}
+            subheader={`Base Model: ${selectedModel.baseModelID}`}
           ></CardHeader>
           <Divider />
           <Typography variant="h6" sx={{ pl: 2, pt: 2 }}>
@@ -243,4 +242,8 @@ function RenderFitting({ fitting }) {
 
 RenderFitting.propTypes = {
   fitting: PropTypes.object.isRequired,
+}
+
+ModelsPage.propTypes = {
+  modelList: PropTypes.array.isRequired,
 }

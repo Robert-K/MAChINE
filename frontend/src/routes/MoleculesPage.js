@@ -1,5 +1,6 @@
 import React from 'react'
 import {
+  Backdrop,
   Box,
   Button,
   Card,
@@ -7,6 +8,7 @@ import {
   CardContent,
   Grid,
   TextField,
+  useTheme,
 } from '@mui/material'
 import SelectionList from '../components/shared/SelectionList'
 import { useNavigate } from 'react-router-dom'
@@ -115,6 +117,7 @@ function MoleculeView({ selectedMolecule, onSave }) {
   const [molName, setMolName] = React.useState('')
   const [show3D, setShow3D] = React.useState(false)
   const navigate = useNavigate()
+  const theme = useTheme()
 
   React.useEffect(() => {
     const chemDocument = new Kekule.ChemDocument()
@@ -129,19 +132,38 @@ function MoleculeView({ selectedMolecule, onSave }) {
   return (
     <Card sx={{ maxHeight: gridHeight, height: gridHeight, overflow: 'auto' }}>
       <CardContent>
-        {show3D === true ? (
-          <MoleculeRenderer
-            moleculeDoc={moleculeDoc}
-            width={editorWidth}
-            height={editorHeight}
-          />
-        ) : (
-          <MoleculeEditor
-            moleculeDoc={moleculeDoc}
-            width={editorWidth}
-            height={editorHeight}
-          />
-        )}
+        <Box
+          sx={{
+            borderRadius: 3,
+            overflow: 'hidden',
+          }}
+        >
+          {show3D === true ? (
+            <MoleculeRenderer
+              moleculeDoc={moleculeDoc}
+              width={editorWidth}
+              height={editorHeight}
+            />
+          ) : (
+            <Box
+              sx={{
+                filter: theme.darkMode ? 'invert(.86)' : false,
+              }}
+            >
+              <MoleculeEditor
+                moleculeDoc={moleculeDoc}
+                width={editorWidth}
+                height={editorHeight}
+              />
+            </Box>
+          )}
+        </Box>
+        <Backdrop
+          sx={{ color: 'white', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+          open={selectedMolecule === null}
+        >
+          Select a molecule on the left to view & edit it here.
+        </Backdrop>
       </CardContent>
       <CardActions>
         <Box

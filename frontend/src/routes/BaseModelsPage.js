@@ -9,30 +9,34 @@ import React from 'react'
 import { Container } from '@mui/material'
 import BaseModelCard from '../components/models/BaseModelCard'
 import Grid from '@mui/material/Grid'
-import PropTypes from 'prop-types'
 import api from '../api'
+import { useNavigate } from 'react-router-dom'
 
 export default function BaseModelsPage() {
   const [modelArray, setModelArray] = React.useState([])
 
   React.useEffect(() => {
     api.getBaseModels().then((sentModels) => {
-      console.log(sentModels)
       setModelArray(sentModels)
     })
   }, [])
 
+  const navigate = useNavigate()
+
+  const handleClick = (baseModel) => {
+    navigate('/models/model-config', { state: { baseModel } })
+  }
   return (
     <Container>
       <Grid container spacing={4} marginTop={1} marginBottom={5}>
         {modelArray.map((baseModel) => (
-          <BaseModelCard baseModel={baseModel} key={baseModel.id} />
+          <BaseModelCard
+            baseModel={baseModel}
+            key={baseModel.id}
+            clickFunc={handleClick}
+          />
         ))}
       </Grid>
     </Container>
   )
-}
-
-BaseModelsPage.propTypes = {
-  baseModels: PropTypes.array,
 }

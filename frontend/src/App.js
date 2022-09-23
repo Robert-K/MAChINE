@@ -1,7 +1,5 @@
 import React, { useCallback } from 'react'
 import ScoreboardsPage from './routes/ScoreboardsPage.js'
-import ModelsPage from './routes/ModelsPage.js'
-import ModelConfigPage from './routes/ModelConfigPage.js'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import SwaggerPage from './routes/SwaggerPage'
 import '@fontsource/roboto'
@@ -12,7 +10,6 @@ import MoleculesPage from './routes/MoleculesPage'
 import StartPage from './routes/StartPage'
 import TrainingPage from './routes/TrainingPage'
 import DarkModeButton from './components/misc/DarkModeButton'
-import BaseModelsPage from './routes/BaseModelsPage'
 import DatasetPage from './routes/DatasetPage'
 import FittingsPage from './routes/FittingsPage'
 import api from './api'
@@ -21,6 +18,9 @@ import { TrainingProvider } from './context/TrainingContext'
 import Particles from 'react-tsparticles'
 import { loadFull } from 'tsparticles'
 import { deepmerge } from '@mui/utils'
+import { handleErrors } from './utils'
+import '@fontsource/poppins'
+import ModelCreationRouter from './routes/ModelCreationRouter'
 
 const themeBase = {
   palette: {
@@ -53,6 +53,8 @@ const themeLight = createTheme(
           root: {
             backgroundColor: 'rgba(255, 255, 255, .2)',
             backdropFilter: 'blur(5px)',
+            boxShadow:
+              '0px 7px 8px -4px rgb(0 0 0 / 10%), 0px 12px 17px 2px rgb(0 0 0 / 8%), 0px 5px 22px 4px rgb(0 0 0 / 6%)',
           },
         },
       },
@@ -60,6 +62,15 @@ const themeLight = createTheme(
     apexcharts: {
       shade: 'light',
     },
+    modelVisual: {
+      borderColor: '#c4c4c4',
+      fontColor: '#212121',
+      backgroundColor: '#ffffff',
+    },
+    home: {
+      mascot: 'molele.svg',
+    },
+    darkTheme: false,
   })
 )
 
@@ -92,12 +103,30 @@ const themeDark = createTheme(
     apexcharts: {
       shade: 'dark',
     },
+    modelVisual: {
+      borderColor: '#707070',
+      fontColor: 'white',
+      backgroundColor: '#2b2b2b',
+    },
+    home: {
+      mascot: 'molele-dark.svg',
+    },
+    darkMode: true,
   })
 )
 
 export default function App() {
-  const [darkMode, setDarkMode] = React.useState(false)
+  const [darkMode, setDarkMode] = React.useState(
+    window.matchMedia &&
+      window.matchMedia('(prefers-color-scheme: dark)').matches
+  )
   const [userName, setUserName] = React.useState(null)
+
+  window
+    .matchMedia('(prefers-color-scheme: dark)')
+    .addEventListener('change', (event) => {
+      setDarkMode(event.matches ? 'dark' : 'light')
+    })
 
   const particlesInit = useCallback(async (engine) => {
     console.log(engine)
@@ -138,6 +167,8 @@ export default function App() {
     setDarkMode(value)
   }
 
+  handleErrors()
+
   return (
     <div className="App">
       <ThemeProvider theme={darkMode ? themeDark : themeLight}>
@@ -148,7 +179,10 @@ export default function App() {
               <Navbar
                 logoutFunction={logout}
                 darkModeButton={
-                  <DarkModeButton setModeFunction={changeDarkMode} />
+                  <DarkModeButton
+                    initialDarkMode={darkMode}
+                    setModeFunction={changeDarkMode}
+                  />
                 }
               />
               <Particles
@@ -217,10 +251,9 @@ export default function App() {
                 <Route path="/" element={<StartPage onLogin={login} />}></Route>
                 <Route path="/home" element={<HomePage />}></Route>
                 <Route
-                  path="/modelconfig"
-                  element={<ModelConfigPage />}
+                  path="/models/*"
+                  element={<ModelCreationRouter />}
                 ></Route>
-                <Route path="/models" element={<ModelsPage />}></Route>
                 <Route path="/molecules" element={<MoleculesPage />}></Route>
                 <Route path="/results" element={<ScoreboardsPage />}></Route>
                 <Route path="/swagger" element={<SwaggerPage />}></Route>
@@ -229,7 +262,6 @@ export default function App() {
                   path="/trained-models"
                   element={<FittingsPage />}
                 ></Route>
-                <Route path="/base-models" element={<BaseModelsPage />}></Route>
                 <Route path="/datasets" element={<DatasetPage />}></Route>
               </Routes>
             </BrowserRouter>
