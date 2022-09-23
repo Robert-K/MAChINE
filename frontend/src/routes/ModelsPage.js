@@ -138,7 +138,7 @@ function ModelDescription({ selectedModel, onActiveTraining }) {
         >
           <CardHeader
             title={selectedModel.name}
-            subheader={`Base Model: ${selectedModel.baseModel}`}
+            subheader={`Base Model: ${selectedModel.baseModelID}`}
           ></CardHeader>
           <Divider />
           <Typography variant="h6" sx={{ pl: 2, pt: 2 }}>
