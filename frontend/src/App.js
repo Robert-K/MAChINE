@@ -1,6 +1,5 @@
 import React, { useCallback } from 'react'
 import ScoreboardsPage from './routes/ScoreboardsPage.js'
-import ModelsPage from './routes/ModelsPage.js'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import SwaggerPage from './routes/SwaggerPage'
 import '@fontsource/roboto'
@@ -21,6 +20,7 @@ import { loadFull } from 'tsparticles'
 import { deepmerge } from '@mui/utils'
 import { handleErrors } from './utils'
 import '@fontsource/poppins'
+import ModelCreationRouter from './routes/ModelCreationRouter'
 
 const themeBase = {
   palette: {
@@ -250,7 +250,10 @@ export default function App() {
               <Routes>
                 <Route path="/" element={<StartPage onLogin={login} />}></Route>
                 <Route path="/home" element={<HomePage />}></Route>
-                <Route path="/models" element={<ModelsPage />}></Route>
+                <Route
+                  path="/models/*"
+                  element={<ModelCreationRouter />}
+                ></Route>
                 <Route path="/molecules" element={<MoleculesPage />}></Route>
                 <Route path="/results" element={<ScoreboardsPage />}></Route>
                 <Route path="/swagger" element={<SwaggerPage />}></Route>

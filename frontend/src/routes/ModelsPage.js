@@ -26,54 +26,25 @@ import ExpandLess from '@mui/icons-material/ExpandLess'
 import ExpandMore from '@mui/icons-material/ExpandMore'
 import PropTypes from 'prop-types'
 import { useNavigate } from 'react-router-dom'
-import api from '../api'
 import TrainingContext from '../context/TrainingContext'
-import UserContext from '../context/UserContext'
-import BaseModelsPage from './BaseModelsPage'
 
 const gridHeight = '80vh'
 /**
  * Depicts a list of saved models and shows a description of the selected model on click
  */
-export default function ModelsPage() {
+export default function ModelsPage({ modelList }) {
   const [selectedIndex, setSelectedIndex] = React.useState(-1)
-  const [modelList, setModelList] = React.useState([])
   const [showDialog, setShowDialog] = React.useState(false)
-  const [creatingModel, setCreatingModel] = React.useState(false)
-  const user = React.useContext(UserContext)
   const training = React.useContext(TrainingContext)
 
-  React.useEffect(() => {
-    refreshModels()
-  }, [user])
-
-  function refreshModels() {
-    api.getModelList().then((models) => setModelList(models))
-  }
-
-  function saveModel(model) {
-    // Find a duplicate
-    const duplicate = modelList.find((savedModel) => {
-      return model.name === savedModel.name
-    })
-
-    if (duplicate) {
-      return 'duplicate'
-    } else if (!model) {
-      return 'error'
-    } else {
-      api.addModelConfig(model).then(refreshModels)
-      setCreatingModel(false)
-      return 0
-    }
-  }
+  const navigate = useNavigate()
 
   const updateSelection = (index) => {
     setSelectedIndex(index)
   }
 
   const initiateCreation = () => {
-    setCreatingModel(true)
+    navigate('base-models')
   }
 
   const handleCloseDialog = () => {
@@ -93,11 +64,8 @@ export default function ModelsPage() {
     training.stopTraining()
     handleCloseDialog()
   }
-
-  if (creatingModel) {
-    return <BaseModelsPage addFunc={saveModel} />
-  } else {
-    return (
+  return (
+    <div>
       <Box sx={{ m: 5 }}>
         <Grid
           container
@@ -114,7 +82,7 @@ export default function ModelsPage() {
               usePopper={false}
               addFunc={initiateCreation}
               height={gridHeight}
-            ></SelectionList>
+            />
           </Grid>
           <Grid item xs={9}>
             <ModelDescription
@@ -144,8 +112,8 @@ export default function ModelsPage() {
           </DialogActions>
         </Dialog>
       </Box>
-    )
-  }
+    </div>
+  )
 }
 
 function ModelDescription({ selectedModel, onActiveTraining }) {
@@ -276,4 +244,8 @@ function RenderFitting({ fitting }) {
 
 RenderFitting.propTypes = {
   fitting: PropTypes.object.isRequired,
+}
+
+ModelsPage.propTypes = {
+  modelList: PropTypes.array.isRequired,
 }

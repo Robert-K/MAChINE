@@ -19,6 +19,7 @@ import {
 import Button from '@mui/material/Button'
 import SchNetVisual from '../components/models/modelConfig/SchNetVisual'
 import { camelToNaturalString } from '../utils'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 export const standardParameters = {
   optimizer: [
@@ -39,19 +40,22 @@ export const standardParameters = {
   ],
 }
 
-export default function ModelConfigPage({ baseModel, addFunc }) {
-  const [parameters, setParameters] = React.useState(baseModel.parameters)
+export default function ModelConfigPage({ addFunc }) {
+  const { state } = useLocation()
+  const [parameters, setParameters] = React.useState(state.baseModel.parameters)
   const [defaultActivation, setDefaultActivation] = React.useState('')
   const [name, setName] = React.useState('')
   const [isInvalidConfig, setIsInvalidConfig] = React.useState(false)
   const [showSnackBar, setShowSnackBar] = React.useState(false)
   const [errorMessage, setErrorMessage] = React.useState('')
 
+  const navigate = useNavigate()
+
   const modelTypeSpecificComponents = {
     sequential: {
       visual: (
         <MLPModelVisual
-          modelLayers={baseModel.parameters.layers}
+          modelLayers={state.baseModel.parameters.layers}
           defaultActivation={defaultActivation}
           updateFunc={updateParameters}
         />
@@ -81,12 +85,12 @@ export default function ModelConfigPage({ baseModel, addFunc }) {
   }
 
   function saveModel() {
-    if (baseModel.type.name === 'sequential') {
+    if (state.baseModel.type.name === 'sequential') {
       parameters.layers.pop()
     }
     const newModel = {
       name,
-      baseModel: baseModel.id,
+      baseModelID: state.baseModel.id,
       parameters,
     }
     switch (addFunc(newModel)) {
@@ -96,6 +100,8 @@ export default function ModelConfigPage({ baseModel, addFunc }) {
       case 'error':
         showSnackError(`The model could not be saved.`)
         break
+      default:
+        navigate('/models')
     }
   }
 
@@ -118,7 +124,7 @@ export default function ModelConfigPage({ baseModel, addFunc }) {
     <Grid sx={{ p: 2, height: '85vh' }} container>
       <Grid item xs={8} sx={{ height: '100%' }}>
         <Card sx={{ height: '100%' }}>
-          {modelTypeSpecificComponents[baseModel.type.name].visual}
+          {modelTypeSpecificComponents[state.baseModel.type.name].visual}
         </Card>
       </Grid>
       <Grid item xs={4}>
@@ -149,7 +155,7 @@ export default function ModelConfigPage({ baseModel, addFunc }) {
               )
             })}
 
-            {modelTypeSpecificComponents[baseModel.type.name].config}
+            {modelTypeSpecificComponents[state.baseModel.type.name].config}
 
             <FormControl>
               <TextField
@@ -186,6 +192,5 @@ export default function ModelConfigPage({ baseModel, addFunc }) {
 }
 
 ModelConfigPage.propTypes = {
-  baseModel: PropTypes.object,
-  addFunc: PropTypes.func,
+  addFunc: PropTypes.func.isRequired,
 }

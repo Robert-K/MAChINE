@@ -10,43 +10,33 @@ import { Container } from '@mui/material'
 import BaseModelCard from '../components/models/BaseModelCard'
 import Grid from '@mui/material/Grid'
 import api from '../api'
-import PropTypes from 'prop-types'
-import ModelConfigPage from './ModelConfigPage'
+import { useNavigate } from 'react-router-dom'
 
-export default function BaseModelsPage({ addFunc }) {
+export default function BaseModelsPage() {
   const [modelArray, setModelArray] = React.useState([])
-  const [selectedModel, setSelectedModel] = React.useState(null)
 
   React.useEffect(() => {
     api.getBaseModels().then((sentModels) => {
-      console.log(sentModels)
       setModelArray(sentModels)
     })
   }, [])
 
+  const navigate = useNavigate()
+
   const handleClick = (baseModel) => {
-    setSelectedModel(baseModel)
+    navigate('/models/model-config', { state: { baseModel } })
   }
-
-  if (selectedModel) {
-    return <ModelConfigPage baseModel={selectedModel} addFunc={addFunc} />
-  } else {
-    return (
-      <Container>
-        <Grid container spacing={4} marginTop={1} marginBottom={5}>
-          {modelArray.map((baseModel) => (
-            <BaseModelCard
-              baseModel={baseModel}
-              key={baseModel.id}
-              clickFunc={handleClick}
-            />
-          ))}
-        </Grid>
-      </Container>
-    )
-  }
-}
-
-BaseModelsPage.propTypes = {
-  addFunc: PropTypes.func,
+  return (
+    <Container>
+      <Grid container spacing={4} marginTop={1} marginBottom={5}>
+        {modelArray.map((baseModel) => (
+          <BaseModelCard
+            baseModel={baseModel}
+            key={baseModel.id}
+            clickFunc={handleClick}
+          />
+        ))}
+      </Grid>
+    </Container>
+  )
 }
