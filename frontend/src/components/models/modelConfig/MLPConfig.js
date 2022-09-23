@@ -24,12 +24,10 @@ export default function MLPConfig({
         }}
         sx={{ m: 2 }}
         onMouseOver={(e) => {
-          if (help.helpMode) {
-            hoverFunc(
-              e,
-              'The standard activation function for this model. Think of an activation function as the way a neuron decides whether to act on an incoming signal and if so, how much it will react!'
-            )
-          }
+          hoverFunc(
+            e,
+            'The standard activation function for this model. Think of an activation function as the way a neuron decides whether to act on an incoming signal and if so, how much it will react!'
+          )
         }}
         onMouseLeave={leaveFunc}
       >

@@ -2,7 +2,6 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { TextField } from '@mui/material'
 import { toNaturalString } from '../../../routes/ModelConfigPage'
-import HelpContext from '../../../context/HelpContext'
 
 const settableSizes = {
   depth: {
@@ -31,7 +30,6 @@ export default function SchNetConfig({
     schnetParams.readoutSize,
   ])
   const [sizesError, setSizesError] = React.useState([false, false, false])
-  const help = React.useContext(HelpContext)
 
   const handleChange = (event, i, min) => {
     const sizesErrorClone = [...sizesError]
@@ -59,9 +57,7 @@ export default function SchNetConfig({
             helperText={sizesError[i] ? 'Must be above zero!' : ''}
             onChange={(e) => handleChange(e, i, value.min)}
             onMouseOver={(e) => {
-              if (help.helpMode) {
-                hoverFunc(e, value.explanation)
-              }
+              hoverFunc(e, value.explanation)
             }}
             onMouseLeave={leaveFunc}
             InputLabelProps={{
