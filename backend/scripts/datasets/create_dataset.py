@@ -1,8 +1,10 @@
+import math
 from multiprocessing import Pool, cpu_count
 import pandas as pd
 from pathlib import Path
 import pickle
 from backend.utils.molecule_formats import *
+import numpy as np
 
 _version = 3
 
@@ -129,11 +131,12 @@ def create_complete_dataset(path, max_size, data_offset, smiles_fingerprint_size
                                  labels,
                                  smiles_fingerprint_sizes,
                                  smiles_fingerprint_radius)
+    histograms = create_histograms(raw_dataset, labels)
     return add_dataset_descriptor(raw_dataset,
                                   name,
                                   image_file,
                                   [path, max_size, data_offset, smiles_fingerprint_sizes, smiles_fingerprint_radius,
-                                   labels, name, image_file])
+                                   labels, name, image_file, histograms])
 
 
 def update_dataset(path):
@@ -148,6 +151,28 @@ def update_dataset(path):
             print('Dataset too old to automatically upgrade')
     else:
         print('Dataset too old to automatically upgrade')
+
+
+# TODO: test this
+def create_histograms(dataset, labels):
+    histograms = dict()
+
+    # prep: separate data by label
+    columns_by_label = dict()
+    for label in labels:
+        columns_by_label[label] = list()
+
+    for entry in dataset:
+        for [label, value] in entry['y'].items():
+            columns_by_label[label].append(value)
+
+    # create histogram for each label
+    for [label, data] in columns_by_label.items():
+        # 4 is an arbitrary value
+        histogram = np.histogram(data, math.floor(len(data) / 4))
+        histograms[label] = histogram
+
+    return histograms
 
 
 # HOW TO USE:
