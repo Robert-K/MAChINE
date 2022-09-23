@@ -96,8 +96,10 @@ export default function ModelsPage() {
   }
 
   const handleHelpPopperOpen = (event, content) => {
-    setHelpAnchorEl(event.currentTarget)
-    setHelpPopperContent(content)
+    if (help.helpMode) {
+      setHelpAnchorEl(event.currentTarget)
+      setHelpPopperContent(content)
+    }
   }
 
   const handleHelpPopperClose = () => {
@@ -122,12 +124,10 @@ export default function ModelsPage() {
             item
             xs={3}
             onMouseOver={(e) => {
-              if (help.helpMode) {
-                handleHelpPopperOpen(
-                  e,
-                  "This is a list of all models you have created so far. Click on any one of them to get more information about it, or click on 'Add a model' to add a new one to the list!"
-                )
-              }
+              handleHelpPopperOpen(
+                e,
+                "This is a list of all models you have created so far. Click on any one of them to get more information about it, or click on 'Add a model' to add a new one to the list!"
+              )
             }}
             onMouseLeave={handleHelpPopperClose}
           >

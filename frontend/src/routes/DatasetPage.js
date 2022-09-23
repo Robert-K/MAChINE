@@ -38,8 +38,10 @@ export default function DatasetPage() {
   }
 
   const handleHelpPopperOpen = (event, content) => {
-    setHelpAnchorEl(event.currentTarget)
-    setHelpPopperContent(content)
+    if (help.helpMode) {
+      setHelpAnchorEl(event.currentTarget)
+      setHelpPopperContent(content)
+    }
   }
 
   const handleHelpPopperClose = () => {
@@ -75,12 +77,10 @@ export default function DatasetPage() {
               )
             }}
             hoverFunc={(e) => {
-              if (help.helpMode) {
-                handleHelpPopperOpen(
-                  e,
-                  "Click to select the label you want to train on. After confirming your choice, it's time to start training!"
-                )
-              }
+              handleHelpPopperOpen(
+                e,
+                "Click to select the label you want to train on. After confirming your choice, it's time to start training!"
+              )
             }}
             leaveFunc={handleHelpPopperClose}
           />

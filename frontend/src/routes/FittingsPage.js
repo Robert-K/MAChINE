@@ -39,8 +39,10 @@ export default function FittingsPage() {
   }
 
   const handleHelpPopperOpen = (event, content) => {
-    setHelpAnchorEl(event.currentTarget)
-    setHelpPopperContent(content)
+    if (help.helpMode) {
+      setHelpAnchorEl(event.currentTarget)
+      setHelpPopperContent(content)
+    }
   }
 
   const handleHelpPopperClose = () => {
@@ -76,12 +78,10 @@ export default function FittingsPage() {
               )
             }}
             hoverFunc={(e) => {
-              if (help.helpMode) {
-                handleHelpPopperOpen(
-                  e,
-                  'Click to analyze your molecule with this model!'
-                )
-              }
+              handleHelpPopperOpen(
+                e,
+                'Click to analyze your molecule with this model!'
+              )
             }}
             leaveFunc={handleHelpPopperClose}
           />

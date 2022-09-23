@@ -73,12 +73,10 @@ export default function ModelConfigPage({ baseModel, addFunc }) {
             defaultActivation={defaultActivation}
             updateFunc={updateParameters}
             hoverFunc={(e) => {
-              if (help.helpMode) {
-                handleHelpPopperOpen(
-                  e,
-                  'This is how your model looks at the moment! Each rectangle represents one layer. On the left is the input layer, and the data will get forwarded from left to right through the layers. The numbers show how many nodes are in the respective layer. Click between two layers to add a new layer between them, or click directly on a layer to delete it.'
-                )
-              }
+              handleHelpPopperOpen(
+                e,
+                'This is how your model looks at the moment! Each rectangle represents one layer. On the left is the input layer, and the data will get forwarded from left to right through the layers. The numbers show how many nodes are in the respective layer. Click between two layers to add a new layer between them, or click directly on a layer to delete it.'
+              )
             }}
           />
         )
@@ -153,9 +151,10 @@ export default function ModelConfigPage({ baseModel, addFunc }) {
   }
 
   const handleHelpPopperOpen = (event, content) => {
-    // todo set the if to this method i swear to god
-    setHelpAnchorEl(event.currentTarget)
-    setHelpPopperContent(content)
+    if (help.helpMode) {
+      setHelpAnchorEl(event.currentTarget)
+      setHelpPopperContent(content)
+    }
   }
 
   const handleHelpPopperClose = () => {
@@ -184,9 +183,7 @@ export default function ModelConfigPage({ baseModel, addFunc }) {
                     onChange={(event) => handleChange(event, param)}
                     sx={{ m: 2 }}
                     onMouseOver={(e) => {
-                      if (help.helpMode) {
-                        handleHelpPopperOpen(e, value.explanation)
-                      }
+                      handleHelpPopperOpen(e, value.explanation)
                     }}
                     // onMouseLeave={handleHelpPopperClose}
                     // onMouseOutCapture={handleHelpPopperClose}
