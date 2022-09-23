@@ -106,7 +106,6 @@ export default function MoleculesPage() {
           md={3}
           onMouseOver={(e) => {
             if (help.helpMode) {
-              // todo make the infotext more feingranular
               handleHelpPopperOpen(
                 e,
                 "This shows all molecules you have created so far. Click on the i-Icon to see more information about a molecule, or click on 'Add a molecule' to add a new one to the list!"

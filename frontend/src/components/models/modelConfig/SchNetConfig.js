@@ -16,7 +16,7 @@ const settableSizes = {
   readoutSize: {
     min: 1,
     // todo ask andre
-    explanation: 'ask Andre',
+    explanation: 'Number of nodes in the regressional part of the network',
   },
 }
 

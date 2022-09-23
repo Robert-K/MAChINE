@@ -62,6 +62,8 @@ export default function MLPModelVisual({
   modelLayers,
   defaultActivation,
   updateFunc,
+  hoverFunc,
+  leaveFunc,
 }) {
   const theme = useTheme()
   const [open, setOpen] = React.useState(false)
@@ -250,7 +252,13 @@ export default function MLPModelVisual({
   }
 
   return (
-    <Card sx={{ m: 2 }}>
+    <Card
+      sx={{ m: 2 }}
+      onMouseOver={(e) => {
+        hoverFunc(e)
+      }}
+      onMouseLeave={leaveFunc}
+    >
       <CardContent
         sx={{
           border: '1px',
@@ -290,4 +298,6 @@ MLPModelVisual.propTypes = {
   modelLayers: PropTypes.array,
   defaultActivation: PropTypes.string,
   updateFunc: PropTypes.func,
+  hoverFunc: PropTypes.func,
+  leaveFunc: PropTypes.func,
 }

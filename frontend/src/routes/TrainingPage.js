@@ -115,7 +115,6 @@ export default function TrainingPage() {
     return newData
   }
 
-  // todo add actual text for helppopper
   return (
     <Grid container>
       <Grid item xs={6}>
@@ -130,6 +129,15 @@ export default function TrainingPage() {
           onChange={handleEpochsChange}
           error={epochsError}
           helperText={epochsError ? 'Required!' : ' '}
+          onMouseOver={(e) => {
+            if (help.helpMode) {
+              handleHelpPopperOpen(
+                e,
+                'This determines how long your model is trained. In each epoch, the entire dataset is passed through your net once!'
+              )
+            }
+          }}
+          onMouseLeave={handleHelpPopperClose}
         />
         <TextField
           sx={{ mx: 3, mt: 3 }}
@@ -142,15 +150,54 @@ export default function TrainingPage() {
           onChange={handleBatchSizeChange}
           error={batchSizeError}
           helperText={batchSizeError ? 'Required!' : ' '}
+          onMouseOver={(e) => {
+            if (help.helpMode) {
+              handleHelpPopperOpen(
+                e,
+                "The batch size determines how often the net's parameters are adjusted. The smaller the batch size, the more often that's the case!"
+              )
+            }
+          }}
+          onMouseLeave={handleHelpPopperClose}
         />
-        <ModelDetailsCard selectedModel={training.selectedModel} />
+        <ModelDetailsCard
+          selectedModel={training.selectedModel}
+          hoverFunc={(e) => {
+            if (help.helpMode) {
+              handleHelpPopperOpen(
+                e,
+                'Here you can see basic information about your model. Among them are your chosen values for the optimizer, the loss, and other model-specific data.'
+              )
+            }
+          }}
+          leaveFunc={handleHelpPopperClose}
+        />
         <DatasetDetailsCard
           selectedDataset={training.selectedDataset}
           selectedLabels={training.selectedLabels}
+          hoverFunc={(e) => {
+            if (help.helpMode) {
+              handleHelpPopperOpen(
+                e,
+                'Here you can see basic information about your chosen dataset. Most importantly, how big your dataset is, and which label you chose to train on!'
+              )
+            }
+          }}
+          leaveFunc={handleHelpPopperClose}
         />
       </Grid>
       <Grid item xs={6}>
-        <Box>
+        <Box
+          onMouseOver={(e) => {
+            if (help.helpMode) {
+              handleHelpPopperOpen(
+                e,
+                'This chart shows the progression of your model in training. On the x-axis, you can see for how long your model has been trained. Take a look at the different functions: They tell you how good your model is in predicting data from the dataset. For loss: The lower, the better! For r-squared: The closer to 1, the better (and a negative value is very bad). Have fun analyzing your model with these functions!'
+              )
+            }
+          }}
+          onMouseLeave={handleHelpPopperClose}
+        >
           <PrettyChart data={filterData(training.trainingData)} />
         </Box>
         <Button
