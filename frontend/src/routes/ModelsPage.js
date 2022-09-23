@@ -65,54 +65,52 @@ export default function ModelsPage({ modelList }) {
     handleCloseDialog()
   }
   return (
-    <div>
-      <Box sx={{ m: 5 }}>
-        <Grid
-          container
-          direction="row"
-          justifyContent="center"
-          alignItems="stretch"
-          columnSpacing={2}
-        >
-          <Grid item xs={3}>
-            <SelectionList
-              updateFunc={updateSelection}
-              elements={modelList}
-              elementType="model"
-              usePopper={false}
-              addFunc={initiateCreation}
-              height={gridHeight}
-            />
-          </Grid>
-          <Grid item xs={9}>
-            <ModelDescription
-              selectedModel={modelList.at(selectedIndex)}
-              onActiveTraining={handleOpenDialog}
-            />
-          </Grid>
+    <Box sx={{ m: 5 }}>
+      <Grid
+        container
+        direction="row"
+        justifyContent="center"
+        alignItems="stretch"
+        columnSpacing={2}
+      >
+        <Grid item xs={3}>
+          <SelectionList
+            updateFunc={updateSelection}
+            elements={modelList}
+            elementType="model"
+            usePopper={false}
+            addFunc={initiateCreation}
+            height={gridHeight}
+          />
         </Grid>
-        <Dialog
-          open={showDialog}
-          onClose={handleCloseDialog}
-          aria-labelledby="alert-dialog-title"
-          aria-describedby="alert-dialog-description"
-        >
-          <DialogTitle id="alert-dialog-title">
-            {'Abort current training?'}
-          </DialogTitle>
-          <DialogContent>
-            <DialogContentText id="alert-dialog-description">
-              To start a new training, you have to abort the current training
-            </DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleCloseDialog}>Cancel</Button>
-            <Button onClick={abortAndShowTraining}>Abort & Show Results</Button>
-            <Button onClick={abortTraining}>Abort</Button>
-          </DialogActions>
-        </Dialog>
-      </Box>
-    </div>
+        <Grid item xs={9}>
+          <ModelDescription
+            selectedModel={modelList.at(selectedIndex)}
+            onActiveTraining={handleOpenDialog}
+          />
+        </Grid>
+      </Grid>
+      <Dialog
+        open={showDialog}
+        onClose={handleCloseDialog}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+          {'Abort current training?'}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            To start a new training, you have to abort the current training
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog}>Cancel</Button>
+          <Button onClick={abortAndShowTraining}>Abort & Show Results</Button>
+          <Button onClick={abortTraining}>Abort</Button>
+        </DialogActions>
+      </Dialog>
+    </Box>
   )
 }
 
