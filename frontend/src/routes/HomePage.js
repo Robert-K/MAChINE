@@ -40,33 +40,53 @@ export default function HomePage() {
         </Box>
       </Box>
       <Box sx={{ textAlign: 'left', mb: 12 }}>
-        <Typography variant="h4" color="text.primary" paragraph>
+        <Typography variant="h4" color="text.primary" paragraph component="div">
           With{' '}
           <span style={{ color: theme.palette.primary.main }}>MAChINE</span> you
           can:
         </Typography>
-        <Typography variant="h6" color="text.secondary" paragraph>
+        <Typography
+          variant="h6"
+          color="text.secondary"
+          paragraph
+          component="div"
+        >
           -{' '}
           <Box display="inline" color="text.primary">
             Draw
           </Box>{' '}
           any molecule imaginable and preview it in 3D
         </Typography>
-        <Typography variant="h6" color="text.secondary" paragraph>
+        <Typography
+          variant="h6"
+          color="text.secondary"
+          paragraph
+          component="div"
+        >
           -{' '}
           <Box display="inline" color="text.primary">
             Configure
           </Box>{' '}
           and train machine learning models to predict properties of molecules
         </Typography>
-        <Typography variant="h6" color="text.secondary" paragraph>
+        <Typography
+          variant="h6"
+          color="text.secondary"
+          paragraph
+          component="div"
+        >
           -{' '}
           <Box display="inline" color="text.primary">
             Analyze
           </Box>{' '}
           your molecules for various properties with the models you trained
         </Typography>
-        <Typography variant="h6" color="text.secondary" paragraph>
+        <Typography
+          variant="h6"
+          color="text.secondary"
+          paragraph
+          component="div"
+        >
           -{' '}
           <Box display="inline" color="text.primary">
             Compare
