@@ -215,6 +215,16 @@ class StorageHandler:
     def get_dataset_summaries(self):
         return self.dataset_summaries
 
+    def get_dataset_histograms(self, dataset_id, labels):
+        # TODO: test this
+        dataset = get_dataset(dataset_id)
+        histograms = dict()
+        if dataset and 'histograms' in dataset:
+            for label, histogram in dataset.get('histograms').items():
+                if label in labels:
+                    histograms[label] = histogram
+            return histograms
+
     # Base Models
     def get_base_model(self, base_model_id):
         return self.base_models.get(base_model_id)
@@ -385,6 +395,7 @@ get_base_model = _inst.get_base_model
 get_base_models = _inst.get_base_models
 get_dataset = _inst.get_dataset
 get_dataset_summaries = _inst.get_dataset_summaries
+get_dataset_histograms = _inst.get_dataset_histograms
 get_fitting = _inst.get_fitting
 get_fitting_summary = _inst.get_fitting_summary
 get_fitting_summaries = _inst.get_fitting_summaries
