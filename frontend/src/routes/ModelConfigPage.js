@@ -49,6 +49,7 @@ export const standardParameters = {
       "The loss of your net describes now 'bad' your net is, that is, how big the difference between the actual output and the desired output is. The loss function determines how this loss is calculated.",
   },
 }
+
 export default function ModelConfigPage({ addFunc }) {
   const { state } = useLocation()
   const [parameters, setParameters] = React.useState(state.baseModel.parameters)
@@ -62,6 +63,19 @@ export default function ModelConfigPage({ addFunc }) {
   const help = React.useContext(HelpContext)
   const navigate = useNavigate()
 
+  const handleHelpPopperOpen = (event, content) => {
+    if (help.helpMode) {
+      setHelpAnchorEl(event.currentTarget)
+      setHelpPopperContent(content)
+    }
+  }
+
+  const handleHelpPopperClose = () => {
+    setHelpAnchorEl(null)
+  }
+
+  const helpOpen = Boolean(helpAnchorEl)
+
   const modelTypeSpecificComponents = {
     sequential: {
       visual: (
@@ -69,18 +83,21 @@ export default function ModelConfigPage({ addFunc }) {
           modelLayers={state.baseModel.parameters.layers}
           defaultActivation={defaultActivation}
           updateFunc={updateParameters}
-            hoverFunc={(e) => {
-              handleHelpPopperOpen(
-                e,
-                'This is how your model looks at the moment! Each rectangle represents one layer. On the left is the input layer, and the data will get forwarded from left to right through the layers. The numbers show how many nodes are in the respective layer. Click between two layers to add a new layer between them, or click directly on a layer to delete it.'
-              )
-            }}
+          hoverFunc={(e) => {
+            handleHelpPopperOpen(
+              e,
+              'This is how your model looks at the moment! Each rectangle represents one layer. On the left is the input layer, and the data will get forwarded from left to right through the layers. The numbers show how many nodes are in the respective layer. Click between two layers to add a new layer between them, or click directly on a layer to delete it.'
+            )
+          }}
         />
       ),
-      config: <MLPConfig updateDefaultActivation={setDefaultActivation}
-            hoverFunc={handleHelpPopperOpen}
-            leaveFunc={handleHelpPopperClose}
-          />,
+      config: (
+        <MLPConfig
+          updateDefaultActivation={setDefaultActivation}
+          hoverFunc={handleHelpPopperOpen}
+          leaveFunc={handleHelpPopperClose}
+        />
+      ),
     },
     schnet: {
       visual: <SchNetVisual />,
@@ -93,8 +110,8 @@ export default function ModelConfigPage({ addFunc }) {
           }}
           updateFunc={updateParameters}
           errorSignal={setIsInvalidConfig}
-            hoverFunc={handleHelpPopperOpen}
-            leaveFunc={handleHelpPopperClose}
+          hoverFunc={handleHelpPopperOpen}
+          leaveFunc={handleHelpPopperClose}
         />
       ),
     },
@@ -142,19 +159,6 @@ export default function ModelConfigPage({ addFunc }) {
     setName(e.target.value)
   }
 
-  const handleHelpPopperOpen = (event, content) => {
-    if (help.helpMode) {
-      setHelpAnchorEl(event.currentTarget)
-      setHelpPopperContent(content)
-    }
-  }
-
-  const handleHelpPopperClose = () => {
-    setHelpAnchorEl(null)
-  }
-
-  const helpOpen = Boolean(helpAnchorEl)
-
   return (
     <Grid sx={{ p: 2, height: '85vh' }} container>
       <Grid item xs={8} sx={{ height: '100%' }}>
@@ -180,8 +184,7 @@ export default function ModelConfigPage({ addFunc }) {
                     onMouseOver={(e) => {
                       handleHelpPopperOpen(e, value.explanation)
                     }}
-                    onMouseOut={handleHelpPopperClose}
-                    onClose={handleHelpPopperClose}
+                    onMouseLeave={handleHelpPopperClose}
                   >
                     {value.map((valueEntry, i) => {
                       return (

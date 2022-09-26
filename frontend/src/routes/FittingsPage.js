@@ -127,12 +127,12 @@ export default function FittingsPage() {
                 )
               }}
               hoverFunc={(e) => {
-              handleHelpPopperOpen(
-                e,
-                'Click to analyze your molecule with this model!'
-              )
-            }}
-            leaveFunc={handleHelpPopperClose}
+                handleHelpPopperOpen(
+                  e,
+                  'Click to analyze your molecule with this model!'
+                )
+              }}
+              leaveFunc={handleHelpPopperClose}
             />
 
             <Dialog
@@ -157,7 +157,6 @@ export default function FittingsPage() {
               </DialogActions>
             </Dialog>
           </React.Fragment>
-            
         ))}
         <DetailsPopper anchor={anchor} open={open} content={content} />
         <HelpPopper

@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { Box, Popper, TextField } from '@mui/material'
+import { TextField } from '@mui/material'
 import { camelToNaturalString } from '../../../utils'
 
 const settableSizes = {
@@ -21,7 +21,7 @@ const settableSizes = {
 export default function SchNetConfig({
   schnetParams,
   updateFunc,
-    errorSignal,
+  errorSignal,
   hoverFunc,
   leaveFunc,
 }) {
@@ -32,7 +32,7 @@ export default function SchNetConfig({
   ])
   const [sizesError, setSizesError] = React.useState([false, false, false])
 
-    React.useEffect(() => {
+  React.useEffect(() => {
     errorSignal(sizesError.includes(true))
   }, [sizesError])
 
@@ -81,13 +81,7 @@ export default function SchNetConfig({
 SchNetConfig.propTypes = {
   schnetParams: PropTypes.object.isRequired,
   updateFunc: PropTypes.func.isRequired,
-    errorSignal: PropTypes.func,
+  errorSignal: PropTypes.func,
   hoverFunc: PropTypes.func,
   leaveFunc: PropTypes.func,
 }
-
-
-
-
-
-
