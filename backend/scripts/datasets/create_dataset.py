@@ -105,13 +105,14 @@ def create_dataset(path: str,
     return dataset
 
 
-def add_dataset_descriptor(dataset, name, image_file, parameters):
+def add_dataset_descriptor(dataset, name, image_file, histograms, parameters):
     """
     Takes a Dataset and adds it to a dictionary containing various fields
 
     :param dataset: The dataset. Presumably created using 'create_dataset'
     :param name: The name of the Dataset
     :param image_file: name of the image file in storage/data/images
+    :param histograms: histogram of the dataset
     :param parameters: parameters that were used to create the dataset
     :return: A dictionary with the fields 'name', 'size', 'labels', 'image_file', 'dataset'
     """
@@ -120,7 +121,7 @@ def add_dataset_descriptor(dataset, name, image_file, parameters):
     print(f'adding descriptor with size {size}, labels {labels}')
     return {'name': name, 'size': size, 'labels': labels,
             'image_file': image_file, 'dataset': dataset,
-            'version': _version, 'parameters': parameters}
+            'version': _version, 'histograms': histograms, 'parameters': parameters}
 
 
 def create_complete_dataset(path, max_size, data_offset, smiles_fingerprint_sizes, smiles_fingerprint_radius, labels,
@@ -135,8 +136,9 @@ def create_complete_dataset(path, max_size, data_offset, smiles_fingerprint_size
     return add_dataset_descriptor(raw_dataset,
                                   name,
                                   image_file,
+                                  histograms,
                                   [path, max_size, data_offset, smiles_fingerprint_sizes, smiles_fingerprint_radius,
-                                   labels, name, image_file, histograms])
+                                   labels, name, image_file])
 
 
 def update_dataset(path):
@@ -153,7 +155,6 @@ def update_dataset(path):
         print('Dataset too old to automatically upgrade')
 
 
-# TODO: test this
 def create_histograms(dataset, labels):
     histograms = dict()
 
@@ -180,7 +181,7 @@ def create_histograms(dataset, labels):
 if __name__ == '__main__':
     # Example for creating a new dataset
     new_set = create_complete_dataset(path="../../storage/csv_data/solubility.csv",
-                                      max_size=10000,
+                                      max_size=100,
                                       data_offset=0,
                                       smiles_fingerprint_sizes=[128, 512, 1024],
                                       smiles_fingerprint_radius=2,
