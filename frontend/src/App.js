@@ -44,6 +44,7 @@ const themeLight = createTheme(
     palette: {
       primary: {
         main: '#137C83',
+        overlay: '#0f6267',
       },
       contrastbackground: {
         main: '#137C83',
@@ -81,6 +82,7 @@ const themeDark = createTheme(
     palette: {
       primary: {
         main: '#dc3984',
+        overlay: '#7E2E54',
       },
       mode: 'dark',
     },

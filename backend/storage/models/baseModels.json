@@ -1,5 +1,5 @@
 {
-	"id": {
+	"1": {
 		"name": "SequentialA",
 		"type": "sequential",
 		"parameters": {
@@ -29,7 +29,7 @@
 		},
 		"metrics": ["MeanAbsoluteError", "R2"]
 	},
-	"id2": {
+	"2": {
 		"name": "SCHNET A",
 		"type": "schnet",
 		"parameters": {

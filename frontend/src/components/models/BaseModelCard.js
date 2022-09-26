@@ -1,6 +1,6 @@
 import React from 'react'
 import Grid from '@mui/material/Grid'
-import { Typography, Box, CardActionArea, CardMedia } from '@mui/material'
+import { Typography, Box, CardActionArea, useTheme } from '@mui/material'
 import PropTypes from 'prop-types'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
@@ -22,6 +22,8 @@ export default function BaseModelCard({
   hoverFunc,
   leaveFunc,
 }) {
+  const theme = useTheme()
+
   return (
     <Grid item xs={4} md={3}>
       {/* ^ The grid has a total width of  12. The xs defines how much of that width each component of the grid gets,
@@ -33,12 +35,31 @@ export default function BaseModelCard({
           onMouseOver={(e) => hoverFunc(e)}
           onMouseLeave={() => leaveFunc()}
         >
-          <CardMedia
-            component="img"
-            height="155px"
-            src={`data:image/png;base64,${baseModel.type.image}`}
-            alt="You should see a base model here."
-          />
+          <Box position="relative">
+            <Box
+              sx={{
+                height: '155px',
+                backgroundPosition: 'center',
+                backgroundSize: 'cover',
+                backgroundImage: `url("/models/network${
+                  baseModel.id % 5
+                }.png")`,
+                filter: 'grayscale(100%)',
+              }}
+            />
+            <Box
+              sx={{
+                position: 'absolute',
+                bottom: 0,
+                left: 0,
+                right: 0,
+                top: 0,
+                backgroundColor: theme.palette.primary.overlay,
+                opacity: 1,
+                mixBlendMode: 'hard-light',
+              }}
+            />
+          </Box>
           <CardContent>
             <Box paddingX={1}>
               {/* Displays the base model's name */}
