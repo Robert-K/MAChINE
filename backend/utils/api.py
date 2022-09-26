@@ -138,6 +138,11 @@ class Fittings(Resource):
         return processed_fittings
 
 
+class Scoreboard(Resource):
+    def get(self):
+        return sh.get_scoreboard_summaries()
+
+
 class AddUser(Resource):
     def post(self):
         args = parser.parse_args()
@@ -260,6 +265,7 @@ api.add_resource(Fittings, '/users/<user_id>/fittings')
 api.add_resource(Analyze, '/users/<user_id>/analyze')
 api.add_resource(Train, '/users/<user_id>/train')
 # Non-user-specific resources
+api.add_resource(Scoreboard, '/scoreboard')
 api.add_resource(Datasets, '/datasets')
 api.add_resource(BaseModels, '/baseModels')
 

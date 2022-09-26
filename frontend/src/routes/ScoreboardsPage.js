@@ -2,90 +2,89 @@ import * as React from 'react'
 import { Box, Paper, Typography } from '@mui/material'
 import { DataGrid } from '@mui/x-data-grid'
 import Api from '../api'
+import UserContext from '../context/UserContext'
 
-let loaded = false
+const fittingColumns = [
+  {
+    field: 'id',
+    headerName: <b>ID</b>,
+    headerAlign: 'center',
+    align: 'center',
+    description:
+      'The ID got created automatically. It is unique and IDentifys a fitting',
+    sortable: false,
+    flex: 4,
+    minWidth: 180,
+  },
+  {
+    field: 'userID',
+    headerName: <b>User ID</b>,
+    headerAlign: 'center',
+    flex: 4,
+    minWidth: 150,
+  },
+  {
+    field: 'modelName',
+    headerName: <b>Model Name</b>,
+    headerAlign: 'center',
+    align: 'right',
+    description: 'The Name of the Model chosen by its creator',
+    sortable: false,
+    flex: 3,
+    minWidth: 140,
+  },
+  {
+    field: 'datasetID',
+    headerName: <b>Dataset ID</b>,
+    headerAlign: 'center',
+    align: 'right',
+    type: 'number',
+    flex: 2,
+    minWidth: 90,
+  },
+  {
+    field: 'labels',
+    headerName: <b>Label</b>,
+    headerAlign: 'center',
+    align: 'center',
+    flex: 2,
+    minWIdth: 90,
+  },
+  {
+    field: 'epochs',
+    headerName: <b>Epochs</b>,
+    headerAlign: 'center',
+    align: 'right',
+    flex: 2,
+    minWidth: 70,
+  },
+  {
+    field: 'batchSize',
+    headerName: <b>Batch Size</b>,
+    headerAlign: 'center',
+    align: 'right',
+    flex: 2,
+    minWidth: 85,
+  },
+  {
+    field: 'accuracy',
+    headerName: <b>Accuracy</b>,
+    headerAlign: 'center',
+    align: 'right',
+    flex: 2,
+    minWidth: 70,
+  },
+]
 
 export default function ScoreboardsPage() {
   const [fittingRows, setFittingRows] = React.useState([])
-  if (!loaded) {
-    Api.getFittings().then((data) => {
+  const user = React.useContext(UserContext)
+  React.useEffect(() => {
+    Api.getScoreboardSummaries().then((data) => {
+      console.log(data)
       setFittingRows(data)
-      loaded = true // quick fix to spot infinite requests
     })
-  }
-  const fittingColumns = [
-    {
-      field: 'id',
-      headerName: <b>ID</b>,
-      headerAlign: 'center',
-      align: 'center',
-      description:
-        'The ID got created automatically. It is unique and IDentifys a fitting',
-      sortable: false,
-      flex: 4,
-      minWidth: 180,
-    },
-    {
-      field: 'modelID',
-      headerName: <b>Model ID</b>,
-      headerAlign: 'center',
-      align: 'center',
-      type: 'number',
-      flex: 4,
-      minWidth: 180,
-    },
-    {
-      field: 'modelName',
-      headerName: <b>Model Name</b>,
-      headerAlign: 'center',
-      align: 'right',
-      description: 'The Name of the Model chosen by its creator',
-      sortable: false,
-      flex: 3,
-      minWidth: 140,
-    },
-    {
-      field: 'datasetID',
-      headerName: <b>Dataset ID</b>,
-      headerAlign: 'center',
-      align: 'right',
-      type: 'number',
-      flex: 2,
-      minWidth: 90,
-    },
-    {
-      field: 'labels',
-      headerName: <b>Label</b>,
-      headerAlign: 'center',
-      align: 'center',
-      flex: 2,
-      minWIdth: 90,
-    },
-    {
-      field: 'epochs',
-      headerName: <b>Epochs</b>,
-      headerAlign: 'center',
-      align: 'right',
-      flex: 2,
-      minWidth: 70,
-    },
-    {
-      field: 'batchSize',
-      headerName: <b>Batch Size</b>,
-      headerAlign: 'center',
-      align: 'right',
-      flex: 2,
-      minWidth: 85,
-    },
-    {
-      field: 'accuracy',
-      headerName: <b>Accuracy</b>,
-      headerAlign: 'center',
-      align: 'right',
-      flex: 2,
-      minWidth: 70,
-    },
-  ]
+  }, [user])
 
   return (
     <div align="center">

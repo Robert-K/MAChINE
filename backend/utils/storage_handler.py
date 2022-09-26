@@ -22,6 +22,7 @@ __all__ = ['add_analysis',
            'get_fitting',
            'get_fitting_summary',
            'get_fitting_summaries',
+           'get_scoreboard_summaries',
            'get_model_summary',
            'get_model_summaries',
            'get_molecules',
@@ -182,6 +183,7 @@ class StorageHandler:
         self.__analyze_datasets()
         self.__read_base_model_types()
         self.__read_base_models()
+        self.scoreboard_summaries = list()
 
     def add_user_handler(self, user_id) -> UserDataStorageHandler:
         if self.user_storage_handler.get(user_id) is None:
@@ -245,8 +247,20 @@ class StorageHandler:
     # Fittings
     # fitting is the actual, trained model, not a summary
     def add_fitting(self, user_id, dataset_id, labels, epochs, accuracy, batch_size, model_id, fitting):
-        return self.get_user_handler(user_id).add_fitting(dataset_id, labels, epochs, accuracy, batch_size, model_id,
-                                                          fitting)
+        fitting_id = self.get_user_handler(user_id).add_fitting(dataset_id, labels, epochs, accuracy, batch_size,
+                                                                model_id,
+                                                                fitting)
+        self.scoreboard_summaries.append({'id': fitting_id,
+                                          'userID': user_id,
+                                          'modelID': model_id,
+                                          'modelName': self.get_user_handler(user_id).get_model_summary(model_id).get(
+                                              'name'),
+                                          'datasetID': dataset_id,
+                                          'labels': labels,
+                                          'epochs': epochs,
+                                          'batchSize': batch_size,
+                                          'accuracy': accuracy})
+        return fitting_id
 
     def update_fitting(self, user_id, fitting_id, epochs, accuracy, fitting):
         return self.get_user_handler(user_id).update_fitting(fitting_id, epochs, accuracy, fitting)
@@ -256,6 +270,9 @@ class StorageHandler:
 
     def get_fitting_summary(self, user_id, fitting_id):
         return self.get_user_handler(user_id).get_fitting_summary(fitting_id)
+
+    def get_scoreboard_summaries(self):
+        return self.scoreboard_summaries
 
     def get_fitting_summaries(self, user_id):
         return self.get_user_handler(user_id).get_fitting_summaries()
@@ -332,6 +349,7 @@ get_dataset_summaries = _inst.get_dataset_summaries
 get_fitting = _inst.get_fitting
 get_fitting_summary = _inst.get_fitting_summary
 get_fitting_summaries = _inst.get_fitting_summaries
+get_scoreboard_summaries = _inst.get_scoreboard_summaries
 get_model_summary = _inst.get_model_summary
 get_model_summaries = _inst.get_model_summaries
 get_molecules = _inst.get_molecules

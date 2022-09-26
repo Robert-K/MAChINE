@@ -49,6 +49,12 @@ export default {
     updateBaseURL()
   },
 
+  async getScoreboardSummaries() {
+    return api.get('/scoreboard').then((response) => {
+      return response.data
+    })
+  },
+
   async getModelList() {
     return api.get(`/users/${userID}/models`).then((response) => {
       return response.data
