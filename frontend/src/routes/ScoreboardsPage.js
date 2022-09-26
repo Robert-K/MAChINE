@@ -17,9 +17,10 @@ const fittingColumns = [
     minWidth: 180,
   },
   {
-    field: 'userID',
-    headerName: <b>User ID</b>,
+    field: 'userName',
+    headerName: <b>User Name</b>,
     headerAlign: 'center',
+    align: 'center',
     flex: 4,
     minWidth: 150,
   },
@@ -88,7 +89,19 @@ export default function ScoreboardsPage() {
 
   return (
     <div align="center">
-      <Box sx={{ mx: 5, mb: 5, mt: 2 }}>
+      <Box
+        sx={{
+          mx: 5,
+          mb: 5,
+          mt: 2,
+          '& .table-theme': {
+            bgcolor: 'primary.light',
+            '&:hover': {
+              bgcolor: 'primary.dark',
+            },
+          },
+        }}
+      >
         <Typography sx={{ m: 4 }} variant="h4">
           Best Models
         </Typography>
@@ -110,6 +123,12 @@ function DataTable(columns, rows) {
         disableColumnMenu={true}
         hideFooter={true}
         experimentalFeatures={{ columnGrouping: true }}
+        getRowClassName={(params) => {
+          if (params.row.userName === React.useContext(UserContext).userName) {
+            console.log('check')
+            return 'table-theme'
+          }
+        }}
       />
     </div>
   )

@@ -41,13 +41,14 @@ _dataset_version = 3
 
 class UserDataStorageHandler:
 
-    def __init__(self, user_id):
+    def __init__(self, user_id, username):
         self.user_path = _user_data_path / user_id
         self.user_fittings_path = self.user_path / 'fittings'
         self.__build_folder_structure()
         self.molecules = self.__load_summary_file('molecules.json')
         self.model_summaries = self.__load_summary_file('models.json')
         self.fitting_summaries = self.__load_summary_file('fittings.json')
+        self.username = username
         atexit.register(self.clean_files)
 
     # Molecules
@@ -57,6 +58,9 @@ class UserDataStorageHandler:
 
     def get_molecules(self):
         return self.molecules
+
+    def get_username(self):
+        return self.username
 
     # Analyses
     def add_analysis(self, smiles, fitting_id, results):
@@ -185,9 +189,9 @@ class StorageHandler:
         self.__read_base_models()
         self.scoreboard_summaries = list()
 
-    def add_user_handler(self, user_id) -> UserDataStorageHandler:
+    def add_user_handler(self, user_id, username) -> UserDataStorageHandler:
         if self.user_storage_handler.get(user_id) is None:
-            self.user_storage_handler[user_id] = UserDataStorageHandler(user_id)
+            self.user_storage_handler[user_id] = UserDataStorageHandler(user_id, username)
         return self.user_storage_handler.get(user_id)
 
     def get_user_handler(self, user_id) -> UserDataStorageHandler | None:
@@ -251,7 +255,7 @@ class StorageHandler:
                                                                 model_id,
                                                                 fitting)
         self.scoreboard_summaries.append({'id': fitting_id,
-                                          'userID': user_id,
+                                          'userName': str(self.get_user_handler(user_id).username),
                                           'modelID': model_id,
                                           'modelName': self.get_user_handler(user_id).get_model_summary(model_id).get(
                                               'name'),
