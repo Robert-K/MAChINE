@@ -198,6 +198,7 @@ class BaseModels(Resource):
                 if current.get('type') == 'sequential':
                     layers = current.get('layers')
                     if layers:
+                        #TODO: this does not work aaaaaaaaaah oh no oh oh nonono cri cri
                         processed_model['taskType'] = 'regression' if layers[len(layers) - 1].get(
                             'units') == 1 else 'classification'
 
