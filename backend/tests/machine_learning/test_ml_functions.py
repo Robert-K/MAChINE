@@ -46,8 +46,7 @@ class MockTraining:
 class TestWithLiveTrainingsGroup:
     def test_is_training_running(self, uid, content):
         ml.live_trainings = content
-        assert ml.is_training_running(uid) == bool(
-            content.get(uid)), 'Expect user to be training when user in live_training dict'
+        assert ml.is_training_running(uid) == bool(content), 'Expected training to be running when content not empty'
 
     def test_stop_training(self, uid, content, mocker):
         ml.live_trainings = dict(content)
@@ -83,5 +82,6 @@ class TestLiveStatsGroup:
 
     def test_on_train_begin(self, user_id, live_stats, mocker):
         mocked_api = mocker.patch('backend.utils.api.notify_training_start')
+        ml.live_trainings = {user_id: {'epochs': 3456}}
         live_stats.on_train_begin()
-        mocked_api.assert_called_once_with(user_id), 'api is supposed to be called once to confirm training start'
+        mocked_api.assert_called_once_with(user_id, 3456), 'api is supposed to be called once to confirm training start'

@@ -101,6 +101,8 @@ class UserDataStorageHandler:
     def add_fitting(self, dataset_id, labels, epochs, accuracy, batch_size, model_id, fitting):
         fitting_id = shortuuid.uuid()
         path = self.save_fitting(fitting_id, fitting)
+        if path is None:
+            return None
         self.fitting_summaries[fitting_id] = {'datasetID': dataset_id,
                                               'labels': labels,
                                               'epochs': epochs,
@@ -119,8 +121,13 @@ class UserDataStorageHandler:
         self.__save_summary_file('models.json', self.model_summaries)
 
     def update_fitting(self, fitting_id, epochs, accuracy, fitting):
-        self.save_fitting(fitting_id, fitting)
-        summary = self.fitting_summaries[fitting_id]
+        path = self.save_fitting(fitting_id, fitting)
+        summary = self.fitting_summaries.get(fitting_id)
+        # Deletes the existing summary if it can't update the fitting
+        if path is None or summary is None:
+            self.fitting_summaries[fitting_id] = None
+            del summary
+            return None
         summary['epochs'] = epochs
         summary['accuracy'] = accuracy
         self.__save_summary_file('fittings.json', self.fitting_summaries)

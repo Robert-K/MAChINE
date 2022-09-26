@@ -71,3 +71,19 @@ def test_faulty_mol_graph_conversion(test_smiles):
     assert nodes is None, 'Converted molecule should be None'
     assert edges is None, 'Converted molecule should be None'
     assert edges_i is None, 'Converted molecule should be None'
+
+
+@pytest.mark.parametrize(
+    'test_smiles, chem_output, expected_validity',
+    [
+        (2, None, False),
+        ([], None, False),
+        ('awdawea', None, False),
+        ('COOH', {'something'}, True),
+    ]
+)
+def test_is_valid_molecule(test_smiles, chem_output, expected_validity, mocker):
+    mocker.patch('backend.utils.molecule_formats.Chem.MolFromSmiles', return_value=chem_output)
+    mocker.patch('backend.utils.molecule_formats.Chem.SanitizeMol', return_value=0)
+    validity = mf.is_valid_molecule(test_smiles)
+    assert validity == expected_validity, 'Expected invalid smiles to be invalid'

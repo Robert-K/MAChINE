@@ -79,7 +79,7 @@ class TestModelRequestGroup:
             converted_model = dict()
             converted_model |= {'id': model_id}
             converted_model |= {'name': model['name']}
-            converted_model |= {'baseModel': model['baseModelID']}
+            converted_model |= {'baseModelID': model['baseModelID']}
             converted_model |= {'parameters': model['parameters']}
             converted_model |= {'fittings': converted_fittings}
             assert converted_model in response_json, 'Response json should contain every model formatted like this'
@@ -139,9 +139,17 @@ class TestMoleculeRequestGroup:
     )
     def test_molecule_patch(self, test_mol_name, test_smiles, test_cml, client, mocker):
         mocker.patch('backend.utils.api.sh.add_molecule', return_value=None)
+        mocker.patch('backend.utils.api.mf.is_valid_molecule', return_value=True)
         response = client.patch(f'/users/{_test_user_id}/molecules',
                                 json={'name': test_mol_name, 'smiles': test_smiles, 'cml': test_cml})
         assert response.status_code == 201, 'Request should have worked'
+        assert response.json is None, 'Response json should be None'
+
+    def test_molecule_patch_invalid(self, client, mocker):
+        mocker.patch('backend.utils.api.mf.is_valid_molecule', return_value=False)
+        response = client.patch(f'/users/{_test_user_id}/molecules',
+                                json={'name': 'af', 'smiles': 'codwa', 'cml': '<cml>'})
+        assert response.status_code == 422, 'Response code should be "Invalid Input"'
         assert response.json is None, 'Response json should be None'
 
 
@@ -383,28 +391,75 @@ class TestAnalyzeRequestGroup:
 # TODO: Implement
 class TestTrainRequestGroup:
     @pytest.mark.parametrize(
-        '',
+        'dataset_id, model_id, labels, epochs, batch_size',
         [
-            ()
+            ('id', '-1523', ['label', 'label2'], 53, 456),
+            ('idawk', '34567', ['label'], 52, 456789)
         ]
     )
-    def test_train_post_response(self, client, mocker):
-        pass
+    def test_train_post_response(self, dataset_id, model_id, labels, epochs, batch_size, client, mocker):
+        magic_background = mocker.patch('backend.utils.api.sio.start_background_task')
+        mocker.patch('backend.utils.api.ml.is_training_running', return_value=False)
+        response = client.post(f'/users/{_test_user_id}/train', json={
+            'datasetID': dataset_id,
+            'modelID': model_id,
+            'epochs': epochs,
+            'labels': json.dumps(labels),
+            'batchSize': batch_size,
+        })
+        magic_background.assert_called_once_with(
+            target=backend.utils.api.ml.train,
+            user_id=_test_user_id,
+            dataset_id=dataset_id,
+            model_id=model_id,
+            labels=labels,
+            epochs=epochs,
+            batch_size=batch_size)
+        assert response.status_code == 200, 'Expected request to work'
+        assert response.json, 'Expecting response to be "True"'
 
     def test_train_busy_post_response(self, client, mocker):
-        pass
+        mocker.patch('backend.utils.api.ml.is_training_running', return_value=True)
+        response = client.post(f'/users/{_test_user_id}/train', json={})
+        assert response.status_code == 503, 'Expecting status code for server busy'
+        assert not response.json, 'Expecting response to be "False"'
 
-    def test_train_patch_response(self, client, mocker):
-        pass
+    @pytest.mark.parametrize(
+        'fitting_id, epochs',
+        [
+            ('1234567890234', 345),
+            ('-456', 42)
+        ]
+    )
+    def test_train_patch_response(self, fitting_id, epochs, client, mocker):
+        mocker.patch('backend.utils.api.ml.is_training_running', return_value=False)
+        mocker.patch('backend.utils.api.sh.get_fitting_summary', return_value={'epochs': 50})
+        response = client.patch(f'/users/{_test_user_id}/train', json={'fittingID': fitting_id, 'epochs': epochs})
+        assert response.status_code == 200, 'Expecting request to work'
+        assert response.json
 
     def test_train_busy_patch_response(self, client, mocker):
-        pass
+        mocker.patch('backend.utils.api.ml.is_training_running', return_value=True)
+        response = client.patch(f'/users/{_test_user_id}/train', json={'fittingID': '-3456', 'epochs': 456})
+        assert response.status_code == 503, 'Expected "Server busy" response'
+        assert response.json == 0, 'Expected 0 Epochs as Error response'
 
     def test_train_fail_patch_response(self, client, mocker):
-        pass
+        mocker.patch('backend.utils.api.ml.is_training_running', return_value=False)
+        mocker.patch('backend.utils.api.sh.get_fitting_summary', return_value=None)
+        response = client.patch(f'/users/{_test_user_id}/train', json={'fittingID': '-3456', 'epochs': 456})
+        assert response.status_code == 404, 'Expected "Resource not found" status code'
+        assert response.json == 0, 'Expected 0 Epochs as Error response'
 
-    def test_train_delete_response(self, client, mocker):
-        pass
-
-    def test_train_fail_delete_response(self, client, mocker):
-        pass
+    @pytest.mark.parametrize(
+        'training_return, expected_response, expected_response_code',
+        [
+            (False, False, 404),
+            (True, True, 200)
+        ]
+    )
+    def test_train_delete_response(self, training_return, expected_response, expected_response_code, client, mocker):
+        mocker.patch('backend.utils.api.ml.stop_training', return_value=training_return)
+        response = client.delete(f'/users/{_test_user_id}/train', json={})
+        assert response.status_code == expected_response_code, 'Expecting status code to match'
+        assert response.json == expected_response, 'Expecting response to match'

@@ -232,6 +232,37 @@ class TestBasicFittingsGroup:
         assert sh.get_fitting(_test_user_id, fitting_id) is None, 'Fitting should not be saved'
 
 
+@pytest.mark.parametrize(
+    'sh_fittings, fitting_id, epochs, accuracy, fitting',
+    [
+        ({'aah': {'datasetID': 'testID', 'epochs': 142, 'accuracy': 12}}, 'aah', 12, 0.01, mm.BasicMockModel({'hi'})),
+    ]
+)
+def test_fitting_update(sh_fittings, fitting_id, epochs, accuracy, fitting):
+    sh.add_user_handler(_test_user_id)
+    sh.get_user_handler(_test_user_id).fitting_summaries = sh_fittings
+    result_id = sh.update_fitting(_test_user_id, fitting_id, epochs, accuracy, fitting)
+    assert result_id == fitting_id, 'Expect returned fitting_id to be equal'
+    summary = sh.get_fitting_summary(_test_user_id, fitting_id)
+    assert summary.get('epochs') == epochs, 'Expected values to be updated'
+    assert summary.get('accuracy') == accuracy, 'Expected values to be updated'
+
+
+@pytest.mark.parametrize(
+    'sh_fittings, fitting_id, epochs, accuracy, fitting',
+    [
+        ({}, 'aah', 12, 0.01, mm.BrokenMockModel({'hi'})),
+        ({}, 'aah', 12, 0.01, mm.BasicMockModel({'hi'})),
+        ({'aah': {'datasetID': 'testID', 'epochs': 142, 'accuracy': 12}}, 'aah', 12, 0.01, mm.BrokenMockModel({'hi'}))
+    ]
+)
+def test_fitting_update_failure(sh_fittings, fitting_id, epochs, accuracy, fitting):
+    sh.add_user_handler(_test_user_id)
+    sh.get_user_handler(_test_user_id).fitting_summaries = sh_fittings
+    assert sh.update_fitting(_test_user_id, fitting_id, epochs, accuracy, fitting) is None, 'Expected None when fails'
+    assert sh.get_fitting_summary(_test_user_id, fitting_id) is None, 'Expected fitting to not exist when fails'
+
+
 def test_dataset_reading():
     # This is hardcoded for Testset Solubility
     summaries = sh.get_dataset_summaries()
