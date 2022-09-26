@@ -316,7 +316,7 @@ def run(debug=True):
             'units': 32,
             'activation': 'relu',
         },
-    ], 'lossFunction': 'Huber Loss', 'optimizer': 'Nadam'}, 'id')
+    ], 'lossFunction': 'Huber Loss', 'optimizer': 'Nadam'}, '1')
     model_id2 = sh.add_model(test_user2, 'MyCoolModel2', {'layers': [
         {
             'type': 'dense',
@@ -338,12 +338,12 @@ def run(debug=True):
             'units': 256,
             'activation': 'relu',
         },
-    ], 'lossFunction': 'Huber Loss', 'optimizer': 'Stochastic Gradient Descent'}, 'id')
+    ], 'lossFunction': 'Huber Loss', 'optimizer': 'Stochastic Gradient Descent'}, '1')
     ml.train(test_user, '2', model_id, ['lumo', 'homo'], 0, 64)
     model_id_2 = sh.add_model(test_user, 'MyCoolSecondModel',
                               {'lossFunction': 'Mean Squared Error', 'optimizer': 'Adam', 'embeddingDimension': 128,
                                'readoutSize': 1,
-                               'depth': 2}, 'id2')
+                               'depth': 2}, '2')
     print(test_user)
     sio.run(app, allow_unsafe_werkzeug=True)
 
