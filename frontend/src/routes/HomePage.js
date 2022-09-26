@@ -106,44 +106,7 @@ export default function HomePage() {
         <Box>
           <Typography variant="h4" color="text.primary" paragraph>
             <span style={{ color: theme.palette.primary.main }}>MAChINE</span>{' '}
-            was made by:
-          </Typography>
-          <Card>
-            <CardMedia
-              component="img"
-              height="230"
-              image="MsG_Logo_Flat.png"
-              alt="lightgreen"
-            />
-            <CardContent>
-              <Typography gutterBottom varian="h5" component="div">
-                Medium-sized Geckos
-              </Typography>
-              <Typography
-                varaint="body2"
-                color="text.secondary"
-                sx={{ maxWidth: 300 }}
-              >
-                This PSE project was created by the &apos;Medium-sized
-                Geckos&apos; group, which consists mostly of members of the
-                O-Phase group &apos;Team Gecko&apos;.
-              </Typography>
-            </CardContent>
-            <CardActions>
-              <Button
-                size="small"
-                href="https://team-gecko.de/"
-                target="_blank"
-              >
-                GECKO Homepage
-              </Button>
-            </CardActions>
-          </Card>
-        </Box>
-
-        <Box sx={{ mt: 13 }}>
-          <Typography variant="h4" color="text.primary" paragraph>
-            for:
+            was made for:
           </Typography>
           <Card>
             <CardMedia
@@ -173,6 +136,42 @@ export default function HomePage() {
                 target="_blank"
               >
                 Learn More
+              </Button>
+            </CardActions>
+          </Card>
+        </Box>
+        <Box sx={{ mt: 16 }}>
+          <Typography variant="h4" color="text.primary" paragraph>
+            by:
+          </Typography>
+          <Card>
+            <CardMedia
+              component="img"
+              height="230"
+              image="MsG_Logo_Flat.png"
+              alt="lightgreen"
+            />
+            <CardContent>
+              <Typography gutterBottom varian="h5" component="div">
+                Medium-sized Geckos
+              </Typography>
+              <Typography
+                varaint="body2"
+                color="text.secondary"
+                sx={{ maxWidth: 300 }}
+              >
+                This PSE project was created by the &apos;Medium-sized
+                Geckos&apos; group, which consists mostly of members of the
+                O-Phase group &apos;Team Gecko&apos;.
+              </Typography>
+            </CardContent>
+            <CardActions>
+              <Button
+                size="small"
+                href="https://team-gecko.de/"
+                target="_blank"
+              >
+                GECKO Homepage
               </Button>
             </CardActions>
           </Card>
