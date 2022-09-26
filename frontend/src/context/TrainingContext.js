@@ -5,6 +5,12 @@ import api from '../api'
 const TrainingContext = React.createContext({
   trainingStatus: true,
   setTrainingStatus: () => {},
+  trainingStopped: false,
+  setTrainingStopped: () => {},
+  trainingFinished: false,
+  setTrainingFinished: () => {},
+  trainingID: '0',
+  setTrainingID: () => {},
   selectedModel: null,
   setSelectedModel: () => {},
   selectedDataset: null,
@@ -16,11 +22,16 @@ const TrainingContext = React.createContext({
   selectedBatchSize: 0,
   setSelectedBatchSize: () => {},
   trainingData: {},
+  softResetContext: () => {},
   resetContext: () => {},
+  stopTraining: () => {},
 })
 
 export const TrainingProvider = ({ children }) => {
   const [trainingStatus, setTrainingStatus] = React.useState(true)
+  const [trainingStopped, setTrainingStopped] = React.useState(false)
+  const [trainingFinished, setTrainingFinished] = React.useState(false)
+  const [trainingID, setTrainingID] = React.useState('0')
   const [selectedModel, setSelectedModel] = React.useState({})
   const [selectedDataset, setSelectedDataset] = React.useState({})
   const [selectedLabels, setSelectedLabels] = React.useState([])
@@ -34,15 +45,20 @@ export const TrainingProvider = ({ children }) => {
 
   React.useEffect(() => {
     setTrainingStatus(false)
-    api.registerSocketListener('started', () => {
+    api.registerSocketListener('started', (data) => {
       setTrainingStatus(true)
-      dispatchTrainingData({ type: 'reset' })
+      setTrainingStopped(false)
+      setTrainingFinished(false)
+      setSelectedEpochs(data)
     })
     api.registerSocketListener('update', (data) => {
       dispatchTrainingData({ type: 'update', payload: data })
     })
-    api.registerSocketListener('done', () => {
+    api.registerSocketListener('done', (response) => {
       setTrainingStatus(false)
+      setTrainingFinished(true)
+      setTrainingID(response.fittingID)
+      setSelectedEpochs(response.epochs)
     })
   }, [])
 
@@ -69,14 +85,26 @@ export const TrainingProvider = ({ children }) => {
     return {}
   }
 
-  function resetContext() {
+  function softResetContext() {
     setTrainingStatus(false)
+    setTrainingStopped(false)
+    setTrainingFinished(false)
+    setTrainingID('0')
+    dispatchTrainingData({ type: 'reset' })
+  }
+
+  function resetContext() {
+    softResetContext()
     setSelectedModel({})
     setSelectedDataset({})
     setSelectedLabels([])
     setSelectedEpochs(10)
     setSelectedBatchSize(64)
-    dispatchTrainingData({ type: 'reset' })
+  }
+
+  function stopTraining() {
+    api.stopTraining()
+    setTrainingStopped(true)
   }
 
   return (
@@ -84,6 +112,12 @@ export const TrainingProvider = ({ children }) => {
       value={{
         trainingStatus,
         setTrainingStatus,
+        trainingStopped,
+        setTrainingStopped,
+        trainingFinished,
+        setTrainingFinished,
+        trainingID,
+        setTrainingID,
         selectedModel,
         setSelectedModel,
         selectedDataset,
@@ -95,7 +129,9 @@ export const TrainingProvider = ({ children }) => {
         selectedBatchSize,
         setSelectedBatchSize,
         trainingData,
+        softResetContext,
         resetContext,
+        stopTraining,
       }}
     >
       {children}

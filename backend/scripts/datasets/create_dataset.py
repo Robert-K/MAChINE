@@ -110,6 +110,7 @@ def add_dataset_descriptor(dataset, name, image_file, parameters):
     :param dataset: The dataset. Presumably created using 'create_dataset'
     :param name: The name of the Dataset
     :param image_file: name of the image file in storage/data/images
+    :param parameters: parameters that were used to create the dataset
     :return: A dictionary with the fields 'name', 'size', 'labels', 'image_file', 'dataset'
     """
     size = len(dataset)
@@ -151,7 +152,6 @@ def update_dataset(path):
 
 # HOW TO USE:
 # Look at examples below
-# TODO: Update storage_handler.py to handle new sets
 if __name__ == '__main__':
     # Example for creating a new dataset
     new_set = create_complete_dataset(path="../../storage/csv_data/solubility.csv",

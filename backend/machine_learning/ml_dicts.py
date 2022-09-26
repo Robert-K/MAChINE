@@ -8,6 +8,10 @@ optimizers = {
     'Adamax': tf.keras.optimizers.Adamax,
     'Stochastic Gradient Descent': tf.keras.optimizers.SGD,
     'Nadam': tf.keras.optimizers.Nadam,
+    'RMSprop': tf.keras.optimizers.RMSprop,
+    'Adadelta': tf.keras.optimizers.Adadelta,
+    'Adagrad': tf.keras.optimizers.Adagrad,
+    'Ftrl': tf.keras.optimizers.Ftrl,
 }
 
 losses = {

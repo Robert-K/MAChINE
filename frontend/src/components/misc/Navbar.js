@@ -8,6 +8,7 @@ import UserContext from '../../context/UserContext'
 import TrainingContext from '../../context/TrainingContext'
 import LogoutIcon from '@mui/icons-material/Logout'
 import ProgressBar from '../training/ProgressBar'
+import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 
 const links = {
   home: {
@@ -49,10 +50,12 @@ export default function Navbar({
   }, [])
 
   React.useEffect(() => {
-    locationName === links.training.link || training.trainingStatus
+    locationName === links.training.link ||
+    training.trainingStatus ||
+    training.trainingFinished
       ? setHideTraining(false)
       : setHideTraining(true)
-  }, [locationName, training.trainingStatus])
+  }, [locationName, training.trainingStatus, training.trainingFinished])
 
   return (
     <AppBar color="primary" position="sticky">
@@ -90,11 +93,15 @@ export default function Navbar({
                 )}
               </React.Fragment>
             ))}
-            {!training.trainingStatus ? null : (
+            {!(
+              training.trainingStatus ||
+              (training.trainingFinished && !training.trainingStopped)
+            ) ? null : (
               <>
-                <Box sx={{ width: '10%', ml: 1 }}>
+                <Box sx={{ width: '10%', mx: 1 }}>
                   <ProgressBar />
                 </Box>
+                {training.trainingStatus ? null : <CheckCircleIcon />}
               </>
             )}
           </>

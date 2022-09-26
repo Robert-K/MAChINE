@@ -37,63 +37,19 @@ const gridHeight = '80vh'
 /**
  * Depicts a list of saved models and shows a description of the selected model on click
  */
-export default function ModelsPage() {
+export default function ModelsPage({ modelList }) {
   const [selectedIndex, setSelectedIndex] = React.useState(-1)
   const [modelList, setModelList] = React.useState([])
   const [showDialog, setShowDialog] = React.useState(false)
   const [creatingModel, setCreatingModel] = React.useState(false)
   const [helpAnchorEl, setHelpAnchorEl] = React.useState(null)
+  const training = React.useContext(TrainingContext)
 
+  const navigate = useNavigate()
   const [helpPopperContent, setHelpPopperContent] = React.useState('')
 
   const user = React.useContext(UserContext)
   const help = React.useContext(HelpContext)
-
-  React.useEffect(() => {
-    refreshModels()
-  }, [user])
-
-  function refreshModels() {
-    api.getModelList().then((models) => setModelList(models))
-  }
-
-  function saveModel(model) {
-    // Find a duplicate
-    const duplicate = modelList.find((savedModel) => {
-      return model.name === savedModel.name
-    })
-
-    if (duplicate) {
-      return 'duplicate'
-    } else if (!model) {
-      return 'error'
-    } else {
-      api.addModelConfig(model).then(refreshModels)
-      setCreatingModel(false)
-      return 0
-    }
-  }
-
-  const updateSelection = (index) => {
-    setSelectedIndex(index)
-  }
-
-  const initiateCreation = () => {
-    setCreatingModel(true)
-  }
-
-  const handleCloseDialog = () => {
-    setShowDialog(false)
-  }
-
-  const handleOpenDialog = () => {
-    setShowDialog(true)
-  }
-
-  const abortTraining = () => {
-    handleCloseDialog()
-    api.stopTraining()
-  }
 
   const handleHelpPopperOpen = (event, content) => {
     if (help.helpMode) {
@@ -108,77 +64,97 @@ export default function ModelsPage() {
 
   const helpOpen = Boolean(helpAnchorEl)
 
-  if (creatingModel) {
-    return <BaseModelsPage addFunc={saveModel} />
-  } else {
-    return (
-      <Box sx={{ m: 5 }}>
-        <Grid
-          container
-          direction="row"
-          justifyContent="center"
-          alignItems="stretch"
-          columnSpacing={2}
-        >
-          <Grid
-            item
-            xs={3}
-            onMouseOver={(e) => {
+  const updateSelection = (index) => {
+    setSelectedIndex(index)
+  }
+
+  const initiateCreation = () => {
+    navigate('base-models')
+  }
+
+  const handleCloseDialog = () => {
+    setShowDialog(false)
+  }
+
+  const handleOpenDialog = () => {
+    setShowDialog(true)
+  }
+
+  const abortAndShowTraining = () => {
+    abortTraining()
+    navigate('/training')
+  }
+
+  const abortTraining = () => {
+    training.stopTraining()
+    handleCloseDialog()
+  }
+  return (
+    <Box sx={{ m: 5 }}>
+      <Grid
+        container
+        direction="row"
+        justifyContent="center"
+        alignItems="stretch"
+        columnSpacing={2}
+      >
+        <Grid item xs={3}
+        onMouseOver={(e) => {
               handleHelpPopperOpen(
                 e,
                 "This is a list of all models you have created so far. Click on any one of them to get more information about it, or click on 'Add a model' to add a new one to the list!"
               )
             }}
-            onMouseLeave={handleHelpPopperClose}
-          >
-            <SelectionList
-              updateFunc={updateSelection}
-              elements={modelList}
-              elementType="model"
-              usePopper={false}
-              addFunc={initiateCreation}
-              height={gridHeight}
-            ></SelectionList>
-          </Grid>
-          <Grid item xs={9}>
-            <ModelDescription
-              selectedModel={modelList.at(selectedIndex)}
-              onActiveTraining={handleOpenDialog}
-              hoverFunc={handleHelpPopperOpen}
-              leaveFunc={handleHelpPopperClose}
-            />
-          </Grid>
+            onMouseLeave={handleHelpPopperClose}>
+          <SelectionList
+            updateFunc={updateSelection}
+            elements={modelList}
+            elementType="model"
+            usePopper={false}
+            addFunc={initiateCreation}
+            height={gridHeight}
+          />
         </Grid>
-        <Dialog
-          open={showDialog}
-          onClose={handleCloseDialog}
-          aria-labelledby="alert-dialog-title"
-          aria-describedby="alert-dialog-description"
-        >
-          <DialogTitle id="alert-dialog-title">
-            {'Abort current training?'}
-          </DialogTitle>
-          <DialogContent>
-            <DialogContentText id="alert-dialog-description">
-              To start a new training, you have to abort the current training
-            </DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={abortTraining}>Abort</Button>
-            <Button onClick={handleCloseDialog}>Cancel</Button>
-          </DialogActions>
-        </Dialog>
-        <HelpPopper
+        <Grid item xs={9}>
+          <ModelDescription
+            selectedModel={modelList.at(selectedIndex)}
+            onActiveTraining={handleOpenDialog}
+            hoverFunc={handleHelpPopperOpen}
+              leaveFunc={handleHelpPopperClose}
+          />
+        </Grid>
+      </Grid>
+      <Dialog
+        open={showDialog}
+        onClose={handleCloseDialog}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+          {'Abort current training?'}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            To start a new training, you have to abort the current training
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog}>Cancel</Button>
+          <Button onClick={abortAndShowTraining}>Abort & Show Results</Button>
+          <Button onClick={abortTraining}>Abort</Button>
+        </DialogActions>
+      </Dialog>
+      <HelpPopper
           id="helpPopper"
           helpPopperContent={helpPopperContent}
           open={helpOpen}
           anchorEl={helpAnchorEl}
           onClose={handleHelpPopperClose}
         />
-      </Box>
-    )
-  }
+    </Box>
+  )
 }
+
 
 function ModelDescription({
   selectedModel,
@@ -209,8 +185,8 @@ function ModelDescription({
         >
           <CardHeader
             title={selectedModel.name}
-            subheader={`Base Model: ${selectedModel.baseModel}`}
-            onMouseOver={(e) => {
+            subheader={`Base Model: ${selectedModel.baseModelID}`}
+             onMouseOver={(e) => {
               hoverFunc(
                 e,
                 "Here you see all relevant information of your model. On the top, you can see the model's name, as well as which base model was used to create it. Since you can train every model multiple times, you can see all of its trained models listed below, too. To start a new training with your selected model, simply click on 'Select training data'!"
@@ -228,7 +204,7 @@ function ModelDescription({
               <RenderFitting
                 fitting={fitting}
                 key={`${fitting.id}-${index}`}
-                hoverFunc={hoverFunc}
+                 hoverFunc={hoverFunc}
                 leaveFunc={leaveFunc}
               ></RenderFitting>
             ))}
@@ -255,14 +231,13 @@ function ModelDescription({
     )
   }
 }
-
+               
 ModelDescription.propTypes = {
   selectedModel: PropTypes.any,
   onActiveTraining: PropTypes.any,
   hoverFunc: PropTypes.func,
   leaveFunc: PropTypes.func,
 }
-
 /**
  * renders a fitting into a collapsable list
  * @param fitting the fitting to be rendered
@@ -335,4 +310,8 @@ RenderFitting.propTypes = {
   fitting: PropTypes.object.isRequired,
   hoverFunc: PropTypes.func,
   leaveFunc: PropTypes.func,
+}
+
+ModelsPage.propTypes = {
+  modelList: PropTypes.array.isRequired,
 }

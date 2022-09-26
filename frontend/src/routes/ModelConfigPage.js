@@ -7,6 +7,7 @@ import MLPModelVisual from '../components/models/modelConfig/MLPModelVisual'
 import {
   Alert,
   Card,
+  CardActions,
   CardContent,
   FormControl,
   InputLabel,
@@ -16,6 +17,9 @@ import {
   TextField,
 } from '@mui/material'
 import Button from '@mui/material/Button'
+import SchNetVisual from '../components/models/modelConfig/SchNetVisual'
+import { camelToNaturalString } from '../utils'
+import { useLocation, useNavigate } from 'react-router-dom'
 import HelpContext from '../context/HelpContext'
 import HelpPopper from '../components/shared/HelpPopper'
 
@@ -45,70 +49,55 @@ export const standardParameters = {
       "The loss of your net describes now 'bad' your net is, that is, how big the difference between the actual output and the desired output is. The loss function determines how this loss is calculated.",
   },
 }
-
-export const toNaturalString = (str) => {
-  const splitAtCapitals = str.split(/(?=[A-Z])/)
-  const strWithSpaces = splitAtCapitals.join(' ')
-  return `${strWithSpaces.charAt(0).toUpperCase()}${strWithSpaces.slice(1)}`
-}
-
-export default function ModelConfigPage({ baseModel, addFunc }) {
-  const [parameters, setParameters] = React.useState(baseModel.parameters)
+export default function ModelConfigPage({ addFunc }) {
+  const { state } = useLocation()
+  const [parameters, setParameters] = React.useState(state.baseModel.parameters)
   const [defaultActivation, setDefaultActivation] = React.useState('')
   const [name, setName] = React.useState('')
+  const [isInvalidConfig, setIsInvalidConfig] = React.useState(false)
   const [showSnackBar, setShowSnackBar] = React.useState(false)
   const [errorMessage, setErrorMessage] = React.useState('')
   const [helpAnchorEl, setHelpAnchorEl] = React.useState(null)
   const [helpPopperContent, setHelpPopperContent] = React.useState('')
   const help = React.useContext(HelpContext)
+  const navigate = useNavigate()
 
-  function renderTypeSpecificComponents() {
-    const children = {}
-    let schnetParams
-    switch (baseModel.type.name) {
-      case 'sequential':
-        children.visual = (
-          <MLPModelVisual
-            modelLayers={baseModel.parameters.layers}
-            defaultActivation={defaultActivation}
-            updateFunc={updateParameters}
+  const modelTypeSpecificComponents = {
+    sequential: {
+      visual: (
+        <MLPModelVisual
+          modelLayers={state.baseModel.parameters.layers}
+          defaultActivation={defaultActivation}
+          updateFunc={updateParameters}
             hoverFunc={(e) => {
               handleHelpPopperOpen(
                 e,
                 'This is how your model looks at the moment! Each rectangle represents one layer. On the left is the input layer, and the data will get forwarded from left to right through the layers. The numbers show how many nodes are in the respective layer. Click between two layers to add a new layer between them, or click directly on a layer to delete it.'
               )
             }}
-          />
-        )
-        children.config = (
-          <MLPConfig
-            updateDefaultActivation={setDefaultActivation}
+        />
+      ),
+      config: <MLPConfig updateDefaultActivation={setDefaultActivation}
             hoverFunc={handleHelpPopperOpen}
             leaveFunc={handleHelpPopperClose}
-          />
-        )
-        break
-      case 'schnet':
-        schnetParams = {
-          depth: parameters.depth,
-          embeddingDimension: parameters.embeddingDimension,
-          readoutSize: parameters.readoutSize,
-        }
-        children.visual = (
-          <div>
-            <img src={`graph.png`} alt="" />
-          </div>
-        )
-        children.config = (
-          <SchNetConfig
-            schnetParams={schnetParams}
-            updateFunc={updateParameters}
+          />,
+    },
+    schnet: {
+      visual: <SchNetVisual />,
+      config: (
+        <SchNetConfig
+          schnetParams={{
+            depth: parameters.depth,
+            embeddingDimension: parameters.embeddingDimension,
+            readoutSize: parameters.readoutSize,
+          }}
+          updateFunc={updateParameters}
+          errorSignal={setIsInvalidConfig}
             hoverFunc={handleHelpPopperOpen}
             leaveFunc={handleHelpPopperClose}
-          />
-        )
-    }
-    return children
+        />
+      ),
+    },
   }
 
   function updateParameters(updatedKey, updatedValue) {
@@ -117,10 +106,13 @@ export default function ModelConfigPage({ baseModel, addFunc }) {
     setParameters(newParams)
   }
 
-  function saveModel(e) {
+  function saveModel() {
+    if (state.baseModel.type.name === 'sequential') {
+      parameters.layers.pop()
+    }
     const newModel = {
       name,
-      baseModel: baseModel.id,
+      baseModelID: state.baseModel.id,
       parameters,
     }
     switch (addFunc(newModel)) {
@@ -130,8 +122,8 @@ export default function ModelConfigPage({ baseModel, addFunc }) {
       case 'error':
         showSnackError(`The model could not be saved.`)
         break
-      case 0:
-      // TODO: add snackbar confirm, "Model saved" or sth
+      default:
+        navigate('/models')
     }
   }
 
@@ -164,33 +156,34 @@ export default function ModelConfigPage({ baseModel, addFunc }) {
   const helpOpen = Boolean(helpAnchorEl)
 
   return (
-    <Grid container>
-      <Grid item xs={8}>
-        {renderTypeSpecificComponents().visual}
+    <Grid sx={{ p: 2, height: '85vh' }} container>
+      <Grid item xs={8} sx={{ height: '100%' }}>
+        <Card sx={{ height: '100%' }}>
+          {modelTypeSpecificComponents[state.baseModel.type.name].visual}
+        </Card>
       </Grid>
-      <Grid item xs={2}>
-        <Card sx={{ m: 2, width: '100%', height: '85vh' }}>
+      <Grid item xs={4}>
+        <Card sx={{ height: '100%', ml: 2 }}>
           <CardContent>
             {Object.entries(standardParameters).map(([param, value], i) => {
               return (
                 <FormControl key={i} fullWidth>
                   <InputLabel sx={{ m: 2 }}>
-                    {toNaturalString(param)}
+                    {camelToNaturalString(param)}
                   </InputLabel>
                   <Select
+                    required
                     value={parameters[param] || ''}
-                    label={toNaturalString(param)}
+                    label={camelToNaturalString(param)}
                     onChange={(event) => handleChange(event, param)}
                     sx={{ m: 2 }}
                     onMouseOver={(e) => {
                       handleHelpPopperOpen(e, value.explanation)
                     }}
-                    // onMouseLeave={handleHelpPopperClose}
-                    // onMouseOutCapture={handleHelpPopperClose}
                     onMouseOut={handleHelpPopperClose}
                     onClose={handleHelpPopperClose}
                   >
-                    {value.options.map((valueEntry, i) => {
+                    {value.map((valueEntry, i) => {
                       return (
                         <MenuItem key={i} value={valueEntry}>
                           {valueEntry}
@@ -202,7 +195,7 @@ export default function ModelConfigPage({ baseModel, addFunc }) {
               )
             })}
 
-            {renderTypeSpecificComponents().config}
+            {modelTypeSpecificComponents[state.baseModel.type.name].config}
 
             <FormControl>
               <TextField
@@ -213,8 +206,12 @@ export default function ModelConfigPage({ baseModel, addFunc }) {
                 required
               />
             </FormControl>
-            <Button onClick={(e) => saveModel(e)}>Save</Button>
           </CardContent>
+          <CardActions>
+            <Button disabled={isInvalidConfig || !name} onClick={saveModel}>
+              Save
+            </Button>
+          </CardActions>
         </Card>
         <Snackbar
           open={showSnackBar}
@@ -242,6 +239,5 @@ export default function ModelConfigPage({ baseModel, addFunc }) {
 }
 
 ModelConfigPage.propTypes = {
-  baseModel: PropTypes.object,
-  addFunc: PropTypes.func,
+  addFunc: PropTypes.func.isRequired,
 }

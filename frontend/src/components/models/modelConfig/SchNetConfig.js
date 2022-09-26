@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { TextField } from '@mui/material'
-import { toNaturalString } from '../../../routes/ModelConfigPage'
+import { Box, Popper, TextField } from '@mui/material'
+import { camelToNaturalString } from '../../../utils'
 
 const settableSizes = {
   depth: {
@@ -21,6 +21,7 @@ const settableSizes = {
 export default function SchNetConfig({
   schnetParams,
   updateFunc,
+    errorSignal,
   hoverFunc,
   leaveFunc,
 }) {
@@ -30,6 +31,10 @@ export default function SchNetConfig({
     schnetParams.readoutSize,
   ])
   const [sizesError, setSizesError] = React.useState([false, false, false])
+
+    React.useEffect(() => {
+    errorSignal(sizesError.includes(true))
+  }, [sizesError])
 
   const handleChange = (event, i, min) => {
     const sizesErrorClone = [...sizesError]
@@ -50,7 +55,7 @@ export default function SchNetConfig({
             required
             key={i}
             id="outlined-number"
-            label={toNaturalString(key)}
+            label={camelToNaturalString(key)}
             type="number"
             defaultValue={sizes[i]}
             error={sizesError[i]}
@@ -76,6 +81,13 @@ export default function SchNetConfig({
 SchNetConfig.propTypes = {
   schnetParams: PropTypes.object.isRequired,
   updateFunc: PropTypes.func.isRequired,
+    errorSignal: PropTypes.func,
   hoverFunc: PropTypes.func,
   leaveFunc: PropTypes.func,
 }
+
+
+
+
+
+

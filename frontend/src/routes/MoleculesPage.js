@@ -23,6 +23,7 @@ import PropTypes from 'prop-types'
 import MoleculeEditor from '../components/molecules/MoleculeEditor'
 import MoleculeRenderer from '../components/molecules/MoleculeRenderer'
 import Molecule from '../internal/Molecule'
+import SnackBarAlert from '../components/misc/SnackBarAlert'
 import HelpPopper from '../components/shared/HelpPopper'
 import HelpContext from '../context/HelpContext'
 
@@ -30,11 +31,11 @@ const gridHeight = '85vh'
 export default function MoleculesPage() {
   const [molecules, setMolecules] = React.useState([])
   const [selectedMolecule, setSelectedMolecule] = React.useState(null)
-  const [errorMessage, setErrorMessage] = React.useState('')
+  const [snackMessage, setSnackMessage] = React.useState('')
   const [showSnackBar, setShowSnackBar] = React.useState(false)
+  const [snackSeverity, setSnackSeverity] = React.useState('warning')
   const [helpAnchorEl, setHelpAnchorEl] = React.useState(null)
   const [helpPopperContent, setHelpPopperContent] = React.useState('')
-
   const user = React.useContext(UserContext)
   const help = React.useContext(HelpContext)
 
@@ -74,9 +75,10 @@ export default function MoleculesPage() {
     }
   }
 
-  function showSnackError(message) {
+  function showSnackMessage(message, severity) {
     setShowSnackBar(true)
-    setErrorMessage(message)
+    setSnackMessage(message)
+    setSnackSeverity(severity)
   }
 
   function saveMolecule(molName, smiles, cml) {
@@ -86,11 +88,22 @@ export default function MoleculesPage() {
     })
 
     if (duplicate) {
-      showSnackError(`Molecule already saved as "${duplicate.name}"`)
+      showSnackMessage(
+        `Molecule already saved as "${duplicate.name}"`,
+        'warning'
+      )
     } else if (!molName || !smiles || !cml) {
-      showSnackError(`Can't save molecule.`)
+      showSnackMessage(`Can't save molecule.`, 'error')
     } else {
-      api.addMolecule(smiles, cml, molName).then(refreshMolecules)
+      api
+        .addMolecule(smiles, cml, molName)
+        .then(refreshMolecules)
+        .catch(() =>
+          showSnackMessage(
+            `Can't save invalid Molecule. Check for Errors in the Editor`,
+            'error'
+          )
+        )
     }
   }
 
@@ -148,19 +161,12 @@ export default function MoleculesPage() {
           onClose={handleHelpPopperClose}
         />
       </Grid>
-      <Snackbar
-        open={showSnackBar}
+      <SnackBarAlert
+        message={snackMessage}
         onClose={() => setShowSnackBar(false)}
-        key="error-snack"
-      >
-        <Alert
-          onClose={() => setShowSnackBar(false)}
-          severity="warning"
-          sx={{ width: '100%' }}
-        >
-          {errorMessage}
-        </Alert>
-      </Snackbar>
+        open={showSnackBar}
+        severity={snackSeverity}
+      />
     </Box>
   )
 }
@@ -202,7 +208,7 @@ function MoleculeView({ selectedMolecule, onSave }) {
           ) : (
             <Box
               sx={{
-                filter: theme.darkMode ? 'invert(1)' : false,
+                filter: theme.darkMode ? 'invert(.86)' : false,
               }}
             >
               <MoleculeEditor

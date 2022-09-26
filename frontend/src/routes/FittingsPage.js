@@ -3,22 +3,29 @@
  */
 
 import React from 'react'
-import { Container } from '@mui/material'
-import Grid from '@mui/material/Grid'
+import {
+  Box,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  ListItem,
+  ListItemText,
+} from '@mui/material'
 import FittingCard from '../components/models/FittingCard'
 import Button from '@mui/material/Button'
 import DetailsPopper from '../components/shared/DetailsPopper'
 import api from '../api'
 import UserContext from '../context/UserContext'
-import { useLocation } from 'react-router-dom'
 import HelpContext from '../context/HelpContext'
 import HelpPopper from '../components/shared/HelpPopper'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 export default function FittingsPage() {
   const [fittingArray, setFittingArray] = React.useState([])
   const { state } = useLocation()
   const { selectedSmiles } = state
-  console.log(selectedSmiles)
   const user = React.useContext(UserContext)
 
   React.useEffect(() => {
@@ -37,6 +44,28 @@ export default function FittingsPage() {
     setAnchor(target)
     setOpen(show)
   }
+  const navigate = useNavigate()
+
+  const [openDialog, setOpenDialog] = React.useState(false)
+
+  const handleClickOpenDialog = () => {
+    setOpenDialog(true)
+  }
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false)
+  }
+
+  const handleGoToMol = () => {
+    setOpenDialog(false)
+    navigate('/molecules')
+  }
+
+  const [analysis, setAnalysis] = React.useState('')
+
+  const handleAnalysis = (response) => {
+    setAnalysis(response)
+  }
 
   const handleHelpPopperOpen = (event, content) => {
     if (help.helpMode) {
@@ -52,39 +81,83 @@ export default function FittingsPage() {
   const helpOpen = Boolean(helpAnchorEl)
 
   return (
-    <Container>
-      <Grid container spacing={4} marginTop={1} marginBottom={5}>
+    <Box sx={{ m: 5 }}>
+      <Box
+        sx={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(4,1fr)',
+          gap: 5,
+        }}
+      >
         {fittingArray.map((fitting) => (
-          <FittingCard
-            fitting={fitting}
-            key={fitting.id}
-            clickFunc={(event) => {
-              handlePopper(
-                event.currentTarget,
-                <Button
-                  fullWidth
-                  variant="contained"
-                  onClick={() => {
-                    api
-                      .analyzeMolecule(fitting.id, selectedSmiles)
-                      .then((response) => {
-                        console.log(response)
-                      })
-                  }}
-                >
-                  Choose this model
-                </Button>,
-                event.currentTarget !== anchor || !open
-              )
-            }}
-            hoverFunc={(e) => {
+          <React.Fragment key={fitting.id}>
+            <FittingCard
+              fitting={fitting}
+              key={fitting.id}
+              sx={{ width: 500 }}
+              clickFunc={(event) => {
+                handlePopper(
+                  event.currentTarget,
+                  <>
+                    <Button
+                      fullWidth
+                      variant="contained"
+                      sx={{ mb: 2 }}
+                      onClick={() => {
+                        api
+                          .analyzeMolecule(fitting.id, selectedSmiles)
+                          .then((response) => {
+                            handleAnalysis(`${Object.entries(response)}`)
+                            handleClickOpenDialog()
+                          })
+                      }}
+                    >
+                      Choose this model
+                    </Button>
+                    Labels:
+                    {fitting.labels.map((label) => {
+                      return (
+                        <ListItem key={label}>
+                          <ListItemText primary={`${label}`} />
+                        </ListItem>
+                      )
+                    })}
+                  </>,
+                  event.currentTarget !== anchor || !open
+                )
+              }}
+              hoverFunc={(e) => {
               handleHelpPopperOpen(
                 e,
                 'Click to analyze your molecule with this model!'
               )
             }}
             leaveFunc={handleHelpPopperClose}
-          />
+            />
+
+            <Dialog
+              open={openDialog}
+              onClose={handleCloseDialog}
+              aria-labelledby="alert-dialog-title"
+              aria-describedby="alert-dialog-description"
+            >
+              <DialogTitle id="alert-dialog-title">
+                {'You successfully analyzed your molecule!'}
+              </DialogTitle>
+              <DialogContent>
+                <DialogContentText id="alert-dialog-description">
+                  {`Result: ${analysis}`}
+                </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={handleCloseDialog}>Remain here</Button>
+                <Button onClick={handleGoToMol} autoFocus>
+                  Go to Molecules
+                </Button>
+              </DialogActions>
+            </Dialog>
+          </React.Fragment>
+            
         ))}
         <DetailsPopper anchor={anchor} open={open} content={content} />
         <HelpPopper
@@ -94,7 +167,7 @@ export default function FittingsPage() {
           anchorEl={helpAnchorEl}
           onClose={handleHelpPopperClose}
         />
-      </Grid>
-    </Container>
+      </Box>
+    </Box>
   )
 }

@@ -1,7 +1,5 @@
 import React, { useCallback } from 'react'
 import ScoreboardsPage from './routes/ScoreboardsPage.js'
-import ModelsPage from './routes/ModelsPage.js'
-import ModelConfigPage from './routes/ModelConfigPage.js'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import SwaggerPage from './routes/SwaggerPage'
 import '@fontsource/roboto'
@@ -12,7 +10,6 @@ import MoleculesPage from './routes/MoleculesPage'
 import StartPage from './routes/StartPage'
 import TrainingPage from './routes/TrainingPage'
 import DarkModeButton from './components/misc/DarkModeButton'
-import BaseModelsPage from './routes/BaseModelsPage'
 import DatasetPage from './routes/DatasetPage'
 import FittingsPage from './routes/FittingsPage'
 import api from './api'
@@ -23,6 +20,9 @@ import { loadFull } from 'tsparticles'
 import { deepmerge } from '@mui/utils'
 import HelpModeButton from './components/misc/HelpModeButton'
 import { HelpProvider } from './context/HelpContext'
+import { handleErrors } from './utils'
+import '@fontsource/poppins'
+import ModelCreationRouter from './routes/ModelCreationRouter'
 
 const themeBase = {
   palette: {
@@ -55,6 +55,8 @@ const themeLight = createTheme(
           root: {
             backgroundColor: 'rgba(255, 255, 255, .2)',
             backdropFilter: 'blur(5px)',
+            boxShadow:
+              '0px 7px 8px -4px rgb(0 0 0 / 10%), 0px 12px 17px 2px rgb(0 0 0 / 8%), 0px 5px 22px 4px rgb(0 0 0 / 6%)',
           },
         },
       },
@@ -64,8 +66,8 @@ const themeLight = createTheme(
     },
     modelVisual: {
       borderColor: '#c4c4c4',
-      fontColor: 'black',
-      nodeColor: '#ffffff',
+      fontColor: '#212121',
+      backgroundColor: '#ffffff',
     },
     home: {
       mascot: 'molele.svg',
@@ -105,8 +107,8 @@ const themeDark = createTheme(
     },
     modelVisual: {
       borderColor: '#707070',
-      fontColor: 'black',
-      nodeColor: '#242424',
+      fontColor: 'white',
+      backgroundColor: '#2b2b2b',
     },
     home: {
       mascot: 'molele-dark.svg',
@@ -173,118 +175,113 @@ export default function App() {
     setHelpMode(value)
   }
 
+  handleErrors()
+
   return (
     <div className="App">
       <ThemeProvider theme={darkMode ? themeDark : themeLight}>
         <UserProvider value={{ userName }}>
-          <HelpProvider value={{ helpMode, setHelpMode }}>
-            <TrainingProvider>
-              <CssBaseline />
-              <BrowserRouter>
-                <Navbar
-                  logoutFunction={logout}
-                  darkModeButton={
-                    <DarkModeButton
-                      initialDarkMode={darkMode}
-                      setModeFunction={changeDarkMode}
-                    />
-                  }
-                  helpModeButton={
+        <HelpProvider value={{ helpMode, setHelpMode }}>
+          <TrainingProvider>
+            <CssBaseline />
+            <BrowserRouter>
+              <Navbar
+                logoutFunction={logout}
+                darkModeButton={
+                  <DarkModeButton
+                    initialDarkMode={darkMode}
+                    setModeFunction={changeDarkMode}
+                  />
+                }
+                helpModeButton={
                     <HelpModeButton
                       initialHelpMode={helpMode}
                       setModeFunction={changeHelpMode}
                     />
                   }
-                />
-                <Particles
-                  init={particlesInit}
-                  options={{
-                    fullScreen: {
+              />
+              <Particles
+                init={particlesInit}
+                options={{
+                  fullScreen: {
+                    enable: true,
+                    zIndex: -1000000,
+                  },
+                  particles: {
+                    color: {
+                      value: '#aaaaaa',
+                    },
+                    links: {
+                      color: '#aaaaaa',
+                      distance: 111,
                       enable: true,
-                      zIndex: -1000000,
+                  
+                      opacity: 0.3,
+                      width: 4,
                     },
-                    particles: {
-                      color: {
-                        value: '#aaaaaa',
-                      },
-                      links: {
-                        color: '#aaaaaa',
-                        distance: 111,
+                    move: {
+                      direction: 'none',
+                      enable: true,
+                      outMode: 'bounce',
+                      random: false,
+                      speed: 0.2,
+                      straight: false,
+                    },
+                    number: {
+                      density: {
                         enable: true,
-                        opacity: 0.3,
-                        width: 4,
+                        value_area: 800,
                       },
-                      move: {
-                        direction: 'none',
+                      value: 30,
+                    },
+                    opacity: {
+                      value: 0.3,
+                    },
+                    shape: {
+                      type: 'circle',
+                    },
+                    size: {
+                      random: true,
+                      value: 7,
+                    },
+                  },
+                  interactivity: {
+                    events: {
+                      onHover: {
                         enable: true,
-                        outMode: 'bounce',
-                        random: false,
-                        speed: 0.2,
-                        straight: false,
+                        mode: 'repulse',
                       },
-                      number: {
-                        density: {
-                          enable: true,
-                          value_area: 800,
-                        },
-                        value: 30,
-                      },
-                      opacity: {
-                        value: 0.3,
-                      },
-                      shape: {
-                        type: 'circle',
-                      },
-                      size: {
-                        random: true,
-                        value: 7,
+                      resize: true,
+                    },
+                    modes: {
+                      repulse: {
+                        distance: 200,
+                        factor: 0.77,
+                        easing: 'ease-out-quad',
                       },
                     },
-                    interactivity: {
-                      events: {
-                        onHover: {
-                          enable: true,
-                          mode: 'repulse',
-                        },
-                        resize: true,
-                      },
-                      modes: {
-                        repulse: {
-                          distance: 200,
-                          factor: 0.77,
-                          easing: 'ease-out-quad',
-                        },
-                      },
-                    },
-                  }}
-                />
-                <Routes>
-                  <Route
-                    path="/"
-                    element={<StartPage onLogin={login} />}
-                  ></Route>
-                  <Route path="/home" element={<HomePage />}></Route>
-                  <Route
-                    path="/modelconfig"
-                    element={<ModelConfigPage />}
-                  ></Route>
-                  <Route path="/models" element={<ModelsPage />}></Route>
-                  <Route path="/molecules" element={<MoleculesPage />}></Route>
-                  <Route path="/results" element={<ScoreboardsPage />}></Route>
-                  <Route path="/swagger" element={<SwaggerPage />}></Route>
-                  <Route path="/training" element={<TrainingPage />}></Route>
-                  <Route
-                    path="/trained-models"
-                    element={<FittingsPage />}
-                  ></Route>
-                  <Route
-                    path="/base-models"
-                    element={<BaseModelsPage />}
-                  ></Route>
-                  <Route path="/datasets" element={<DatasetPage />}></Route>
-                </Routes>
-              </BrowserRouter>
-            </TrainingProvider>
+                  },
+                }}
+              />
+              <Routes>
+                <Route path="/" element={<StartPage onLogin={login} />}></Route>
+                <Route path="/home" element={<HomePage />}></Route>
+                <Route
+                  path="/models/*"
+                  element={<ModelCreationRouter />}
+                ></Route>
+                <Route path="/molecules" element={<MoleculesPage />}></Route>
+                <Route path="/results" element={<ScoreboardsPage />}></Route>
+                <Route path="/swagger" element={<SwaggerPage />}></Route>
+                <Route path="/training" element={<TrainingPage />}></Route>
+                <Route
+                  path="/trained-models"
+                  element={<FittingsPage />}
+                ></Route>
+                <Route path="/datasets" element={<DatasetPage />}></Route>
+              </Routes>
+            </BrowserRouter>
+          </TrainingProvider>
           </HelpProvider>
         </UserProvider>
       </ThemeProvider>

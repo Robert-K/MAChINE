@@ -14,8 +14,9 @@ import PropTypes from 'prop-types'
 import ModelConfigPage from './ModelConfigPage'
 import HelpPopper from '../components/shared/HelpPopper'
 import HelpContext from '../context/HelpContext'
+import { useNavigate } from 'react-router-dom'
 
-export default function BaseModelsPage({ addFunc }) {
+export default function BaseModelsPage({ }) {
   const [modelArray, setModelArray] = React.useState([])
   const [selectedModel, setSelectedModel] = React.useState(null)
   const [helpAnchorEl, setHelpAnchorEl] = React.useState(null)
@@ -24,14 +25,10 @@ export default function BaseModelsPage({ addFunc }) {
 
   React.useEffect(() => {
     api.getBaseModels().then((sentModels) => {
-      console.log(sentModels)
       setModelArray(sentModels)
     })
   }, [])
 
-  const handleClick = (baseModel) => {
-    setSelectedModel(baseModel)
-  }
   const handleHelpPopperOpen = (event, content) => {
     if (help.helpMode) {
       setHelpAnchorEl(event.currentTarget)
@@ -44,40 +41,38 @@ export default function BaseModelsPage({ addFunc }) {
   }
 
   const helpOpen = Boolean(helpAnchorEl)
+  const navigate = useNavigate()
 
-  if (selectedModel) {
-    return <ModelConfigPage baseModel={selectedModel} addFunc={addFunc} />
-  } else {
-    return (
-      <Container>
-        <Grid container spacing={4} marginTop={1} marginBottom={5}>
-          {modelArray.map((baseModel) => (
-            <BaseModelCard
-              baseModel={baseModel}
-              key={baseModel.id}
-              clickFunc={handleClick}
-              hoverFunc={(e) => {
+  const handleClick = (baseModel) => {
+    navigate('/models/model-config', { state: { baseModel } })
+  }
+  return (
+    <Container>
+      <Grid container spacing={4} marginTop={1} marginBottom={5}>
+        {modelArray.map((baseModel) => (
+          <BaseModelCard
+            baseModel={baseModel}
+            key={baseModel.id}
+            clickFunc={handleClick}
+            hoverFunc={(e) => {
                 handleHelpPopperOpen(
                   e,
                   "Click here to select this base model. Don't worry, you'll get to configure its parameters on the next page!"
                 )
               }}
               leaveFunc={handleHelpPopperClose}
-            />
-          ))}
-        </Grid>
-        <HelpPopper
+          />
+        ))}
+      </Grid>
+      <HelpPopper
           id="helpPopper"
           helpPopperContent={helpPopperContent}
           open={helpOpen}
           anchorEl={helpAnchorEl}
           onClose={handleHelpPopperClose}
         />
-      </Container>
-    )
-  }
-}
-
-BaseModelsPage.propTypes = {
-  addFunc: PropTypes.func,
+    </Container>
+  )
+              
+        
 }

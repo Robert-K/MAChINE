@@ -1,4 +1,6 @@
 import json
+from time import sleep
+
 from flask import Flask
 from flask_cors import CORS
 from flask_restful import reqparse, Api, Resource
@@ -6,6 +8,7 @@ import hashlib
 from flask_socketio import SocketIO
 from backend.utils import storage_handler as sh
 from backend.machine_learning import ml_functions as ml
+from backend.utils import molecule_formats as mf
 
 app = Flask(__name__)
 cors = CORS(app)
@@ -24,7 +27,7 @@ parser.add_argument('labels')
 parser.add_argument('epochs', type=int)
 parser.add_argument('accuracy')
 parser.add_argument('batchSize', type=int)
-parser.add_argument('baseModel')
+parser.add_argument('baseModelID')
 parser.add_argument('parameters', type=dict)
 
 
@@ -56,7 +59,7 @@ class Models(Resource):
             model_configs.append({
                 'id': key,
                 'name': current_model['name'],
-                'baseModel': current_model['baseModelID'],
+                'baseModelID': current_model['baseModelID'],
                 'parameters': current_model['parameters'],
                 'fittings': model_fittings
             })
@@ -65,7 +68,7 @@ class Models(Resource):
     # called when a new configs is added
     def patch(self, user_id):
         args = parser.parse_args()
-        return sh.add_model(user_id, args['name'], args['parameters'], args['baseModel'])
+        return sh.add_model(user_id, args['name'], args['parameters'], args['baseModelID'])
 
 
 class Molecules(Resource):
@@ -104,7 +107,10 @@ class Molecules(Resource):
 
     def patch(self, user_id):
         args = parser.parse_args()
-        return sh.add_molecule(user_id, args['smiles'], args['cml'], args['name']), 201
+        smiles = args['smiles']
+        if mf.is_valid_molecule(smiles):
+            return sh.add_molecule(user_id, args['smiles'], args['cml'], args['name']), 201
+        return None, 422
 
 
 class Fittings(Resource):
@@ -175,39 +181,29 @@ class BaseModels(Resource):
     def get(self):
         models = sh.get_base_models()
         processed_models = []
-        for model_id in models.keys():
-            current = models.get(model_id)
+        for model_id, current in models.items():
             if current:
-                processed_model = dict()
-
-                # add type-universal entries
-                processed_model['name'] = current.get('name')
+                processed_model = dict(current)
                 processed_model['id'] = model_id
+                del processed_model['image']
+                del processed_model['metrics']
+
+                # add model type object
                 processed_model_type = dict()
                 processed_model_type['name'] = current.get('type')
                 processed_model_type['image'] = current.get('image')
                 processed_model['type'] = processed_model_type
 
-                # add type-specific entries
-                processed_model_parameters = dict()
-                params = current.get('parameters')
-                processed_model_parameters['lossFunction'] = params.get('lossFunction')
-                processed_model_parameters['optimizer'] = params.get('optimizer')
-
+                # add task type
                 if current.get('type') == 'sequential':
-                    layers = params.get('layers')
+                    layers = current.get('layers')
                     if layers:
                         processed_model['taskType'] = 'regression' if layers[len(layers) - 1].get(
                             'units') == 1 else 'classification'
-                        processed_model_parameters['layers'] = layers
 
                 elif current.get('type') == 'schnet':
                     processed_model['taskType'] = 'regression'
-                    processed_model_parameters['depth'] = params.get('depth')
-                    processed_model_parameters['embeddingDimension'] = params.get('embeddingDimension')
-                    processed_model_parameters['readoutSize'] = params.get('readoutSize')
 
-                processed_model['parameters'] = processed_model_parameters
                 processed_models.append(processed_model)
         return processed_models
 
@@ -218,26 +214,44 @@ class Analyze(Resource):
         return ml.analyze(user_id, args['fittingID'], args['smiles'])
 
 
-# Creates a new fitting, adds that fitting to model
 class Train(Resource):
     def post(self, user_id):
+        if ml.is_training_running(user_id):
+            return False, 503
         args = parser.parse_args()
         labels = json.loads(args['labels'])
-        return ml.train(user_id, args['datasetID'], args['modelID'], labels, args['epochs'], args['batchSize'])
+        sio.start_background_task(target=ml.train,
+                                  user_id=user_id,
+                                  dataset_id=args['datasetID'],
+                                  model_id=args['modelID'],
+                                  labels=labels,
+                                  epochs=args['epochs'],
+                                  batch_size=args['batchSize'])
+        return True, 200
+
+    def patch(self, user_id):
+        args = parser.parse_args()
+
+        if ml.is_training_running(user_id):
+            return 0, 503
+
+        fitting_summary = sh.get_fitting_summary(user_id, args['fittingID'])
+        if not bool(fitting_summary):
+            return 0, 404
+
+        sio.start_background_task(target=ml.continue_training,
+                                  user_id=user_id,
+                                  fitting_id=args['fittingID'],
+                                  epochs=args['epochs'])
+        return (fitting_summary.get('epochs') + args['epochs']), 200
 
     def delete(self, user_id):
-        return
-
-
-class Check(Resource):
-    def get(self):
-        return
+        return (True, 200) if ml.stop_training(user_id) else (False, 404)
 
 
 # Actually set up the Api resource routing here
 api.add_resource(AddUser, '/users')
 api.add_resource(DeleteUser, '/users/<user_id>')
-api.add_resource(Check, '/check')
 api.add_resource(Models, '/users/<user_id>/models')
 api.add_resource(Molecules, '/users/<user_id>/molecules')
 api.add_resource(Fittings, '/users/<user_id>/fittings')
@@ -249,41 +263,17 @@ api.add_resource(Datasets, '/datasets')
 api.add_resource(BaseModels, '/baseModels')
 
 
-# SocketIO event listeners
-@sio.on('ping')
-def handle_ping(data):
-    sio.emit('pong', data + 'copy')
-
-
-@sio.on('start_training')
-def start_training(user_id, dataset_id, model_id, labels, epochs, batch_size):
-    if ml.is_training_running(user_id):
-        return False
-    sio.start_background_task(target=ml.train,
-                              user_id=user_id,
-                              dataset_id=dataset_id,
-                              model_id=model_id,
-                              labels=labels,
-                              epochs=epochs,
-                              batch_size=batch_size)
-    return True
-
-
-@sio.on('stop_training')
-def stop_training(user_id):
-    ml.stop_training(user_id)
-
-
+# SocketIO event listeners/senders
 def update_training_logs(user_id, logs):
     sio.emit('update', {user_id: logs})
 
 
-def notify_training_done(user_id):
-    sio.emit('done', {user_id: True})
+def notify_training_done(user_id, fitting_id, epochs_trained):
+    sio.emit('done', {user_id: {'fittingID': fitting_id, 'epochs': epochs_trained}})
 
 
-def notify_training_start(user_id):
-    sio.emit('started', {user_id: True})
+def notify_training_start(user_id, epochs):
+    sio.emit('started', {user_id: epochs})
 
 
 def run(debug=True):
@@ -291,7 +281,6 @@ def run(debug=True):
     # TODO: Remove
     test_user = str(hashlib.sha1('Tom'.encode('utf-8'), usedforsecurity=False).hexdigest())
     test_user2 = str(hashlib.sha1('Tim'.encode('utf-8'), usedforsecurity=False).hexdigest())
-    # test_user = str(hash('yee'))
     sh.add_user_handler(test_user)
     sh.add_user_handler(test_user2)
     sh.add_molecule(test_user, 'c1ccn2nncc2c1',
@@ -327,8 +316,8 @@ def run(debug=True):
             'units': 32,
             'activation': 'relu',
         },
-    ], 'loss': 'Huber Loss', 'optimizer': 'Nadam'}, 'id')
-    model_id2 = sh.add_model(test_user2, 'MyCoolModel', {'layers': [
+    ], 'lossFunction': 'Huber Loss', 'optimizer': 'Nadam'}, 'id')
+    model_id2 = sh.add_model(test_user2, 'MyCoolModel2', {'layers': [
         {
             'type': 'dense',
             'units': 256,
@@ -349,19 +338,12 @@ def run(debug=True):
             'units': 256,
             'activation': 'relu',
         },
-    ], 'loss': 'Huber Loss', 'optimizer': 'Stochastic Gradient Descent'}, 'id')
-    fitting_id = ml.train(test_user, '2', model_id, ['lumo', 'homo'], 0, 64)
+    ], 'lossFunction': 'Huber Loss', 'optimizer': 'Stochastic Gradient Descent'}, 'id')
+    ml.train(test_user, '2', model_id, ['lumo', 'homo'], 0, 64)
     model_id_2 = sh.add_model(test_user, 'MyCoolSecondModel',
-                              {'loss': 'MeanSquaredError', 'optimizer': 'Adam', 'embeddingDim': 128, 'readoutSize': 1,
+                              {'lossFunction': 'Mean Squared Error', 'optimizer': 'Adam', 'embeddingDimension': 128,
+                               'readoutSize': 1,
                                'depth': 2}, 'id2')
-    # fitting_id2 = ml.train(test_user, '1', model_id_2, ['HIV_active'], 5, 128)
-    # ml.analyze(test_user, fitting_id, 'c1ccn2nncc2c1')
-    # ml.analyze(test_user, fitting_id2, 'c1ccn2nncc2c1')
-    # fitting_id_1 = sh.add_fitting(test_user, '0', 2, 0.25, 125, model_id, ml.train(test_user))
-    # fitting_id_2 = sh.add_fitting(test_user, '0', 6000, 5.05, 5, model_id, )
-    # print(fitting_id_1, fitting_id_2)
-    # sh.add_analysis(test_user, 'Clc(c(Cl)c(Cl)c1C(=O)O)c(Cl)c1Cl', fitting_id_1, {'lumo': -7.152523})
-    # sh.add_analysis(test_user, 'Clc(c(Cl)c(Cl)c1C(=O)O)c(Cl)c1Cl', fitting_id_2, {'homo': 1.5254})
     print(test_user)
     sio.run(app, allow_unsafe_werkzeug=True)
 

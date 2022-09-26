@@ -15,42 +15,60 @@ import { useNavigate } from 'react-router-dom'
 import TrainingContext from '../context/TrainingContext'
 import api from '../api'
 import PrettyChart from '../components/training/PrettyChart'
+import SnackBarAlert from '../components/misc/SnackBarAlert'
 import HelpContext from '../context/HelpContext'
 import HelpPopper from '../components/shared/HelpPopper'
 
 export default function TrainingPage() {
   const training = React.useContext(TrainingContext)
-  const [loadTraining, setLoadTraining] = React.useState(false)
+  const [localEpochs, setLocalEpochs] = React.useState(training.selectedEpochs)
   const [showDialog, setShowDialog] = React.useState(false)
   const [helpAnchorEl, setHelpAnchorEl] = React.useState(null)
   const [helpPopperContent, setHelpPopperContent] = React.useState('')
   const help = React.useContext(HelpContext)
-
   const [epochsError, setEpochsError] = React.useState(false)
-  const handleEpochsChange = (event) => {
-    const tempEpochs = event.target.value
-    training.setSelectedEpochs(tempEpochs)
-    if (tempEpochs > 0) {
-      // TODO: Add allowed range of values
+  const [batchSizeError, setBatchSizeError] = React.useState(false)
+  const [startStopButton, setStartStopButton] = React.useState('Start')
+  const [loadTraining, setLoadTraining] = React.useState(false)
+  const [openSnackError, setOpenSnackError] = React.useState(false)
+
+  const checkEpochs = (epochs) => {
+    if (epochs > 0) {
       setEpochsError(false)
     } else {
       setEpochsError(true)
     }
   }
 
-  const [batchSizeError, setBatchSizeError] = React.useState(false)
-  const handleBatchSizeChange = (event) => {
-    const tempBatchSize = event.target.value
-    training.setSelectedBatchSize(tempBatchSize)
-    if (tempBatchSize > 0) {
-      // TODO: Add allowed range of values
+  const checkBatchSize = (batchSize) => {
+    if (batchSize > 0) {
       setBatchSizeError(false)
     } else {
       setBatchSizeError(true)
     }
   }
 
-  const [startStopButton, setStartStopButton] = React.useState('Start')
+  const initialMount = React.useRef(true)
+
+  React.useEffect(() => {
+    checkBatchSize(training.selectedBatchSize)
+    if (initialMount.current) {
+      initialMount.current = false
+    } else {
+      training.setTrainingFinished(false)
+    }
+    return () => {
+      training.setTrainingFinished(false)
+    }
+  }, [training.selectedBatchSize])
+
+  React.useEffect(() => {
+    checkEpochs(localEpochs)
+  }, [localEpochs])
+
+  React.useEffect(() => {
+    setLocalEpochs(training.selectedEpochs)
+  }, [training.selectedEpochs])
 
   React.useEffect(() => {
     if (training.trainingStatus) {
@@ -66,15 +84,30 @@ export default function TrainingPage() {
     if (training.trainingStatus) {
       setShowDialog(true)
     } else {
+      training.softResetContext()
       setLoadTraining(true)
-      api.trainModel(
-        training.selectedDataset.datasetID,
-        training.selectedModel.id,
-        training.selectedLabels,
-        training.selectedEpochs,
-        training.selectedBatchSize
-      )
+      training.setSelectedEpochs(localEpochs)
+      api
+        .trainModel(
+          training.selectedDataset.datasetID,
+          training.selectedModel.id,
+          training.selectedLabels,
+          localEpochs,
+          training.selectedBatchSize
+        )
+        .then((response) => {
+          setOpenSnackError(!response)
+          setLoadTraining(response)
+        })
     }
+  }
+
+  const handleAdditionalTraining = () => {
+    setLoadTraining(true)
+    api.continueTraining(training.trainingID, localEpochs).then((response) => {
+      setOpenSnackError(!response)
+      setLoadTraining(response)
+    })
   }
 
   const handleCloseDialog = () => {
@@ -82,11 +115,26 @@ export default function TrainingPage() {
   }
 
   const abortTraining = () => {
-    api.stopTraining()
+    training.stopTraining()
     handleCloseDialog()
   }
 
   const navigate = useNavigate()
+
+  function filterData(data) {
+    // Change this to exclude more data
+    const excludedPoints = ['epoch']
+    const newData = []
+    Object.entries(data).forEach(([dataName, values], index) => {
+      if (excludedPoints.indexOf(dataName) === -1) {
+        if (values.length === 1) {
+          values = [...values, ...values]
+        }
+        newData.push({ name: dataName, data: values })
+      }
+    })
+    return newData
+  }
 
   const handleHelpPopperOpen = (event, content) => {
     if (help.helpMode) {
@@ -100,23 +148,6 @@ export default function TrainingPage() {
   }
 
   const helpOpen = Boolean(helpAnchorEl)
-
-  function filterData(data) {
-    // Change this to exclude more data
-    const excludedPoints = ['epoch']
-    const newData = []
-    Object.entries(data).forEach(([dataName, values], index) => {
-      if (excludedPoints.indexOf(dataName) === -1) {
-        console.log('aah')
-        if (values.length === 1) {
-          values = [...values, ...values]
-        }
-        newData.push({ name: dataName, data: values })
-      }
-    })
-    return newData
-  }
-
   return (
     <Grid container>
       <Grid item xs={6}>
@@ -126,9 +157,9 @@ export default function TrainingPage() {
           id="epochs"
           label="Epochs"
           type="number"
-          defaultValue={training.selectedEpochs}
-          disabled={training.trainingStatus}
-          onChange={handleEpochsChange}
+          value={localEpochs}
+          disabled={training.trainingStatus || loadTraining}
+          onChange={(event) => setLocalEpochs(event.target.value)}
           error={epochsError}
           helperText={epochsError ? 'Required!' : ' '}
           onMouseOver={(e) => {
@@ -145,9 +176,11 @@ export default function TrainingPage() {
           id="batchsize"
           label="Batch Size"
           type="number"
-          defaultValue={training.selectedBatchSize}
-          disabled={training.trainingStatus}
-          onChange={handleBatchSizeChange}
+          value={training.selectedBatchSize}
+          disabled={training.trainingStatus || loadTraining}
+          onChange={(event) =>
+            training.setSelectedBatchSize(event.target.value)
+          }
           error={batchSizeError}
           helperText={batchSizeError ? 'Required!' : ' '}
           onMouseOver={(e) => {
@@ -210,6 +243,16 @@ export default function TrainingPage() {
             <Button onClick={abortTraining}>Abort</Button>
           </DialogActions>
         </Dialog>
+        {!training.trainingFinished ? null : (
+          <Button
+            variant="outlined"
+            disabled={epochsError || loadTraining}
+            sx={{ m: 2 }}
+            onClick={handleAdditionalTraining}
+          >
+            Train additional {localEpochs} epochs
+          </Button>
+        )}
         <Box sx={{ flexGrow: 1 }}></Box>
         <Button
           variant="outlined"
@@ -219,6 +262,12 @@ export default function TrainingPage() {
           Continue to Molecules
         </Button>
       </Grid>
+      <SnackBarAlert
+        open={openSnackError}
+        onClose={() => setOpenSnackError(false)}
+        severity="error"
+        message="Someone is already training right now. Please try again later"
+      />
       <HelpPopper
         id="helpPopper"
         helpPopperContent={helpPopperContent}

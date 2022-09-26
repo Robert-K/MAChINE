@@ -2,7 +2,7 @@ import { Kekule } from 'kekule'
 import React, { useEffect } from 'react'
 import PropTypes from 'prop-types'
 import { Box } from '@mui/material'
-
+const C = Kekule.Editor.ObjModifier.Category
 const composer = new Kekule.Editor.Composer(document)
 composer
   .setPredefinedSetting('molOnly')
@@ -15,13 +15,8 @@ composer
     /* 'config', // These are great for debugging
     'objInspector', */
   ])
-  .setChemToolButtons([
-    'manipulate',
-    'erase',
-    'bond',
-    'atomAndFormula',
-    'charge',
-  ])
+  .setChemToolButtons(['manipulate', 'erase', 'bond', 'atom'])
+composer.setAllowedObjModifierCategories([C.GENERAL])
 // Makes atoms atom-colored and bonds longer for better 3D View
 composer.getEditorConfigs().structureConfigs.defBondLength = 1
 composer.getRenderConfigs().colorConfigs.useAtomSpecifiedColor = true

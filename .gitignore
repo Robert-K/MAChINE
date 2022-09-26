@@ -104,7 +104,7 @@ modules.xml
 .idea/**/markdown-navigator/
 
 # Cache file creation bug
-# See https://youtrack.jetbrains.com/issue/JBR-2257
+# See https://youtrack.jetrains.com/issue/JBR-2257
 .idea/$CACHE_FILE$
 
 # CodeStream plugin
@@ -115,3 +115,5 @@ modules.xml
 
 # AAAAARRRGhhhHHHNgghhggnghh!!!!
 .idea/pse.iml
+
+/desktop.ini

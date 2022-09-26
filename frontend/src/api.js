@@ -136,18 +136,7 @@ export default {
       })
   },
 
-  trainModel(datasetID, modelID, labels, epochs, batchSize) {
-    socket.emit(
-      'start_training',
-      userID,
-      datasetID,
-      modelID,
-      labels,
-      epochs,
-      batchSize
-    )
-    /*
-    console.log(labels)
+  async trainModel(datasetID, modelID, labels, epochs, batchSize) {
     return api
       .post(`/users/${userID}/train`, {
         datasetID,
@@ -161,12 +150,21 @@ export default {
       }) */
   },
 
-  stopTraining() {
-    socket.emit('stop_training', userID)
-    /*
-    return api.delete(`/users/${userID}/train`).then((response) => {
+  async continueTraining(fittingID, epochs) {
+    return api
+      .patch(`/users/${userID}/train`, { fittingID, epochs })
+      .then((response) => {
+        return response.data
+      })
+      .catch((response) => {
+        return response.data
+      })
+  },
+
+  async stopTraining() {
+    return api.delete(`users/${userID}/train`).then((response) => {
       return response.data
-    }) */
+    })
   },
 
   registerSocketListener(action, onAction) {

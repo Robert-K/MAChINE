@@ -2,13 +2,15 @@ from backend.utils.molecule_formats import smiles_to_fingerprint
 import tensorflow as tf
 from keras import layers
 
+
 # parameters right now needs to contain fields for 'optimizer', 'units_per_layer', 'activationFunction', 'metrics'
 _fingerprint_size = 512
+
 
 def create_fnn_with_dataset(parameters, dataset, labels, loss, optimizer, metrics, batch_size):
     layers_param = parameters.get('layers')
 
-    # Create thingies for dataset
+    # Get input/output for dataset
     x, y = zip(*[(mol["x"].get("fingerprints")[str(_fingerprint_size)],
                   list(mol.get("y").get(k) for k in labels)) for mol in dataset])
     x, y = tf.constant(x), tf.constant(y)
