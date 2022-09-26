@@ -26,10 +26,8 @@ import ExpandLess from '@mui/icons-material/ExpandLess'
 import ExpandMore from '@mui/icons-material/ExpandMore'
 import PropTypes from 'prop-types'
 import { useNavigate } from 'react-router-dom'
-import api from '../api'
 import TrainingContext from '../context/TrainingContext'
 import UserContext from '../context/UserContext'
-import BaseModelsPage from './BaseModelsPage'
 import HelpPopper from '../components/shared/HelpPopper'
 import HelpContext from '../context/HelpContext'
 
@@ -39,7 +37,6 @@ const gridHeight = '80vh'
  */
 export default function ModelsPage({ modelList }) {
   const [selectedIndex, setSelectedIndex] = React.useState(-1)
-  const [modelList, setModelList] = React.useState([])
   const [showDialog, setShowDialog] = React.useState(false)
   const [creatingModel, setCreatingModel] = React.useState(false)
   const [helpAnchorEl, setHelpAnchorEl] = React.useState(null)
@@ -98,14 +95,17 @@ export default function ModelsPage({ modelList }) {
         alignItems="stretch"
         columnSpacing={2}
       >
-        <Grid item xs={3}
-        onMouseOver={(e) => {
-              handleHelpPopperOpen(
-                e,
-                "This is a list of all models you have created so far. Click on any one of them to get more information about it, or click on 'Add a model' to add a new one to the list!"
-              )
-            }}
-            onMouseLeave={handleHelpPopperClose}>
+        <Grid
+          item
+          xs={3}
+          onMouseOver={(e) => {
+            handleHelpPopperOpen(
+              e,
+              "This is a list of all models you have created so far. Click on any one of them to get more information about it, or click on 'Add a model' to add a new one to the list!"
+            )
+          }}
+          onMouseLeave={handleHelpPopperClose}
+        >
           <SelectionList
             updateFunc={updateSelection}
             elements={modelList}
@@ -120,7 +120,7 @@ export default function ModelsPage({ modelList }) {
             selectedModel={modelList.at(selectedIndex)}
             onActiveTraining={handleOpenDialog}
             hoverFunc={handleHelpPopperOpen}
-              leaveFunc={handleHelpPopperClose}
+            leaveFunc={handleHelpPopperClose}
           />
         </Grid>
       </Grid>
@@ -145,16 +145,15 @@ export default function ModelsPage({ modelList }) {
         </DialogActions>
       </Dialog>
       <HelpPopper
-          id="helpPopper"
-          helpPopperContent={helpPopperContent}
-          open={helpOpen}
-          anchorEl={helpAnchorEl}
-          onClose={handleHelpPopperClose}
-        />
+        id="helpPopper"
+        helpPopperContent={helpPopperContent}
+        open={helpOpen}
+        anchorEl={helpAnchorEl}
+        onClose={handleHelpPopperClose}
+      />
     </Box>
   )
 }
-
 
 function ModelDescription({
   selectedModel,
@@ -186,7 +185,7 @@ function ModelDescription({
           <CardHeader
             title={selectedModel.name}
             subheader={`Base Model: ${selectedModel.baseModelID}`}
-             onMouseOver={(e) => {
+            onMouseOver={(e) => {
               hoverFunc(
                 e,
                 "Here you see all relevant information of your model. On the top, you can see the model's name, as well as which base model was used to create it. Since you can train every model multiple times, you can see all of its trained models listed below, too. To start a new training with your selected model, simply click on 'Select training data'!"
@@ -204,7 +203,7 @@ function ModelDescription({
               <RenderFitting
                 fitting={fitting}
                 key={`${fitting.id}-${index}`}
-                 hoverFunc={hoverFunc}
+                hoverFunc={hoverFunc}
                 leaveFunc={leaveFunc}
               ></RenderFitting>
             ))}
@@ -231,7 +230,7 @@ function ModelDescription({
     )
   }
 }
-               
+
 ModelDescription.propTypes = {
   selectedModel: PropTypes.any,
   onActiveTraining: PropTypes.any,

@@ -29,7 +29,7 @@ export default function ModelDetailsCard({
                 {valueName === 'layers' ? (
                   <SmallLayerVisual layers={value} />
                 ) : (
-                  ` `${
+                  `${
                     valueName[0].toUpperCase() + valueName.substring(1)
                   }: ${JSON.stringify(value)}`
                 )}
@@ -91,5 +91,3 @@ function SmallLayerVisual({ layers }) {
 SmallLayerVisual.propTypes = {
   layers: PropTypes.array,
 }
-
-                 

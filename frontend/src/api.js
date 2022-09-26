@@ -147,7 +147,7 @@ export default {
       })
       .then((response) => {
         return response.data
-      }) */
+      })
   },
 
   async continueTraining(fittingID, epochs) {
