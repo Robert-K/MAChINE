@@ -27,9 +27,18 @@ import HelpContext from '../context/HelpContext'
 import HelpPopper from '../components/shared/HelpPopper'
 import { useLocation, useNavigate } from 'react-router-dom'
 import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined'
+import PrettyChart from '../components/training/PrettyChart'
 
 export default function FittingsPage() {
   const [fittingArray, setFittingArray] = React.useState([])
+  const [open, setOpen] = React.useState(false)
+  const [content, setContent] = React.useState(<h1>Placeholder</h1>)
+  const [anchor, setAnchor] = React.useState(null)
+  const [openDialog, setOpenDialog] = React.useState(false)
+  const [analysis, setAnalysis] = React.useState('')
+  const [selectedFitting, setSelectedFitting] = React.useState({})
+  const [charts, setCharts] = React.useState([])
+  const [histograms, setHistograms] = React.useState({})
   const { state } = useLocation()
   const { selectedSmiles } = state
   const user = React.useContext(UserContext)
@@ -40,20 +49,37 @@ export default function FittingsPage() {
     api.getFittings().then((fittings) => setFittingArray(fittings))
   }, [user])
 
-  const [open, setOpen] = React.useState(false)
-  const [content, setContent] = React.useState(<h1>Placeholder</h1>)
-  const [anchor, setAnchor] = React.useState(null)
   const [helpAnchorEl, setHelpAnchorEl] = React.useState(null)
   const [helpPopperContent, setHelpPopperContent] = React.useState('')
   const help = React.useContext(HelpContext)
+  React.useEffect(() => {
+    if (Object.keys(selectedFitting).length !== 0) {
+      api
+        .getHistograms(selectedFitting.datasetID, selectedFitting.labels)
+        .then((histograms) => {
+          if (histograms !== null) setHistograms(histograms)
+        })
+    }
+  }, [selectedFitting.datasetID])
+
+  React.useEffect(() => {
+    if (Object.keys(selectedFitting).length !== 0) {
+      const newCharts = {}
+      selectedFitting.labels.forEach((label) => {
+        newCharts[label] = {
+          options: { chart: { type: 'bar' }, xaxis: histograms[label][1] },
+          series: [{ name: label, data: histograms[label][0] }],
+        }
+      })
+      setCharts(newCharts)
+    }
+  }, [histograms])
 
   const handlePopper = (target, content, show) => {
     setContent(content)
     setAnchor(target)
     setOpen(show)
   }
-
-  const [openDialog, setOpenDialog] = React.useState(false)
 
   const handleClickOpenDialog = () => {
     setOpenDialog(true)
@@ -68,8 +94,6 @@ export default function FittingsPage() {
     navigate('/molecules')
   }
 
-  const [analysis, setAnalysis] = React.useState('')
-
   const handleAnalysis = (response) => {
     setAnalysis(response)
   }
@@ -79,6 +103,13 @@ export default function FittingsPage() {
       setHelpAnchorEl(event.currentTarget)
       setHelpPopperContent(content)
     }
+  }
+  function handleFittingSelection(fitting) {
+    setSelectedFitting(fitting)
+    api.analyzeMolecule(fitting.id, selectedSmiles).then((response) => {
+      handleAnalysis(`${Object.entries(response)}`)
+      handleClickOpenDialog()
+    })
   }
 
   const handleHelpPopperClose = () => {
@@ -146,14 +177,7 @@ export default function FittingsPage() {
                         fullWidth
                         variant="contained"
                         sx={{ mb: 2 }}
-                        onClick={() => {
-                          api
-                            .analyzeMolecule(fitting.id, selectedSmiles)
-                            .then((response) => {
-                              handleAnalysis(`${Object.entries(response)}`)
-                              handleClickOpenDialog()
-                            })
-                        }}
+                        onClick={handleFittingSelection}
                       >
                         Choose this model
                       </Button>
@@ -191,6 +215,13 @@ export default function FittingsPage() {
                   <DialogContentText id="alert-dialog-description">
                     {`Result: ${analysis}`}
                   </DialogContentText>
+                  <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                    {charts.map((chart) => {
+                      return (
+                        <PrettyChart data={chart} key={chart.series.name} />
+                      )
+                    })}
+                  </Box>
                 </DialogContent>
                 <DialogActions>
                   <Button onClick={handleCloseDialog}>Remain here</Button>
