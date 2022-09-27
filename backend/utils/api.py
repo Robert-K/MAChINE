@@ -227,9 +227,8 @@ class Datasets(Resource):
 
 
 class Histograms(Resource):
-    def get(self):
-        args = parser.parse_args()
-        return sh.get_dataset_histograms(args['datasetID'], args['labels'])
+    def get(self, dataset_id, labels):
+        return sh.get_dataset_histograms(dataset_id, labels)
 
 
 class BaseModels(Resource):
@@ -316,7 +315,7 @@ api.add_resource(Train, '/users/<user_id>/train')
 # Non-user-specific resources
 api.add_resource(Scoreboard, '/scoreboard/<fitting_id>', '/scoreboard')
 api.add_resource(Datasets, '/datasets')
-api.add_resource(Histograms, '/histograms')
+api.add_resource(Histograms, '/histograms/<dataset_id>/<labels>')
 api.add_resource(BaseModels, '/baseModels')
 
 

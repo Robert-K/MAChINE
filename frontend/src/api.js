@@ -98,11 +98,9 @@ export default {
   },
 
   async getHistograms(datasetID, labels) {
-    return api
-      .get(`/histograms`, { params: { datasetID, labels } })
-      .then((response) => {
-        return response.data
-      })
+    return api.get(`/histograms/${datasetID}/${labels}`).then((response) => {
+      return response.data
+    })
   },
 
   async getBaseModels() {
