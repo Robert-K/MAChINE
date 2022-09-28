@@ -23,6 +23,8 @@ import { HelpProvider } from './context/HelpContext'
 import { handleErrors } from './utils'
 import '@fontsource/poppins'
 import ModelCreationRouter from './routes/ModelCreationRouter'
+import Joyride from 'react-joyride'
+import OnboardingTooltip from './components/onboarding/OnboardingTooltip'
 
 const themeBase = {
   palette: {
@@ -141,10 +143,40 @@ export default function App() {
     window.matchMedia &&
       window.matchMedia('(prefers-color-scheme: dark)').matches
   )
-
+  const [theme, setTheme] = React.useState(darkMode ? themeDark : themeLight)
   const [helpMode, setHelpMode] = React.useState(false)
   const [userName, setUserName] = React.useState(null)
   const [adminMode, setAdminMode] = React.useState(false)
+  const [runOnboarding, setRunOnboarding] = React.useState(false)
+
+  const steps = [
+    {
+      content: (
+        <div>
+          <h2>
+            Hi {userName}! Welcome to{' '}
+            <span style={{ color: theme.palette.primary.main }}>MAChINE</span>!
+          </h2>
+          Would you like to take a quick tour of the app?
+          <br />
+          Sike! There&apos;s no exit button. You&apos;re stuck here now.
+        </div>
+      ),
+      locale: {
+        skip: <strong aria-label="skip">S-K-I-P</strong>,
+      },
+      placement: 'center',
+      target: 'body',
+    },
+    {
+      content: <h2>WOW! A NAVBAR!!!</h2>,
+      floaterProps: {
+        disableAnimation: true,
+      },
+      spotlightPadding: 20,
+      target: '.MuiToolbar-root',
+    },
+  ]
 
   window
     .matchMedia('(prefers-color-scheme: dark)')
@@ -161,6 +193,7 @@ export default function App() {
 
   async function login(newUserName) {
     if (userName !== null) logout()
+    setRunOnboarding(true)
     return api
       .completeLogin(newUserName)
       .then((r) => {
@@ -180,6 +213,7 @@ export default function App() {
     api.stopTraining()
     api.logout().catch((e) => console.log(e))
     setUserName(null)
+    setRunOnboarding(false)
     // TrainingsContext is reset in Navbar
     /* TODO: Delete all Data */
     /* TODO: Delete trained models */
@@ -188,6 +222,7 @@ export default function App() {
 
   const changeDarkMode = (value) => {
     setDarkMode(value)
+    setTheme(value ? themeDark : themeLight)
   }
 
   const changeHelpMode = (value) => {
@@ -216,7 +251,7 @@ export default function App() {
 
   return (
     <div className="App">
-      <ThemeProvider theme={darkMode ? themeDark : themeLight}>
+      <ThemeProvider theme={theme}>
         <UserProvider value={{ userName, adminMode, setAdminMode }}>
           <HelpProvider value={{ helpMode, setHelpMode }}>
             <TrainingProvider>
@@ -297,6 +332,25 @@ export default function App() {
                           easing: 'ease-out-quad',
                         },
                       },
+                    },
+                  }}
+                />
+                <Joyride
+                  tooltipComponent={OnboardingTooltip}
+                  continuous
+                  hideCloseButton
+                  run={runOnboarding}
+                  scrollToFirstStep
+                  disableOverlayClose
+                  disableCloseOnEsc
+                  showProgress
+                  showSkipButton
+                  steps={steps}
+                  styles={{
+                    options: {
+                      arrowColor: theme.palette.primary.main,
+                      overlayColor: 'rgba(0, 0, 0, 0.33)',
+                      zIndex: 10000,
                     },
                   }}
                 />
