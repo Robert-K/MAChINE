@@ -348,7 +348,7 @@ function RenderFitting({
                 sx={{ color: theme.palette.primary.main }}
                 primary="Accuracy:"
               ></ListItemText>
-              {fitting.accuracy}%
+              {fitting.accuracy.toFixed(2)}%
             </ListItem>
           </List>
         </Collapse>
