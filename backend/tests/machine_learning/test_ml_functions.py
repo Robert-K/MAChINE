@@ -32,6 +32,29 @@ def test_training_start_running(mocker):
 
 
 @pytest.mark.parametrize(
+    'user_id, smiles, fitting_id, model_id, base_model_id, labels, prediction',
+    [
+        ('345678afw', 'COOOOH', '-5212', '5125', '3', ['testLabel', 'testLabel2'], numpy.array([[0.075434], [45678]])),
+    ]
+)
+def test_analyze(user_id, smiles, fitting_id, model_id, base_model_id, labels, prediction, mocker):
+    mocker.patch('backend.utils.storage_handler.get_fitting', return_value=BasicMockModel(prediction))
+    mocker.patch('backend.utils.storage_handler.get_fitting_summary',
+                 return_value={'modelID': model_id, 'labels': labels})
+    mocker.patch('backend.utils.storage_handler.get_model_summary', return_value={'baseModelID': base_model_id})
+    mocker.patch('backend.utils.storage_handler.get_base_model', return_value={'type': 'random'})
+    mocked_sh = mocker.patch('backend.utils.storage_handler.add_analysis')
+    mocker.patch('backend.machine_learning.ml_functions.mld.molecule_conversion_functions', return_value={'test'})
+    result = ml.analyze(user_id=user_id, fitting_id=fitting_id, smiles=smiles)
+
+    formatted_analysis = dict()
+    for (x, y) in zip(*[labels, prediction]):
+        formatted_analysis |= {x: y}
+    mocked_sh.assert_called_once_with(user_id, smiles, fitting_id, formatted_analysis)
+    assert result == formatted_analysis, 'This should match. Every label to every value'
+
+
+@pytest.mark.parametrize(
     'uid, content',
     [
         ('u', {}),
@@ -126,8 +149,8 @@ class TestLiveStatsGroup:
         ]
     )
     def test_on_train_end_update(self, user_id, dataset_id, model_id, batch_size, labels, model,
-                              initial_epoch, fitting_id, epochs, accuracy, epochs_trained,
-                              mocker):
+                                 initial_epoch, fitting_id, epochs, accuracy, epochs_trained,
+                                 mocker):
         live_stats = ml.LiveStats(user_id)
         live_stats.epochs_trained = epochs_trained
         live_stats.model = model
@@ -148,3 +171,50 @@ class TestLiveStatsGroup:
         live_stats.on_train_end()
         mocked_sh.assert_called_once_with(user_id, fitting_id, epochs_trained, accuracy, model)
         mocked_api.assert_called_once_with(user_id, fitting_id, epochs_trained)
+
+@pytest.mark.parametrize(
+    'user_id, dataset_id, model_id, labels, epochs, batch_size',
+    [
+        ('456789', '0', '4567890', ['labelA', 'labelB'], 5, 128),
+    ]
+)
+class TestTrainingClassGroup:
+
+    @pytest.fixture()
+    def mock_init_things(self, mocker):
+        mocker.patch('backend.utils.storage_handler.get_model_summary')
+        mocker.patch('backend.utils.storage_handler.get_base_model')
+        mocker.patch('backend.machine_learning.ml_functions.Training.split_dataset', return_value=[None, None, None])
+        mocker.patch('backend.machine_learning.ml_functions.Training.create_model_and_set',
+                     return_value=[None, None])
+
+    def test_training_init(self, user_id, dataset_id, model_id, labels, epochs, batch_size, mock_init_things):
+        test_training = ml.Training(user_id, dataset_id, model_id, labels, epochs, batch_size)
+
+        assert test_training.user_id == user_id
+        assert test_training.dataset_id == dataset_id
+        assert test_training.model_id == model_id
+        assert test_training.batch_size == batch_size
+        assert test_training.labels == labels
+        assert test_training.model is None
+        assert test_training.training_set is None
+        assert test_training.validation_set is None
+        assert test_training.test_set is None
+        assert test_training.epochs == epochs
+        assert test_training.fitting_id is None
+        assert test_training.initial_epoch == 0, 'Initial epoch is 0 when fitting_id is None'
+
+    @pytest.mark.parametrize(
+        'fitting_id, initial_epochs',
+        [('-567', 6)]
+    )
+    def test_training_init_load(self, user_id, dataset_id, model_id, labels, epochs, batch_size, fitting_id, initial_epochs, mocker, mock_init_things):
+        mock_model = BasicMockModel({'something'})
+        mocker.patch('backend.utils.storage_handler.get_fitting', return_value=mock_model)
+        mocker.patch('backend.utils.storage_handler.get_fitting_summary', return_value={'epochs': initial_epochs})
+
+        test_training = ml.Training(user_id, dataset_id, model_id, labels, epochs, batch_size, fitting_id)
+
+        assert test_training.initial_epoch == initial_epochs, 'Initial epoch should not be different'
+        assert test_training.epochs == epochs + initial_epochs, 'Training epochs should be epochs + initial_epochs'
+        assert test_training.model == mock_model
