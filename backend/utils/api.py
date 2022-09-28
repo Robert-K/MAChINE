@@ -227,7 +227,11 @@ class Datasets(Resource):
 
 class Histograms(Resource):
     def get(self, dataset_id, labels):
-        return sh.get_dataset_histograms(dataset_id, labels)
+        histograms = sh.get_dataset_histograms(dataset_id, labels)
+        for hist in histograms.values():
+            hist['binEdges'] = list(hist['bin_edges'])
+            del hist['bin_edges']
+        return histograms
 
 
 class BaseModels(Resource):

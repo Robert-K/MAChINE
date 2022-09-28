@@ -210,11 +210,10 @@ class StorageHandler:
         return self.dataset_summaries
 
     def get_dataset_histograms(self, dataset_id, labels):
-        # TODO: test this
-        dataset = get_dataset(dataset_id)
+        dataset_summary = self.dataset_summaries.get(dataset_id)
         histograms = dict()
-        if dataset and 'histograms' in dataset:
-            for label, histogram in dataset.get('histograms').items():
+        if dataset_summary and 'histograms' in dataset_summary:
+            for label, histogram in dataset_summary.get('histograms').items():
                 if label in labels:
                     histograms[label] = histogram
             return histograms
@@ -321,6 +320,7 @@ class StorageHandler:
                            'labelDescriptors': content.get('labels'),
                            'fingerprintSizes': content.get('fingerprint_sizes'),
                            'datasetPath': str(dataset_path.absolute()),
+                           'histograms': content.get('histograms')
                            }
         return dataset_summary
 
