@@ -18,6 +18,8 @@ import Button from '@mui/material/Button'
 import DetailsPopper from '../components/shared/DetailsPopper'
 import api from '../api'
 import UserContext from '../context/UserContext'
+import HelpContext from '../context/HelpContext'
+import HelpPopper from '../components/shared/HelpPopper'
 import { useLocation, useNavigate } from 'react-router-dom'
 
 export default function FittingsPage() {
@@ -33,6 +35,9 @@ export default function FittingsPage() {
   const [open, setOpen] = React.useState(false)
   const [content, setContent] = React.useState(<h1>Placeholder</h1>)
   const [anchor, setAnchor] = React.useState(null)
+  const [helpAnchorEl, setHelpAnchorEl] = React.useState(null)
+  const [helpPopperContent, setHelpPopperContent] = React.useState('')
+  const help = React.useContext(HelpContext)
 
   const handlePopper = (target, content, show) => {
     setContent(content)
@@ -61,6 +66,19 @@ export default function FittingsPage() {
   const handleAnalysis = (response) => {
     setAnalysis(response)
   }
+
+  const handleHelpPopperOpen = (event, content) => {
+    if (help.helpMode) {
+      setHelpAnchorEl(event.currentTarget)
+      setHelpPopperContent(content)
+    }
+  }
+
+  const handleHelpPopperClose = () => {
+    setHelpAnchorEl(null)
+  }
+
+  const helpOpen = Boolean(helpAnchorEl)
 
   return (
     <Box sx={{ m: 5 }}>
@@ -108,6 +126,13 @@ export default function FittingsPage() {
                   event.currentTarget !== anchor || !open
                 )
               }}
+              hoverFunc={(e) => {
+                handleHelpPopperOpen(
+                  e,
+                  'Click to analyze your molecule with this model!'
+                )
+              }}
+              leaveFunc={handleHelpPopperClose}
             />
 
             <Dialog
@@ -134,6 +159,13 @@ export default function FittingsPage() {
           </React.Fragment>
         ))}
         <DetailsPopper anchor={anchor} open={open} content={content} />
+        <HelpPopper
+          id="helpPopper"
+          helpPopperContent={helpPopperContent}
+          open={helpOpen}
+          anchorEl={helpAnchorEl}
+          onClose={handleHelpPopperClose}
+        />
       </Box>
     </Box>
   )

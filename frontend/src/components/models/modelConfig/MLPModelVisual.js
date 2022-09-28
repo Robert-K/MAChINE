@@ -66,6 +66,8 @@ export default function MLPModelVisual({
   modelLayers,
   defaultActivation,
   updateFunc,
+  hoverFunc,
+  leaveFunc,
 }) {
   const theme = useTheme()
   const [open, setOpen] = React.useState(false)
@@ -307,7 +309,13 @@ export default function MLPModelVisual({
   }
 
   return (
-    <div style={{ height: '100%' }}>
+    <div
+      style={{ height: '100%' }}
+      onMouseOver={(e) => {
+        hoverFunc(e)
+      }}
+      onMouseLeave={leaveFunc}
+    >
       <div id="network" style={{ height: '100%' }}></div>
       <Popper
         id="popper"
@@ -334,4 +342,6 @@ MLPModelVisual.propTypes = {
   modelLayers: PropTypes.array,
   defaultActivation: PropTypes.string,
   updateFunc: PropTypes.func,
+  hoverFunc: PropTypes.func,
+  leaveFunc: PropTypes.func,
 }

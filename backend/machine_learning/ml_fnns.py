@@ -4,7 +4,6 @@ from keras import layers
 
 
 # parameters right now needs to contain fields for 'optimizer', 'units_per_layer', 'activationFunction', 'metrics'
-# Technically, we do not need batchSize in this method. It was added so that create_fnn and create_schnet have the same signature
 _fingerprint_size = 512
 
 

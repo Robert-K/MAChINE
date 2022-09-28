@@ -5,9 +5,17 @@ import PropTypes from 'prop-types'
 export default function DatasetDetailsCard({
   selectedDataset,
   selectedLabels,
+  hoverFunc,
+  leaveFunc,
 }) {
   return (
-    <Card sx={{ m: 3 }}>
+    <Card
+      sx={{ m: 3 }}
+      onMouseOver={(e) => {
+        hoverFunc(e)
+      }}
+      onMouseLeave={leaveFunc}
+    >
       <CardContent>
         <Typography gutterBottom variant="h5" component="div">
           Dataset Details
@@ -29,4 +37,6 @@ export default function DatasetDetailsCard({
 DatasetDetailsCard.propTypes = {
   selectedDataset: PropTypes.object.isRequired,
   selectedLabels: PropTypes.array.isRequired,
+  hoverFunc: PropTypes.func,
+  leaveFunc: PropTypes.func,
 }

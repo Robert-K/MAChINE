@@ -5,7 +5,12 @@ import { Box, CardActionArea, CardHeader, Typography } from '@mui/material'
 import CardContent from '@mui/material/CardContent'
 import PropTypes from 'prop-types'
 
-export default function FittingCard({ fitting, clickFunc }) {
+export default function FittingCard({
+  fitting,
+  clickFunc,
+  hoverFunc,
+  leaveFunc,
+}) {
   return (
     <Grid item xs={4} md={3}>
       <Card>
@@ -13,6 +18,8 @@ export default function FittingCard({ fitting, clickFunc }) {
           onClick={(e) => {
             clickFunc(e)
           }}
+          onMouseOver={(e) => hoverFunc(e)}
+          onMouseLeave={() => leaveFunc()}
         >
           <CardContent>
             <CardHeader
@@ -45,4 +52,6 @@ export default function FittingCard({ fitting, clickFunc }) {
 FittingCard.propTypes = {
   fitting: PropTypes.object.isRequired,
   clickFunc: PropTypes.func.isRequired,
+  hoverFunc: PropTypes.func,
+  leaveFunc: PropTypes.func,
 }

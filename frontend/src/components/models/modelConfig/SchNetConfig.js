@@ -1,21 +1,20 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { Box, Popper, TextField } from '@mui/material'
-import HelpIcon from '@mui/icons-material/Help'
+import { TextField } from '@mui/material'
 import { camelToNaturalString } from '../../../utils'
 
 const settableSizes = {
   depth: {
     min: 1,
-    explanation: 'How many layers the net will have',
+    explanation: 'This defines how many layers your net will have',
   },
   embeddingDimension: {
     min: 1,
-    explanation: 'Dimension of node embedding space',
+    explanation: 'This defines how many values each node corresponds to',
   },
   readoutSize: {
     min: 1,
-    explanation: 'Dimension of last layer?',
+    explanation: 'Number of nodes in the regressional part of the network',
   },
 }
 
@@ -23,6 +22,8 @@ export default function SchNetConfig({
   schnetParams,
   updateFunc,
   errorSignal,
+  hoverFunc,
+  leaveFunc,
 }) {
   const [sizes, setSizes] = React.useState([
     schnetParams.depth,
@@ -30,8 +31,6 @@ export default function SchNetConfig({
     schnetParams.readoutSize,
   ])
   const [sizesError, setSizesError] = React.useState([false, false, false])
-  const [anchorEl, setAnchorEl] = React.useState(null)
-  const [popperContent, setPopperContent] = React.useState('')
 
   React.useEffect(() => {
     errorSignal(sizesError.includes(true))
@@ -49,17 +48,6 @@ export default function SchNetConfig({
     }
   }
 
-  const handlePopperOpen = (event, content) => {
-    setAnchorEl(event.currentTarget)
-    setPopperContent(content)
-  }
-
-  const handlePopperClose = () => {
-    setAnchorEl(null)
-  }
-
-  const open = Boolean(anchorEl)
-
   return (
     <div>
       {Object.entries(settableSizes).map(([key, value], i) => {
@@ -75,9 +63,9 @@ export default function SchNetConfig({
             helperText={sizesError[i] ? 'Must be a number above zero!' : ''}
             onChange={(e) => handleChange(e, i, key, value.min)}
             onMouseOver={(e) => {
-              handlePopperOpen(e, value.explanation)
+              hoverFunc(e, value.explanation)
             }}
-            onMouseLeave={handlePopperClose}
+            onMouseLeave={leaveFunc}
             InputLabelProps={{
               shrink: true,
             }}
@@ -87,21 +75,6 @@ export default function SchNetConfig({
           />
         )
       })}
-      <Popper
-        id="mouse-over-popper"
-        sx={{
-          pointerEvents: 'none',
-        }}
-        open={open}
-        anchorEl={anchorEl}
-        placement={'right'}
-        onClose={handlePopperClose}
-      >
-        <Box sx={{ border: 1 }}>
-          <HelpIcon />
-          {popperContent}
-        </Box>
-      </Popper>
     </div>
   )
 }
@@ -110,4 +83,6 @@ SchNetConfig.propTypes = {
   schnetParams: PropTypes.object.isRequired,
   updateFunc: PropTypes.func.isRequired,
   errorSignal: PropTypes.func,
+  hoverFunc: PropTypes.func,
+  leaveFunc: PropTypes.func,
 }

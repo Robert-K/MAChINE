@@ -18,6 +18,8 @@ import { TrainingProvider } from './context/TrainingContext'
 import Particles from 'react-tsparticles'
 import { loadFull } from 'tsparticles'
 import { deepmerge } from '@mui/utils'
+import HelpModeButton from './components/misc/HelpModeButton'
+import { HelpProvider } from './context/HelpContext'
 import { handleErrors } from './utils'
 import '@fontsource/poppins'
 import ModelCreationRouter from './routes/ModelCreationRouter'
@@ -122,6 +124,8 @@ export default function App() {
     window.matchMedia &&
       window.matchMedia('(prefers-color-scheme: dark)').matches
   )
+
+  const [helpMode, setHelpMode] = React.useState(false)
   const [userName, setUserName] = React.useState(null)
 
   window
@@ -169,105 +173,121 @@ export default function App() {
     setDarkMode(value)
   }
 
+  const changeHelpMode = (value) => {
+    setHelpMode(value)
+  }
+
   handleErrors()
 
   return (
     <div className="App">
       <ThemeProvider theme={darkMode ? themeDark : themeLight}>
         <UserProvider value={{ userName }}>
-          <TrainingProvider>
-            <CssBaseline />
-            <BrowserRouter>
-              <Navbar
-                logoutFunction={logout}
-                darkModeButton={
-                  <DarkModeButton
-                    initialDarkMode={darkMode}
-                    setModeFunction={changeDarkMode}
-                  />
-                }
-              />
-              <Particles
-                init={particlesInit}
-                options={{
-                  fullScreen: {
-                    enable: true,
-                    zIndex: -1000000,
-                  },
-                  particles: {
-                    color: {
-                      value: '#aaaaaa',
-                    },
-                    links: {
-                      color: '#aaaaaa',
-                      distance: 111,
+          <HelpProvider value={{ helpMode, setHelpMode }}>
+            <TrainingProvider>
+              <CssBaseline />
+              <BrowserRouter>
+                <Navbar
+                  logoutFunction={logout}
+                  darkModeButton={
+                    <DarkModeButton
+                      initialDarkMode={darkMode}
+                      setModeFunction={changeDarkMode}
+                    />
+                  }
+                  helpModeButton={
+                    <HelpModeButton
+                      initialHelpMode={helpMode}
+                      setModeFunction={changeHelpMode}
+                    />
+                  }
+                />
+                <Particles
+                  init={particlesInit}
+                  options={{
+                    fullScreen: {
                       enable: true,
-                      opacity: 0.3,
-                      width: 4,
+                      zIndex: -1000000,
                     },
-                    move: {
-                      direction: 'none',
-                      enable: true,
-                      outMode: 'bounce',
-                      random: false,
-                      speed: 0.2,
-                      straight: false,
-                    },
-                    number: {
-                      density: {
+                    particles: {
+                      color: {
+                        value: '#aaaaaa',
+                      },
+                      links: {
+                        color: '#aaaaaa',
+                        distance: 111,
                         enable: true,
-                        value_area: 800,
+
+                        opacity: 0.3,
+                        width: 4,
                       },
-                      value: 30,
-                    },
-                    opacity: {
-                      value: 0.3,
-                    },
-                    shape: {
-                      type: 'circle',
-                    },
-                    size: {
-                      random: true,
-                      value: 7,
-                    },
-                  },
-                  interactivity: {
-                    events: {
-                      onHover: {
+                      move: {
+                        direction: 'none',
                         enable: true,
-                        mode: 'repulse',
+                        outMode: 'bounce',
+                        random: false,
+                        speed: 0.2,
+                        straight: false,
                       },
-                      resize: true,
-                    },
-                    modes: {
-                      repulse: {
-                        distance: 200,
-                        factor: 0.77,
-                        easing: 'ease-out-quad',
+                      number: {
+                        density: {
+                          enable: true,
+                          value_area: 800,
+                        },
+                        value: 30,
+                      },
+                      opacity: {
+                        value: 0.3,
+                      },
+                      shape: {
+                        type: 'circle',
+                      },
+                      size: {
+                        random: true,
+                        value: 7,
                       },
                     },
-                  },
-                }}
-              />
-              <Routes>
-                <Route path="/" element={<StartPage onLogin={login} />}></Route>
-                <Route path="/home" element={<HomePage />}></Route>
-                <Route
-                  path="/models/*"
-                  element={<ModelCreationRouter />}
-                ></Route>
-                <Route path="/molecules" element={<MoleculesPage />}></Route>
-                <Route path="/results" element={<ScoreboardsPage />}></Route>
-                <Route path="/swagger" element={<SwaggerPage />}></Route>
-                <Route path="/training" element={<TrainingPage />}></Route>
-                <Route
-                  path="/trained-models"
-                  element={<FittingsPage />}
-                ></Route>
-                <Route path="/datasets" element={<DatasetPage />}></Route>
-              </Routes>
-            </BrowserRouter>
-          </TrainingProvider>
+                    interactivity: {
+                      events: {
+                        onHover: {
+                          enable: true,
+                          mode: 'repulse',
+                        },
+                        resize: true,
+                      },
+                      modes: {
+                        repulse: {
+                          distance: 200,
+                          factor: 0.77,
+                          easing: 'ease-out-quad',
+                        },
+                      },
+                    },
+                  }}
+                />
+                <Routes>
+                  <Route
+                    path="/"
+                    element={<StartPage onLogin={login} />}
+                  ></Route>
+                  <Route path="/home" element={<HomePage />}></Route>
+                  <Route
+                    path="/models/*"
+                    element={<ModelCreationRouter />}
+                  ></Route>
+                  <Route path="/molecules" element={<MoleculesPage />}></Route>
+                  <Route path="/results" element={<ScoreboardsPage />}></Route>
+                  <Route path="/swagger" element={<SwaggerPage />}></Route>
+                  <Route path="/training" element={<TrainingPage />}></Route>
+                  <Route
+                    path="/trained-models"
+                    element={<FittingsPage />}
+                  ></Route>
+                  <Route path="/datasets" element={<DatasetPage />}></Route>
+                </Routes>
+              </BrowserRouter>
+            </TrainingProvider>
+          </HelpProvider>
         </UserProvider>
       </ThemeProvider>
     </div>

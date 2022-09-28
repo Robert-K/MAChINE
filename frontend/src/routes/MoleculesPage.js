@@ -22,6 +22,8 @@ import MoleculeEditor from '../components/molecules/MoleculeEditor'
 import MoleculeRenderer from '../components/molecules/MoleculeRenderer'
 import Molecule from '../internal/Molecule'
 import SnackBarAlert from '../components/misc/SnackBarAlert'
+import HelpPopper from '../components/shared/HelpPopper'
+import HelpContext from '../context/HelpContext'
 
 const gridHeight = '85vh'
 export default function MoleculesPage() {
@@ -30,7 +32,23 @@ export default function MoleculesPage() {
   const [snackMessage, setSnackMessage] = React.useState('')
   const [showSnackBar, setShowSnackBar] = React.useState(false)
   const [snackSeverity, setSnackSeverity] = React.useState('warning')
+  const [helpAnchorEl, setHelpAnchorEl] = React.useState(null)
+  const [helpPopperContent, setHelpPopperContent] = React.useState('')
   const user = React.useContext(UserContext)
+  const help = React.useContext(HelpContext)
+
+  const handleHelpPopperOpen = (event, content) => {
+    if (help.helpMode) {
+      setHelpAnchorEl(event.currentTarget)
+      setHelpPopperContent(content)
+    }
+  }
+
+  const handleHelpPopperClose = () => {
+    setHelpAnchorEl(null)
+  }
+
+  const helpOpen = Boolean(helpAnchorEl)
 
   React.useEffect(() => {
     refreshMolecules()
@@ -96,7 +114,17 @@ export default function MoleculesPage() {
         alignItems="stretch"
         columnSpacing={2}
       >
-        <Grid item md={3}>
+        <Grid
+          item
+          md={3}
+          onMouseOver={(e) => {
+            handleHelpPopperOpen(
+              e,
+              'This shows all molecules you have created so far. Click on the i-Icon to see more information about a molecule.'
+            )
+          }}
+          onMouseLeave={handleHelpPopperClose}
+        >
           <SelectionList
             elements={molecules}
             elementType="molecule"
@@ -106,12 +134,30 @@ export default function MoleculesPage() {
             height={gridHeight}
           ></SelectionList>
         </Grid>
-        <Grid item md={9} key="molecule-view">
+        <Grid
+          item
+          md={9}
+          key="molecule-view"
+          onMouseOver={(e) => {
+            handleHelpPopperOpen(
+              e,
+              "This is your molecule sandbox! Let your creativity flow and create the molecule of your dreams.\nClick on the line-icon on the left to create new bonds, on the C-icon to change an atom, or on the eraser-icon to delete things.\nWhen you're happy with your molecule, give it a name and save it!\nSaved molecules can be analyzed by the models you have trained with a click on the button 'Analyze' in the bottom right corner."
+            )
+          }}
+          onMouseLeave={handleHelpPopperClose}
+        >
           <MoleculeView
             selectedMolecule={selectedMolecule}
             onSave={saveMolecule}
           />
         </Grid>
+        <HelpPopper
+          id="helpPopper"
+          helpPopperContent={helpPopperContent}
+          open={helpOpen}
+          anchorEl={helpAnchorEl}
+          onClose={handleHelpPopperClose}
+        />
       </Grid>
       <SnackBarAlert
         message={snackMessage}

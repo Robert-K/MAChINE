@@ -20,24 +20,34 @@ import Button from '@mui/material/Button'
 import SchNetVisual from '../components/models/modelConfig/SchNetVisual'
 import { camelToNaturalString } from '../utils'
 import { useLocation, useNavigate } from 'react-router-dom'
+import HelpContext from '../context/HelpContext'
+import HelpPopper from '../components/shared/HelpPopper'
 
 export const standardParameters = {
-  optimizer: [
-    'Adam',
-    'Adamax',
-    'Stochastic Gradient Descent',
-    'RMSprop',
-    'Adadelta',
-    'Nadam',
-    'Adagrad',
-    'Ftrl',
-  ],
-  lossFunction: [
-    'Binary Cross Entropy',
-    'Huber Loss',
-    'Mean Absolute Error',
-    'Mean Squared Error',
-  ],
+  optimizer: {
+    options: [
+      'Adam',
+      'Adamax',
+      'Stochastic Gradient Descent',
+      'RMSprop',
+      'Adadelta',
+      'Adagrad',
+      'NAdam',
+      'Ftrl',
+    ],
+    explanation:
+      'The optimizer plays an important part in training your model. It decides how the parameters of your net will be tweaked to make the net better!',
+  },
+  lossFunction: {
+    options: [
+      'Binary Cross Entropy',
+      'Huber Loss',
+      'Mean Absolute Error',
+      'Mean Squared Error',
+    ],
+    explanation:
+      "The loss of your net describes now 'bad' your net is, that is, how big the difference between the actual output and the desired output is. The loss function determines how this loss is calculated.",
+  },
 }
 
 export default function ModelConfigPage({ addFunc }) {
@@ -48,8 +58,23 @@ export default function ModelConfigPage({ addFunc }) {
   const [isInvalidConfig, setIsInvalidConfig] = React.useState(false)
   const [showSnackBar, setShowSnackBar] = React.useState(false)
   const [errorMessage, setErrorMessage] = React.useState('')
-
+  const [helpAnchorEl, setHelpAnchorEl] = React.useState(null)
+  const [helpPopperContent, setHelpPopperContent] = React.useState('')
+  const help = React.useContext(HelpContext)
   const navigate = useNavigate()
+
+  const handleHelpPopperOpen = (event, content) => {
+    if (help.helpMode) {
+      setHelpAnchorEl(event.currentTarget)
+      setHelpPopperContent(content)
+    }
+  }
+
+  const handleHelpPopperClose = () => {
+    setHelpAnchorEl(null)
+  }
+
+  const helpOpen = Boolean(helpAnchorEl)
 
   const modelTypeSpecificComponents = {
     sequential: {
@@ -58,9 +83,22 @@ export default function ModelConfigPage({ addFunc }) {
           modelLayers={state.baseModel.parameters.layers}
           defaultActivation={defaultActivation}
           updateFunc={updateParameters}
+          hoverFunc={(e) => {
+            handleHelpPopperOpen(
+              e,
+              'This is how your model looks at the moment. Each rectangle represents one layer. On the left is the input layer, and the data will get forwarded from left to right through the layers.\nThe numbers show how many nodes are in the respective layer.\nClick between two layers to add a new layer between them, or click directly on a layer to delete it.'
+            )
+          }}
+          leaveFunc={handleHelpPopperClose}
         />
       ),
-      config: <MLPConfig updateDefaultActivation={setDefaultActivation} />,
+      config: (
+        <MLPConfig
+          updateDefaultActivation={setDefaultActivation}
+          hoverFunc={handleHelpPopperOpen}
+          leaveFunc={handleHelpPopperClose}
+        />
+      ),
     },
     schnet: {
       visual: <SchNetVisual />,
@@ -73,6 +111,8 @@ export default function ModelConfigPage({ addFunc }) {
           }}
           updateFunc={updateParameters}
           errorSignal={setIsInvalidConfig}
+          hoverFunc={handleHelpPopperOpen}
+          leaveFunc={handleHelpPopperClose}
         />
       ),
     },
@@ -142,8 +182,12 @@ export default function ModelConfigPage({ addFunc }) {
                     label={camelToNaturalString(param)}
                     onChange={(event) => handleChange(event, param)}
                     sx={{ m: 2 }}
+                    onMouseOver={(e) => {
+                      handleHelpPopperOpen(e, value.explanation)
+                    }}
+                    onMouseLeave={handleHelpPopperClose}
                   >
-                    {value.map((valueEntry, i) => {
+                    {value.options.map((valueEntry, i) => {
                       return (
                         <MenuItem key={i} value={valueEntry}>
                           {valueEntry}
@@ -186,6 +230,13 @@ export default function ModelConfigPage({ addFunc }) {
             {errorMessage}
           </Alert>
         </Snackbar>
+        <HelpPopper
+          id="helpPopper"
+          helpPopperContent={helpPopperContent}
+          open={helpOpen}
+          anchorEl={helpAnchorEl}
+          onClose={handleHelpPopperClose}
+        />
       </Grid>
     </Grid>
   )

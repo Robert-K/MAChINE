@@ -27,6 +27,9 @@ import ExpandMore from '@mui/icons-material/ExpandMore'
 import PropTypes from 'prop-types'
 import { useNavigate } from 'react-router-dom'
 import TrainingContext from '../context/TrainingContext'
+import UserContext from '../context/UserContext'
+import HelpPopper from '../components/shared/HelpPopper'
+import HelpContext from '../context/HelpContext'
 
 const gridHeight = '80vh'
 /**
@@ -35,9 +38,28 @@ const gridHeight = '80vh'
 export default function ModelsPage({ modelList }) {
   const [selectedIndex, setSelectedIndex] = React.useState(-1)
   const [showDialog, setShowDialog] = React.useState(false)
+  const [creatingModel, setCreatingModel] = React.useState(false)
+  const [helpAnchorEl, setHelpAnchorEl] = React.useState(null)
   const training = React.useContext(TrainingContext)
 
   const navigate = useNavigate()
+  const [helpPopperContent, setHelpPopperContent] = React.useState('')
+
+  const user = React.useContext(UserContext)
+  const help = React.useContext(HelpContext)
+
+  const handleHelpPopperOpen = (event, content) => {
+    if (help.helpMode) {
+      setHelpAnchorEl(event.currentTarget)
+      setHelpPopperContent(content)
+    }
+  }
+
+  const handleHelpPopperClose = () => {
+    setHelpAnchorEl(null)
+  }
+
+  const helpOpen = Boolean(helpAnchorEl)
 
   const updateSelection = (index) => {
     setSelectedIndex(index)
@@ -73,7 +95,17 @@ export default function ModelsPage({ modelList }) {
         alignItems="stretch"
         columnSpacing={2}
       >
-        <Grid item xs={3}>
+        <Grid
+          item
+          xs={3}
+          onMouseOver={(e) => {
+            handleHelpPopperOpen(
+              e,
+              "This is a list of all models you have created so far. \n Click on any one of them to get more information about it, or click on 'Add a model' to add a new one to the list."
+            )
+          }}
+          onMouseLeave={handleHelpPopperClose}
+        >
           <SelectionList
             updateFunc={updateSelection}
             elements={modelList}
@@ -87,6 +119,8 @@ export default function ModelsPage({ modelList }) {
           <ModelDescription
             selectedModel={modelList.at(selectedIndex)}
             onActiveTraining={handleOpenDialog}
+            hoverFunc={handleHelpPopperOpen}
+            leaveFunc={handleHelpPopperClose}
           />
         </Grid>
       </Grid>
@@ -110,11 +144,23 @@ export default function ModelsPage({ modelList }) {
           <Button onClick={abortTraining}>Abort</Button>
         </DialogActions>
       </Dialog>
+      <HelpPopper
+        id="helpPopper"
+        helpPopperContent={helpPopperContent}
+        open={helpOpen}
+        anchorEl={helpAnchorEl}
+        onClose={handleHelpPopperClose}
+      />
     </Box>
   )
 }
 
-function ModelDescription({ selectedModel, onActiveTraining }) {
+function ModelDescription({
+  selectedModel,
+  onActiveTraining,
+  hoverFunc,
+  leaveFunc,
+}) {
   const { setSelectedModel, trainingStatus, resetContext } =
     React.useContext(TrainingContext)
   const navigate = useNavigate()
@@ -139,6 +185,13 @@ function ModelDescription({ selectedModel, onActiveTraining }) {
           <CardHeader
             title={selectedModel.name}
             subheader={`Base Model: ${selectedModel.baseModelID}`}
+            onMouseOver={(e) => {
+              hoverFunc(
+                e,
+                "Here you see all relevant information of your model.\nOn the top, you can see the model's name, as well as which base model was used to create it.\nSince you can train every model multiple times, you can see all of its trained models listed below.\nTo start a new training with your selected model, simply click on 'Select training data'!"
+              )
+            }}
+            onMouseLeave={leaveFunc}
           ></CardHeader>
           <Divider />
           <Typography variant="h6" sx={{ pl: 2, pt: 2 }}>
@@ -150,6 +203,8 @@ function ModelDescription({ selectedModel, onActiveTraining }) {
               <RenderFitting
                 fitting={fitting}
                 key={`${fitting.id}-${index}`}
+                hoverFunc={hoverFunc}
+                leaveFunc={leaveFunc}
               ></RenderFitting>
             ))}
           </List>
@@ -179,27 +234,37 @@ function ModelDescription({ selectedModel, onActiveTraining }) {
 ModelDescription.propTypes = {
   selectedModel: PropTypes.any,
   onActiveTraining: PropTypes.any,
+  hoverFunc: PropTypes.func,
+  leaveFunc: PropTypes.func,
 }
-
 /**
  * renders a fitting into a collapsable list
  * @param fitting the fitting to be rendered
  * @returns {JSX.Element}
  */
-function RenderFitting({ fitting }) {
+function RenderFitting({ fitting, hoverFunc, leaveFunc }) {
   const [open, setOpen] = React.useState(false)
   const toggleOpen = () => {
     setOpen(!open)
   }
   const theme = useTheme()
   return (
-    <ListItem key={fitting.id}>
+    <ListItem
+      key={fitting.id}
+      onMouseOver={(e) => {
+        hoverFunc(
+          e,
+          'Here you can see which dataset was used to train this trained model, how long the model was trained (epochs), how big the data bundles were that were fed into the network (batch size), and how good it is (accuracy).'
+        )
+      }}
+      onMouseLeave={leaveFunc}
+    >
       <Box sx={{ width: 1 }}>
         <ListItemButton onClick={() => toggleOpen()}>
           {open ? <ExpandLess /> : <ExpandMore />}
           <ListItemText
             primary={`Dataset ID: ${fitting.datasetID}`}
-            secondary={`Fitting ID: ${fitting.id}`}
+            secondary={`Trained model ID: ${fitting.id}`}
             sx={{ color: theme.palette.primary.main }}
           ></ListItemText>
         </ListItemButton>
@@ -242,6 +307,8 @@ function RenderFitting({ fitting }) {
 
 RenderFitting.propTypes = {
   fitting: PropTypes.object.isRequired,
+  hoverFunc: PropTypes.func,
+  leaveFunc: PropTypes.func,
 }
 
 ModelsPage.propTypes = {

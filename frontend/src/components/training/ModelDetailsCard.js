@@ -2,9 +2,19 @@ import React from 'react'
 import { Box, Card, CardContent, ListItem, Typography } from '@mui/material'
 import PropTypes from 'prop-types'
 
-export default function ModelDetailsCard({ selectedModel }) {
+export default function ModelDetailsCard({
+  selectedModel,
+  hoverFunc,
+  leaveFunc,
+}) {
   return (
-    <Card sx={{ m: 3 }}>
+    <Card
+      sx={{ m: 3 }}
+      onMouseOver={(e) => {
+        hoverFunc(e)
+      }}
+      onMouseLeave={leaveFunc}
+    >
       <CardContent>
         <Typography gutterBottom variant="h5" component="div">
           Model Details
@@ -34,6 +44,8 @@ export default function ModelDetailsCard({ selectedModel }) {
 
 ModelDetailsCard.propTypes = {
   selectedModel: PropTypes.object.isRequired,
+  hoverFunc: PropTypes.func,
+  leaveFunc: PropTypes.func,
 }
 
 function SmallLayerVisual({ layers }) {

@@ -33,7 +33,11 @@ const links = {
   },
 }
 
-export default function Navbar({ logoutFunction, darkModeButton }) {
+export default function Navbar({
+  logoutFunction,
+  darkModeButton,
+  helpModeButton,
+}) {
   const locationName = useLocation().pathname
   const user = React.useContext(UserContext)
   const training = React.useContext(TrainingContext)
@@ -121,6 +125,7 @@ export default function Navbar({ logoutFunction, darkModeButton }) {
           </>
         )}
         <ServerStatusButton />
+        {helpModeButton}
         {darkModeButton}
       </Toolbar>
       <style jsx="true">{`
@@ -148,4 +153,5 @@ export default function Navbar({ logoutFunction, darkModeButton }) {
 Navbar.propTypes = {
   logoutFunction: PropTypes.func.isRequired,
   darkModeButton: PropTypes.element,
+  helpModeButton: PropTypes.element,
 }

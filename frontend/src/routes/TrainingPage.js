@@ -16,15 +16,20 @@ import TrainingContext from '../context/TrainingContext'
 import api from '../api'
 import PrettyChart from '../components/training/PrettyChart'
 import SnackBarAlert from '../components/misc/SnackBarAlert'
+import HelpContext from '../context/HelpContext'
+import HelpPopper from '../components/shared/HelpPopper'
 
 export default function TrainingPage() {
   const training = React.useContext(TrainingContext)
   const [localEpochs, setLocalEpochs] = React.useState(training.selectedEpochs)
+  const [showDialog, setShowDialog] = React.useState(false)
+  const [helpAnchorEl, setHelpAnchorEl] = React.useState(null)
+  const [helpPopperContent, setHelpPopperContent] = React.useState('')
+  const help = React.useContext(HelpContext)
   const [epochsError, setEpochsError] = React.useState(false)
   const [batchSizeError, setBatchSizeError] = React.useState(false)
   const [startStopButton, setStartStopButton] = React.useState('Start')
   const [loadTraining, setLoadTraining] = React.useState(false)
-  const [showDialog, setShowDialog] = React.useState(false)
   const [openSnackError, setOpenSnackError] = React.useState(false)
 
   const checkEpochs = (epochs) => {
@@ -131,6 +136,18 @@ export default function TrainingPage() {
     return newData
   }
 
+  const handleHelpPopperOpen = (event, content) => {
+    if (help.helpMode) {
+      setHelpAnchorEl(event.currentTarget)
+      setHelpPopperContent(content)
+    }
+  }
+
+  const handleHelpPopperClose = () => {
+    setHelpAnchorEl(null)
+  }
+
+  const helpOpen = Boolean(helpAnchorEl)
   return (
     <Grid container>
       <Grid item xs={6}>
@@ -145,6 +162,13 @@ export default function TrainingPage() {
           onChange={(event) => setLocalEpochs(event.target.value)}
           error={epochsError}
           helperText={epochsError ? 'Required!' : ' '}
+          onMouseOver={(e) => {
+            handleHelpPopperOpen(
+              e,
+              'This determines how long your model is trained. In each epoch, the entire dataset is passed through your net once.'
+            )
+          }}
+          onMouseLeave={handleHelpPopperClose}
         />
         <TextField
           sx={{ mx: 3, mt: 3 }}
@@ -159,15 +183,46 @@ export default function TrainingPage() {
           }
           error={batchSizeError}
           helperText={batchSizeError ? 'Required!' : ' '}
+          onMouseOver={(e) => {
+            handleHelpPopperOpen(
+              e,
+              "The batch size determines how often the net's parameters are adjusted. The smaller the batch size, the more often that's the case!"
+            )
+          }}
+          onMouseLeave={handleHelpPopperClose}
         />
-        <ModelDetailsCard selectedModel={training.selectedModel} />
+        <ModelDetailsCard
+          selectedModel={training.selectedModel}
+          hoverFunc={(e) => {
+            handleHelpPopperOpen(
+              e,
+              'Here you can see basic informations about your model. Among them are your chosen values for the optimizer, the loss, and other model-specific data.'
+            )
+          }}
+          leaveFunc={handleHelpPopperClose}
+        />
         <DatasetDetailsCard
           selectedDataset={training.selectedDataset}
           selectedLabels={training.selectedLabels}
+          hoverFunc={(e) => {
+            handleHelpPopperOpen(
+              e,
+              'Here you can see basic information about your chosen dataset. Most importantly, its size, and which label you chose to train on!'
+            )
+          }}
+          leaveFunc={handleHelpPopperClose}
         />
       </Grid>
       <Grid item xs={6}>
-        <Box>
+        <Box
+          onMouseOver={(e) => {
+            handleHelpPopperOpen(
+              e,
+              'This chart shows the progression of your model in training. On the x-axis, you can see for how many epochs your model has been trained. Take a look at the different functions: They tell you how good your model is in predicting data from the dataset. For loss: The lower, the better! For r-squared: The closer to 1, the better (and a negative value is very bad).'
+            )
+          }}
+          onMouseLeave={handleHelpPopperClose}
+        >
           <PrettyChart data={filterData(training.trainingData)} />
         </Box>
         <Button
@@ -212,6 +267,13 @@ export default function TrainingPage() {
         onClose={() => setOpenSnackError(false)}
         severity="error"
         message="Someone is already training right now. Please try again later"
+      />
+      <HelpPopper
+        id="helpPopper"
+        helpPopperContent={helpPopperContent}
+        open={helpOpen}
+        anchorEl={helpAnchorEl}
+        onClose={handleHelpPopperClose}
       />
     </Grid>
   )
