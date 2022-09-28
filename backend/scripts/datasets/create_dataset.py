@@ -172,8 +172,11 @@ def create_histograms(dataset, labels):
     # create histogram for each label
     for [label, data] in columns_by_label.items():
         # 4 is an arbitrary value
-        histogram = np.histogram(data, math.floor(len(data) / 4))
-        histograms[label] = histogram
+        hist, bin_edges = np.histogram(data, math.floor(len(data) / 4))
+        histograms[label] = dict({
+            'buckets': hist.tolist(),
+            'bin_edges': bin_edges.tolist()
+        })
 
     return histograms
 
