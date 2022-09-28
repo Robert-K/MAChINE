@@ -12,14 +12,22 @@ class BasicMockModel:
         pickle.dump(self, file)
         file.close()
 
-    def predict(self, predicted_thing):
-        return self.prediction
 
 class TrainMockModel(BasicMockModel):
-    def __init__(self, prediction, metrics_names):
-        super(prediction)
+    def __init__(self, prediction=None, metrics_names=None, evaluation=None):
+        super().__init__(prediction)
         self.metrics_names = metrics_names
         self.stop_training = False
+        self.evaluation = evaluation
+
+    def evaluate(self, *args, **kwargs):
+        return self.evaluation
+
+    def fit(self, *args, **kwargs):
+        return 'a'
+
+    def predict(self, predicted_thing):
+        return self.prediction
 
 
 class BrokenMockModel:
