@@ -55,6 +55,18 @@ export default {
     })
   },
 
+  async deleteScoreboardFitting(fittingID) {
+    return api.delete(`/scoreboard/${fittingID}`).then((response) => {
+      return response
+    })
+  },
+
+  async deleteScoreboardFittings() {
+    return api.delete('/scoreboard/0').then((response) => {
+      return response
+    })
+  },
+
   async getModelList() {
     return api.get(`/users/${userID}/models`).then((response) => {
       return response.data

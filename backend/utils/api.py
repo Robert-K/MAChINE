@@ -142,12 +142,18 @@ class Scoreboard(Resource):
     def get(self):
         return sh.get_scoreboard_summaries()
 
+    def delete(self, fitting_id):
+        if fitting_id == '0':
+            return sh.delete_scoreboard_fittings()
+        else:
+            return sh.delete_scoreboard_fitting(fitting_id)
+
 
 class AddUser(Resource):
     def post(self):
         args = parser.parse_args()
         user_id = str(hashlib.sha1(args['username'].encode('utf-8'), usedforsecurity=False).hexdigest())
-        #if sh.get_user_handler(user_id): // TODO uncomment this to prevent user from reusing a name
+        # if sh.get_user_handler(user_id): // TODO uncomment this to prevent user from reusing a name
         #    return None, 409
         print(args)
         handler = sh.add_user_handler(user_id, args['username'])
@@ -268,7 +274,7 @@ api.add_resource(Fittings, '/users/<user_id>/fittings')
 api.add_resource(Analyze, '/users/<user_id>/analyze')
 api.add_resource(Train, '/users/<user_id>/train')
 # Non-user-specific resources
-api.add_resource(Scoreboard, '/scoreboard')
+api.add_resource(Scoreboard, '/scoreboard/<fitting_id>', '/scoreboard')
 api.add_resource(Datasets, '/datasets')
 api.add_resource(BaseModels, '/baseModels')
 

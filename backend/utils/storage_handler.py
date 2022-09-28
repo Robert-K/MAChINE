@@ -23,6 +23,8 @@ __all__ = ['add_analysis',
            'get_fitting_summary',
            'get_fitting_summaries',
            'get_scoreboard_summaries',
+           'delete_scoreboard_fitting',
+           'delete_scoreboard_fittings',
            'get_model_summary',
            'get_model_summaries',
            'get_molecules',
@@ -278,6 +280,17 @@ class StorageHandler:
     def get_scoreboard_summaries(self):
         return self.scoreboard_summaries
 
+    def delete_scoreboard_fitting(self, fitting_id):
+        to_remove = list()
+        for i in self.scoreboard_summaries:
+            if i.get('id') == fitting_id:
+                to_remove.append(i)
+        for i in to_remove:
+            self.scoreboard_summaries.remove(i)
+
+    def delete_scoreboard_fittings(self):
+        self.scoreboard_summaries = list()
+
     def get_fitting_summaries(self, user_id):
         return self.get_user_handler(user_id).get_fitting_summaries()
 
@@ -359,3 +372,5 @@ get_model_summaries = _inst.get_model_summaries
 get_molecules = _inst.get_molecules
 get_user_handler = _inst.get_user_handler
 update_fitting = _inst.update_fitting
+delete_scoreboard_fitting = _inst.delete_scoreboard_fitting
+delete_scoreboard_fittings = _inst.delete_scoreboard_fittings
