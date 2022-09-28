@@ -221,7 +221,6 @@ class Datasets(Resource):
                     'datasetID': dataset_id,
                     'size': current_dataset['size'],
                     'labelDescriptors': current_dataset['labelDescriptors'],
-                    'image': current_dataset['image'],
                 })
         return processed_datasets
 
@@ -239,13 +238,11 @@ class BaseModels(Resource):
             if current:
                 processed_model = dict(current)
                 processed_model['id'] = model_id
-                del processed_model['image']
                 del processed_model['metrics']
 
                 # add model type object
                 processed_model_type = dict()
                 processed_model_type['name'] = current.get('type')
-                processed_model_type['image'] = current.get('image')
                 processed_model['type'] = processed_model_type
 
                 # add task type
