@@ -21,7 +21,7 @@ export default function ModelDetailsCard({
           Model Details
         </Typography>
         <Typography>Name: {selectedModel.name}</Typography>
-        <Typography>Base Model: {selectedModel.baseModel}</Typography>
+        <Typography>Base Model: {selectedModel.baseModelID}</Typography>
         <Typography>Parameters: </Typography>
         {Object.entries(selectedModel.parameters).map(
           ([valueName, value], index) => {

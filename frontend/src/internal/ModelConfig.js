@@ -5,14 +5,14 @@ class ModelConfig {
    * A Model Configuration consists of
    * @param id , string
    * @param name of configuration given by user, is a string
-   * @param baseModelId , string
+   * @param baseModelID , string
    * @param parameters dictionary of customized model parameters
    * @param fittings array of fittings for models based on this config
    */
-  constructor(id, name, baseModelId, parameters, fittings) {
+  constructor(id, name, baseModelID, parameters, fittings) {
     this.id = id
     this.name = name
-    this.baseModel = baseModelId
+    this.baseModelID = baseModelID
     this.parameters = parameters
     this.fittings = Array.isArray(fittings) ? fittings : []
   }
