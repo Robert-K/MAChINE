@@ -82,7 +82,6 @@ export default function ScoreboardsPage() {
   const user = React.useContext(UserContext)
   React.useEffect(() => {
     Api.getScoreboardSummaries().then((data) => {
-      console.log(data)
       setFittingRows(data)
     })
   }, [user])
@@ -114,6 +113,13 @@ export default function ScoreboardsPage() {
 }
 
 function DataTable(columns, rows) {
+  const [userFittings, setUserFittings] = React.useState([])
+  const user = React.useContext(UserContext)
+  React.useEffect(() => {
+    Api.getFittings().then((data) => {
+      setUserFittings(data)
+    })
+  }, [user])
   return (
     <div style={{ height: 600, width: '100%' }}>
       <DataGrid
@@ -124,9 +130,10 @@ function DataTable(columns, rows) {
         hideFooter={true}
         experimentalFeatures={{ columnGrouping: true }}
         getRowClassName={(params) => {
-          if (params.row.userName === React.useContext(UserContext).userName) {
-            console.log('check')
-            return 'table-theme'
+          for (let i = 0; i < userFittings.length; i++) {
+            if (params.row.id === userFittings[i].id) {
+              return 'table-theme'
+            }
           }
         }}
       />

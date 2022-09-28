@@ -147,8 +147,8 @@ class AddUser(Resource):
     def post(self):
         args = parser.parse_args()
         user_id = str(hashlib.sha1(args['username'].encode('utf-8'), usedforsecurity=False).hexdigest())
-        if sh.get_user_handler(user_id):
-            return None, 409
+        #if sh.get_user_handler(user_id): // TODO uncomment this to prevent user from reusing a name
+        #    return None, 409
         print(args)
         handler = sh.add_user_handler(user_id, args['username'])
         if handler:
