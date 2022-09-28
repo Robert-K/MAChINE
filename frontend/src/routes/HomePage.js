@@ -12,8 +12,9 @@ import {
 import Button from '@mui/material/Button'
 import { NavLink } from 'react-router-dom'
 import HelpOutlineOutlinedIcon from '@mui/icons-material/HelpOutlineOutlined'
+import PropTypes from 'prop-types'
 
-export default function HomePage() {
+export default function HomePage({ startOnboarding }) {
   const theme = useTheme()
   return (
     <Box sx={{ align: 'center', px: '20%' }}>
@@ -41,7 +42,32 @@ export default function HomePage() {
           </Typography>
         </Box>
       </Box>
-      <Box sx={{ textAlign: 'left', mb: 9 }}>
+
+      <Box sx={{ mb: 8, textAlign: 'center' }}>
+        <Typography
+          variant="h4"
+          lineHeight="150%"
+          color="text.primary"
+          paragraph
+          component="div"
+        >
+          Don&apos;t know how to get started?{' '}
+          <Button
+            variant="outlined"
+            style={{
+              fontSize: theme.typography.h4.fontSize,
+              display: 'inline-block',
+            }}
+            onClick={() => {
+              startOnboarding()
+            }}
+          >
+            Take a quick tour!
+          </Button>
+        </Typography>
+      </Box>
+
+      <Box sx={{ textAlign: 'left', mb: 8 }}>
         <Typography variant="h4" color="text.primary" paragraph component="div">
           With{' '}
           <span style={{ color: theme.palette.primary.main }}>MAChINE</span> you
@@ -229,4 +255,8 @@ export default function HomePage() {
       `}</style>
     </Box>
   )
+}
+
+HomePage.propTypes = {
+  startOnboarding: PropTypes.func.isRequired,
 }

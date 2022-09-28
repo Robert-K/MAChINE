@@ -23,7 +23,7 @@ import { HelpProvider } from './context/HelpContext'
 import { handleErrors } from './utils'
 import '@fontsource/poppins'
 import ModelCreationRouter from './routes/ModelCreationRouter'
-import Joyride from 'react-joyride'
+import Joyride, { STATUS } from 'react-joyride'
 import OnboardingTooltip from './components/onboarding/OnboardingTooltip'
 
 const themeBase = {
@@ -193,7 +193,7 @@ export default function App() {
 
   async function login(newUserName) {
     if (userName !== null) logout()
-    setRunOnboarding(true)
+    // setRunOnboarding(true) // Uncomment to run onboarding on login
     return api
       .completeLogin(newUserName)
       .then((r) => {
@@ -230,6 +230,17 @@ export default function App() {
   }
 
   handleErrors()
+
+  const handleJoyrideCallback = (data) => {
+    const { action, index, status, type } = data
+    if ([STATUS.FINISHED, STATUS.SKIPPED].includes(status)) {
+      setRunOnboarding(false)
+    }
+
+    console.groupCollapsed(type)
+    console.log(data) // eslint-disable-line no-console
+    console.groupEnd()
+  }
 
   const pattern = ['a', 'd', 'm', 'i', 'n', 'm', 'o', 'd', 'e']
   let current = 0
@@ -337,6 +348,7 @@ export default function App() {
                 />
                 <Joyride
                   tooltipComponent={OnboardingTooltip}
+                  callback={handleJoyrideCallback}
                   continuous
                   hideCloseButton
                   run={runOnboarding}
@@ -359,7 +371,16 @@ export default function App() {
                     path="/"
                     element={<StartPage onLogin={login} />}
                   ></Route>
-                  <Route path="/home" element={<HomePage />}></Route>
+                  <Route
+                    path="/home"
+                    element={
+                      <HomePage
+                        startOnboarding={() => {
+                          setRunOnboarding(true)
+                        }}
+                      />
+                    }
+                  ></Route>
                   <Route
                     path="/models/*"
                     element={<ModelCreationRouter />}

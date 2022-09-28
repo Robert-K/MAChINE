@@ -45,7 +45,12 @@ export default function OnboardingTooltip({
             Back
           </Button>
         )}
-        <Button color="primary" variant="text" {...primaryProps}>
+        <Button
+          color="primary"
+          variant="text"
+          sx={{ ml: 'auto !important' }}
+          {...primaryProps}
+        >
           Next
         </Button>
       </CardActions>
