@@ -79,7 +79,7 @@ export default function DatasetPage() {
             hoverFunc={(e) => {
               handleHelpPopperOpen(
                 e,
-                "Click to select the label you want to train on. After confirming your choice, it's time to start training!"
+                "Click to select the dataset you want to train on. \n After confirming your choice, it's time to start training!"
               )
             }}
             leaveFunc={handleHelpPopperClose}

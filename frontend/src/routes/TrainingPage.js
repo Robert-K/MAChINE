@@ -165,7 +165,7 @@ export default function TrainingPage() {
           onMouseOver={(e) => {
             handleHelpPopperOpen(
               e,
-              'This determines how long your model is trained. In each epoch, the entire dataset is passed through your net once!'
+              'This determines how long your model is trained. In each epoch, the entire dataset is passed through your net once.'
             )
           }}
           onMouseLeave={handleHelpPopperClose}
@@ -196,7 +196,7 @@ export default function TrainingPage() {
           hoverFunc={(e) => {
             handleHelpPopperOpen(
               e,
-              'Here you can see basic information about your model. Among them are your chosen values for the optimizer, the loss, and other model-specific data.'
+              'Here you can see basic informations about your model. Among them are your chosen values for the optimizer, the loss, and other model-specific data.'
             )
           }}
           leaveFunc={handleHelpPopperClose}
@@ -207,7 +207,7 @@ export default function TrainingPage() {
           hoverFunc={(e) => {
             handleHelpPopperOpen(
               e,
-              'Here you can see basic information about your chosen dataset. Most importantly, how big your dataset is, and which label you chose to train on!'
+              'Here you can see basic information about your chosen dataset. Most importantly, its size, and which label you chose to train on!'
             )
           }}
           leaveFunc={handleHelpPopperClose}
@@ -218,7 +218,7 @@ export default function TrainingPage() {
           onMouseOver={(e) => {
             handleHelpPopperOpen(
               e,
-              'This chart shows the progression of your model in training. On the x-axis, you can see for how long your model has been trained. Take a look at the different functions: They tell you how good your model is in predicting data from the dataset. For loss: The lower, the better! For r-squared: The closer to 1, the better (and a negative value is very bad). Have fun analyzing your model with these functions!'
+              'This chart shows the progression of your model in training. On the x-axis, you can see for how many epochs your model has been trained. Take a look at the different functions: They tell you how good your model is in predicting data from the dataset. For loss: The lower, the better! For r-squared: The closer to 1, the better (and a negative value is very bad).'
             )
           }}
           onMouseLeave={handleHelpPopperClose}

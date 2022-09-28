@@ -86,7 +86,7 @@ export default function ModelConfigPage({ addFunc }) {
           hoverFunc={(e) => {
             handleHelpPopperOpen(
               e,
-              'This is how your model looks at the moment! Each rectangle represents one layer. On the left is the input layer, and the data will get forwarded from left to right through the layers. The numbers show how many nodes are in the respective layer. Click between two layers to add a new layer between them, or click directly on a layer to delete it.'
+              'This is how your model looks at the moment. Each rectangle represents one layer. On the left is the input layer, and the data will get forwarded from left to right through the layers.\nThe numbers show how many nodes are in the respective layer.\nClick between two layers to add a new layer between them, or click directly on a layer to delete it.'
             )
           }}
           leaveFunc={handleHelpPopperClose}

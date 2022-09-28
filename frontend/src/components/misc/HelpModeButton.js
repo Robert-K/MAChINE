@@ -1,7 +1,8 @@
 import React from 'react'
-import { IconButton } from '@mui/material'
-import HelpOutlineOutlinedIcon from '@mui/icons-material/HelpOutlineOutlined'
 import HelpContext from '../../context/HelpContext'
+import { IconButton } from '@mui/material'
+import HelpIcon from '@mui/icons-material/Help'
+import HelpOutlineOutlinedIcon from '@mui/icons-material/HelpOutlineOutlined'
 
 export default function HelpModeButton() {
   const help = React.useContext(HelpContext)
@@ -12,13 +13,13 @@ export default function HelpModeButton() {
 
   return (
     <IconButton
-      sx={{ color: help.helpMode ? 'white' : 'black' }}
+      sx={{ color: 'white' }}
       aria-label="Toggle Help Mode"
       onClick={() => {
         changeHelpMode(!help.helpMode)
       }}
     >
-      <HelpOutlineOutlinedIcon />
+      {help.helpMode ? <HelpIcon /> : <HelpOutlineOutlinedIcon />}
     </IconButton>
   )
 }

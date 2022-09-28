@@ -26,7 +26,7 @@ export default function MLPConfig({
         onMouseOver={(e) => {
           hoverFunc(
             e,
-            'The standard activation function for this model. Think of an activation function as the way a neuron decides whether to act on an incoming signal and if so, how much it will react!'
+            'The standard activation function for this model.\nThink of an activation function as the way a neuron decides whether to act on an incoming signal and if so, how much it will react!\nWhen you create a new layer, you can choose its activation function individually, or you can set your default activation function here on the right.'
           )
         }}
         onMouseLeave={leaveFunc}

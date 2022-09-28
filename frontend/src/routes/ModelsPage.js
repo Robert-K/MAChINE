@@ -101,7 +101,7 @@ export default function ModelsPage({ modelList }) {
           onMouseOver={(e) => {
             handleHelpPopperOpen(
               e,
-              "This is a list of all models you have created so far. Click on any one of them to get more information about it, or click on 'Add a model' to add a new one to the list!"
+              "This is a list of all models you have created so far. \n Click on any one of them to get more information about it, or click on 'Add a model' to add a new one to the list."
             )
           }}
           onMouseLeave={handleHelpPopperClose}
@@ -188,7 +188,7 @@ function ModelDescription({
             onMouseOver={(e) => {
               hoverFunc(
                 e,
-                "Here you see all relevant information of your model. On the top, you can see the model's name, as well as which base model was used to create it. Since you can train every model multiple times, you can see all of its trained models listed below, too. To start a new training with your selected model, simply click on 'Select training data'!"
+                "Here you see all relevant information of your model.\nOn the top, you can see the model's name, as well as which base model was used to create it.\nSince you can train every model multiple times, you can see all of its trained models listed below.\nTo start a new training with your selected model, simply click on 'Select training data'!"
               )
             }}
             onMouseLeave={leaveFunc}
@@ -254,7 +254,7 @@ function RenderFitting({ fitting, hoverFunc, leaveFunc }) {
       onMouseOver={(e) => {
         hoverFunc(
           e,
-          'Here you can see which dataset was used to train this trained model, how long the model was trained (epochs), how big the data bundles were that were fed into the network (batch size), and how good the it is (accuracy).'
+          'Here you can see which dataset was used to train this trained model, how long the model was trained (epochs), how big the data bundles were that were fed into the network (batch size), and how good it is (accuracy).'
         )
       }}
       onMouseLeave={leaveFunc}

@@ -20,19 +20,30 @@ export default function HelpPopper({
   return (
     <Popper
       id="mouse-over-popper"
-      sx={{ pointerEvents: 'none', padding: 3 }}
+      sx={{
+        pointerEvents: 'none',
+        padding: 3,
+        zIndex: 100,
+      }}
       open={open}
       anchorEl={anchorEl}
       placement={'right'}
       onClose={onClose}
+      modifiers={[
+        {
+          name: 'preventOverflow',
+          options: {
+            padding: 80,
+          },
+        },
+      ]}
     >
       <Card
         sx={{
           maxWidth: 300,
           border: 1,
           borderColor: theme.palette.primary.main,
-          backgroundColor:
-            theme.components.MuiCard.styleOverrides.root.backgroundColor,
+          backgroundColor: theme.palette.background.default,
         }}
       >
         <CardContent>
@@ -44,7 +55,7 @@ export default function HelpPopper({
           >
             <HelpIcon />
           </Box>
-          <Typography style={{ textAlign: 'center' }}>
+          <Typography style={{ textAlign: 'center', whiteSpace: 'pre-line' }}>
             {helpPopperContent}
           </Typography>
         </CardContent>
