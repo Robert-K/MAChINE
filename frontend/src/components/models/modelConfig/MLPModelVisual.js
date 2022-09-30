@@ -3,7 +3,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import * as vis from 'vis-data'
 import * as v from 'vis-network'
-import LayerConfigPopup from './LayerConfigPopup'
+import LayerConfigPopup, { activationFuncs } from './LayerConfigPopup'
 import Layer from '../../../internal/Layer'
 import LayerDeletionPopup from './LayerDeletionPopup'
 
@@ -194,7 +194,14 @@ export default function MLPModelVisual({
       )
       if (layer.activation) {
         ctx.fillStyle = theme.modelVisual.fontColor
-        ctx.fillText(layer.activation, topNodePos.x, topNodePos.y - 60)
+        ctx.fillText(
+          activationFuncs.find(
+            (element) =>
+              element.toUpperCase() === layer.activation.toUpperCase()
+          ),
+          topNodePos.x,
+          topNodePos.y - 60
+        )
       }
     })
   }
