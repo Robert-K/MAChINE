@@ -9,6 +9,7 @@ export default function OnboardingTooltip({
   tooltipProps,
   primaryProps,
   backProps,
+  skipProps,
 }) {
   const theme = useTheme()
 
@@ -20,7 +21,7 @@ export default function OnboardingTooltip({
         border: `2px solid ${theme.palette.primary.main}`,
       }}
     >
-      <CardContent>
+      <CardContent sx={{ maxWidth: '70vw' }}>
         <p
           style={{
             position: 'absolute',
@@ -40,17 +41,20 @@ export default function OnboardingTooltip({
         {step.content}
       </CardContent>
       <CardActions>
+        <Button
+          color="primary"
+          variant="text"
+          {...skipProps}
+          sx={{ mr: 'auto !important' }}
+        >
+          Cancel
+        </Button>
         {index > 0 && (
           <Button color="primary" variant="text" {...backProps}>
             Back
           </Button>
         )}
-        <Button
-          color="primary"
-          variant="text"
-          sx={{ ml: 'auto !important' }}
-          {...primaryProps}
-        >
+        <Button color="primary" variant="text" {...primaryProps}>
           Next
         </Button>
       </CardActions>
@@ -65,4 +69,5 @@ OnboardingTooltip.propTypes = {
   tooltipProps: PropTypes.object.isRequired,
   primaryProps: PropTypes.object.isRequired,
   backProps: PropTypes.object.isRequired,
+  skipProps: PropTypes.object.isRequired,
 }

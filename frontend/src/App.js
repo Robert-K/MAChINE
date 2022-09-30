@@ -181,10 +181,10 @@ export default function App() {
   }
 
   const logout = () => {
+    setRunOnboarding(false)
     api.stopTraining()
     api.logout().catch((e) => console.log(e))
     setUserName(null)
-    setRunOnboarding(false)
     // TrainingsContext is reset in Navbar
     /* TODO: Delete all Data */
     /* TODO: Delete trained models */
