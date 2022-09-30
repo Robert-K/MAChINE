@@ -54,8 +54,11 @@ export default function MoleculesPage() {
     refreshMolecules()
   }, [user])
 
-  function refreshMolecules() {
-    api.getMoleculeList().then((moleculeList) => setMolecules(moleculeList))
+  function refreshMolecules(addedmol) {
+    api.getMoleculeList().then((moleculeList) => {
+      setMolecules(moleculeList)
+      setSelectedMolecule(addedmol)
+    })
   }
 
   function onMoleculeSelect(index) {
@@ -95,7 +98,9 @@ export default function MoleculesPage() {
     } else {
       api
         .addMolecule(smiles, cml, molName)
-        .then(refreshMolecules)
+        .then(() => {
+          refreshMolecules(new Molecule(molName, smiles, cml))
+        })
         .catch(() =>
           showSnackMessage(
             `Can't save invalid Molecule. Check for Errors in the Editor`,
@@ -221,7 +226,7 @@ function MoleculeView({ selectedMolecule, onSave }) {
           sx={{ color: 'white', zIndex: (theme) => theme.zIndex.drawer + 1 }}
           open={selectedMolecule === null}
         >
-          Select a molecule on the left to view & edit it here.
+          Select a molecule or add one on the left to view & edit it here .
         </Backdrop>
       </CardContent>
       <CardActions>
