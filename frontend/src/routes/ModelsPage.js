@@ -332,6 +332,13 @@ function RenderFitting({
             <ListItem>
               <ListItemText
                 sx={{ color: theme.palette.primary.main }}
+                primary="Label: "
+              ></ListItemText>
+              {handleLabels(fitting.labels)}
+            </ListItem>
+            <ListItem>
+              <ListItemText
+                sx={{ color: theme.palette.primary.main }}
                 primary="Epochs: "
               ></ListItemText>
               {fitting.epochs}
@@ -365,6 +372,19 @@ RenderFitting.propTypes = {
   index: PropTypes.number,
   open: PropTypes.array,
   setOpen: PropTypes.any,
+}
+
+function handleLabels(labelArray) {
+  let labelText = ''
+  for (let i = 0; i < labelArray.length - 1; i++) {
+    labelText = labelText + capitalizedWord(labelArray[i]) + ', '
+  }
+  labelText = labelText + capitalizedWord(labelArray[labelArray.length - 1])
+  return labelText
+}
+
+function capitalizedWord(word) {
+  return word[0].toUpperCase() + word.substring(1)
 }
 
 ModelsPage.propTypes = {
