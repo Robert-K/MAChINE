@@ -27,7 +27,7 @@ export default function DatasetDetailsCard({
         <Typography>Label:</Typography>
         {selectedLabels.map((label) => (
           <ListItem sx={{ py: 0.1 }} key={label}>
-            {label}
+            {label[0].toUpperCase() + label.substring(1)}
           </ListItem>
         ))}
       </CardContent>

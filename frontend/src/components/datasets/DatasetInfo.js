@@ -66,7 +66,7 @@ export default function DatasetInfo({ dataset }) {
                     checkedIcon={<RadioButtonCheckedIcon />}
                   />
                 }
-                label={descriptor}
+                label={descriptor[0].toUpperCase() + descriptor.substring(1)}
               />
             </ListItem>
           )
