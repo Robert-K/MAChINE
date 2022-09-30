@@ -53,7 +53,7 @@ export const standardParameters = {
 export default function ModelConfigPage({ addFunc }) {
   const { state } = useLocation()
   const [parameters, setParameters] = React.useState(state.baseModel.parameters)
-  const [defaultActivation, setDefaultActivation] = React.useState('')
+  const [defaultActivation, setDefaultActivation] = React.useState('ReLU')
   const [name, setName] = React.useState('')
   const [isInvalidConfig, setIsInvalidConfig] = React.useState(false)
   const [showSnackBar, setShowSnackBar] = React.useState(false)
