@@ -75,7 +75,7 @@ export default function MLPModelVisual({
   const [actionIndex, setActionIndex] = React.useState(-1)
   const [popperContentKey, setPopperContentKey] = React.useState('')
   const [visualizedLayers, setVisualizedLayers] = React.useState(
-    [{ type: 'Dense', units: 1 }].concat(modelLayers)
+    [{ type: 'Dense', units: 3 }].concat(modelLayers)
   )
   const [options] = React.useState({
     nodes: {
@@ -201,7 +201,7 @@ export default function MLPModelVisual({
       ctx.strokeStyle = theme.modelVisual.borderColor
       ctx.fillStyle = theme.modelVisual.backgroundColor
       const x = network.getPosition(`${i}.1`).x + 100
-      const y = network.getPosition('0.1').y
+      const y = network.getPosition('0.2').y
       roundRect(ctx, x - 20, y - 20, 40, 40, 7, true, true)
       ctx.font = '30px Poppins'
       ctx.textAlign = 'center'
@@ -218,27 +218,26 @@ export default function MLPModelVisual({
     }
     const nodesByLayer = []
     const newEdges = []
-    // const newOptions = Object.assign({}, options)
     visualizedLayers.forEach((layer, index) => {
       // add new group for layer
       const graphLayer = []
-      if (layer.units < 10) {
+      if (layer.units < 10 && index !== 0) {
         for (let i = 1; i <= layer.units; i++) {
           // add nodes to layer
           graphLayer.push({
             id: `${index}.${i}`,
-            label: index === 0 ? 'Input' : `${i}`,
+            label: `${i}`,
             group: index.toString(),
           })
         }
       } else {
         graphLayer.push({
           id: `${index}.1`,
-          label: '1',
+          label: index === 0 ? 'Input' : '1',
           group: index.toString(),
         })
         graphLayer.push({
-          id: `${index}.${2}`,
+          id: `${index}.2`,
           label: '.\n.\n.',
           group: index.toString(),
           font: {
@@ -247,7 +246,7 @@ export default function MLPModelVisual({
         })
         graphLayer.push({
           id: `${index}.${layer.units}`,
-          label: layer.units.toString(),
+          label: index === 0 ? 'Input' : layer.units.toString(),
           group: index.toString(),
         })
       }
