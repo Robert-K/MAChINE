@@ -83,7 +83,12 @@ def train(user_id, dataset_id, model_id, labels, epochs, batch_size, fitting_id=
     # Placeholder here to ensure no other training can be started while we're initializing, as this takes a while
     # This isn't great
     live_trainings[user_id] = {'Placeholder'}
-    new_training = Training(user_id, dataset_id, model_id, labels, epochs, batch_size, fitting_id)
+    try:
+        new_training = Training(user_id, dataset_id, model_id, labels, epochs, batch_size, fitting_id)
+    except (TypeError, AttributeError):
+        del live_trainings[user_id]
+        return False
+
     live_trainings[user_id] = new_training
     new_training.start_training()
     return True
