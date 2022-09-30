@@ -161,13 +161,13 @@ export default function ModelConfigPage({ addFunc }) {
   }
 
   return (
-    <Grid sx={{ p: 2, height: '85vh' }} container>
+    <Grid sx={{ p: 2, height: '87vh' }} container>
       <Grid item xs={8} sx={{ height: '100%' }}>
         <Card sx={{ height: '100%' }}>
           {modelTypeSpecificComponents[state.baseModel.type.name].visual}
         </Card>
       </Grid>
-      <Grid item xs={4}>
+      <Grid item xs={4} sx={{ height: '100%' }}>
         <Card sx={{ height: '100%', ml: 2 }}>
           <CardContent>
             {Object.entries(standardParameters).map(([param, value], i) => {
