@@ -23,8 +23,8 @@ import { HelpProvider } from './context/HelpContext'
 import { handleErrors } from './utils'
 import '@fontsource/poppins'
 import ModelCreationRouter from './routes/ModelCreationRouter'
-import Joyride, { STATUS } from 'react-joyride'
-import OnboardingTooltip from './components/onboarding/OnboardingTooltip'
+import { STATUS } from 'react-joyride'
+import Onboarding from './Onboarding'
 
 const themeBase = {
   palette: {
@@ -149,35 +149,6 @@ export default function App() {
   const [adminMode, setAdminMode] = React.useState(false)
   const [runOnboarding, setRunOnboarding] = React.useState(false)
 
-  const steps = [
-    {
-      content: (
-        <div>
-          <h2>
-            Hi {userName}! Welcome to{' '}
-            <span style={{ color: theme.palette.primary.main }}>MAChINE</span>!
-          </h2>
-          Would you like to take a quick tour of the app?
-          <br />
-          Sike! There&apos;s no exit button. You&apos;re stuck here now.
-        </div>
-      ),
-      locale: {
-        skip: <strong aria-label="skip">S-K-I-P</strong>,
-      },
-      placement: 'center',
-      target: 'body',
-    },
-    {
-      content: <h2>WOW! A NAVBAR!!!</h2>,
-      floaterProps: {
-        disableAnimation: true,
-      },
-      spotlightPadding: 20,
-      target: '.MuiToolbar-root',
-    },
-  ]
-
   window
     .matchMedia('(prefers-color-scheme: dark)')
     .addEventListener('change', (event) => {
@@ -231,15 +202,11 @@ export default function App() {
 
   handleErrors()
 
-  const handleJoyrideCallback = (data) => {
+  const onboardingCallback = (data) => {
     const { action, index, status, type } = data
     if ([STATUS.FINISHED, STATUS.SKIPPED].includes(status)) {
       setRunOnboarding(false)
     }
-
-    console.groupCollapsed(type)
-    console.log(data) // eslint-disable-line no-console
-    console.groupEnd()
   }
 
   const pattern = ['a', 'd', 'm', 'i', 'n', 'm', 'o', 'd', 'e']
@@ -346,26 +313,7 @@ export default function App() {
                     },
                   }}
                 />
-                <Joyride
-                  tooltipComponent={OnboardingTooltip}
-                  callback={handleJoyrideCallback}
-                  continuous
-                  hideCloseButton
-                  run={runOnboarding}
-                  scrollToFirstStep
-                  disableOverlayClose
-                  disableCloseOnEsc
-                  showProgress
-                  showSkipButton
-                  steps={steps}
-                  styles={{
-                    options: {
-                      arrowColor: theme.palette.primary.main,
-                      overlayColor: 'rgba(0, 0, 0, 0.33)',
-                      zIndex: 10000,
-                    },
-                  }}
-                />
+                <Onboarding run={runOnboarding} callback={onboardingCallback} />
                 <Routes>
                   <Route
                     path="/"
