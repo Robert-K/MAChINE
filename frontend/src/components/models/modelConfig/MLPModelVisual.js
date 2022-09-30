@@ -128,7 +128,7 @@ export default function MLPModelVisual({
 
   /**
    * Handles click on network canvas
-   * does nothing if:
+   * does nothing or closes layer configuration popup if:
    *   left of first or right of last layer, or if
    *   a configuration is already in progress
    * calculates actionIndex
@@ -142,8 +142,11 @@ export default function MLPModelVisual({
     if (
       clickPos.x < network.getPosition('0.1').x ||
       clickPos.x > network.getPosition(`${visualizedLayers.length - 1}.1`).x ||
+      clickPos.y < network.getPosition('0.2').y - 20 ||
+      clickPos.y < network.getPosition('0.2').y - 20 ||
       open
     ) {
+      setOpen(false)
       return
     }
     // calculate actionIndex and determine action type
