@@ -148,7 +148,7 @@ export default function HomePage() {
             <CardMedia
               component="img"
               height="230"
-              image="MsG_Logo_Flat.png"
+              image="msg_logo_flat.png"
               alt="lightgreen"
             />
             <CardContent>
