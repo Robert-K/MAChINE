@@ -8,7 +8,7 @@ export default function MLPConfig({
   hoverFunc,
   leaveFunc,
 }) {
-  const [activation, setActivation] = React.useState('relu')
+  const [activation, setActivation] = React.useState('ReLU')
 
   return (
     <FormControl fullWidth>

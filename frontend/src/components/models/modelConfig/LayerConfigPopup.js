@@ -13,16 +13,16 @@ import Button from '@mui/material/Button'
 import PropTypes from 'prop-types'
 
 export const activationFuncs = [
-  'linear',
-  'relu',
-  'sigmoid',
-  'softmax',
-  'softplus',
-  'softsign',
-  'tanh',
-  'selu',
-  'elu',
-  'exponential',
+  'Linear',
+  'ReLU',
+  'Sigmoid',
+  'Softmax',
+  'Softplus',
+  'Softsign',
+  'Tanh',
+  'SELU',
+  'ELU',
+  'Exponential',
 ]
 
 export default function LayerConfigPopup({
@@ -35,7 +35,7 @@ export default function LayerConfigPopup({
   const [error, setError] = React.useState(false)
 
   const handleSubmit = () => {
-    passConfig(units, activation)
+    passConfig(units, activation.toLowerCase())
   }
 
   const handleCancel = () => {
