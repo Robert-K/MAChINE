@@ -2,15 +2,13 @@ import React from 'react'
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material'
 import PropTypes from 'prop-types'
 import { activationFuncs } from './LayerConfigPopup'
-import HelpContext from '../../../context/HelpContext'
 
 export default function MLPConfig({
   updateDefaultActivation,
   hoverFunc,
   leaveFunc,
 }) {
-  const [activation, setActivation] = React.useState('')
-  const help = React.useContext(HelpContext)
+  const [activation, setActivation] = React.useState('relu')
 
   return (
     <FormControl fullWidth>
