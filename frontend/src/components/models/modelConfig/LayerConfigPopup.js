@@ -30,8 +30,8 @@ export default function LayerConfigPopup({
   cancelConfig,
   defaultActivation,
 }) {
-  const [activation, setActivation] = React.useState('')
-  const [units, setUnits] = React.useState(0)
+  const [activation, setActivation] = React.useState(defaultActivation)
+  const [units, setUnits] = React.useState(1)
   const [error, setError] = React.useState(false)
 
   const handleSubmit = () => {

@@ -32,7 +32,7 @@ export const standardParameters = {
       'RMSprop',
       'Adadelta',
       'Adagrad',
-      'NAdam',
+      'Nadam',
       'Ftrl',
     ],
     explanation:
