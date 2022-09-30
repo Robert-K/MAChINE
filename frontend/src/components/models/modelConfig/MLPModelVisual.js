@@ -231,13 +231,14 @@ export default function MLPModelVisual({
     visualizedLayers.forEach((layer, index) => {
       // add new group for layer
       const graphLayer = []
-      if (layer.units < 10 && index !== 0) {
+      if (layer.units < 7 && index !== 0) {
         for (let i = 1; i <= layer.units; i++) {
           // add nodes to layer
           graphLayer.push({
             id: `${index}.${i}`,
             label: `${i}`,
             group: index.toString(),
+            margin: 10,
           })
         }
       } else {
@@ -245,6 +246,7 @@ export default function MLPModelVisual({
           id: `${index}.1`,
           label: index === 0 ? 'Input' : '1',
           group: index.toString(),
+          margin: 10,
         })
         graphLayer.push({
           id: `${index}.2`,
@@ -253,11 +255,13 @@ export default function MLPModelVisual({
           font: {
             vadjust: -2.57,
           },
+          margin: 10,
         })
         graphLayer.push({
           id: `${index}.${layer.units}`,
           label: index === 0 ? 'Input' : layer.units.toString(),
           group: index.toString(),
+          margin: 10,
         })
       }
       nodesByLayer.push(graphLayer)
