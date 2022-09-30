@@ -10,6 +10,7 @@ import {
   useTheme,
 } from '@mui/material'
 import Button from '@mui/material/Button'
+import { NavLink } from 'react-router-dom'
 
 export default function HomePage() {
   const theme = useTheme()
@@ -53,7 +54,7 @@ export default function HomePage() {
         >
           -{' '}
           <Box display="inline" color="text.primary">
-            Draw
+            <NavLink to="/molecules">Draw</NavLink>
           </Box>{' '}
           any molecule imaginable and preview it in 3D
         </Typography>
@@ -65,7 +66,7 @@ export default function HomePage() {
         >
           -{' '}
           <Box display="inline" color="text.primary">
-            Configure
+            <NavLink to="/models">Configure</NavLink>
           </Box>{' '}
           and train machine learning models to predict properties of molecules
         </Typography>
@@ -77,7 +78,7 @@ export default function HomePage() {
         >
           -{' '}
           <Box display="inline" color="text.primary">
-            Analyze
+            <NavLink to="/molecules">Analyze</NavLink>
           </Box>{' '}
           your molecules for various properties with the models you trained
         </Typography>
@@ -89,7 +90,7 @@ export default function HomePage() {
         >
           -{' '}
           <Box display="inline" color="text.primary">
-            Compare
+            <NavLink to="/results">Compare</NavLink>
           </Box>{' '}
           your molecules and models to other users&apos; creations
         </Typography>
