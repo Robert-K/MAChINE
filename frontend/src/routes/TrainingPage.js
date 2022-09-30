@@ -235,7 +235,10 @@ export default function TrainingPage() {
           }}
           onMouseLeave={handleHelpPopperClose}
         >
-          <PrettyChart data={filterData(training.trainingData)} />
+          <PrettyChart
+            data={filterData(training.trainingData)}
+            maxLength={training.selectedEpochs}
+          />
         </Box>
         <Grid container>
           <Grid item xs={8}>
