@@ -2,6 +2,7 @@ import React from 'react'
 import { Box, Card, CardContent, ListItem, Typography } from '@mui/material'
 import PropTypes from 'prop-types'
 import ModelConfig from '../../internal/ModelConfig'
+import { camelToNaturalString } from '../../utils'
 
 export default function ModelDetailsCard({
   selectedModel,
@@ -30,9 +31,7 @@ export default function ModelDetailsCard({
                 {valueName === 'layers' ? (
                   <SmallLayerVisual layers={value} />
                 ) : (
-                  `${
-                    valueName[0].toUpperCase() + valueName.substring(1)
-                  }: ${JSON.stringify(value)}`
+                  `${camelToNaturalString(valueName)}: ${JSON.stringify(value)}`
                 )}
               </ListItem>
             )
