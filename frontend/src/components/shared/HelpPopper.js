@@ -1,13 +1,5 @@
 import React from 'react'
-import {
-  Box,
-  Card,
-  CardContent,
-  Popper,
-  Typography,
-  useTheme,
-} from '@mui/material'
-import HelpIcon from '@mui/icons-material/Help'
+import { Card, CardContent, Popper, Typography, useTheme } from '@mui/material'
 import PropTypes from 'prop-types'
 
 export default function HelpPopper({
@@ -47,14 +39,6 @@ export default function HelpPopper({
         }}
       >
         <CardContent>
-          <Box
-            display="flex"
-            alignItems="center"
-            justifyContent="center"
-            sx={{ mb: 1 }}
-          >
-            <HelpIcon />
-          </Box>
           <Typography style={{ textAlign: 'center', whiteSpace: 'pre-line' }}>
             {helpPopperContent}
           </Typography>
