@@ -112,13 +112,13 @@ export default function Navbar({
           <Button
             sx={{ mr: 2 }}
             variant="contained"
+            size="large"
             onClick={() => {
               user.setAdminMode(false)
             }}
-            primary="Aaah"
+            endIcon={<AdminPanelSettingsIcon />}
           >
             Exit Admin Mode
-            <AdminPanelSettingsIcon sx={{ m: 1 }} />
           </Button>
         ) : null}
 

@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Box, Button, IconButton, Paper, Typography } from '@mui/material'
+import { Box, Button, Card, IconButton, Typography } from '@mui/material'
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings'
 import DeleteSweepIcon from '@mui/icons-material/DeleteSweep'
 import DeleteIcon from '@mui/icons-material/Delete'
@@ -20,7 +20,7 @@ export default function ScoreboardsPage() {
       field: 'id',
       headerName: <b>ID</b>,
       headerAlign: 'center',
-      align: 'right',
+      align: 'center',
       description:
         'The ID got created automatically. It is unique and IDentifys a fitting',
       sortable: false,
@@ -43,7 +43,7 @@ export default function ScoreboardsPage() {
         )
       },
       flex: 4,
-      minWidth: 180,
+      minWidth: 200,
     },
     {
       field: 'userName',
@@ -67,7 +67,7 @@ export default function ScoreboardsPage() {
       field: 'datasetID',
       headerName: <b>Dataset ID</b>,
       headerAlign: 'center',
-      align: 'right',
+      align: 'center',
       type: 'number',
       flex: 2,
       minWidth: 90,
@@ -84,7 +84,7 @@ export default function ScoreboardsPage() {
       field: 'epochs',
       headerName: <b>Epochs</b>,
       headerAlign: 'center',
-      align: 'right',
+      align: 'center',
       flex: 2,
       minWidth: 70,
     },
@@ -92,7 +92,7 @@ export default function ScoreboardsPage() {
       field: 'batchSize',
       headerName: <b>Batch Size</b>,
       headerAlign: 'center',
-      align: 'right',
+      align: 'center',
       flex: 2,
       minWidth: 85,
     },
@@ -100,7 +100,7 @@ export default function ScoreboardsPage() {
       field: 'accuracy',
       headerName: <b>Accuracy</b>,
       headerAlign: 'center',
-      align: 'right',
+      align: 'center',
       flex: 2,
       minWidth: 70,
     },
@@ -123,9 +123,9 @@ export default function ScoreboardsPage() {
     <div align="center">
       <Box
         sx={{
-          mx: 5,
-          mb: 5,
-          mt: 2,
+          mx: 4,
+          mb: 4,
+          mt: 1,
           '& .table-theme': {
             bgcolor: 'primary.light',
             '&:hover': {
@@ -140,13 +140,13 @@ export default function ScoreboardsPage() {
         {adminMode ? (
           <AdminPanel changeFunc={setAdminMode} refreshFunc={refresh} />
         ) : null}
-        <Paper sx={{ maxWidth: 1000, m: 5 }}>
+        <Card sx={{ maxWidth: '80vw', m: 4 }}>
           <DataTable
             columns={fittingColumns}
             rows={fittingRows}
             highlightedRows={highlightedRows}
           />
-        </Paper>
+        </Card>
       </Box>
     </div>
   )
@@ -157,26 +157,27 @@ function AdminPanel({ changeFunc, refreshFunc }) {
     <Box>
       <Button
         variant="contained"
-        sx={{ m: 3 }}
+        size="large"
+        sx={{ m: 1 }}
         onClick={() => {
-          api.deleteScoreboardFittings().then((response) => {
+          api.deleteScoreboardFittings().then(() => {
             refreshFunc()
           })
         }}
+        endIcon={<DeleteSweepIcon />}
       >
-        {' '}
-        {'Delete All!'}
-        <DeleteSweepIcon sx={{ m: 1 }} />{' '}
+        Delete All!
       </Button>
       <Button
         variant="contained"
-        sx={{ m: 3 }}
+        size="large"
+        sx={{ m: 1 }}
         onClick={() => {
           changeFunc(false)
         }}
+        endIcon={<AdminPanelSettingsIcon />}
       >
-        {'Leave Admin Mode'}
-        <AdminPanelSettingsIcon sx={{ m: 1 }} />
+        Leave Admin Mode
       </Button>
     </Box>
   )
@@ -189,21 +190,19 @@ AdminPanel.propTypes = {
 
 function DataTable({ columns, rows, highlightedRows }) {
   return (
-    <div style={{ height: 600, width: '100%' }}>
-      <DataGrid
-        sx={{ borderColor: 'primary.light' }}
-        rows={rows}
-        columns={columns}
-        disableColumnMenu={true}
-        hideFooter={true}
-        experimentalFeatures={{ columnGrouping: true }}
-        getRowClassName={(params) => {
-          return highlightedRows.some(({ id }) => id === params.row.id)
-            ? 'table-theme'
-            : null
-        }}
-      />
-    </div>
+    <DataGrid
+      sx={{ height: '72vh', width: '100%' }}
+      rows={rows}
+      columns={columns}
+      disableColumnMenu={true}
+      hideFooter={true}
+      experimentalFeatures={{ columnGrouping: true }}
+      getRowClassName={(params) => {
+        return highlightedRows.some(({ id }) => id === params.row.id)
+          ? 'table-theme'
+          : null
+      }}
+    />
   )
 }
 
