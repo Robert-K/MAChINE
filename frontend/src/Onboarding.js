@@ -26,7 +26,10 @@ export default function Onboarding({ run, callback }) {
         setStepIndex(index + (action === ACTIONS.PREV ? -1 : 1))
       }
       if (steps[index].location) {
-        navigate(steps[stepIndex].location)
+        navigate(
+          steps[stepIndex].location,
+          steps[stepIndex].params ? steps[stepIndex].params : {}
+        )
       }
     }
     if ([EVENTS.STEP_AFTER, EVENTS.TARGET_NOT_FOUND].includes(type)) {
@@ -150,6 +153,115 @@ export default function Onboarding({ run, callback }) {
       ),
       target: '.base-model-card.id-2',
       location: '/models/base-models',
+    },
+    {
+      content: (
+        <div>
+          <h2>
+            This is the{' '}
+            <span style={{ color: theme.palette.primary.main }}>
+              model configuration
+            </span>{' '}
+            page
+          </h2>
+          Here you can configure various properties of your model.
+        </div>
+      ),
+      placement: 'center',
+      target: 'body',
+      location: '/models/model-config',
+      params: {
+        state: {
+          baseModel: {
+            name: 'SequentialA',
+            type: { name: 'sequential', image: null },
+            parameters: {
+              lossFunction: 'Mean Squared Error',
+              optimizer: 'Adam',
+              layers: [
+                { type: 'Dense', units: 256, activation: 'relu' },
+                {
+                  type: 'Dense',
+                  units: 256,
+                  activation: 'relu',
+                },
+                { type: 'Dense', units: 256, activation: 'relu' },
+                { type: 'Dense', units: 1 },
+              ],
+            },
+            id: '1',
+          },
+        },
+      },
+    },
+    {
+      content: (
+        <div>
+          <h2>
+            The{' '}
+            <span style={{ color: theme.palette.primary.main }}>
+              Network Visualizer
+            </span>
+            ...
+          </h2>
+          allows you to add & remove layers and set their activation functions.
+        </div>
+      ),
+      target: '.vis-network',
+    },
+    {
+      content: (
+        <div>
+          <h2>
+            Once you&apos;ve configured your new model, you can start{' '}
+            <span style={{ color: theme.palette.primary.main }}>training</span>{' '}
+            it
+          </h2>
+        </div>
+      ),
+      location: '/models',
+      target: 'body',
+      placement: 'center',
+    },
+    {
+      content: (
+        <div>
+          <h2>
+            First, select the model, then click this{' '}
+            <span style={{ color: theme.palette.primary.main }}>button</span>
+          </h2>
+        </div>
+      ),
+      target: '.select-training-data',
+    },
+    {
+      content: (
+        <div>
+          <h2>
+            Next, pick a{' '}
+            <span style={{ color: theme.palette.primary.main }}>dataset</span>{' '}
+            for training{' '}
+          </h2>
+        </div>
+      ),
+      location: '/datasets',
+      target: 'body',
+      placement: 'center',
+    },
+    {
+      content: (
+        <div>
+          <h2>
+            The dataset determines which{' '}
+            <span style={{ color: theme.palette.primary.main }}>
+              properties
+            </span>{' '}
+            of the molecules your model can predict and how well.
+          </h2>
+        </div>
+      ),
+      location: '/datasets',
+      target: 'button .MuiCardActionArea-root',
     },
   ]
 

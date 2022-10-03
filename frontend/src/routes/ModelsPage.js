@@ -257,6 +257,7 @@ function ModelDescription({
                     onActiveTraining()
                   }
                 }}
+                className="select-training-data"
               >
                 Select Training Data
               </Button>
