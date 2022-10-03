@@ -39,7 +39,6 @@ export default function ModelsPage({ modelList }) {
   const [showDialog, setShowDialog] = React.useState(false)
   const [helpAnchorEl, setHelpAnchorEl] = React.useState(null)
   const training = React.useContext(TrainingContext)
-
   const navigate = useNavigate()
   const [helpPopperContent, setHelpPopperContent] = React.useState('')
 
@@ -160,6 +159,26 @@ function ModelDescription({
   const { setSelectedModel, trainingStatus, resetContext } =
     React.useContext(TrainingContext)
   const navigate = useNavigate()
+  const theme = useTheme()
+  const [open, setOpen] = React.useState([])
+  const [globalOpen, setGlobalOpen] = React.useState(false)
+  let newOpen
+
+  React.useEffect(() => {
+    selectedModel !== undefined
+      ? setOpen(new Array(selectedModel.fittings.length).fill(false))
+      : setOpen([])
+    setGlobalOpen(false)
+  }, [selectedModel])
+
+  const toggleAll = () => {
+    setGlobalOpen(!globalOpen)
+    newOpen = [...open]
+    for (let i = 0; i < newOpen.length; i++) {
+      newOpen[i] = !globalOpen
+    }
+    setOpen(newOpen)
+  }
 
   if (!selectedModel) {
     // no model selected
@@ -190,9 +209,28 @@ function ModelDescription({
             onMouseLeave={leaveFunc}
           ></CardHeader>
           <Divider />
-          <Typography variant="h6" sx={{ pl: 2, pt: 2 }}>
-            Trained models:
-          </Typography>
+          <Grid container>
+            <Grid item xs={6}>
+              <Typography variant="h6" sx={{ pl: 2, pt: 2 }}>
+                Trained models:
+              </Typography>
+            </Grid>
+            <Grid
+              item
+              xs={6}
+              display="flex"
+              sx={{
+                pt: 2,
+                justifyContent: 'flex-end',
+              }}
+            >
+              <Button variant="text" endIcon={<Collapse />} onClick={toggleAll}>
+                <Typography sx={{ color: theme.palette.primary.main }}>
+                  {globalOpen ? 'Collapse all' : 'Expand all'}
+                </Typography>
+              </Button>
+            </Grid>
+          </Grid>
           {/* Adds a fitting for each fitting saved in the model */}
           <List sx={{ flexGrow: 1, overflow: 'auto' }}>
             {selectedModel.fittings.map((fitting, index) => (
@@ -201,6 +239,9 @@ function ModelDescription({
                 key={`${fitting.id}-${index}`}
                 hoverFunc={hoverFunc}
                 leaveFunc={leaveFunc}
+                index={index}
+                open={open}
+                setOpen={setOpen}
               ></RenderFitting>
             ))}
           </List>
@@ -232,16 +273,30 @@ ModelDescription.propTypes = {
   onActiveTraining: PropTypes.any,
   hoverFunc: PropTypes.func,
   leaveFunc: PropTypes.func,
+  fittingsLength: PropTypes.number,
 }
 /**
  * renders a fitting into a collapsable list
  * @param fitting the fitting to be rendered
+ * @param hoverFunc Function that gets called when the mouse hovers over the component
+ * @param leaveFunc Function that gets called when the mouse no longer hovers over the component
+ * @param index todo upd javadoc
+ * @param open
+ * @param setOpen
  * @returns {JSX.Element}
  */
-function RenderFitting({ fitting, hoverFunc, leaveFunc }) {
-  const [open, setOpen] = React.useState(false)
+function RenderFitting({
+  fitting,
+  hoverFunc,
+  leaveFunc,
+  index,
+  open,
+  setOpen,
+}) {
   const toggleOpen = () => {
-    setOpen(!open)
+    const newOpen = [...open]
+    newOpen[index] = !open[index]
+    setOpen(newOpen)
   }
   const theme = useTheme()
   return (
@@ -257,7 +312,7 @@ function RenderFitting({ fitting, hoverFunc, leaveFunc }) {
     >
       <Box sx={{ width: 1 }}>
         <ListItemButton onClick={() => toggleOpen()}>
-          {open ? <ExpandLess /> : <ExpandMore />}
+          {open[index] ? <ExpandLess /> : <ExpandMore />}
           <ListItemText
             primary={`Dataset ID: ${fitting.datasetID}`}
             secondary={`Trained model ID: ${fitting.id}`}
@@ -265,7 +320,7 @@ function RenderFitting({ fitting, hoverFunc, leaveFunc }) {
           ></ListItemText>
         </ListItemButton>
         <Collapse
-          in={open}
+          in={open[index]}
           timeout="auto"
           mountOnEnter
           unmountOnExit
@@ -305,6 +360,9 @@ RenderFitting.propTypes = {
   fitting: PropTypes.object.isRequired,
   hoverFunc: PropTypes.func,
   leaveFunc: PropTypes.func,
+  index: PropTypes.number,
+  open: PropTypes.array,
+  setOpen: PropTypes.any,
 }
 
 ModelsPage.propTypes = {
