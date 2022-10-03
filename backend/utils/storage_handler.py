@@ -13,6 +13,8 @@ __all__ = ['add_analysis',
            'add_model',
            'add_molecule',
            'add_user_handler',
+           'delete_scoreboard_fitting',
+           'delete_scoreboard_fittings',
            'delete_user_handler',
            'get_analyses',
            'get_base_model',
@@ -23,8 +25,6 @@ __all__ = ['add_analysis',
            'get_fitting_summary',
            'get_fitting_summaries',
            'get_scoreboard_summaries',
-           'delete_scoreboard_fitting',
-           'delete_scoreboard_fittings',
            'get_model_summary',
            'get_model_summaries',
            'get_molecules',
@@ -60,9 +60,6 @@ class UserDataStorageHandler:
 
     def get_molecules(self):
         return self.molecules
-
-    def get_username(self):
-        return self.username
 
     # Analyses
     def add_analysis(self, smiles, fitting_id, results):
@@ -189,7 +186,7 @@ class StorageHandler:
         self.__analyze_datasets()
         self.__read_base_model_types()
         self.__read_base_models()
-        self.scoreboard_summaries = list()
+        self.scoreboard_summaries = self.__read_scoreboard_summaries()
 
     def add_user_handler(self, user_id, username) -> UserDataStorageHandler:
         if self.user_storage_handler.get(user_id) is None:
@@ -256,16 +253,18 @@ class StorageHandler:
         fitting_id = self.get_user_handler(user_id).add_fitting(dataset_id, labels, epochs, accuracy, batch_size,
                                                                 model_id,
                                                                 fitting)
-        self.scoreboard_summaries.append({'id': fitting_id,
-                                          'userName': str(self.get_user_handler(user_id).username),
-                                          'modelID': model_id,
-                                          'modelName': self.get_user_handler(user_id).get_model_summary(model_id).get(
-                                              'name'),
-                                          'datasetID': dataset_id,
-                                          'labels': labels,
-                                          'epochs': epochs,
-                                          'batchSize': batch_size,
-                                          'accuracy': accuracy})
+        self.scoreboard_summaries[fitting_id] = {'id': fitting_id,
+                                                 'userName': str(self.get_user_handler(user_id).username),
+                                                 'modelID': model_id,
+                                                 'modelName': self.get_user_handler(user_id).get_model_summary(
+                                                     model_id).get(
+                                                     'name'),
+                                                 'datasetID': dataset_id,
+                                                 'labels': labels,
+                                                 'epochs': epochs,
+                                                 'batchSize': batch_size,
+                                                 'accuracy': accuracy}
+        self.__save_scoreboard_summaries()
         return fitting_id
 
     def update_fitting(self, user_id, fitting_id, epochs, accuracy, fitting):
@@ -281,15 +280,12 @@ class StorageHandler:
         return self.scoreboard_summaries
 
     def delete_scoreboard_fitting(self, fitting_id):
-        to_remove = list()
-        for i in self.scoreboard_summaries:
-            if i.get('id') == fitting_id:
-                to_remove.append(i)
-        for i in to_remove:
-            self.scoreboard_summaries.remove(i)
+        self.scoreboard_summaries.pop(fitting_id)
+        self.__save_scoreboard_summaries()
 
     def delete_scoreboard_fittings(self):
-        self.scoreboard_summaries = list()
+        self.scoreboard_summaries = dict()
+        self.__save_scoreboard_summaries()
 
     def get_fitting_summaries(self, user_id):
         return self.get_user_handler(user_id).get_fitting_summaries()
@@ -350,6 +346,22 @@ class StorageHandler:
             self.base_model_types = json.load(file)
             file.close()
 
+    @staticmethod
+    def __read_scoreboard_summaries():
+        scoreboard_path = _user_data_path / 'scoreboard.json'
+        data = dict()
+        if scoreboard_path.exists():
+            file = scoreboard_path.open('r')
+            data = json.load(file)
+            file.close()
+        return data
+
+    def __save_scoreboard_summaries(self):
+        scoreboard_path = _user_data_path / 'scoreboard.json'
+        file = scoreboard_path.open('w')
+        json.dump(self.scoreboard_summaries, file)
+        file.close()
+
 
 _inst = StorageHandler()
 add_analysis = _inst.add_analysis
@@ -357,6 +369,8 @@ add_fitting = _inst.add_fitting
 add_model = _inst.add_model
 add_molecule = _inst.add_molecule
 add_user_handler = _inst.add_user_handler
+delete_scoreboard_fitting = _inst.delete_scoreboard_fitting
+delete_scoreboard_fittings = _inst.delete_scoreboard_fittings
 delete_user_handler = _inst.delete_user_handler
 get_analyses = _inst.get_analyses
 get_base_model = _inst.get_base_model
@@ -372,5 +386,3 @@ get_model_summaries = _inst.get_model_summaries
 get_molecules = _inst.get_molecules
 get_user_handler = _inst.get_user_handler
 update_fitting = _inst.update_fitting
-delete_scoreboard_fitting = _inst.delete_scoreboard_fitting
-delete_scoreboard_fittings = _inst.delete_scoreboard_fittings

@@ -140,7 +140,7 @@ class Fittings(Resource):
 
 class Scoreboard(Resource):
     def get(self):
-        return sh.get_scoreboard_summaries()
+        return list(sh.get_scoreboard_summaries().values())
 
     def delete(self, fitting_id):
         if fitting_id == '0':
