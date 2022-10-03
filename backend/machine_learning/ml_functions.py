@@ -168,4 +168,4 @@ class LiveStats(keras.callbacks.Callback):
                                                 finished_training.batch_size,
                                                 finished_training.model_id,
                                                 self.model)
-            api.notify_training_done(self.user_id, fitting_id, self.epochs_trained)
+            api.notify_training_done(self.user_id, fitting_id, self.epochs_trained, accuracy)
