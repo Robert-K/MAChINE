@@ -97,8 +97,9 @@ export default function StartPage({ onLogin }) {
             justifyContent="center"
           >
             <TextField
-              label="Name"
+              label="Your name"
               value={enteredName}
+              autoFocus
               onChange={(e) => updateName(e.target.value)}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' && enteredName) submitName()

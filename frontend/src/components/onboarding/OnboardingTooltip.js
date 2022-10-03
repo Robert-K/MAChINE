@@ -50,7 +50,7 @@ export default function OnboardingTooltip({
           Cancel
         </Button>
         <Button color="primary" variant="text" {...primaryProps}>
-          Next
+          Next{index === 0 ? ' (ENTER)' : ''}
         </Button>
       </CardActions>
     </Card>
