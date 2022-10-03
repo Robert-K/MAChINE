@@ -54,8 +54,10 @@ export default function HomePage() {
           component="div"
         >
           -{' '}
-          <Box display="inline" color="text.primary">
-            <NavLink to="/molecules">Draw</NavLink>
+          <Box display="inline">
+            <NavLink to="/molecules">
+              <span style={{ color: theme.palette.text.primary }}>Draw</span>
+            </NavLink>
           </Box>{' '}
           any molecule imaginable and preview it in 3D
         </Typography>
@@ -66,8 +68,12 @@ export default function HomePage() {
           component="div"
         >
           -{' '}
-          <Box display="inline" color="text.primary">
-            <NavLink to="/models">Configure</NavLink>
+          <Box display="inline">
+            <NavLink to="/models">
+              <span style={{ color: theme.palette.text.primary }}>
+                Configure
+              </span>
+            </NavLink>
           </Box>{' '}
           and train machine learning models to predict properties of molecules
         </Typography>
@@ -79,7 +85,9 @@ export default function HomePage() {
         >
           -{' '}
           <Box display="inline" color="text.primary">
-            <NavLink to="/molecules">Analyze</NavLink>
+            <NavLink to="/molecules">
+              <span style={{ color: theme.palette.text.primary }}>Analyze</span>
+            </NavLink>
           </Box>{' '}
           your molecules for various properties with the models you trained
         </Typography>
@@ -91,7 +99,9 @@ export default function HomePage() {
         >
           -{' '}
           <Box display="inline" color="text.primary">
-            <NavLink to="/results">Compare</NavLink>
+            <NavLink to="/results">
+              <span style={{ color: theme.palette.text.primary }}>Compare</span>
+            </NavLink>
           </Box>{' '}
           your molecules and models to other users&apos; creations
         </Typography>

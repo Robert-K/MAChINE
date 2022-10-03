@@ -27,7 +27,6 @@ import ExpandMore from '@mui/icons-material/ExpandMore'
 import PropTypes from 'prop-types'
 import { useNavigate } from 'react-router-dom'
 import TrainingContext from '../context/TrainingContext'
-import UserContext from '../context/UserContext'
 import HelpPopper from '../components/shared/HelpPopper'
 import HelpContext from '../context/HelpContext'
 
@@ -38,14 +37,12 @@ const gridHeight = '80vh'
 export default function ModelsPage({ modelList }) {
   const [selectedIndex, setSelectedIndex] = React.useState(-1)
   const [showDialog, setShowDialog] = React.useState(false)
-  const [creatingModel, setCreatingModel] = React.useState(false)
   const [helpAnchorEl, setHelpAnchorEl] = React.useState(null)
   const training = React.useContext(TrainingContext)
 
   const navigate = useNavigate()
   const [helpPopperContent, setHelpPopperContent] = React.useState('')
 
-  const user = React.useContext(UserContext)
   const help = React.useContext(HelpContext)
 
   const handleHelpPopperOpen = (event, content) => {
