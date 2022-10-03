@@ -172,7 +172,7 @@ class User(Resource):
                             'a4"/></bondArray></molecule></cml>',
                             'Water')
 
-            example_model_id = sh.add_model(user_id, 'MyExampleModel',
+            example_model_id = sh.add_model(user_id, 'Example Model',
                                             {'layers': [
                                                 {
                                                     'type': 'dense',
