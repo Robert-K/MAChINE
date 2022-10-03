@@ -58,10 +58,12 @@ export const TrainingProvider = ({ children }) => {
     })
     api.registerSocketListener('done', (response) => {
       setTrainingStatus(false)
-      setTrainingFinished(true)
-      setTrainingID(response.fittingID)
-      setSelectedEpochs(response.epochs)
-      setFinishedAccuracy(response.accuracy)
+      if (selectedLabels.length !== 0) {
+        setTrainingFinished(true)
+        setTrainingID(response.fittingID)
+        setSelectedEpochs(response.epochs)
+        setFinishedAccuracy(response.accuracy)
+      }
     })
   }, [])
 
