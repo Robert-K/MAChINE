@@ -49,11 +49,6 @@ export default function OnboardingTooltip({
         >
           Cancel
         </Button>
-        {index > 0 && (
-          <Button color="primary" variant="text" {...backProps}>
-            Back
-          </Button>
-        )}
         <Button color="primary" variant="text" {...primaryProps}>
           Next
         </Button>

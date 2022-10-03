@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { useTheme } from '@mui/material'
 import UserContext from './context/UserContext'
 import Joyride, { ACTIONS, EVENTS } from 'react-joyride'
@@ -13,13 +13,11 @@ export default function Onboarding({ run, callback }) {
   const locationName = useLocation().pathname
   const [stepIndex, setStepIndex] = React.useState(0)
 
-  useEffect(() => {
-    setStepIndex(0)
-  }, [run])
-
   const internalCallback = (data) => {
-    console.log(data)
     const { action, index, status, type } = data
+    if ([ACTIONS.START, ACTIONS.RESTART].includes(action)) {
+      setStepIndex(0)
+    }
     if (EVENTS.STEP_BEFORE === type) {
       if (
         steps[index].skipLocations &&
@@ -29,7 +27,6 @@ export default function Onboarding({ run, callback }) {
       }
       if (steps[index].location) {
         navigate(steps[stepIndex].location)
-        setStepIndex(index + (action === ACTIONS.PREV ? 1 : -1))
       }
     }
     if ([EVENTS.STEP_AFTER, EVENTS.TARGET_NOT_FOUND].includes(type)) {
@@ -46,9 +43,8 @@ export default function Onboarding({ run, callback }) {
             Hi {user.userName}! Welcome to{' '}
             <span style={{ color: theme.palette.primary.main }}>MAChINE</span>!
           </h2>
-          Would you like to take a quick tour of the app?
-          <br />
-          Sike! There&apos;s no exit button. You&apos;re stuck here now.
+          This tour will guide you through the most important features of the
+          app.
         </div>
       ),
       placement: 'center',
@@ -101,12 +97,7 @@ export default function Onboarding({ run, callback }) {
       location: '/models',
     },
     {
-      content: (
-        <h2>
-          Let&apos;s add a{' '}
-          <span style={{ color: theme.palette.primary.main }}>model</span>
-        </h2>
-      ),
+      content: <h2>You can add a new model using this button</h2>,
       target: 'button[aria-label="Add item"]',
       location: '/models',
     },
@@ -114,16 +105,50 @@ export default function Onboarding({ run, callback }) {
       content: (
         <div>
           <h2>
-            Next, select a{' '}
+            Next is selecting a{' '}
             <span style={{ color: theme.palette.primary.main }}>
               base model
             </span>
           </h2>
-          Your new model will be based on this pre-configured model. We&apos;ll
-          start with Sequential A, but you can try out the others later.
+          Your new model will be based on this pre-configured model.
         </div>
       ),
-      target: 'button.MuiCardActionArea-root',
+      placement: 'center',
+      target: 'body',
+      location: '/models/base-models',
+    },
+    {
+      content: (
+        <div>
+          <h2>
+            The{' '}
+            <span style={{ color: theme.palette.primary.main }}>
+              Sequential
+            </span>{' '}
+            base model
+          </h2>
+          It&apos;s the simplest model type, consisting of a single stack of
+          layers. <br />
+          However, it offers the most customization options in MAChINE.
+        </div>
+      ),
+      target: '.base-model-card.id-1',
+      location: '/models/base-models',
+    },
+    {
+      content: (
+        <div>
+          <h2>
+            The{' '}
+            <span style={{ color: theme.palette.primary.main }}>SchNet</span>{' '}
+            base model
+          </h2>
+          SchNet is short for Schrödinger Network. Consisting of a graph neural
+          network and an MLP component, it&apos; more complex than the
+          Sequential model, but also more powerful.
+        </div>
+      ),
+      target: '.base-model-card.id-2',
       location: '/models/base-models',
     },
   ]
