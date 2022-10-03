@@ -15,7 +15,6 @@ export default function DatasetPage() {
   React.useEffect(() => {
     api.getDatasets().then((datasetList) => {
       setDatasets(datasetList)
-      console.log(datasets)
     })
   }, [])
 

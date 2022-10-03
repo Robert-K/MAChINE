@@ -169,7 +169,6 @@ export default {
 
   registerSocketListener(action, onAction) {
     return socket.on(action, (res) => {
-      console.log(res)
       if (res[userID]) {
         onAction(res[userID])
       }
