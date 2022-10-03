@@ -105,6 +105,7 @@ export default function SelectionList({
       >
         <CardActions>
           <Button
+            aria-label="Add item"
             onClick={() => {
               handleIndexChange(-1)
               addFunc()

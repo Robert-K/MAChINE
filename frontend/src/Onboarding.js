@@ -14,12 +14,11 @@ export default function Onboarding({ run, callback }) {
   const [stepIndex, setStepIndex] = React.useState(0)
 
   useEffect(() => {
-    if (!run) {
-      setStepIndex(0)
-    }
+    setStepIndex(0)
   }, [run])
 
   const internalCallback = (data) => {
+    console.log(data)
     const { action, index, status, type } = data
     if (EVENTS.STEP_BEFORE === type) {
       if (
@@ -30,6 +29,7 @@ export default function Onboarding({ run, callback }) {
       }
       if (steps[index].location) {
         navigate(steps[stepIndex].location)
+        setStepIndex(index + (action === ACTIONS.PREV ? 1 : -1))
       }
     }
     if ([EVENTS.STEP_AFTER, EVENTS.TARGET_NOT_FOUND].includes(type)) {
@@ -68,7 +68,6 @@ export default function Onboarding({ run, callback }) {
         </div>
       ),
       spotlightPadding: 0,
-      spotlightClicks: true,
       target: '.MuiToolbar-root',
     },
     {
@@ -82,7 +81,6 @@ export default function Onboarding({ run, callback }) {
         </div>
       ),
       spotlightPadding: 0,
-      spotlightClicks: true,
       target: "a[href$='/models']",
       skipLocations: ['/models'],
     },
@@ -101,6 +99,32 @@ export default function Onboarding({ run, callback }) {
       placement: 'center',
       target: 'body',
       location: '/models',
+    },
+    {
+      content: (
+        <h2>
+          Let&apos;s add a{' '}
+          <span style={{ color: theme.palette.primary.main }}>model</span>
+        </h2>
+      ),
+      target: 'button[aria-label="Add item"]',
+      location: '/models',
+    },
+    {
+      content: (
+        <div>
+          <h2>
+            Next, select a{' '}
+            <span style={{ color: theme.palette.primary.main }}>
+              base model
+            </span>
+          </h2>
+          Your new model will be based on this pre-configured model. We&apos;ll
+          start with Sequential A, but you can try out the others later.
+        </div>
+      ),
+      target: 'button.MuiCardActionArea-root',
+      location: '/models/base-models',
     },
   ]
 
