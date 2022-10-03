@@ -4,9 +4,11 @@ import LanIcon from '@mui/icons-material/Lan'
 import ServerConfigForm from './ServerConfigForm'
 import { Badge, IconButton, badgeClasses } from '@mui/material'
 import api from '../../api'
+import UserContext from '../../context/UserContext'
 
 export default function ServerStatusButton() {
   const [anchorEl, setAnchorEl] = React.useState(null)
+  const { adminMode } = React.useContext(UserContext)
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget)
@@ -18,7 +20,7 @@ export default function ServerStatusButton() {
 
   const [color, setColor] = React.useState('error')
 
-  const open = Boolean(anchorEl)
+  const open = Boolean(anchorEl && adminMode)
   const id = open ? 'simple-popover' : undefined
 
   function updateColor() {

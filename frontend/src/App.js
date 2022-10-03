@@ -127,6 +127,7 @@ export default function App() {
 
   const [helpMode, setHelpMode] = React.useState(false)
   const [userName, setUserName] = React.useState(null)
+  const [adminMode, setAdminMode] = React.useState(false)
 
   window
     .matchMedia('(prefers-color-scheme: dark)')
@@ -182,7 +183,7 @@ export default function App() {
   return (
     <div className="App">
       <ThemeProvider theme={darkMode ? themeDark : themeLight}>
-        <UserProvider value={{ userName }}>
+        <UserProvider value={{ userName, adminMode, setAdminMode }}>
           <HelpProvider value={{ helpMode, setHelpMode }}>
             <TrainingProvider>
               <CssBaseline />

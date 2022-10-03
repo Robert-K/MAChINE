@@ -4,12 +4,15 @@ import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings'
 import DeleteSweepIcon from '@mui/icons-material/DeleteSweep'
 import DeleteIcon from '@mui/icons-material/Delete'
 import { DataGrid } from '@mui/x-data-grid'
-import Api from '../api'
+import api from '../api'
 import UserContext from '../context/UserContext'
+import PropTypes from 'prop-types'
 
 export default function ScoreboardsPage() {
   const [fittingRows, setFittingRows] = React.useState([])
-  const [adminMode, setAdminMode] = React.useState(true)
+  const [highlightedRows, setHighlightedRows] = React.useState([])
+
+  const { adminMode, setAdminMode } = React.useContext(UserContext)
   const user = React.useContext(UserContext)
 
   const fittingColumns = [
@@ -28,7 +31,7 @@ export default function ScoreboardsPage() {
             {adminMode ? (
               <IconButton
                 onClick={() => {
-                  Api.deleteScoreboardFitting(params.id).then((response) => {
+                  api.deleteScoreboardFitting(params.id).then((response) => {
                     refresh()
                   })
                 }}
@@ -108,8 +111,11 @@ export default function ScoreboardsPage() {
   }, [user])
 
   function refresh() {
-    Api.getScoreboardSummaries().then((data) => {
+    api.getScoreboardSummaries().then((data) => {
       setFittingRows(data)
+    })
+    api.getFittings().then((data) => {
+      setHighlightedRows(data)
     })
   }
 
@@ -131,55 +137,57 @@ export default function ScoreboardsPage() {
         <Typography sx={{ m: 4 }} variant="h4">
           Best Models
         </Typography>
-        {AdminPanel(adminMode, setAdminMode, refresh)}
+        {adminMode ? (
+          <AdminPanel changeFunc={setAdminMode} refreshFunc={refresh} />
+        ) : null}
         <Paper sx={{ maxWidth: 1000, m: 5 }}>
-          {DataTable(fittingColumns, fittingRows)}
+          <DataTable
+            columns={fittingColumns}
+            rows={fittingRows}
+            highlightedRows={highlightedRows}
+          />
         </Paper>
       </Box>
     </div>
   )
 }
 
-function AdminPanel(active, changefunc, reffunc) {
-  if (active) {
-    return (
-      <Box>
-        <Button
-          variant="contained"
-          sx={{ m: 3 }}
-          onClick={() => {
-            Api.deleteScoreboardFittings().then((response) => {
-              reffunc()
-            })
-          }}
-        >
-          {' '}
-          {'Delete All!'}
-          <DeleteSweepIcon sx={{ m: 1 }} />{' '}
-        </Button>
-        <Button
-          variant="contained"
-          sx={{ m: 3 }}
-          onClick={() => {
-            changefunc(false)
-          }}
-        >
-          {'Leave Admin Mode'}
-          <AdminPanelSettingsIcon sx={{ m: 1 }} />
-        </Button>
-      </Box>
-    )
-  }
+function AdminPanel({ changeFunc, refreshFunc }) {
+  return (
+    <Box>
+      <Button
+        variant="contained"
+        sx={{ m: 3 }}
+        onClick={() => {
+          api.deleteScoreboardFittings().then((response) => {
+            refreshFunc()
+          })
+        }}
+      >
+        {' '}
+        {'Delete All!'}
+        <DeleteSweepIcon sx={{ m: 1 }} />{' '}
+      </Button>
+      <Button
+        variant="contained"
+        sx={{ m: 3 }}
+        onClick={() => {
+          changeFunc(false)
+        }}
+      >
+        {'Leave Admin Mode'}
+        <AdminPanelSettingsIcon sx={{ m: 1 }} />
+      </Button>
+    </Box>
+  )
 }
 
-function DataTable(columns, rows) {
-  const [userFittings, setUserFittings] = React.useState([])
-  const user = React.useContext(UserContext)
-  React.useEffect(() => {
-    Api.getFittings().then((data) => {
-      setUserFittings(data)
-    })
-  }, [user])
+AdminPanel.propTypes = {
+  changeFunc: PropTypes.func,
+  refreshFunc: PropTypes.func,
+}
+
+function DataTable({ columns, rows, highlightedRows }) {
   return (
     <div style={{ height: 600, width: '100%' }}>
       <DataGrid
@@ -190,13 +198,17 @@ function DataTable(columns, rows) {
         hideFooter={true}
         experimentalFeatures={{ columnGrouping: true }}
         getRowClassName={(params) => {
-          for (let i = 0; i < userFittings.length; i++) {
-            if (params.row.id === userFittings[i].id) {
-              return 'table-theme'
-            }
-          }
+          return highlightedRows.some(({ id }) => id === params.row.id)
+            ? 'table-theme'
+            : null
         }}
       />
     </div>
   )
+}
+
+DataTable.propTypes = {
+  columns: PropTypes.any,
+  rows: PropTypes.any,
+  highlightedRows: PropTypes.array,
 }
