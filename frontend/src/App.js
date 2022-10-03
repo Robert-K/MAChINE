@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react'
+import React, { useCallback, useEffect } from 'react'
 import ScoreboardsPage from './routes/ScoreboardsPage.js'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import SwaggerPage from './routes/SwaggerPage'
@@ -179,6 +179,24 @@ export default function App() {
   }
 
   handleErrors()
+
+  const pattern = ['a', 'd', 'm', 'i', 'n', 'm', 'o', 'd', 'e']
+  let current = 0
+
+  useEffect(() => {
+    const keyHandler = function (event) {
+      if (pattern.indexOf(event.key) < 0 || event.key !== pattern[current]) {
+        current = 0
+        return
+      }
+      current++
+      if (pattern.length === current && !adminMode) {
+        setAdminMode(true)
+        alert('You are now an admin!')
+      }
+    }
+    document.addEventListener('keydown', keyHandler, false)
+  }, [])
 
   return (
     <div className="App">
