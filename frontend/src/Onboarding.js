@@ -5,6 +5,7 @@ import Joyride, { ACTIONS, EVENTS } from 'react-joyride'
 import OnboardingTooltip from './components/onboarding/OnboardingTooltip'
 import PropTypes from 'prop-types'
 import { useLocation, useNavigate } from 'react-router-dom'
+import TrainingContext from './context/TrainingContext'
 
 export default function Onboarding({ run, callback }) {
   const user = React.useContext(UserContext)
@@ -12,11 +13,13 @@ export default function Onboarding({ run, callback }) {
   const navigate = useNavigate()
   const locationName = useLocation().pathname
   const [stepIndex, setStepIndex] = React.useState(0)
+  const training = React.useContext(TrainingContext)
 
   const internalCallback = (data) => {
     const { action, index, status, type } = data
     if ([ACTIONS.START, ACTIONS.RESTART].includes(action)) {
       setStepIndex(0)
+      training.selectExampleTrainingParameters()
     }
     if (EVENTS.STEP_BEFORE === type) {
       if (
@@ -261,7 +264,23 @@ export default function Onboarding({ run, callback }) {
         </div>
       ),
       location: '/datasets',
-      target: 'button .MuiCardActionArea-root',
+      target: 'button.MuiCardActionArea-root',
+    },
+    {
+      content: (
+        <div>
+          <h2>
+            It&apos;s{' '}
+            <span style={{ color: theme.palette.primary.main }}>
+              training time
+            </span>
+            !
+          </h2>
+        </div>
+      ),
+      location: '/training',
+      target: 'body',
+      placement: 'center',
     },
   ]
 
