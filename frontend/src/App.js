@@ -30,6 +30,16 @@ const themeBase = {
       main: '#6dcd00',
     },
   },
+  components: {
+    MuiDataGrid: {
+      styleOverrides: {
+        columnHeaderTitle: {
+          fontWeight: 600,
+          fontSize: 'large',
+        },
+      },
+    },
+  },
   typography: {
     fontFamily: `"Poppins", "Helvetica", "Arial", sans-serif`,
     fontSize: 14,

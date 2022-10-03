@@ -13,12 +13,11 @@ export default function ScoreboardsPage() {
   const [highlightedRows, setHighlightedRows] = React.useState([])
 
   const { adminMode, setAdminMode } = React.useContext(UserContext)
-  const user = React.useContext(UserContext)
 
   const fittingColumns = [
     {
       field: 'id',
-      headerName: <b>ID</b>,
+      headerName: 'Model ID',
       headerAlign: 'center',
       align: 'center',
       description:
@@ -47,7 +46,7 @@ export default function ScoreboardsPage() {
     },
     {
       field: 'userName',
-      headerName: <b>User Name</b>,
+      headerName: 'Username',
       headerAlign: 'center',
       align: 'center',
       flex: 4,
@@ -55,7 +54,7 @@ export default function ScoreboardsPage() {
     },
     {
       field: 'modelName',
-      headerName: <b>Model Name</b>,
+      headerName: 'Model Name',
       headerAlign: 'center',
       align: 'center',
       description: 'The Name of the Model chosen by its creator',
@@ -65,7 +64,7 @@ export default function ScoreboardsPage() {
     },
     {
       field: 'datasetID',
-      headerName: <b>Dataset ID</b>,
+      headerName: 'Dataset ID',
       headerAlign: 'center',
       align: 'center',
       type: 'number',
@@ -74,7 +73,7 @@ export default function ScoreboardsPage() {
     },
     {
       field: 'labels',
-      headerName: <b>Label</b>,
+      headerName: 'Label',
       headerAlign: 'center',
       align: 'center',
       flex: 2,
@@ -82,7 +81,7 @@ export default function ScoreboardsPage() {
     },
     {
       field: 'epochs',
-      headerName: <b>Epochs</b>,
+      headerName: 'Epochs',
       headerAlign: 'center',
       align: 'center',
       flex: 2,
@@ -90,7 +89,7 @@ export default function ScoreboardsPage() {
     },
     {
       field: 'batchSize',
-      headerName: <b>Batch Size</b>,
+      headerName: 'Batch Size',
       headerAlign: 'center',
       align: 'center',
       flex: 2,
@@ -98,7 +97,7 @@ export default function ScoreboardsPage() {
     },
     {
       field: 'accuracy',
-      headerName: <b>Accuracy</b>,
+      headerName: 'Accuracy',
       headerAlign: 'center',
       align: 'center',
       flex: 2,
@@ -108,7 +107,7 @@ export default function ScoreboardsPage() {
 
   React.useEffect(() => {
     refresh()
-  }, [user])
+  }, [])
 
   function refresh() {
     api.getScoreboardSummaries().then((data) => {
