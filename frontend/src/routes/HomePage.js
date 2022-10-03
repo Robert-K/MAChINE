@@ -11,6 +11,7 @@ import {
 } from '@mui/material'
 import Button from '@mui/material/Button'
 import { NavLink } from 'react-router-dom'
+import HelpOutlineOutlinedIcon from '@mui/icons-material/HelpOutlineOutlined'
 
 export default function HomePage() {
   const theme = useTheme()
@@ -40,7 +41,7 @@ export default function HomePage() {
           </Typography>
         </Box>
       </Box>
-      <Box sx={{ textAlign: 'left', mb: 12 }}>
+      <Box sx={{ textAlign: 'left', mb: 9 }}>
         <Typography variant="h4" color="text.primary" paragraph component="div">
           With{' '}
           <span style={{ color: theme.palette.primary.main }}>MAChINE</span> you
@@ -93,6 +94,19 @@ export default function HomePage() {
             <NavLink to="/results">Compare</NavLink>
           </Box>{' '}
           your molecules and models to other users&apos; creations
+        </Typography>
+      </Box>
+      <Box sx={{ mb: 12 }}>
+        <Typography
+          variant="h6"
+          color="text.secondary"
+          paragraph
+          component="div"
+        >
+          To have individual components of MAChINE explained to you, click on
+          the <HelpOutlineOutlinedIcon /> icon on the top right and then hover
+          over the respective component with your mouse. To turn the
+          explanations off, simply click on the button again.
         </Typography>
       </Box>
       <Box

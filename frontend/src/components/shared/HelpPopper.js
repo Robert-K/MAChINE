@@ -2,12 +2,15 @@ import React from 'react'
 import { Card, CardContent, Popper, Typography, useTheme } from '@mui/material'
 import PropTypes from 'prop-types'
 
-export default function HelpPopper({
-  helpPopperContent,
-  open,
-  anchorEl,
-  onClose,
-}) {
+/**
+ *
+ * @param helpPopperContent The text that will be displayed in the help popper
+ * @param open Whether the popper is open or not
+ * @param anchorEl Where the popper will be placed
+ * @returns {JSX.Element} The MUI card with helpful text inside
+ * @constructor The constructor of the popper.
+ */
+export default function HelpPopper({ helpPopperContent, open, anchorEl }) {
   const theme = useTheme()
   return (
     <Popper
@@ -15,14 +18,13 @@ export default function HelpPopper({
       sx={{
         pointerEvents: 'none',
         padding: 3,
-        zIndex: 100,
       }}
       open={open}
       anchorEl={anchorEl}
       placement={'right'}
-      onClose={onClose}
       modifiers={[
         {
+          // Ensures that the popper doesn't disappear behind the navbar
           name: 'preventOverflow',
           options: {
             padding: 80,
@@ -39,6 +41,7 @@ export default function HelpPopper({
         }}
       >
         <CardContent>
+          {/** whiteSpace: 'pre-line' is necessary to make \n-Linebreaks work within the popper **/}
           <Typography style={{ textAlign: 'center', whiteSpace: 'pre-line' }}>
             {helpPopperContent}
           </Typography>
@@ -52,5 +55,4 @@ HelpPopper.propTypes = {
   helpPopperContent: PropTypes.string.isRequired,
   open: PropTypes.bool.isRequired,
   anchorEl: PropTypes.object,
-  onClose: PropTypes.func,
 }

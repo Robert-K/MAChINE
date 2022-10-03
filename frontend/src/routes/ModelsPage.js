@@ -149,7 +149,6 @@ export default function ModelsPage({ modelList }) {
         helpPopperContent={helpPopperContent}
         open={helpOpen}
         anchorEl={helpAnchorEl}
-        onClose={handleHelpPopperClose}
       />
     </Box>
   )
