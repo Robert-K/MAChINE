@@ -2,7 +2,7 @@ import React from 'react'
 const UserContext = React.createContext({
   userName: '',
   adminMode: false,
-  setAdminActive: () => {},
+  setAdminMode: () => {},
 })
 
 export const UserProvider = UserContext.Provider
