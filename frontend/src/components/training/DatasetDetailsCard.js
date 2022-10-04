@@ -2,6 +2,7 @@ import React from 'react'
 import { Card, CardContent, ListItem, Typography } from '@mui/material'
 import PropTypes from 'prop-types'
 import Dataset from '../../internal/Dataset'
+import { camelToNaturalString } from '../../utils'
 
 export default function DatasetDetailsCard({
   selectedDataset,
@@ -27,7 +28,7 @@ export default function DatasetDetailsCard({
         <Typography>Label:</Typography>
         {selectedLabels.map((label) => (
           <ListItem sx={{ py: 0.1 }} key={label}>
-            {label[0].toUpperCase() + label.substring(1)}
+            {camelToNaturalString(label)}
           </ListItem>
         ))}
       </CardContent>

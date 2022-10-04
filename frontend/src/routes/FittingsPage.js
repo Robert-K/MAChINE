@@ -5,6 +5,7 @@
 import React from 'react'
 import {
   Box,
+  Button,
   Card,
   CardActionArea,
   Dialog,
@@ -19,7 +20,6 @@ import {
   useTheme,
 } from '@mui/material'
 import FittingCard from '../components/models/FittingCard'
-import Button from '@mui/material/Button'
 import DetailsPopper from '../components/shared/DetailsPopper'
 import api from '../api'
 import UserContext from '../context/UserContext'
@@ -29,6 +29,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import Histogram from '../components/datasets/Histogram'
 import { camelToNaturalString } from '../utils'
 import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined'
+import { camelToNaturalString } from '../utils'
 
 export default function FittingsPage() {
   const [fittingArray, setFittingArray] = React.useState([])
@@ -211,7 +212,6 @@ export default function FittingsPage() {
                           size="16px"
                           color="secondary"
                           sx={{ ml: 1 }}
-                        />
                       ) : null}
                     </Button>
                     Labels:
@@ -254,6 +254,7 @@ export default function FittingsPage() {
                   flexDirection: 'column',
                   margin: 'auto',
                   width: '90%',
+                        />
                 }}
               >
                 {Object.entries(chartData).map(([label, data], index) => {

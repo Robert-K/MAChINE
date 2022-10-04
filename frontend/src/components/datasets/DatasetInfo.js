@@ -14,6 +14,7 @@ import { useNavigate } from 'react-router-dom'
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked'
 import RadioButtonCheckedIcon from '@mui/icons-material/RadioButtonChecked'
 import TrainingContext from '../../context/TrainingContext'
+import { camelToNaturalString } from '../../utils'
 
 export default function DatasetInfo({ dataset }) {
   const [labelArray, setLabelArray] = React.useState([])
@@ -66,7 +67,7 @@ export default function DatasetInfo({ dataset }) {
                     checkedIcon={<RadioButtonCheckedIcon />}
                   />
                 }
-                label={descriptor[0].toUpperCase() + descriptor.substring(1)}
+                label={camelToNaturalString(descriptor)}
               />
             </ListItem>
           )

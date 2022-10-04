@@ -29,6 +29,7 @@ import { useNavigate } from 'react-router-dom'
 import TrainingContext from '../context/TrainingContext'
 import HelpPopper from '../components/shared/HelpPopper'
 import HelpContext from '../context/HelpContext'
+import { camelToNaturalString } from '../utils'
 
 const gridHeight = '80vh'
 /**
@@ -378,14 +379,11 @@ RenderFitting.propTypes = {
 function handleLabels(labelArray) {
   let labelText = ''
   for (let i = 0; i < labelArray.length - 1; i++) {
-    labelText = labelText + capitalizedWord(labelArray[i]) + ', '
+    labelText = labelText + camelToNaturalString(labelArray[i]) + ', '
   }
-  labelText = labelText + capitalizedWord(labelArray[labelArray.length - 1])
+  labelText =
+    labelText + camelToNaturalString(labelArray[labelArray.length - 1])
   return labelText
-}
-
-function capitalizedWord(word) {
-  return word[0].toUpperCase() + word.substring(1)
 }
 
 ModelsPage.propTypes = {

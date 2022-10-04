@@ -1,8 +1,13 @@
 import React from 'react'
 import Grid from '@mui/material/Grid'
 import Card from '@mui/material/Card'
-import { Box, CardActionArea, CardHeader, Typography } from '@mui/material'
-import CardContent from '@mui/material/CardContent'
+import {
+  Box,
+  CardActionArea,
+  CardContent,
+  CardHeader,
+  Typography,
+} from '@mui/material'
 import PropTypes from 'prop-types'
 
 export default function FittingCard({
@@ -29,7 +34,6 @@ export default function FittingCard({
             />
             <Box paddingX={2}>
               <Typography variant="subtitle1" component="h4">
-                {/* TODO: display dataset's name instead. */}
                 Training dataset: {fitting.datasetName}
               </Typography>
               <Typography variant="subtitle1" component="h4">

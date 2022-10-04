@@ -67,7 +67,8 @@ export function handleErrors() {
 }
 
 export const camelToNaturalString = (str) => {
-  const splitAtCapitals = str.split(/(?=[A-Z])/)
+  const splitAtCapitals = str.split(/(?=[A-Z][a-z])/)
   const strWithSpaces = splitAtCapitals.join(' ')
-  return `${strWithSpaces.charAt(0).toUpperCase()}${strWithSpaces.slice(1)}`
+  const strCorrected = strWithSpaces.replace('_', ' ')
+  return `${strCorrected.charAt(0).toUpperCase()}${strCorrected.slice(1)}`
 }
