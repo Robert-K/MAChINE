@@ -69,6 +69,15 @@ export function handleErrors() {
 export const camelToNaturalString = (str) => {
   const splitAtCapitals = str.split(/(?=[A-Z][a-z])/)
   const strWithSpaces = splitAtCapitals.join(' ')
-  const strCorrected = strWithSpaces.replace('_', ' ')
-  return `${strCorrected.charAt(0).toUpperCase()}${strCorrected.slice(1)}`
+  const strValReplaced = strWithSpaces.replace('val_', 'validation_')
+  const strCorrected = strValReplaced.replaceAll('_', ' ')
+  return capitalizeWordsAfterSpaces(strCorrected)
+}
+
+function capitalizeWordsAfterSpaces(text) {
+  const words = text.split(' ')
+  for (let i = 0; i < words.length; i++) {
+    words[i] = `${words[i].charAt(0).toUpperCase()}${words[i].substring(1)}`
+  }
+  return words.join(' ')
 }

@@ -1,6 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import api from '../api'
+import { camelToNaturalString } from '../utils'
 
 const TrainingContext = React.createContext({
   trainingStatus: true,
@@ -83,6 +84,7 @@ export const TrainingProvider = ({ children }) => {
       case 'update': {
         const currentData = { ...trainingData }
         Object.entries(action.payload).forEach(([dataName, value], index) => {
+          dataName = camelToNaturalString(dataName)
           currentData[dataName] =
             currentData[dataName] === undefined
               ? [value]
