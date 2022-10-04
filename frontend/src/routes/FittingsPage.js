@@ -26,8 +26,9 @@ import UserContext from '../context/UserContext'
 import HelpContext from '../context/HelpContext'
 import HelpPopper from '../components/shared/HelpPopper'
 import { useLocation, useNavigate } from 'react-router-dom'
+import Histogram from '../components/datasets/Histogram'
+import { camelToNaturalString } from '../utils'
 import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined'
-import PrettyChart from '../components/training/PrettyChart'
 
 export default function FittingsPage() {
   const [fittingArray, setFittingArray] = React.useState([])
@@ -60,16 +61,26 @@ export default function FittingsPage() {
           if (histograms !== null) setHistograms(histograms)
         })
     }
-  }, [selectedFitting.datasetID])
+  }, [selectedFitting])
 
   React.useEffect(() => {
     if (Object.keys(selectedFitting).length !== 0) {
-      const newCharts = {}
+      const newCharts = []
       selectedFitting.labels.forEach((label) => {
-        newCharts[label] = {
-          options: { chart: { type: 'bar' }, xaxis: histograms[label][1] },
-          series: [{ name: label, data: histograms[label][0] }],
+        const hist = histograms[label]
+        const newChart = {
+          name: camelToNaturalString(label),
+          data: [],
         }
+        for (let i = 0; i < hist.buckets.length; i++) {
+          newChart.data.push({
+            x: `[${hist.binEdges[i].toFixed(2)},${hist.binEdges[i + 1].toFixed(
+              2
+            )}]`,
+            y: hist.buckets[i],
+          })
+        }
+        newCharts.push(newChart)
       })
       setCharts(newCharts)
     }
@@ -201,37 +212,37 @@ export default function FittingsPage() {
                 }}
                 leaveFunc={handleHelpPopperClose}
               />
-
-              <Dialog
-                open={openDialog}
-                onClose={handleCloseDialog}
-                aria-labelledby="alert-dialog-title"
-                aria-describedby="alert-dialog-description"
-              >
-                <DialogTitle id="alert-dialog-title">
-                  {'You successfully analyzed your molecule!'}
-                </DialogTitle>
-                <DialogContent>
-                  <DialogContentText id="alert-dialog-description">
-                    {`Result: ${analysis}`}
-                  </DialogContentText>
-                  <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-                    {charts.map((chart) => {
-                      return (
-                        <PrettyChart data={chart} key={chart.series.name} />
-                      )
-                    })}
-                  </Box>
-                </DialogContent>
-                <DialogActions>
-                  <Button onClick={handleCloseDialog}>Remain here</Button>
-                  <Button onClick={handleGoToMol} autoFocus>
-                    Go to Molecules
-                  </Button>
-                </DialogActions>
-              </Dialog>
             </React.Fragment>
           ))}
+
+          <Dialog
+            open={openDialog}
+            onClose={handleCloseDialog}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+            fullWidth
+            maxWidth="md"
+          >
+            <DialogTitle id="alert-dialog-title">
+              {'You successfully analyzed your molecule!'}
+            </DialogTitle>
+            <DialogContent>
+              <DialogContentText id="alert-dialog-description">
+                {`Result: ${analysis}`}
+              </DialogContentText>
+              <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                {charts.map((chart, index) => {
+                  return <Histogram seriesObject={chart} key={index} />
+                })}
+              </Box>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleCloseDialog}>Remain here</Button>
+              <Button onClick={handleGoToMol} autoFocus>
+                Go to Molecules
+              </Button>
+            </DialogActions>
+          </Dialog>
           <DetailsPopper anchor={anchor} open={open} content={content} />
           <HelpPopper
             id="helpPopper"
