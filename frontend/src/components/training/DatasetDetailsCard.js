@@ -1,6 +1,7 @@
 import React from 'react'
 import { Card, CardContent, ListItem, Typography } from '@mui/material'
 import PropTypes from 'prop-types'
+import Dataset from '../../internal/Dataset'
 
 export default function DatasetDetailsCard({
   selectedDataset,
@@ -35,8 +36,13 @@ export default function DatasetDetailsCard({
 }
 
 DatasetDetailsCard.propTypes = {
-  selectedDataset: PropTypes.object.isRequired,
-  selectedLabels: PropTypes.array.isRequired,
+  selectedDataset: PropTypes.object,
+  selectedLabels: PropTypes.array,
   hoverFunc: PropTypes.func,
   leaveFunc: PropTypes.func,
+}
+
+DatasetDetailsCard.defaultProps = {
+  selectedDataset: new Dataset('ERROR', 'ERROR', 0, ['ERROR']),
+  selectedLabels: ['ERROR'],
 }

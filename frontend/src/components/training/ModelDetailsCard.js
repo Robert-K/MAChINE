@@ -1,6 +1,7 @@
 import React from 'react'
 import { Box, Card, CardContent, ListItem, Typography } from '@mui/material'
 import PropTypes from 'prop-types'
+import ModelConfig from '../../internal/ModelConfig'
 
 export default function ModelDetailsCard({
   selectedModel,
@@ -43,9 +44,13 @@ export default function ModelDetailsCard({
 }
 
 ModelDetailsCard.propTypes = {
-  selectedModel: PropTypes.object.isRequired,
+  selectedModel: PropTypes.object,
   hoverFunc: PropTypes.func,
   leaveFunc: PropTypes.func,
+}
+
+ModelDetailsCard.defaultProps = {
+  selectedModel: new ModelConfig('ERROR', 'ERROR', 'ERROR', {}, []),
 }
 
 function SmallLayerVisual({ layers }) {

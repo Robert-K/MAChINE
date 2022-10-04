@@ -1,6 +1,5 @@
 import json
-from time import sleep
-
+import sched, time
 from flask import Flask
 from flask_cors import CORS
 from flask_restful import reqparse, Api, Resource
@@ -14,6 +13,8 @@ app = Flask(__name__)
 cors = CORS(app)
 api = Api(app)
 sio = SocketIO(app, cors_allowed_origins='*', async_mode="threading", logger=True, engineio_logger=True)
+
+scheduler = sched.scheduler(time.time, sio.sleep)
 
 parser = reqparse.RequestParser()
 parser.add_argument('username')
@@ -278,14 +279,23 @@ api.add_resource(BaseModels, '/baseModels')
 
 # SocketIO event listeners/senders
 def update_training_logs(user_id, logs):
-    sio.emit('update', {user_id: logs})
+    scheduler.enter(0.3 * (len(scheduler.queue) + 1),
+                    2,
+                    sio.emit,
+                    ('update', {user_id: logs}))
+    sio.start_background_task(scheduler.run, blocking=True)
 
 
 def notify_training_done(user_id, fitting_id, epochs_trained, accuracy):
-    sio.emit('done', {user_id: {'fittingID': fitting_id, 'epochs': epochs_trained, 'accuracy': accuracy}})
+    scheduler.enter(0.3 * (len(scheduler.queue) + 1),
+                    2,
+                    sio.emit,
+                    ('done', {user_id: {'fittingID': fitting_id, 'epochs': epochs_trained, 'accuracy': accuracy}}))
+    sio.start_background_task(scheduler.run, blocking=True)
 
 
 def notify_training_start(user_id, epochs):
+    scheduler.empty()
     sio.emit('started', {user_id: epochs})
 
 

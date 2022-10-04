@@ -235,44 +235,52 @@ export default function TrainingPage() {
           }}
           onMouseLeave={handleHelpPopperClose}
         >
-          <PrettyChart data={filterData(training.trainingData)} />
+          <PrettyChart
+            data={filterData(training.trainingData)}
+            maxLength={training.selectedEpochs}
+          />
         </Box>
-        <Button
-          variant="outlined"
-          disabled={epochsError || batchSizeError}
-          sx={{ m: 2 }}
-          onClick={handleStartStop}
-        >
-          {startStopButton}
-          {!loadTraining ? null : (
-            <CircularProgress size="16px" sx={{ ml: 1 }} />
-          )}
-        </Button>
-        <Dialog open={showDialog} onClose={handleCloseDialog}>
-          <DialogTitle>{'Abort current training?'}</DialogTitle>
-          <DialogActions>
-            <Button onClick={handleCloseDialog}>Cancel</Button>
-            <Button onClick={abortTraining}>Abort</Button>
-          </DialogActions>
-        </Dialog>
-        {!training.trainingFinished ? null : (
-          <Button
-            variant="outlined"
-            disabled={epochsError || loadTraining}
-            sx={{ m: 2 }}
-            onClick={handleAdditionalTraining}
-          >
-            Train additional {localEpochs} epochs
-          </Button>
-        )}
-        <Box sx={{ flexGrow: 1 }}></Box>
-        <Button
-          variant="outlined"
-          sx={{ m: 2 }}
-          onClick={() => navigate('/molecules')}
-        >
-          Continue to Molecules
-        </Button>
+        <Grid container>
+          <Grid item xs={8}>
+            <Button
+              variant="outlined"
+              disabled={epochsError || batchSizeError}
+              sx={{ m: 2 }}
+              onClick={handleStartStop}
+            >
+              {startStopButton}
+              {!loadTraining ? null : (
+                <CircularProgress size="16px" sx={{ ml: 1 }} />
+              )}
+            </Button>
+            <Dialog open={showDialog} onClose={handleCloseDialog}>
+              <DialogTitle>{'Abort current training?'}</DialogTitle>
+              <DialogActions>
+                <Button onClick={handleCloseDialog}>Cancel</Button>
+                <Button onClick={abortTraining}>Abort</Button>
+              </DialogActions>
+            </Dialog>
+            {!training.trainingFinished ? null : (
+              <Button
+                variant="outlined"
+                disabled={epochsError || loadTraining}
+                sx={{ m: 2 }}
+                onClick={handleAdditionalTraining}
+              >
+                Train additional {localEpochs} epochs
+              </Button>
+            )}
+          </Grid>
+          <Grid item xs={4}>
+            <Button
+              variant="outlined"
+              sx={{ m: 2 }}
+              onClick={() => navigate('/molecules')}
+            >
+              Continue to Molecules
+            </Button>
+          </Grid>
+        </Grid>
       </Grid>
       <Dialog open={showFinishDialog} onClose={handleCloseFinishDialog}>
         <DialogTitle>{'Your training finished!'}</DialogTitle>

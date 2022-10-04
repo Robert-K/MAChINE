@@ -39,6 +39,13 @@ const themeBase = {
         },
       },
     },
+    MuiLinearProgress: {
+      styleOverrides: {
+        bar: {
+          transition: 'transform 0.05s linear',
+        },
+      },
+    },
   },
   typography: {
     fontFamily: `"Poppins", "Helvetica", "Arial", sans-serif`,

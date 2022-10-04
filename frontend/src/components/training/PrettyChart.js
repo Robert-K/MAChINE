@@ -6,10 +6,11 @@ import propTypes from 'prop-types'
 export default function PrettyChart({ data }) {
   const theme = useTheme()
   const displayedData = data || [{ data: [] }]
+  const xLength = displayedData.loss ? displayedData.loss.length : 10
   return (
     <Chart
       options={{
-        stroke: { curve: 'smooth' },
+        stroke: { curve: xLength > 100 ? 'straight' : 'smooth' },
         dataLabels: { enabled: false },
         fill: {
           type: 'gradient',
@@ -27,14 +28,18 @@ export default function PrettyChart({ data }) {
           background: 'transparent',
           toolbar: { show: false },
           animations: {
-            enabled: true,
+            enabled: xLength < 70,
             easing: 'linear',
             dynamicAnimation: {
-              speed: 1000,
+              speed: 290,
             },
           },
         },
-        colors: [theme.palette.primary.main],
+        colors: ['#2E93fA', '#66DA26', '#546E7A', '#E91E63', '#FF9800'],
+        xaxis: {
+          min: 1,
+          tickAmount: xLength > 30 ? 25 : 10,
+        },
         yaxis: {
           forceNiceScale: true,
           decimalsInFloat: 2,
@@ -49,4 +54,8 @@ export default function PrettyChart({ data }) {
 
 PrettyChart.propTypes = {
   data: propTypes.array,
+}
+
+PrettyChart.defaultProps = {
+  maxLength: 10,
 }
