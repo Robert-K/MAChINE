@@ -7,6 +7,8 @@ import {
   List,
   ListItemButton,
   ListItemText,
+  Typography,
+  useTheme,
 } from '@mui/material'
 import Button from '@mui/material/Button'
 import PropTypes from 'prop-types'
@@ -39,6 +41,7 @@ export default function SelectionList({
   const [open, setOpen] = React.useState(false)
   const [content, setContent] = React.useState(<h1>Placeholder</h1>)
   const [anchor, setAnchor] = React.useState(null)
+  const theme = useTheme()
 
   /**
    * popper configuration
@@ -114,20 +117,38 @@ export default function SelectionList({
             <AddIcon sx={{ mr: 1 }} /> Add a {elementType}
           </Button>
         </CardActions>
-        <List sx={{ flexGrow: 1, overflow: 'auto' }}>
-          {elements.map((element, index) => (
-            <ListItemButton
-              key={index + element.name}
-              onClick={() => {
-                handleIndexChange(index)
-              }}
-              selected={selectedIndex === index}
-            >
-              <ListItemText primary={element.name} />
-              {popperButton(element)}
-            </ListItemButton>
-          ))}
-        </List>
+        {elements.length === 0 ? (
+          <Typography
+            display="flex"
+            justifyContent="center"
+            sx={{
+              color: theme.palette.text.secondary,
+              m: 2,
+              mt: 3,
+              whiteSpace: 'pre-line',
+              textAlign: 'center',
+            }}
+          >
+            {
+              'You have created no models yet.\nClick on the button above to configure one!'
+            }
+          </Typography>
+        ) : (
+          <List sx={{ flexGrow: 1, overflow: 'auto' }}>
+            {elements.map((element, index) => (
+              <ListItemButton
+                key={index + element.name}
+                onClick={() => {
+                  handleIndexChange(index)
+                }}
+                selected={selectedIndex === index}
+              >
+                <ListItemText primary={element.name} />
+                {popperButton(element)}
+              </ListItemButton>
+            ))}
+          </List>
+        )}
         <DetailsPopper
           anchor={anchor}
           open={open}
