@@ -142,6 +142,7 @@ export default function MoleculesPage() {
             updateFunc={(index) => onMoleculeSelect(index)}
             height={gridHeight}
             forcedSelectedIndex={selectedIndex}
+            pageName={'molecules'}
           ></SelectionList>
         </Grid>
         <Grid

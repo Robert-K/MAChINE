@@ -36,6 +36,7 @@ export default function SelectionList({
   addFunc,
   height,
   forcedSelectedIndex,
+  pageName,
 }) {
   const [selectedIndex, setSelectedIndex] = React.useState(forcedSelectedIndex)
   const [open, setOpen] = React.useState(false)
@@ -129,9 +130,9 @@ export default function SelectionList({
               textAlign: 'center',
             }}
           >
-            {
-              'You have created no models yet.\nClick on the button above to configure one!'
-            }
+            {'You have created no ' +
+              pageName +
+              ' yet.\nClick on the button above to configure one!'}
           </Typography>
         ) : (
           <List sx={{ flexGrow: 1, overflow: 'auto' }}>
@@ -168,6 +169,7 @@ SelectionList.propTypes = {
   addFunc: PropTypes.func.isRequired,
   height: PropTypes.any,
   forcedSelectedIndex: PropTypes.any,
+  pageName: PropTypes.string,
 }
 
 SelectionList.defaultProps = {
