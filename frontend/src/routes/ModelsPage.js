@@ -336,7 +336,7 @@ function RenderFitting({
                 sx={{ color: theme.palette.primary.main }}
                 primary="Label: "
               ></ListItemText>
-              {handleLabels(fitting.labels)}
+              {camelToNaturalString(fitting.labels.join(', '))}
             </ListItem>
             <ListItem>
               <ListItemText
@@ -374,16 +374,6 @@ RenderFitting.propTypes = {
   index: PropTypes.number,
   open: PropTypes.array,
   setOpen: PropTypes.any,
-}
-
-function handleLabels(labelArray) {
-  let labelText = ''
-  for (let i = 0; i < labelArray.length - 1; i++) {
-    labelText = labelText + camelToNaturalString(labelArray[i]) + ', '
-  }
-  labelText =
-    labelText + camelToNaturalString(labelArray[labelArray.length - 1])
-  return labelText
 }
 
 ModelsPage.propTypes = {
