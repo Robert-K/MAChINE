@@ -10,6 +10,8 @@ import {
   useTheme,
 } from '@mui/material'
 import Button from '@mui/material/Button'
+import { NavLink } from 'react-router-dom'
+import HelpOutlineOutlinedIcon from '@mui/icons-material/HelpOutlineOutlined'
 
 export default function HomePage() {
   const theme = useTheme()
@@ -39,7 +41,7 @@ export default function HomePage() {
           </Typography>
         </Box>
       </Box>
-      <Box sx={{ textAlign: 'left', mb: 12 }}>
+      <Box sx={{ textAlign: 'left', mb: 9 }}>
         <Typography variant="h4" color="text.primary" paragraph component="div">
           With{' '}
           <span style={{ color: theme.palette.primary.main }}>MAChINE</span> you
@@ -52,8 +54,10 @@ export default function HomePage() {
           component="div"
         >
           -{' '}
-          <Box display="inline" color="text.primary">
-            Draw
+          <Box display="inline">
+            <NavLink to="/molecules">
+              <span style={{ color: theme.palette.text.primary }}>Draw</span>
+            </NavLink>
           </Box>{' '}
           any molecule imaginable and preview it in 3D
         </Typography>
@@ -64,8 +68,12 @@ export default function HomePage() {
           component="div"
         >
           -{' '}
-          <Box display="inline" color="text.primary">
-            Configure
+          <Box display="inline">
+            <NavLink to="/models">
+              <span style={{ color: theme.palette.text.primary }}>
+                Configure
+              </span>
+            </NavLink>
           </Box>{' '}
           and train machine learning models to predict properties of molecules
         </Typography>
@@ -77,7 +85,9 @@ export default function HomePage() {
         >
           -{' '}
           <Box display="inline" color="text.primary">
-            Analyze
+            <NavLink to="/molecules">
+              <span style={{ color: theme.palette.text.primary }}>Analyze</span>
+            </NavLink>
           </Box>{' '}
           your molecules for various properties with the models you trained
         </Typography>
@@ -89,9 +99,24 @@ export default function HomePage() {
         >
           -{' '}
           <Box display="inline" color="text.primary">
-            Compare
+            <NavLink to="/results">
+              <span style={{ color: theme.palette.text.primary }}>Compare</span>
+            </NavLink>
           </Box>{' '}
           your molecules and models to other users&apos; creations
+        </Typography>
+      </Box>
+      <Box sx={{ mb: 12 }}>
+        <Typography
+          variant="h6"
+          color="text.secondary"
+          paragraph
+          component="div"
+        >
+          To have individual components of MAChINE explained to you, click on
+          the <HelpOutlineOutlinedIcon /> icon on the top right and then hover
+          over the respective component with your mouse. To turn the
+          explanations off, simply click on the button again.
         </Typography>
       </Box>
       <Box
@@ -148,7 +173,7 @@ export default function HomePage() {
             <CardMedia
               component="img"
               height="230"
-              image="MsG_Logo_Flat.png"
+              image="msg_logo_flat.png"
               alt="lightgreen"
             />
             <CardContent>

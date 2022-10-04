@@ -25,6 +25,7 @@ const TrainingContext = React.createContext({
   softResetContext: () => {},
   resetContext: () => {},
   stopTraining: () => {},
+  finishedAccuracy: 0,
 })
 
 export const TrainingProvider = ({ children }) => {
@@ -37,6 +38,7 @@ export const TrainingProvider = ({ children }) => {
   const [selectedLabels, setSelectedLabels] = React.useState([])
   const [selectedEpochs, setSelectedEpochs] = React.useState(10)
   const [selectedBatchSize, setSelectedBatchSize] = React.useState(64)
+  const [finishedAccuracy, setFinishedAccuracy] = React.useState(0)
   const [trainingData, dispatchTrainingData] = React.useReducer(
     updateTrainingData,
     {},
@@ -59,6 +61,7 @@ export const TrainingProvider = ({ children }) => {
       setTrainingFinished(true)
       setTrainingID(response.fittingID)
       setSelectedEpochs(response.epochs)
+      setFinishedAccuracy(response.accuracy)
     })
   }, [])
 
@@ -132,6 +135,7 @@ export const TrainingProvider = ({ children }) => {
         softResetContext,
         resetContext,
         stopTraining,
+        finishedAccuracy,
       }}
     >
       {children}

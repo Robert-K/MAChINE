@@ -32,7 +32,7 @@ export const standardParameters = {
       'RMSprop',
       'Adadelta',
       'Adagrad',
-      'NAdam',
+      'Nadam',
       'Ftrl',
     ],
     explanation:
@@ -53,7 +53,7 @@ export const standardParameters = {
 export default function ModelConfigPage({ addFunc }) {
   const { state } = useLocation()
   const [parameters, setParameters] = React.useState(state.baseModel.parameters)
-  const [defaultActivation, setDefaultActivation] = React.useState('')
+  const [defaultActivation, setDefaultActivation] = React.useState('ReLU')
   const [name, setName] = React.useState('')
   const [isInvalidConfig, setIsInvalidConfig] = React.useState(false)
   const [showSnackBar, setShowSnackBar] = React.useState(false)
@@ -161,13 +161,13 @@ export default function ModelConfigPage({ addFunc }) {
   }
 
   return (
-    <Grid sx={{ p: 2, height: '85vh' }} container>
+    <Grid sx={{ p: 2, height: '87vh' }} container>
       <Grid item xs={8} sx={{ height: '100%' }}>
         <Card sx={{ height: '100%' }}>
           {modelTypeSpecificComponents[state.baseModel.type.name].visual}
         </Card>
       </Grid>
-      <Grid item xs={4}>
+      <Grid item xs={4} sx={{ height: '100%' }}>
         <Card sx={{ height: '100%', ml: 2 }}>
           <CardContent>
             {Object.entries(standardParameters).map(([param, value], i) => {

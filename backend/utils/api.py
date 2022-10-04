@@ -281,8 +281,8 @@ def update_training_logs(user_id, logs):
     sio.emit('update', {user_id: logs})
 
 
-def notify_training_done(user_id, fitting_id, epochs_trained):
-    sio.emit('done', {user_id: {'fittingID': fitting_id, 'epochs': epochs_trained}})
+def notify_training_done(user_id, fitting_id, epochs_trained, accuracy):
+    sio.emit('done', {user_id: {'fittingID': fitting_id, 'epochs': epochs_trained, 'accuracy': accuracy}})
 
 
 def notify_training_start(user_id, epochs):

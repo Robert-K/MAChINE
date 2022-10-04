@@ -23,6 +23,7 @@ import InfoIcon from '@mui/icons-material/Info'
  * @param usePopper boolean whether a descriptive popper should appear
  * @param addFunc function to be called when using add button
  * @param height string setting height of the list (ex: 88vh)
+ * @param forcedSelectedIndex index set by parent component
  * @returns {JSX.Element}
  */
 export default function SelectionList({
@@ -32,8 +33,9 @@ export default function SelectionList({
   usePopper,
   addFunc,
   height,
+  forcedSelectedIndex,
 }) {
-  const [selectedIndex, setSelectedIndex] = React.useState(-1)
+  const [selectedIndex, setSelectedIndex] = React.useState(forcedSelectedIndex)
   const [open, setOpen] = React.useState(false)
   const [content, setContent] = React.useState(<h1>Placeholder</h1>)
   const [anchor, setAnchor] = React.useState(null)
@@ -75,6 +77,10 @@ export default function SelectionList({
         </IconButton>
       )
   }
+
+  React.useEffect(() => {
+    setSelectedIndex(forcedSelectedIndex)
+  }, [forcedSelectedIndex])
 
   /**
    * Handler for Index Changes (aka list item clicks & "New"-Button clicks)
@@ -139,8 +145,10 @@ SelectionList.propTypes = {
   updateFunc: PropTypes.func,
   addFunc: PropTypes.func.isRequired,
   height: PropTypes.any,
+  forcedSelectedIndex: PropTypes.any,
 }
 
 SelectionList.defaultProps = {
   height: '7vh',
+  forcedSelectedIndex: -1,
 }

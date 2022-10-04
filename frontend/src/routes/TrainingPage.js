@@ -8,6 +8,8 @@ import {
   DialogTitle,
   Grid,
   TextField,
+  Typography,
+  useTheme,
 } from '@mui/material'
 import ModelDetailsCard from '../components/training/ModelDetailsCard'
 import DatasetDetailsCard from '../components/training/DatasetDetailsCard'
@@ -31,6 +33,8 @@ export default function TrainingPage() {
   const [startStopButton, setStartStopButton] = React.useState('Start')
   const [loadTraining, setLoadTraining] = React.useState(false)
   const [openSnackError, setOpenSnackError] = React.useState(false)
+  const [showFinishDialog, setShowFinishDialog] = React.useState(false)
+  const theme = useTheme()
 
   const checkEpochs = (epochs) => {
     if (epochs > 0) {
@@ -80,6 +84,10 @@ export default function TrainingPage() {
     }
   }, [training.trainingStatus])
 
+  React.useEffect(() => {
+    setShowFinishDialog(training.trainingFinished)
+  }, [training.trainingFinished])
+
   const handleStartStop = () => {
     if (training.trainingStatus) {
       setShowDialog(true)
@@ -112,6 +120,10 @@ export default function TrainingPage() {
 
   const handleCloseDialog = () => {
     setShowDialog(false)
+  }
+
+  const handleCloseFinishDialog = () => {
+    setShowFinishDialog(false)
   }
 
   const abortTraining = () => {
@@ -262,6 +274,30 @@ export default function TrainingPage() {
           Continue to Molecules
         </Button>
       </Grid>
+      <Dialog open={showFinishDialog} onClose={handleCloseFinishDialog}>
+        <DialogTitle>{'Your training finished!'}</DialogTitle>
+        <Typography
+          display="flex"
+          sx={{
+            justifyContent: 'center',
+            color: theme.palette.text.secondary,
+            p: 2,
+          }}
+        >
+          {"Your model's accuracy: " + training.finishedAccuracy + '%'}
+        </Typography>
+
+        <DialogActions>
+          <Button onClick={handleCloseFinishDialog}>Close</Button>
+          <Button
+            onClick={() => {
+              navigate('/molecules')
+            }}
+          >
+            Continue to molecules
+          </Button>
+        </DialogActions>
+      </Dialog>
       <SnackBarAlert
         open={openSnackError}
         onClose={() => setOpenSnackError(false)}

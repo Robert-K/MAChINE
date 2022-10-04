@@ -6,6 +6,7 @@ import pickle
 import tensorflow as tf
 from base64 import encodebytes
 import io
+import shortuuid
 from PIL import Image
 
 __all__ = ['add_analysis',
@@ -73,7 +74,7 @@ class UserDataStorageHandler:
 
     # Models
     def add_model(self, name, parameters, base_model_id):
-        model_id = str(hash(str(parameters)) ^ hash(name) ^ hash(base_model_id))
+        model_id = shortuuid.uuid()
         self.model_summaries[model_id] = {'name': name,
                                           'baseModelID': base_model_id,
                                           'parameters': parameters,
@@ -91,7 +92,7 @@ class UserDataStorageHandler:
     # Fittings
     # Saves a fitting, creates a summary, updates the model summary
     def add_fitting(self, dataset_id, labels, epochs, accuracy, batch_size, model_id, fitting):
-        fitting_id = str(hash(fitting) ^ hash(epochs) ^ hash(accuracy) ^ hash(batch_size))
+        fitting_id = shortuuid.uuid()
         path = self.save_fitting(fitting_id, fitting)
         self.fitting_summaries[fitting_id] = {'datasetID': dataset_id,
                                               'labels': labels,

@@ -3,7 +3,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import * as vis from 'vis-data'
 import * as v from 'vis-network'
-import LayerConfigPopup from './LayerConfigPopup'
+import LayerConfigPopup, { activationFuncs } from './LayerConfigPopup'
 import Layer from '../../../internal/Layer'
 import LayerDeletionPopup from './LayerDeletionPopup'
 
@@ -75,7 +75,7 @@ export default function MLPModelVisual({
   const [actionIndex, setActionIndex] = React.useState(-1)
   const [popperContentKey, setPopperContentKey] = React.useState('')
   const [visualizedLayers, setVisualizedLayers] = React.useState(
-    [{ type: 'Dense', units: 1 }].concat(modelLayers)
+    [{ type: 'Dense', units: 3 }].concat(modelLayers)
   )
   const [options] = React.useState({
     nodes: {
@@ -128,7 +128,7 @@ export default function MLPModelVisual({
 
   /**
    * Handles click on network canvas
-   * does nothing if:
+   * does nothing or closes layer configuration popup if:
    *   left of first or right of last layer, or if
    *   a configuration is already in progress
    * calculates actionIndex
@@ -142,8 +142,11 @@ export default function MLPModelVisual({
     if (
       clickPos.x < network.getPosition('0.1').x ||
       clickPos.x > network.getPosition(`${visualizedLayers.length - 1}.1`).x ||
+      clickPos.y < network.getPosition('0.2').y - 20 ||
+      clickPos.y < network.getPosition('0.2').y - 20 ||
       open
     ) {
+      setOpen(false)
       return
     }
     // calculate actionIndex and determine action type
@@ -191,7 +194,14 @@ export default function MLPModelVisual({
       )
       if (layer.activation) {
         ctx.fillStyle = theme.modelVisual.fontColor
-        ctx.fillText(layer.activation, topNodePos.x, topNodePos.y - 60)
+        ctx.fillText(
+          activationFuncs.find(
+            (element) =>
+              element.toUpperCase() === layer.activation.toUpperCase()
+          ),
+          topNodePos.x,
+          topNodePos.y - 60
+        )
       }
     })
   }
@@ -201,7 +211,7 @@ export default function MLPModelVisual({
       ctx.strokeStyle = theme.modelVisual.borderColor
       ctx.fillStyle = theme.modelVisual.backgroundColor
       const x = network.getPosition(`${i}.1`).x + 100
-      const y = network.getPosition('0.1').y
+      const y = network.getPosition('0.2').y
       roundRect(ctx, x - 20, y - 20, 40, 40, 7, true, true)
       ctx.font = '30px Poppins'
       ctx.textAlign = 'center'
@@ -218,37 +228,40 @@ export default function MLPModelVisual({
     }
     const nodesByLayer = []
     const newEdges = []
-    // const newOptions = Object.assign({}, options)
     visualizedLayers.forEach((layer, index) => {
       // add new group for layer
       const graphLayer = []
-      if (layer.units < 10) {
+      if (layer.units < 7 && index !== 0) {
         for (let i = 1; i <= layer.units; i++) {
           // add nodes to layer
           graphLayer.push({
             id: `${index}.${i}`,
-            label: index === 0 ? 'Input' : `${i}`,
+            label: `${i}`,
             group: index.toString(),
+            margin: 10,
           })
         }
       } else {
         graphLayer.push({
           id: `${index}.1`,
-          label: '1',
+          label: index === 0 ? 'Input' : '1',
           group: index.toString(),
+          margin: 10,
         })
         graphLayer.push({
-          id: `${index}.${2}`,
+          id: `${index}.2`,
           label: '.\n.\n.',
           group: index.toString(),
           font: {
             vadjust: -2.57,
           },
+          margin: 10,
         })
         graphLayer.push({
           id: `${index}.${layer.units}`,
-          label: layer.units.toString(),
+          label: index === 0 ? 'Input' : layer.units.toString(),
           group: index.toString(),
+          margin: 10,
         })
       }
       nodesByLayer.push(graphLayer)

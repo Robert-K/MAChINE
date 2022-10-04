@@ -28,6 +28,7 @@ import HelpContext from '../context/HelpContext'
 const gridHeight = '85vh'
 export default function MoleculesPage() {
   const [molecules, setMolecules] = React.useState([])
+  const [selectedIndex, setSelectedIndex] = React.useState(-1)
   const [selectedMolecule, setSelectedMolecule] = React.useState(null)
   const [snackMessage, setSnackMessage] = React.useState('')
   const [showSnackBar, setShowSnackBar] = React.useState(false)
@@ -54,8 +55,14 @@ export default function MoleculesPage() {
     refreshMolecules()
   }, [user])
 
-  function refreshMolecules() {
-    api.getMoleculeList().then((moleculeList) => setMolecules(moleculeList))
+  function refreshMolecules(addedMol) {
+    api.getMoleculeList().then((moleculeList) => {
+      setMolecules(moleculeList)
+      if (addedMol) {
+        setSelectedMolecule(addedMol)
+        setSelectedIndex(moleculeList.length - 1)
+      }
+    })
   }
 
   function onMoleculeSelect(index) {
@@ -95,7 +102,9 @@ export default function MoleculesPage() {
     } else {
       api
         .addMolecule(smiles, cml, molName)
-        .then(refreshMolecules)
+        .then(() => {
+          refreshMolecules(new Molecule(molName, smiles, cml))
+        })
         .catch(() =>
           showSnackMessage(
             `Can't save invalid Molecule. Check for Errors in the Editor`,
@@ -132,6 +141,7 @@ export default function MoleculesPage() {
             addFunc={() => onMoleculeSelect(-1)}
             updateFunc={(index) => onMoleculeSelect(index)}
             height={gridHeight}
+            forcedSelectedIndex={selectedIndex}
           ></SelectionList>
         </Grid>
         <Grid
@@ -221,7 +231,7 @@ function MoleculeView({ selectedMolecule, onSave }) {
           sx={{ color: 'white', zIndex: (theme) => theme.zIndex.drawer + 1 }}
           open={selectedMolecule === null}
         >
-          Select a molecule on the left to view & edit it here.
+          Select a molecule or add one on the left to view & edit it here .
         </Backdrop>
       </CardContent>
       <CardActions>
