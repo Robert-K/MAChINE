@@ -6,7 +6,7 @@ import propTypes from 'prop-types'
 export default function PrettyChart({ data, maxLength }) {
   const theme = useTheme()
   const displayedData = data || [{ data: [] }]
-  const xLength = typeof maxLength === 'number' ? maxLength : 10
+  const xLength = displayedData.loss ? displayedData.loss.length : 10
   return (
     <Chart
       options={{
@@ -28,17 +28,16 @@ export default function PrettyChart({ data, maxLength }) {
           background: 'transparent',
           toolbar: { show: false },
           animations: {
-            enabled: xLength < 30,
+            enabled: xLength < 70,
             easing: 'linear',
             dynamicAnimation: {
-              speed: 250,
+              speed: 290,
             },
           },
         },
         colors: ['#2E93fA', '#66DA26', '#546E7A', '#E91E63', '#FF9800'],
         xaxis: {
           min: 1,
-          max: xLength,
           tickAmount: xLength > 30 ? 25 : 10,
         },
         yaxis: {
