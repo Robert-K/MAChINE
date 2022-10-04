@@ -1,8 +1,8 @@
 import keras.callbacks
 
-from backend.utils import storage_handler as sh
 import backend.utils.api as api
 from backend.machine_learning import ml_dicts as mld
+from backend.utils import storage_handler as sh
 
 # Dictionary containing all current active training sessions
 live_trainings = dict()
@@ -69,7 +69,7 @@ class Training:
 
         # R2 is our replacement for accuracy
         # Thus every model needs to have R2 as a metric
-        accuracy = round(evaluation.get('r_square') * 100, 3)
+        accuracy = round(evaluation.get('r_square') * 100, 2)
         return accuracy
 
     def stop_training(self):
