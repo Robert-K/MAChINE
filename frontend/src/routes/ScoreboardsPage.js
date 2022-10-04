@@ -20,8 +20,6 @@ export default function ScoreboardsPage() {
       headerName: 'Model ID',
       headerAlign: 'center',
       align: 'center',
-      description:
-        'The ID got created automatically. It is unique and IDentifys a fitting',
       sortable: false,
       renderCell: (params) => {
         return (
@@ -57,7 +55,6 @@ export default function ScoreboardsPage() {
       headerName: 'Model Name',
       headerAlign: 'center',
       align: 'center',
-      description: 'The Name of the Model chosen by its creator',
       sortable: false,
       flex: 3,
       minWidth: 140,
