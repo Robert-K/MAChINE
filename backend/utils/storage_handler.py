@@ -215,7 +215,7 @@ class StorageHandler:
         if dataset_summary and 'histograms' in dataset_summary:
             for label, histogram in dataset_summary.get('histograms').items():
                 if label in labels:
-                    histograms[label] = histogram
+                    histograms[label] = dict(histogram)
             return histograms
 
     # Base Models
