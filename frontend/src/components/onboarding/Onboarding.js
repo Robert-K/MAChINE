@@ -344,9 +344,25 @@ export default function Onboarding({ run, callback }) {
             When you&apos;re happy with your molecule, hit{' '}
             <span style={{ color: theme.palette.primary.main }}>analyze</span>
           </h2>
+          You will be able to analyze your new molecule with any of your trained
+          models and view the results.
         </div>
       ),
       target: '.analyze-button',
+    },
+    {
+      content: (
+        <div>
+          <h2>
+            Finally, you can{' '}
+            <span style={{ color: theme.palette.primary.main }}>compare</span>{' '}
+            your molecules and models to those of other users.
+          </h2>
+        </div>
+      ),
+      location: '/results',
+      target: 'body',
+      placement: 'center',
     },
   ]
 

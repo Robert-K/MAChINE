@@ -148,6 +148,7 @@ export default function MoleculesPage() {
           item
           md={9}
           key="molecule-view"
+          className="molecule-view"
           onMouseOver={(e) => {
             handleHelpPopperOpen(
               e,
