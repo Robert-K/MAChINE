@@ -28,6 +28,7 @@ import HelpContext from '../context/HelpContext'
 const gridHeight = '85vh'
 export default function MoleculesPage() {
   const [molecules, setMolecules] = React.useState([])
+  const [selectedIndex, setSelectedIndex] = React.useState(-1)
   const [selectedMolecule, setSelectedMolecule] = React.useState(null)
   const [snackMessage, setSnackMessage] = React.useState('')
   const [showSnackBar, setShowSnackBar] = React.useState(false)
@@ -54,10 +55,13 @@ export default function MoleculesPage() {
     refreshMolecules()
   }, [user])
 
-  function refreshMolecules(addedmol) {
+  function refreshMolecules(addedMol) {
     api.getMoleculeList().then((moleculeList) => {
       setMolecules(moleculeList)
-      setSelectedMolecule(addedmol)
+      if (addedMol) {
+        setSelectedMolecule(addedMol)
+        setSelectedIndex(moleculeList.length - 1)
+      }
     })
   }
 
@@ -137,6 +141,7 @@ export default function MoleculesPage() {
             addFunc={() => onMoleculeSelect(-1)}
             updateFunc={(index) => onMoleculeSelect(index)}
             height={gridHeight}
+            forcedSelectedIndex={selectedIndex}
           ></SelectionList>
         </Grid>
         <Grid
