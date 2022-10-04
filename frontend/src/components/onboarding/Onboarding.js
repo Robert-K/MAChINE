@@ -1,11 +1,11 @@
 import React from 'react'
 import { useTheme } from '@mui/material'
-import UserContext from './context/UserContext'
+import UserContext from '../../context/UserContext'
 import Joyride, { ACTIONS, EVENTS } from 'react-joyride'
-import OnboardingTooltip from './components/onboarding/OnboardingTooltip'
+import OnboardingTooltip from './OnboardingTooltip'
 import PropTypes from 'prop-types'
 import { useLocation, useNavigate } from 'react-router-dom'
-import TrainingContext from './context/TrainingContext'
+import TrainingContext from '../../context/TrainingContext'
 
 export default function Onboarding({ run, callback }) {
   const user = React.useContext(UserContext)
@@ -17,7 +17,11 @@ export default function Onboarding({ run, callback }) {
 
   const internalCallback = (data) => {
     const { action, index, status, type } = data
-    if ([ACTIONS.START, ACTIONS.RESTART].includes(action)) {
+    if (
+      [ACTIONS.START, ACTIONS.RESTART, ACTIONS.CLOSE, ACTIONS.SKIP].includes(
+        action
+      )
+    ) {
       setStepIndex(0)
       training.selectExampleTrainingParameters()
     }
@@ -271,16 +275,78 @@ export default function Onboarding({ run, callback }) {
         <div>
           <h2>
             It&apos;s{' '}
-            <span style={{ color: theme.palette.primary.main }}>
-              training time
-            </span>
-            !
+            <span style={{ color: theme.palette.primary.main }}>training</span>{' '}
+            time!
           </h2>
+          This page allows you to train your model on the selected dataset.
         </div>
       ),
       location: '/training',
       target: 'body',
       placement: 'center',
+    },
+    {
+      content: (
+        <div>
+          <h2>
+            <span style={{ color: theme.palette.primary.main }}>Before</span>{' '}
+            you start training...
+          </h2>
+          you can set the number of epochs and the batch size as well as review
+          your selected model and dataset.
+        </div>
+      ),
+      target: '.MuiGrid-item.MuiGrid-grid-xs-6',
+    },
+    {
+      content: (
+        <div>
+          <h2>
+            <span style={{ color: theme.palette.primary.main }}>Once</span> you
+            start training...
+          </h2>
+          you will see live updates of the training progress in the graph.
+        </div>
+      ),
+      target: '.apexcharts-canvas',
+    },
+    {
+      content: (
+        <div>
+          <h2>
+            Next is{' '}
+            <span style={{ color: theme.palette.primary.main }}>molecule</span>{' '}
+            creation!
+          </h2>
+        </div>
+      ),
+      location: '/molecules',
+      target: 'body',
+      placement: 'center',
+    },
+    {
+      content: (
+        <div>
+          <h2>
+            You can{' '}
+            <span style={{ color: theme.palette.primary.main }}>draw</span> any
+            molecule you like
+          </h2>
+          Feel free to play around!
+        </div>
+      ),
+      target: '.molecule-view',
+    },
+    {
+      content: (
+        <div>
+          <h2>
+            When you&apos;re happy with your molecule, hit{' '}
+            <span style={{ color: theme.palette.primary.main }}>analyze</span>
+          </h2>
+        </div>
+      ),
+      target: '.analyze-button',
     },
   ]
 

@@ -24,7 +24,7 @@ import { handleErrors } from './utils'
 import '@fontsource/poppins'
 import ModelCreationRouter from './routes/ModelCreationRouter'
 import { STATUS } from 'react-joyride'
-import Onboarding from './Onboarding'
+import Onboarding from './components/onboarding/Onboarding'
 
 const themeBase = {
   palette: {
