@@ -135,7 +135,9 @@ export default function StartPage({ onLogin }) {
                 color="text.secondary"
               >
                 {connecting ? 'connecting...' : ''}
-                {connectionFailed ? 'Connection failed. Please try again' : ''}
+                {connectionFailed
+                  ? 'Login failed. Please try again later or use a different name'
+                  : ''}
               </Typography>
             </Box>
           </Stack>

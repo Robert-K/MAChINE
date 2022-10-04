@@ -62,7 +62,7 @@ export default {
   },
 
   async deleteScoreboardFittings() {
-    return api.delete('/scoreboard/0').then((response) => {
+    return api.delete('/scoreboard').then((response) => {
       return response
     })
   },

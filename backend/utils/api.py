@@ -142,27 +142,25 @@ class Scoreboard(Resource):
     def get(self):
         return list(sh.get_scoreboard_summaries().values())
 
-    def delete(self, fitting_id):
-        if fitting_id == '0':
+    def delete(self, fitting_id=None):
+        if fitting_id is None:
             return sh.delete_scoreboard_fittings()
         else:
             return sh.delete_scoreboard_fitting(fitting_id)
 
 
-class AddUser(Resource):
+class User(Resource):
     def post(self):
         args = parser.parse_args()
         user_id = str(hashlib.sha1(args['username'].encode('utf-8'), usedforsecurity=False).hexdigest())
-        # if sh.get_user_handler(user_id): // TODO uncomment this to prevent user from reusing a name
-        #    return None, 409
-        print(args)
+        # This line means that if a user forgets to log out that username is blocked from there on
+        if sh.get_user_handler(user_id) and not __debug__:
+            return None, 409
         handler = sh.add_user_handler(user_id, args['username'])
         if handler:
             return {'userID': user_id}, 201
         return 404
 
-
-class DeleteUser(Resource):
     def delete(self, user_id):
         if sh.get_user_handler(user_id):
             sh.delete_user_handler(user_id)
@@ -265,8 +263,7 @@ class Train(Resource):
 
 
 # Actually set up the Api resource routing here
-api.add_resource(AddUser, '/users')
-api.add_resource(DeleteUser, '/users/<user_id>')
+api.add_resource(User, '/users', '/users/<user_id>')
 api.add_resource(Models, '/users/<user_id>/models')
 api.add_resource(Molecules, '/users/<user_id>/molecules')
 api.add_resource(Fittings, '/users/<user_id>/fittings')
