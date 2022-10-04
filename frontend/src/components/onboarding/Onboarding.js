@@ -364,6 +364,35 @@ export default function Onboarding({ run, callback }) {
       target: 'body',
       placement: 'center',
     },
+    {
+      content: (
+        <div>
+          <h2>
+            One last thing:{' '}
+            <span style={{ color: theme.palette.primary.main }}>Help mode</span>
+            !
+          </h2>
+          Help mode will give you hints on parameters and panels simply by
+          hovering above them. You can always toggle it using this button.
+        </div>
+      ),
+      target: 'help-mode-button',
+    },
+    {
+      content: (
+        <div>
+          <h2>
+            That&apos;s it!{' '}
+            <span style={{ color: theme.palette.primary.main }}>Enjoy</span>!
+          </h2>
+          Thank you for choosing MAChINE for your daily AI molecule property
+          prediction needs!
+        </div>
+      ),
+      location: '/models',
+      target: 'body',
+      placement: 'center',
+    },
   ]
 
   return (

@@ -34,8 +34,8 @@ const gridHeight = '80vh'
 /**
  * Depicts a list of saved models and shows a description of the selected model on click
  */
-export default function ModelsPage({ modelList }) {
-  const [selectedIndex, setSelectedIndex] = React.useState(-1)
+export default function ModelsPage({ modelList, initSelectedIndex }) {
+  const [selectedIndex, setSelectedIndex] = React.useState(initSelectedIndex)
   const [showDialog, setShowDialog] = React.useState(false)
   const [helpAnchorEl, setHelpAnchorEl] = React.useState(null)
   const training = React.useContext(TrainingContext)
@@ -276,6 +276,7 @@ ModelDescription.propTypes = {
   leaveFunc: PropTypes.func,
   fittingsLength: PropTypes.number,
 }
+
 /**
  * renders a fitting into a collapsable list
  * @param fitting the fitting to be rendered
@@ -368,4 +369,9 @@ RenderFitting.propTypes = {
 
 ModelsPage.propTypes = {
   modelList: PropTypes.array.isRequired,
+  initSelectedIndex: PropTypes.number,
+}
+
+ModelsPage.defaultProps = {
+  initSelectedIndex: -1,
 }

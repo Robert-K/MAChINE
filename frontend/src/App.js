@@ -331,7 +331,11 @@ export default function App() {
                   ></Route>
                   <Route
                     path="/models/*"
-                    element={<ModelCreationRouter />}
+                    element={
+                      <ModelCreationRouter
+                        initSelectedIndex={runOnboarding ? 0 : -1}
+                      />
+                    }
                   ></Route>
                   <Route path="/molecules" element={<MoleculesPage />}></Route>
                   <Route path="/results" element={<ScoreboardsPage />}></Route>

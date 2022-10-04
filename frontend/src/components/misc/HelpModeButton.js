@@ -13,6 +13,7 @@ export default function HelpModeButton() {
 
   return (
     <IconButton
+      className="help-mode-button"
       sx={{ color: 'white' }}
       aria-label="Toggle Help Mode"
       onClick={() => {
