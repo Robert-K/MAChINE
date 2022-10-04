@@ -1,13 +1,14 @@
+import hashlib
 import json
 import sched, time
 from flask import Flask
 from flask_cors import CORS
 from flask_restful import reqparse, Api, Resource
-import hashlib
 from flask_socketio import SocketIO
-from backend.utils import storage_handler as sh
+
 from backend.machine_learning import ml_functions as ml
 from backend.utils import molecule_formats as mf
+from backend.utils import storage_handler as sh
 
 app = Flask(__name__)
 cors = CORS(app)
@@ -41,16 +42,19 @@ class Models(Resource):
 
         for key in models.keys():
             current_model = models[key]
+            current_base_model = sh.get_base_model(current_model['baseModelID'])
             model_fittings = []
             for fitting_id in current_model['fittingIDs']:
                 fitting = sh.get_fitting_summary(user_id, fitting_id)
                 if fitting:  # convert fitting
+                    dataset = sh.get_dataset_summaries().get(fitting['datasetID'])
                     model_fittings.append(
                         {
                             'id': fitting_id,
                             'modelID': fitting['modelID'],
                             'modelName': current_model['name'],
                             'datasetID': fitting['datasetID'],
+                            'datasetName': dataset['name'],
                             'labels': fitting['labels'],
                             'epochs': fitting['epochs'],
                             'batchSize': fitting['batchSize'],
@@ -61,6 +65,7 @@ class Models(Resource):
                 'id': key,
                 'name': current_model['name'],
                 'baseModelID': current_model['baseModelID'],
+                'baseModelName': current_base_model['name'],
                 'parameters': current_model['parameters'],
                 'fittings': model_fittings
             })
@@ -120,6 +125,7 @@ class Fittings(Resource):
         processed_fittings = []
         for fitting_id in fittings.keys():
             current_fitting = fittings.get(fitting_id)
+            current_dataset = sh.get_dataset_summaries().get(current_fitting['datasetID'])
             model_name = 'n/a'
             model = sh.get_model_summary(user_id, current_fitting.get('modelID'))
             if model:
@@ -130,6 +136,7 @@ class Fittings(Resource):
                     'modelID': current_fitting['modelID'],
                     'modelName': model_name,
                     'datasetID': current_fitting['datasetID'],
+                    'datasetName': current_dataset['name'],
                     'labels': current_fitting['labels'],
                     'epochs': current_fitting['epochs'],
                     'batchSize': current_fitting['batchSize'],

@@ -200,7 +200,7 @@ function ModelDescription({
         >
           <CardHeader
             title={selectedModel.name}
-            subheader={`Base Model: ${selectedModel.baseModelID}`}
+            subheader={`Base Model: ${selectedModel.baseModelName}`}
             onMouseOver={(e) => {
               hoverFunc(
                 e,
@@ -317,7 +317,7 @@ function RenderFitting({
         <ListItemButton onClick={() => toggleOpen()}>
           {open[index] ? <ExpandLess /> : <ExpandMore />}
           <ListItemText
-            primary={`Dataset ID: ${fitting.datasetID}`}
+            primary={`Dataset: ${fitting.datasetName}`}
             secondary={`Trained model ID: ${fitting.id}`}
             sx={{ color: theme.palette.primary.main }}
           ></ListItemText>

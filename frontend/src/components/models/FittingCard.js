@@ -30,7 +30,7 @@ export default function FittingCard({
             <Box paddingX={2}>
               <Typography variant="subtitle1" component="h4">
                 {/* TODO: display dataset's name instead. */}
-                Training dataset: {fitting.datasetID}
+                Training dataset: {fitting.datasetName}
               </Typography>
               <Typography variant="subtitle1" component="h4">
                 Epochs: {fitting.epochs}

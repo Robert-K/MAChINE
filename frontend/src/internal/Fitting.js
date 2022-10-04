@@ -15,6 +15,7 @@ class Fitting {
     modelID,
     modelName,
     datasetID,
+    datasetName,
     labels,
     epochs,
     batchSize,
@@ -24,6 +25,7 @@ class Fitting {
     this.modelID = modelID
     this.modelName = modelName
     this.datasetID = datasetID
+    this.datasetName = datasetName
     this.labels = labels
     this.epochs = epochs
     this.batchSize = batchSize
