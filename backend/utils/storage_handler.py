@@ -13,6 +13,8 @@ __all__ = ['add_analysis',
            'add_model',
            'add_molecule',
            'add_user_handler',
+           'delete_scoreboard_fitting',
+           'delete_scoreboard_fittings',
            'delete_user_handler',
            'get_analyses',
            'get_base_model',
@@ -22,6 +24,7 @@ __all__ = ['add_analysis',
            'get_fitting',
            'get_fitting_summary',
            'get_fitting_summaries',
+           'get_scoreboard_summaries',
            'get_model_summary',
            'get_model_summaries',
            'get_molecules',
@@ -40,13 +43,14 @@ _dataset_version = 3
 
 class UserDataStorageHandler:
 
-    def __init__(self, user_id):
+    def __init__(self, user_id, username):
         self.user_path = _user_data_path / user_id
         self.user_fittings_path = self.user_path / 'fittings'
         self.__build_folder_structure()
         self.molecules = self.__load_summary_file('molecules.json')
         self.model_summaries = self.__load_summary_file('models.json')
         self.fitting_summaries = self.__load_summary_file('fittings.json')
+        self.username = username
         atexit.register(self.clean_files)
 
     # Molecules
@@ -182,10 +186,11 @@ class StorageHandler:
         self.__analyze_datasets()
         self.__read_base_model_types()
         self.__read_base_models()
+        self.scoreboard_summaries = self.__read_scoreboard_summaries()
 
-    def add_user_handler(self, user_id) -> UserDataStorageHandler:
+    def add_user_handler(self, user_id, username) -> UserDataStorageHandler:
         if self.user_storage_handler.get(user_id) is None:
-            self.user_storage_handler[user_id] = UserDataStorageHandler(user_id)
+            self.user_storage_handler[user_id] = UserDataStorageHandler(user_id, username)
         return self.user_storage_handler.get(user_id)
 
     def get_user_handler(self, user_id) -> UserDataStorageHandler | None:
@@ -245,17 +250,49 @@ class StorageHandler:
     # Fittings
     # fitting is the actual, trained model, not a summary
     def add_fitting(self, user_id, dataset_id, labels, epochs, accuracy, batch_size, model_id, fitting):
-        return self.get_user_handler(user_id).add_fitting(dataset_id, labels, epochs, accuracy, batch_size, model_id,
-                                                          fitting)
+        fitting_id = self.get_user_handler(user_id).add_fitting(dataset_id, labels, epochs, accuracy, batch_size,
+                                                                model_id,
+                                                                fitting)
+        # Creates the scoreboard fitting summary
+        self.scoreboard_summaries[fitting_id] = {'id': fitting_id,
+                                                 'userName': str(self.get_user_handler(user_id).username),
+                                                 'modelID': model_id,
+                                                 'modelName': self.get_user_handler(user_id).get_model_summary(
+                                                     model_id).get(
+                                                     'name'),
+                                                 'datasetID': dataset_id,
+                                                 'labels': labels,
+                                                 'epochs': epochs,
+                                                 'batchSize': batch_size,
+                                                 'accuracy': accuracy}
+        self.__save_scoreboard_summaries()
+        return fitting_id
 
     def update_fitting(self, user_id, fitting_id, epochs, accuracy, fitting):
-        return self.get_user_handler(user_id).update_fitting(fitting_id, epochs, accuracy, fitting)
+        fitting_id = self.get_user_handler(user_id).update_fitting(fitting_id, epochs, accuracy, fitting)
+        # Updates the scoreboard fitting summary
+        scoreboard_fitting = self.scoreboard_summaries[fitting_id]
+        scoreboard_fitting['epochs'] = epochs
+        scoreboard_fitting['accuracy'] = accuracy
+        self.__save_scoreboard_summaries()
+        return fitting_id
 
     def get_fitting(self, user_id, fitting_id):
         return self.get_user_handler(user_id).get_fitting(fitting_id)
 
     def get_fitting_summary(self, user_id, fitting_id):
         return self.get_user_handler(user_id).get_fitting_summary(fitting_id)
+
+    def get_scoreboard_summaries(self):
+        return self.scoreboard_summaries
+
+    def delete_scoreboard_fitting(self, fitting_id):
+        self.scoreboard_summaries.pop(fitting_id)
+        self.__save_scoreboard_summaries()
+
+    def delete_scoreboard_fittings(self):
+        self.scoreboard_summaries = dict()
+        self.__save_scoreboard_summaries()
 
     def get_fitting_summaries(self, user_id):
         return self.get_user_handler(user_id).get_fitting_summaries()
@@ -316,6 +353,22 @@ class StorageHandler:
             self.base_model_types = json.load(file)
             file.close()
 
+    @staticmethod
+    def __read_scoreboard_summaries():
+        scoreboard_path = _user_data_path / 'scoreboard.json'
+        data = dict()
+        if scoreboard_path.exists():
+            file = scoreboard_path.open('r')
+            data = json.load(file)
+            file.close()
+        return data
+
+    def __save_scoreboard_summaries(self):
+        scoreboard_path = _user_data_path / 'scoreboard.json'
+        file = scoreboard_path.open('w')
+        json.dump(self.scoreboard_summaries, file)
+        file.close()
+
 
 _inst = StorageHandler()
 add_analysis = _inst.add_analysis
@@ -323,6 +376,8 @@ add_fitting = _inst.add_fitting
 add_model = _inst.add_model
 add_molecule = _inst.add_molecule
 add_user_handler = _inst.add_user_handler
+delete_scoreboard_fitting = _inst.delete_scoreboard_fitting
+delete_scoreboard_fittings = _inst.delete_scoreboard_fittings
 delete_user_handler = _inst.delete_user_handler
 get_analyses = _inst.get_analyses
 get_base_model = _inst.get_base_model
@@ -332,6 +387,7 @@ get_dataset_summaries = _inst.get_dataset_summaries
 get_fitting = _inst.get_fitting
 get_fitting_summary = _inst.get_fitting_summary
 get_fitting_summaries = _inst.get_fitting_summaries
+get_scoreboard_summaries = _inst.get_scoreboard_summaries
 get_model_summary = _inst.get_model_summary
 get_model_summaries = _inst.get_model_summaries
 get_molecules = _inst.get_molecules

@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react'
+import React, { useCallback, useEffect } from 'react'
 import ScoreboardsPage from './routes/ScoreboardsPage.js'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import SwaggerPage from './routes/SwaggerPage'
@@ -28,6 +28,16 @@ const themeBase = {
   palette: {
     connected: {
       main: '#6dcd00',
+    },
+  },
+  components: {
+    MuiDataGrid: {
+      styleOverrides: {
+        columnHeaderTitle: {
+          fontWeight: 600,
+          fontSize: 'large',
+        },
+      },
     },
   },
   typography: {
@@ -127,6 +137,7 @@ export default function App() {
 
   const [helpMode, setHelpMode] = React.useState(false)
   const [userName, setUserName] = React.useState(null)
+  const [adminMode, setAdminMode] = React.useState(false)
 
   window
     .matchMedia('(prefers-color-scheme: dark)')
@@ -179,10 +190,28 @@ export default function App() {
 
   handleErrors()
 
+  const pattern = ['a', 'd', 'm', 'i', 'n', 'm', 'o', 'd', 'e']
+  let current = 0
+
+  useEffect(() => {
+    const keyHandler = function (event) {
+      if (pattern.indexOf(event.key) < 0 || event.key !== pattern[current]) {
+        current = 0
+        return
+      }
+      current++
+      if (pattern.length === current && !adminMode) {
+        setAdminMode(true)
+        alert('You are now an admin!')
+      }
+    }
+    document.addEventListener('keydown', keyHandler, false)
+  }, [])
+
   return (
     <div className="App">
       <ThemeProvider theme={darkMode ? themeDark : themeLight}>
-        <UserProvider value={{ userName }}>
+        <UserProvider value={{ userName, adminMode, setAdminMode }}>
           <HelpProvider value={{ helpMode, setHelpMode }}>
             <TrainingProvider>
               <CssBaseline />

@@ -138,17 +138,29 @@ class Fittings(Resource):
         return processed_fittings
 
 
-class AddUser(Resource):
+class Scoreboard(Resource):
+    def get(self):
+        return list(sh.get_scoreboard_summaries().values())
+
+    def delete(self, fitting_id=None):
+        if fitting_id is None:
+            return sh.delete_scoreboard_fittings()
+        else:
+            return sh.delete_scoreboard_fitting(fitting_id)
+
+
+class User(Resource):
     def post(self):
         args = parser.parse_args()
         user_id = str(hashlib.sha1(args['username'].encode('utf-8'), usedforsecurity=False).hexdigest())
-        handler = sh.add_user_handler(user_id)
+        # This line means that if a user forgets to log out that username is blocked from there on
+        if sh.get_user_handler(user_id) and not __debug__:
+            return None, 409
+        handler = sh.add_user_handler(user_id, args['username'])
         if handler:
             return {'userID': user_id}, 201
         return 404
 
-
-class DeleteUser(Resource):
     def delete(self, user_id):
         if sh.get_user_handler(user_id):
             sh.delete_user_handler(user_id)
@@ -251,8 +263,7 @@ class Train(Resource):
 
 
 # Actually set up the Api resource routing here
-api.add_resource(AddUser, '/users')
-api.add_resource(DeleteUser, '/users/<user_id>')
+api.add_resource(User, '/users', '/users/<user_id>')
 api.add_resource(Models, '/users/<user_id>/models')
 api.add_resource(Molecules, '/users/<user_id>/molecules')
 api.add_resource(Fittings, '/users/<user_id>/fittings')
@@ -260,6 +271,7 @@ api.add_resource(Fittings, '/users/<user_id>/fittings')
 api.add_resource(Analyze, '/users/<user_id>/analyze')
 api.add_resource(Train, '/users/<user_id>/train')
 # Non-user-specific resources
+api.add_resource(Scoreboard, '/scoreboard/<fitting_id>', '/scoreboard')
 api.add_resource(Datasets, '/datasets')
 api.add_resource(BaseModels, '/baseModels')
 
@@ -282,8 +294,8 @@ def run(debug=True):
     # TODO: Remove
     test_user = str(hashlib.sha1('Tom'.encode('utf-8'), usedforsecurity=False).hexdigest())
     test_user2 = str(hashlib.sha1('Tim'.encode('utf-8'), usedforsecurity=False).hexdigest())
-    sh.add_user_handler(test_user)
-    sh.add_user_handler(test_user2)
+    sh.add_user_handler(test_user, 'Tom')
+    sh.add_user_handler(test_user2, 'Tim')
     sh.add_molecule(test_user, 'c1ccn2nncc2c1',
                     '<cml xmlns=\"http://www.xml-cml.org/schema\"><molecule id=\"m1\"><atomArray><atom id=\"a1\" elementType=\"C\" x2=\"14.04999999999995\" y2=\"46.39999999999984\"/><atom id=\"a2\" elementType=\"C\" isotope=\"13\" x2=\"13.35999999999995\" y2=\"45.999999999999844\"/><atom id=\"a5\" elementType=\"C\" x2=\"14.739999999999949\" y2=\"45.19999999999985\"/><atom id=\"a6\" elementType=\"C\" x2=\"14.739999999999949\" y2=\"45.999999999999844\"/><atom id=\"a7\" elementType=\"R\" x2=\"15.43999999999995\" y2=\"46.39999999999984\"/></atomArray><bondArray><bond id=\"b1\" order=\"S\" atomRefs2=\"a1 a2\"/><bond id=\"b5\" order=\"S\" atomRefs2=\"a5 a6\"/><bond id=\"b6\" order=\"D\" atomRefs2=\"a6 a1\"/><bond id=\"b7\" order=\"S\" atomRefs2=\"a6 a7\"/></bondArray></molecule></cml>',
                     'MySuperCoolMolecule')

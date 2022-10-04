@@ -1,4 +1,4 @@
-import { AppBar, Box, IconButton, Toolbar } from '@mui/material'
+import { AppBar, Box, Button, IconButton, Toolbar } from '@mui/material'
 import { NavLink, useLocation, useNavigate } from 'react-router-dom'
 import * as React from 'react'
 import logo from '../../logo.svg'
@@ -9,6 +9,7 @@ import TrainingContext from '../../context/TrainingContext'
 import LogoutIcon from '@mui/icons-material/Logout'
 import ProgressBar from '../training/ProgressBar'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings'
 
 const links = {
   home: {
@@ -107,6 +108,20 @@ export default function Navbar({
           </>
         )}
         <Box sx={{ flexGrow: 1 }}></Box>
+        {user.adminMode ? (
+          <Button
+            sx={{ mr: 2 }}
+            variant="contained"
+            size="large"
+            onClick={() => {
+              user.setAdminMode(false)
+            }}
+            endIcon={<AdminPanelSettingsIcon />}
+          >
+            Exit Admin Mode
+          </Button>
+        ) : null}
+
         {!user.userName ? null : (
           <>
             {user.userName}

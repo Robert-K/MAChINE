@@ -49,6 +49,24 @@ export default {
     updateBaseURL()
   },
 
+  async getScoreboardSummaries() {
+    return api.get('/scoreboard').then((response) => {
+      return response.data
+    })
+  },
+
+  async deleteScoreboardFitting(fittingID) {
+    return api.delete(`/scoreboard/${fittingID}`).then((response) => {
+      return response
+    })
+  },
+
+  async deleteScoreboardFittings() {
+    return api.delete('/scoreboard').then((response) => {
+      return response
+    })
+  },
+
   async getModelList() {
     return api.get(`/users/${userID}/models`).then((response) => {
       return response.data
