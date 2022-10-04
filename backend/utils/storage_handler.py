@@ -253,6 +253,7 @@ class StorageHandler:
         fitting_id = self.get_user_handler(user_id).add_fitting(dataset_id, labels, epochs, accuracy, batch_size,
                                                                 model_id,
                                                                 fitting)
+        # Creates the scoreboard fitting summary
         self.scoreboard_summaries[fitting_id] = {'id': fitting_id,
                                                  'userName': str(self.get_user_handler(user_id).username),
                                                  'modelID': model_id,
@@ -268,7 +269,13 @@ class StorageHandler:
         return fitting_id
 
     def update_fitting(self, user_id, fitting_id, epochs, accuracy, fitting):
-        return self.get_user_handler(user_id).update_fitting(fitting_id, epochs, accuracy, fitting)
+        fitting_id = self.get_user_handler(user_id).update_fitting(fitting_id, epochs, accuracy, fitting)
+        # Updates the scoreboard fitting summary
+        scoreboard_fitting = self.scoreboard_summaries[fitting_id]
+        scoreboard_fitting['epochs'] = epochs
+        scoreboard_fitting['accuracy'] = accuracy
+        self.__save_scoreboard_summaries()
+        return fitting_id
 
     def get_fitting(self, user_id, fitting_id):
         return self.get_user_handler(user_id).get_fitting(fitting_id)
