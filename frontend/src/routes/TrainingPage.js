@@ -135,7 +135,7 @@ export default function TrainingPage() {
 
   function filterData(data) {
     // Change this to exclude more data
-    const excludedPoints = ['epoch', 'Epoch']
+    const excludedPoints = ['Epoch']
     const newData = []
     Object.entries(data).forEach(([dataName, values], index) => {
       if (excludedPoints.indexOf(dataName) === -1) {
