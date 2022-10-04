@@ -376,7 +376,7 @@ export default function Onboarding({ run, callback }) {
           hovering above them. You can always toggle it using this button.
         </div>
       ),
-      target: 'help-mode-button',
+      target: '.help-mode-button',
     },
     {
       content: (
