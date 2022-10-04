@@ -113,7 +113,7 @@ export default function ModelsPage({ modelList }) {
         </Grid>
         <Grid item xs={9}>
           <ModelDescription
-            selectedModel={modelList.at(selectedIndex)}
+            selectedModel={modelList[selectedIndex]}
             onActiveTraining={handleOpenDialog}
             hoverFunc={handleHelpPopperOpen}
             leaveFunc={handleHelpPopperClose}
@@ -184,9 +184,9 @@ function ModelDescription({
     // no model selected
     return (
       <Card>
-        <CardContent>
-          <Typography align="center" color="lightgrey">
-            Select a Model.
+        <CardContent sx={{ p: 3 }}>
+          <Typography variant="h5" align="center" color="lightgrey">
+            Select a Model from the list to view details.
           </Typography>
         </CardContent>
       </Card>
