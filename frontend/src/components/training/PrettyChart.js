@@ -3,7 +3,7 @@ import React from 'react'
 import { useTheme } from '@mui/material'
 import propTypes from 'prop-types'
 
-export default function PrettyChart({ data, maxLength }) {
+export default function PrettyChart({ data }) {
   const theme = useTheme()
   const displayedData = data || [{ data: [] }]
   const xLength = displayedData.loss ? displayedData.loss.length : 10
@@ -54,7 +54,6 @@ export default function PrettyChart({ data, maxLength }) {
 
 PrettyChart.propTypes = {
   data: propTypes.array,
-  maxLength: propTypes.any,
 }
 
 PrettyChart.defaultProps = {

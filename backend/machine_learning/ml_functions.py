@@ -81,7 +81,6 @@ def train(user_id, dataset_id, model_id, labels, epochs, batch_size, fitting_id=
     if is_training_running(user_id):  # Change this to allow for more than one training at the same time
         return False
     # Placeholder here to ensure no other training can be started while we're initializing, as this takes a while
-    # This isn't great
     live_trainings[user_id] = {'Placeholder'}
     try:
         new_training = Training(user_id, dataset_id, model_id, labels, epochs, batch_size, fitting_id)
