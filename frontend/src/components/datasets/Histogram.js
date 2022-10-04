@@ -3,12 +3,15 @@ import Chart from 'react-apexcharts'
 import PropTypes from 'prop-types'
 import { useTheme } from '@mui/material'
 
-export default function Histogram({ seriesObject }) {
+export default function Histogram({ seriesObject, highlightedIndex }) {
   const theme = useTheme()
-  const displayedData = seriesObject || { name: '', data: [] }
+  const chartConfig = seriesObject || {
+    name: '',
+    data: [],
+  }
   return (
     <Chart
-      series={[displayedData]}
+      series={[chartConfig]}
       width="100%"
       type="bar"
       options={{
@@ -29,14 +32,26 @@ export default function Histogram({ seriesObject }) {
         },
         xaxis: {
           type: 'category',
-          tickAmount: displayedData.data.length > 30 ? 25 : 10,
+          title: {
+            text: chartConfig.name,
+          },
+          tickAmount: chartConfig.data.length > 30 ? 25 : 10,
         },
-        colors: [theme.palette.primary.main],
+        colors: [
+          function ({ value, seriesIndex, w }) {
+            if (seriesIndex === highlightedIndex) {
+              return '#FEB019'
+            } else {
+              return theme.palette.primary.main
+            }
+          },
+        ],
       }}
     />
   )
 }
 
 Histogram.propTypes = {
-  seriesObject: PropTypes.object.isRequired,
+  seriesObject: PropTypes.object,
+  highlightedIndex: PropTypes.number,
 }

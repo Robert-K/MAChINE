@@ -15,6 +15,7 @@ import {
   Grid,
   ListItem,
   ListItemText,
+  CircularProgress,
   Typography,
   useTheme,
 } from '@mui/material'
@@ -36,10 +37,13 @@ export default function FittingsPage() {
   const [content, setContent] = React.useState(<h1>Placeholder</h1>)
   const [anchor, setAnchor] = React.useState(null)
   const [openDialog, setOpenDialog] = React.useState(false)
-  const [analysis, setAnalysis] = React.useState('')
+  const [analysis, setAnalysis] = React.useState({})
   const [selectedFitting, setSelectedFitting] = React.useState({})
-  const [charts, setCharts] = React.useState([])
+  const [chartConfigs, setChartConfigs] = React.useState([
+    { name: '', data: [], highlightedIndex: -1 },
+  ])
   const [histograms, setHistograms] = React.useState({})
+  const [loading, setLoading] = React.useState(false)
   const { state } = useLocation()
   const { selectedSmiles } = state
   const user = React.useContext(UserContext)
@@ -71,20 +75,26 @@ export default function FittingsPage() {
         const newChart = {
           name: camelToNaturalString(label),
           data: [],
+          highlightedIndex: -1,
         }
         for (let i = 0; i < hist.buckets.length; i++) {
+          if (analysis[label] <= hist.binEdges[i]) {
+            newChart.highlightedIndex = i
+            console.log(i)
+          }
           newChart.data.push({
-            x: `[${hist.binEdges[i].toFixed(2)},${hist.binEdges[i + 1].toFixed(
-              2
-            )}]`,
+            x: `[${hist.binEdges[i].toFixed(2)} , ${hist.binEdges[
+              i + 1
+            ].toFixed(2)}]`,
             y: hist.buckets[i],
           })
         }
         newCharts.push(newChart)
       })
-      setCharts(newCharts)
+      setLoading(false)
+      setChartConfigs(newCharts)
     }
-  }, [histograms])
+  }, [histograms, analysis])
 
   const handlePopper = (target, content, show) => {
     setContent(content)
@@ -117,8 +127,9 @@ export default function FittingsPage() {
   }
   function handleFittingSelection(fitting) {
     setSelectedFitting(fitting)
+    setLoading(true)
     api.analyzeMolecule(fitting.id, selectedSmiles).then((response) => {
-      handleAnalysis(`${Object.entries(response)}`)
+      handleAnalysis(response)
       handleClickOpenDialog()
     })
   }
@@ -191,6 +202,13 @@ export default function FittingsPage() {
                         onClick={handleFittingSelection}
                       >
                         Choose this model
+                        {loading ? (
+                          <CircularProgress
+                            size="16px"
+                            color="secondary"
+                            sx={{ ml: 1 }}
+                          />
+                        ) : null}
                       </Button>
                       Labels:
                       {fitting.labels.map((label) => {
@@ -228,16 +246,32 @@ export default function FittingsPage() {
             </DialogTitle>
             <DialogContent>
               <DialogContentText id="alert-dialog-description">
-                {`Result: ${analysis}`}
+                <b>Result:</b>
+                <br />
+                {Object.entries(analysis).map(
+                  ([label, value]) => `${label}: ${value}`
+                )}
               </DialogContentText>
-              <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-                {charts.map((chart, index) => {
-                  return <Histogram seriesObject={chart} key={index} />
+              <Box
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  width: '85%',
+                }}
+              >
+                {chartConfigs.map((chart, index) => {
+                  return (
+                    <Histogram
+                      seriesObject={chart}
+                      highlightedIndex={chart.highlightedIndex}
+                      key={index}
+                    />
+                  )
                 })}
               </Box>
             </DialogContent>
             <DialogActions>
-              <Button onClick={handleCloseDialog}>Remain here</Button>
+              <Button onClick={handleCloseDialog}>Back</Button>
               <Button onClick={handleGoToMol} autoFocus>
                 Go to Molecules
               </Button>
