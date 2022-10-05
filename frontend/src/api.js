@@ -14,8 +14,17 @@ let userID = ''
 
 function updateBaseURL() {
   api.defaults.baseURL = `http://${serverAddress}:${serverPort}`
+  const newSocket = io(`ws://${serverAddress}:${serverPort}`, {
+    timeout: 60000,
+  })
+  Object.keys(socket._callbacks).forEach((key) => {
+    const eventName = key.replace('$', '')
+    socket.listeners(eventName).forEach((func) => {
+      newSocket.on(eventName, func)
+    })
+  })
   socket.disconnect()
-  socket = io(`ws://${serverAddress}:${serverPort}`, { timeout: 60000 })
+  socket = newSocket
 }
 
 export default {
