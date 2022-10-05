@@ -1,5 +1,5 @@
 import { Card, CardActions, CardContent, Button, useTheme } from '@mui/material'
-import React from 'react'
+import React, { useEffect } from 'react'
 import PropTypes from 'prop-types'
 
 export default function OnboardingTooltip({
@@ -12,6 +12,23 @@ export default function OnboardingTooltip({
   skipProps,
 }) {
   const theme = useTheme()
+
+  const fixFloater = () => {
+    // This dirty fix is needed because of a strange Firefox bug:
+    // The react-joyride floater div comes with a drop-shadow filter
+    // The filter causes it to become invisible in Firefox
+    // This is a workaround to remove the filter, as react-joyride does not provide a way to do this
+    const floater = document.getElementsByClassName(
+      '__floater __floater__open'
+    )[0]
+    if (floater) {
+      floater.style.filter = 'none'
+    }
+  }
+
+  useEffect(() => {
+    fixFloater()
+  }, [index, size, step, tooltipProps, primaryProps, backProps, skipProps])
 
   return (
     <Card

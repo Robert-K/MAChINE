@@ -42,6 +42,7 @@ export default function Onboarding({ run, callback }) {
     if ([EVENTS.STEP_AFTER, EVENTS.TARGET_NOT_FOUND].includes(type)) {
       setStepIndex(index + (action === ACTIONS.PREV ? -1 : 1))
     }
+
     callback(data)
   }
 
