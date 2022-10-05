@@ -73,8 +73,17 @@ export default function ScoreboardsPage() {
       headerName: 'Label',
       headerAlign: 'center',
       align: 'center',
+      sortable: false,
       flex: 2,
-      minWIdth: 90,
+      minWidth: 90,
+      renderCell: (params) => {
+        const result = []
+        for (let i = 0; i < params.value.length; i++) {
+          result[i] =
+            params.value[i].charAt(0).toUpperCase() + params.value[i].slice(1)
+        }
+        return <div>{result.join(', ')}</div>
+      },
     },
     {
       field: 'epochs',
