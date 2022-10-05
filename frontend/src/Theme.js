@@ -1,6 +1,8 @@
 import { createTheme } from '@mui/material'
 import { deepmerge } from '@mui/utils'
 
+// Create a base theme, which will be used to create the other themes.
+// These values are used in both light and dark mode.
 export const themeBase = {
   palette: {
     connected: {
@@ -33,6 +35,7 @@ export const themeBase = {
   },
 }
 
+// Create the light theme.
 export const themeLight = createTheme(
   deepmerge(themeBase, {
     palette: {
@@ -71,6 +74,7 @@ export const themeLight = createTheme(
   })
 )
 
+// Create the dark theme.
 export const themeDark = createTheme(
   deepmerge(themeBase, {
     palette: {

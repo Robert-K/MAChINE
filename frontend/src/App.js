@@ -26,7 +26,9 @@ import { STATUS } from 'react-joyride'
 import Onboarding from './components/onboarding/Onboarding'
 import { themeDark, themeLight } from './Theme'
 
+// The main app component
 export default function App() {
+  // Set the theme based on the user's system preference
   const [darkMode, setDarkMode] = React.useState(
     window.matchMedia &&
       window.matchMedia('(prefers-color-scheme: dark)').matches
@@ -37,19 +39,19 @@ export default function App() {
   const [adminMode, setAdminMode] = React.useState(false)
   const [runOnboarding, setRunOnboarding] = React.useState(false)
 
+  // Set the theme when the user changes their system preference
   window
     .matchMedia('(prefers-color-scheme: dark)')
     .addEventListener('change', (event) => {
       setDarkMode(event.matches ? 'dark' : 'light')
     })
 
+  // Initialize the particles background
   const particlesInit = useCallback(async (engine) => {
-    // you can initiate the tsParticles instance (engine) here, adding custom shapes or presets
-    // this loads the tsparticles package bundle, it's the easiest method for getting everything ready
-    // starting from v2 you can add only the features you need reducing the bundle size
     await loadFull(engine)
   }, [])
 
+  // Log the user in (or register if you will)
   async function login(newUserName) {
     if (userName !== null) logout()
     // setRunOnboarding(true) // Uncomment to run onboarding on login
@@ -68,15 +70,14 @@ export default function App() {
       })
   }
 
+  // Log the user out, stop onboarding, training and disable adminMode
   const logout = () => {
     setRunOnboarding(false)
+    setAdminMode(false)
     api.stopTraining()
     api.logout().catch((e) => console.log(e))
     setUserName(null)
-    // TrainingsContext is reset in Navbar
-    /* TODO: Delete all Data */
-    /* TODO: Delete trained models */
-    /* TODO: Delete molecules */
+    // TrainingContext is reset in Navbar
   }
 
   const changeDarkMode = (value) => {
@@ -88,8 +89,10 @@ export default function App() {
     setHelpMode(value)
   }
 
+  // Error handling for production
   handleErrors()
 
+  // Reset runOnboarding so onboarding can be run again
   const onboardingCallback = (data) => {
     const { action, index, status, type } = data
     if ([STATUS.FINISHED, STATUS.SKIPPED].includes(status)) {
@@ -97,9 +100,11 @@ export default function App() {
     }
   }
 
+  // Secret adminMode pattern, you can input this anywhere to enable adminMode
   const pattern = ['a', 'd', 'm', 'i', 'n', 'm', 'o', 'd', 'e']
   let current = 0
 
+  // Register adminMode pattern listener
   useEffect(() => {
     const keyHandler = function (event) {
       if (pattern.indexOf(event.key) < 0 || event.key !== pattern[current]) {
