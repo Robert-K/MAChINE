@@ -6,11 +6,11 @@ import backend.utils.storage_handler as sh
 import backend.tests.mocks.mock_models as mm
 
 _test_user_id = 'Wakawaka'
-
+_test_user_name = "aaah"
 
 @pytest.fixture(autouse=True)
 def delete_user_handler():
-    sh.add_user_handler(_test_user_id)
+    sh.add_user_handler(_test_user_id, _test_user_name)
     sh.delete_user_handler(_test_user_id)
 
 
@@ -20,22 +20,22 @@ def mock_deletion(mocker):
 
 
 def test_handler_creation():
-    handler = sh.add_user_handler(_test_user_id)
+    handler = sh.add_user_handler(_test_user_id, _test_user_name)
     assert sh.get_user_handler(_test_user_id) == handler, 'Expected just created handler'
     sh.delete_user_handler(_test_user_id)
-    new_handler = sh.add_user_handler(_test_user_id)
+    new_handler = sh.add_user_handler(_test_user_id, _test_user_name)
     assert sh.get_user_handler(_test_user_id) != handler, 'Expected new_handler'
     assert sh.get_user_handler(_test_user_id) == new_handler, 'Expected just created new_handler'
 
 
 def test_handler_double_creation():
-    handler = sh.add_user_handler(_test_user_id)
-    other_handler = sh.add_user_handler(_test_user_id)
+    handler = sh.add_user_handler(_test_user_id, _test_user_name)
+    other_handler = sh.add_user_handler(_test_user_id, _test_user_name)
     assert handler != other_handler
 
 
 def test_handler_deletion():
-    handler = sh.add_user_handler(_test_user_id)
+    handler = sh.add_user_handler(_test_user_id, _test_user_name)
     sh.delete_user_handler(_test_user_id)
     assert sh.get_user_handler(_test_user_id) is None
     assert not handler.user_path.exists()
@@ -51,7 +51,7 @@ def test_handler_deletion():
 class TestBasicMoleculeGroup:
 
     def test_molecule_addition(self, test_smiles, test_cml, test_name):
-        sh.add_user_handler(_test_user_id)
+        sh.add_user_handler(_test_user_id, _test_user_name)
         sh.add_molecule(_test_user_id, test_smiles, test_cml, test_name)
         molecules = sh.get_molecules(_test_user_id)
         molecule = molecules.get(test_smiles)
@@ -60,11 +60,11 @@ class TestBasicMoleculeGroup:
         assert molecule == {'name': test_name, 'cml': test_cml, 'analyses': dict()}
 
     def test_molecule_loading(self, test_smiles, test_cml, test_name, *mock_deletion):
-        handler = sh.add_user_handler(_test_user_id)
+        handler = sh.add_user_handler(_test_user_id, _test_user_name)
         sh.add_molecule(_test_user_id, test_smiles, test_cml, test_name)
         molecules = sh.get_molecules(_test_user_id)
         molecule = molecules.get(test_smiles)
-        new_handler = sh.add_user_handler(_test_user_id)
+        new_handler = sh.add_user_handler(_test_user_id, _test_user_name)
         assert new_handler != handler, 'New Handler should be different'
         loaded_molecules = sh.get_molecules(_test_user_id)
         loaded_molecule = loaded_molecules.get(test_smiles)
@@ -76,7 +76,7 @@ class TestBasicMoleculeGroup:
         test_fitting_id2 = 'test_fitting_b'
         test_results = {'test': 5}
         test_results2 = {5: 'aa'}
-        sh.add_user_handler(_test_user_id)
+        sh.add_user_handler(_test_user_id, _test_user_name)
         sh.add_molecule(_test_user_id, test_smiles, test_cml, test_name)
         sh.add_analysis(_test_user_id, test_smiles, test_fitting_id, test_results)
         sh.add_analysis(_test_user_id, test_smiles, test_fitting_id2, test_results2)
@@ -122,7 +122,7 @@ class TestBasicMoleculeGroup:
 )
 class TestBasicModelGroup:
     def test_model_addition(self, test_model_name, test_parameters, test_base_id):
-        sh.add_user_handler(_test_user_id)
+        sh.add_user_handler(_test_user_id, _test_user_name)
         assert len(sh.get_model_summaries(_test_user_id)) == 0
         test_model_id = sh.add_model(_test_user_id, test_model_name, test_parameters, test_base_id)
         summary = sh.get_model_summary(_test_user_id, test_model_id)
@@ -134,12 +134,12 @@ class TestBasicModelGroup:
 
     def test_model_loading(self, test_model_name, test_parameters, test_base_id, mock_deletion):
         test_fitting_id = str(5125)
-        handler = sh.add_user_handler(_test_user_id)
+        handler = sh.add_user_handler(_test_user_id, _test_user_name)
         model_id = sh.add_model(_test_user_id, test_model_name, test_parameters, test_base_id)
         models = sh.get_model_summaries(_test_user_id)
         model = sh.get_model_summary(_test_user_id, model_id)
         sh.get_user_handler(_test_user_id).add_fitting_to_model(model_id, test_fitting_id)
-        new_handler = sh.add_user_handler(_test_user_id)
+        new_handler = sh.add_user_handler(_test_user_id, _test_user_name)
         assert new_handler != handler, 'New Handler should be different'
         loaded_models = sh.get_model_summaries(_test_user_id)
         loaded_model = sh.get_model_summary(_test_user_id, model_id)
@@ -162,7 +162,7 @@ class TestBasicFittingsGroup:
         test_parameters = {'embeddingDim': 256, 'depth': 3, 'readoutSize': 2, 'loss': 'MeanSquaredError',
                            'optimizer': 'Adam'}
         test_basemodel_id = 'Test B'
-        sh.add_user_handler(_test_user_id)
+        sh.add_user_handler(_test_user_id, _test_user_name)
         added_model_id = sh.add_model(_test_user_id, test_model_name, test_parameters, test_basemodel_id)
         return added_model_id
 
@@ -197,6 +197,21 @@ class TestBasicFittingsGroup:
         loaded_fitting = sh.get_fitting(_test_user_id, test_fitting_id)
         assert type(loaded_fitting) == type(test_fitting), 'fitting should get loaded'
 
+        scoreboard_entry = sh.get_scoreboard_summaries().get(test_fitting_id)
+        wanted_entry = {'id': test_fitting_id,
+                                                 'userName': str(sh.get_user_handler(_test_user_id).username),
+                                                 'modelID': add_test_model,
+                                                 'modelName': sh.get_user_handler(_test_user_id).get_model_summary(
+                                                     add_test_model).get(
+                                                     'name'),
+                                                 'datasetID': test_dataset_id,
+                                                 'labels': test_labels,
+                                                 'epochs': test_epochs,
+                                                 'batchSize': test_batch_size,
+                                                 'accuracy': test_accuracy}
+        assert wanted_entry == scoreboard_entry, 'Scoreboard entry should look like this'
+
+
     def test_fitting_loading(self, test_dataset_id, test_labels, test_epochs, test_accuracy, test_batch_size,
                              test_fitting, add_test_model, mock_keras_save, mock_deletion):
         assert add_test_model is not None, 'Test setup'
@@ -210,7 +225,7 @@ class TestBasicFittingsGroup:
         user_path = sh.get_user_handler(_test_user_id).user_path
         sh.delete_user_handler(_test_user_id)
         assert user_path.exists(), 'Test setup. NEEDS to exist after "deletion"'
-        sh.add_user_handler(_test_user_id)
+        sh.add_user_handler(_test_user_id, _test_user_name)
         assert type(sh.get_fitting(_test_user_id, test_fitting_id)) == type(fitting), 'Fittings should be same of type'
         assert sh.get_fitting_summary(_test_user_id, test_fitting_id) == fitting_summary, 'Loaded fitting summary ' \
                                                                                           'dict should be the exact ' \
@@ -233,19 +248,23 @@ class TestBasicFittingsGroup:
 
 
 @pytest.mark.parametrize(
-    'sh_fittings, fitting_id, epochs, accuracy, fitting',
+    'sh_fittings, sh_scoreboard, fitting_id, epochs, accuracy, fitting',
     [
-        ({'aah': {'datasetID': 'testID', 'epochs': 142, 'accuracy': 12}}, 'aah', 12, 0.01, mm.BasicMockModel({'hi'})),
+        ({'aah': {'datasetID': 'testID', 'epochs': 142, 'accuracy': 12}}, {'aah': {'epochs': 142, 'accuracy': 12}}, 'aah', 12, 0.01, mm.BasicMockModel({'hi'})),
     ]
 )
-def test_fitting_update(sh_fittings, fitting_id, epochs, accuracy, fitting):
-    sh.add_user_handler(_test_user_id)
+def test_fitting_update(sh_fittings, sh_scoreboard, fitting_id, epochs, accuracy, fitting):
+    sh.add_user_handler(_test_user_id, _test_user_name)
     sh.get_user_handler(_test_user_id).fitting_summaries = sh_fittings
+    sh._inst.scoreboard_summaries = sh_scoreboard
     result_id = sh.update_fitting(_test_user_id, fitting_id, epochs, accuracy, fitting)
     assert result_id == fitting_id, 'Expect returned fitting_id to be equal'
     summary = sh.get_fitting_summary(_test_user_id, fitting_id)
+    scoreboard = sh.get_scoreboard_summaries().get(fitting_id)
     assert summary.get('epochs') == epochs, 'Expected values to be updated'
     assert summary.get('accuracy') == accuracy, 'Expected values to be updated'
+    assert scoreboard.get('epochs') == epochs, 'Expected values to be updated'
+    assert scoreboard.get('accuracy') == accuracy, 'Expected values to be updated'
 
 
 @pytest.mark.parametrize(
@@ -257,7 +276,7 @@ def test_fitting_update(sh_fittings, fitting_id, epochs, accuracy, fitting):
     ]
 )
 def test_fitting_update_failure(sh_fittings, fitting_id, epochs, accuracy, fitting):
-    sh.add_user_handler(_test_user_id)
+    sh.add_user_handler(_test_user_id, _test_user_name)
     sh.get_user_handler(_test_user_id).fitting_summaries = sh_fittings
     assert sh.update_fitting(_test_user_id, fitting_id, epochs, accuracy, fitting) is None, 'Expected None when fails'
     assert sh.get_fitting_summary(_test_user_id, fitting_id) is None, 'Expected fitting to not exist when fails'

@@ -33,7 +33,7 @@ class TestModelRequestGroup:
         assert len(response.json) == 0, 'Response list should be empty'
 
     @pytest.mark.parametrize(
-        'sh_models, sh_fittings',
+        'sh_models, sh_fittings, sh_datasets, base_models',
         [
             ({
                  'test_model_id': {
@@ -52,11 +52,24 @@ class TestModelRequestGroup:
                      'fittingPath': 'X',
                      'modelID': 'test_model_id',
                  }
-             })
+             }, {
+                'dataset_id': {
+                    'name': 'test',
+                }
+            },
+
+             {'Test A': {
+                     'name': 'test AAA'
+                 }},
+             )
         ]
     )
-    def test_model_get_response(self, sh_models, sh_fittings, client, mocker):
-        mocker.patch('backend.utils.api.sh', backend.tests.mocks.mock_sh.MockSH(sh_models, sh_fittings))
+    def test_model_get_response(self, sh_models, sh_fittings, sh_datasets, base_models, client, mocker):
+        mock_sh = backend.tests.mocks.mock_sh.MockSH(sh_models, sh_fittings)
+        mocker.patch('backend.utils.api.sh.get_fitting_summary', mock_sh.get_fitting_summary)
+        mocker.patch('backend.utils.api.sh.get_model_summaries', mock_sh.get_model_summaries)
+        mocker.patch('backend.utils.api.sh.get_dataset_summaries', return_value=sh_datasets)
+        mocker.patch('backend.utils.api.sh.get_base_model', return_value=base_models.get('Test A'))
         response = client.get(f'/users/{_test_user_id}/models')
         assert response.status_code == 200, 'Request should have worked'
         assert type(response.json) == list, 'Response json should be a list'
@@ -70,6 +83,7 @@ class TestModelRequestGroup:
                 converted_fitting |= {'modelID': fitting['modelID']}
                 converted_fitting |= {'modelName': model['name']}
                 converted_fitting |= {'datasetID': fitting['datasetID']}
+                converted_fitting |= {'datasetName': sh_datasets.get(fitting['datasetID']).get('name')}
                 converted_fitting |= {'labels': fitting['labels']}
                 converted_fitting |= {'epochs': fitting['epochs']}
                 converted_fitting |= {'batchSize': fitting['batchSize']}
@@ -80,6 +94,7 @@ class TestModelRequestGroup:
             converted_model |= {'id': model_id}
             converted_model |= {'name': model['name']}
             converted_model |= {'baseModelID': model['baseModelID']}
+            converted_model |= {'baseModelName': base_models.get('Test A').get('name')}
             converted_model |= {'parameters': model['parameters']}
             converted_model |= {'fittings': converted_fittings}
             assert converted_model in response_json, 'Response json should contain every model formatted like this'
@@ -163,7 +178,7 @@ class TestFittingRequestGroup:
         assert len(response.json) == 0, 'List should be empty'
 
     @pytest.mark.parametrize(
-        'sh_models, sh_fittings',
+        'sh_models, sh_fittings, sh_datasets',
         [
             ({
                  'test_model_id': {
@@ -191,12 +206,16 @@ class TestFittingRequestGroup:
                      'fittingPath': 'X2',
                      'modelID': 'test_model_id',
                  }
-             }),
-            ({}, {})
+             },
+             {'dataset_id': {'name': 'dataset_name'}}),
+            ({}, {}, {})
         ]
     )
-    def test_fitting_get_response(self, sh_models, sh_fittings, client, mocker):
-        mocker.patch('backend.utils.api.sh', backend.tests.mocks.mock_sh.MockSH(fittings=sh_fittings, models=sh_models))
+    def test_fitting_get_response(self, sh_models, sh_fittings, sh_datasets,client, mocker):
+        mock_sh = backend.tests.mocks.mock_sh.MockSH(fittings=sh_fittings, models=sh_models)
+        mocker.patch('backend.utils.api.sh.get_fitting_summaries', mock_sh.get_fitting_summaries)
+        mocker.patch('backend.utils.api.sh.get_model_summary', mock_sh.get_model_summary)
+        mocker.patch('backend.utils.api.sh.get_dataset_summaries', return_value=sh_datasets)
         response = client.get(f'/users/{_test_user_id}/fittings')
         assert response.status_code == 200, 'Request should have succeeded'
         response_json = response.json
@@ -210,6 +229,7 @@ class TestFittingRequestGroup:
             converted_fitting |= {'modelID': fitting['modelID']}
             converted_fitting |= {'modelName': model_name}
             converted_fitting |= {'datasetID': fitting['datasetID']}
+            converted_fitting |= {'datasetName': sh_datasets.get(fitting['datasetID']).get('name')}
             converted_fitting |= {'labels': fitting['labels']}
             converted_fitting |= {'epochs': fitting['epochs']}
             converted_fitting |= {'batchSize': fitting['batchSize']}
@@ -228,11 +248,17 @@ class TestUserRequestGroup:
     )
     def test_add_user_response(self, test_username, client, mocker):
         mocker.patch('backend.utils.api.sh.add_user_handler', return_value={'This represents a handler'})
+        sh_mol_mock = mocker.patch('backend.utils.api.sh.add_molecule')
+        sh_model_mock = mocker.patch('backend.utils.api.sh.add_model')
+        sio_background_mock = mocker.patch('backend.utils.api.sio.start_background_task')
         response = client.post(f'/users', json={'username': test_username})
         user_id = str(hashlib.sha1(test_username.encode('utf-8'), usedforsecurity=False).hexdigest())
         assert response.status_code == 201, 'Request should have worked'
         assert response.is_json, 'Response should be a json'
         assert response.json == {'userID': user_id}, 'json should contain the user id'
+        sh_mol_mock.assert_called_once()
+        sh_model_mock.assert_called_once()
+        sio_background_mock.assert_called_once()
 
     def test_add_user_error(self, client, mocker):
         mocker.patch('backend.utils.api.sh.add_user_handler', return_value=None)

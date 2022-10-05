@@ -140,7 +140,7 @@ class TestLiveStatsGroup:
                                           batch_size,
                                           model_id,
                                           model)
-        mocked_api.assert_called_once_with(user_id, fitting_id, epochs_trained)
+        mocked_api.assert_called_once_with(user_id, fitting_id, epochs_trained, accuracy)
 
     @pytest.mark.parametrize(
         'user_id, dataset_id, model_id, batch_size, labels, model, initial_epoch, fitting_id, epochs, accuracy, '
@@ -171,7 +171,7 @@ class TestLiveStatsGroup:
         mocked_sh = mocker.patch('backend.utils.storage_handler.update_fitting', return_value=fitting_id)
         live_stats.on_train_end()
         mocked_sh.assert_called_once_with(user_id, fitting_id, epochs_trained, accuracy, model)
-        mocked_api.assert_called_once_with(user_id, fitting_id, epochs_trained)
+        mocked_api.assert_called_once_with(user_id, fitting_id, epochs_trained, accuracy)
 
 @pytest.mark.parametrize(
     'user_id, dataset_id, model_id, labels, epochs, batch_size',

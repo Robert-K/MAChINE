@@ -299,10 +299,11 @@ class StorageHandler:
     def update_fitting(self, user_id, fitting_id, epochs, accuracy, fitting):
         fitting_id = self.get_user_handler(user_id).update_fitting(fitting_id, epochs, accuracy, fitting)
         # Updates the scoreboard fitting summary
-        scoreboard_fitting = self.scoreboard_summaries[fitting_id]
-        scoreboard_fitting['epochs'] = epochs
-        scoreboard_fitting['accuracy'] = accuracy
-        self.__save_scoreboard_summaries()
+        scoreboard_fitting = self.scoreboard_summaries.get(fitting_id)
+        if scoreboard_fitting:
+            scoreboard_fitting['epochs'] = epochs
+            scoreboard_fitting['accuracy'] = accuracy
+            self.__save_scoreboard_summaries()
         return fitting_id
 
     def get_fitting(self, user_id, fitting_id):
