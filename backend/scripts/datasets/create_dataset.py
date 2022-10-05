@@ -6,7 +6,7 @@ import pickle
 from backend.utils.molecule_formats import *
 import numpy as np
 
-_version = 4
+_version = 5
 
 
 def smiles_to_fingerprints(smiles, sizes, radius=2):
@@ -143,7 +143,7 @@ def update_dataset(path):
     with path.open('rb') as old_set_file_read:
         old_set = pickle.load(old_set_file_read)
 
-    if old_set.get('version') == _version:
+    if old_set.get('version') == _version + 1:
         return old_set
 
     try:
@@ -171,8 +171,8 @@ def create_histograms(dataset, labels):
 
     # create histogram for each label
     for [label, data] in columns_by_label.items():
-        # 4 is an arbitrary value
-        hist, bin_edges = np.histogram(data, math.floor(len(data) / 4))
+        # 10 is an arbitrary value, change corresponding to degree of detail required
+        hist, bin_edges = np.histogram(data, 2)
         histograms[label] = dict({
             'buckets': hist.tolist(),
             'bin_edges': bin_edges.tolist()
@@ -184,6 +184,7 @@ def create_histograms(dataset, labels):
 # HOW TO USE:
 # Look at examples below
 if __name__ == '__main__':
+    update_dataset('../../storage/data/med_hiv.pkl')
     '''
     Example for creating a new dataset
     new_set = create_complete_dataset(path="../../storage/csv_data/solubility.csv",
