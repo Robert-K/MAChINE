@@ -23,6 +23,8 @@ import { HelpProvider } from './context/HelpContext'
 import { handleErrors } from './utils'
 import '@fontsource/poppins'
 import ModelCreationRouter from './routes/ModelCreationRouter'
+import { STATUS } from 'react-joyride'
+import Onboarding from './components/onboarding/Onboarding'
 
 const themeBase = {
   palette: {
@@ -88,7 +90,7 @@ const themeLight = createTheme(
       backgroundColor: '#ffffff',
     },
     home: {
-      mascot: 'molele.svg',
+      mascot: '/molele.svg',
     },
     darkTheme: false,
   })
@@ -130,7 +132,7 @@ const themeDark = createTheme(
       backgroundColor: '#2b2b2b',
     },
     home: {
-      mascot: 'molele-dark.svg',
+      mascot: '/molele-dark.svg',
     },
     darkMode: true,
   })
@@ -141,10 +143,11 @@ export default function App() {
     window.matchMedia &&
       window.matchMedia('(prefers-color-scheme: dark)').matches
   )
-
+  const [theme, setTheme] = React.useState(darkMode ? themeDark : themeLight)
   const [helpMode, setHelpMode] = React.useState(false)
   const [userName, setUserName] = React.useState(null)
   const [adminMode, setAdminMode] = React.useState(false)
+  const [runOnboarding, setRunOnboarding] = React.useState(false)
 
   window
     .matchMedia('(prefers-color-scheme: dark)')
@@ -161,6 +164,7 @@ export default function App() {
 
   async function login(newUserName) {
     if (userName !== null) logout()
+    // setRunOnboarding(true) // Uncomment to run onboarding on login
     return api
       .completeLogin(newUserName)
       .then((r) => {
@@ -177,6 +181,7 @@ export default function App() {
   }
 
   const logout = () => {
+    setRunOnboarding(false)
     api.stopTraining()
     api.logout().catch((e) => console.log(e))
     setUserName(null)
@@ -188,6 +193,7 @@ export default function App() {
 
   const changeDarkMode = (value) => {
     setDarkMode(value)
+    setTheme(value ? themeDark : themeLight)
   }
 
   const changeHelpMode = (value) => {
@@ -195,6 +201,13 @@ export default function App() {
   }
 
   handleErrors()
+
+  const onboardingCallback = (data) => {
+    const { action, index, status, type } = data
+    if ([STATUS.FINISHED, STATUS.SKIPPED].includes(status)) {
+      setRunOnboarding(false)
+    }
+  }
 
   const pattern = ['a', 'd', 'm', 'i', 'n', 'm', 'o', 'd', 'e']
   let current = 0
@@ -216,7 +229,7 @@ export default function App() {
 
   return (
     <div className="App">
-      <ThemeProvider theme={darkMode ? themeDark : themeLight}>
+      <ThemeProvider theme={theme}>
         <UserProvider value={{ userName, adminMode, setAdminMode }}>
           <HelpProvider value={{ helpMode, setHelpMode }}>
             <TrainingProvider>
@@ -300,15 +313,29 @@ export default function App() {
                     },
                   }}
                 />
+                <Onboarding run={runOnboarding} callback={onboardingCallback} />
                 <Routes>
                   <Route
                     path="/"
                     element={<StartPage onLogin={login} />}
                   ></Route>
-                  <Route path="/home" element={<HomePage />}></Route>
+                  <Route
+                    path="/home"
+                    element={
+                      <HomePage
+                        startOnboarding={() => {
+                          setRunOnboarding(true)
+                        }}
+                      />
+                    }
+                  ></Route>
                   <Route
                     path="/models/*"
-                    element={<ModelCreationRouter />}
+                    element={
+                      <ModelCreationRouter
+                        initSelectedIndex={runOnboarding ? 0 : -1}
+                      />
+                    }
                   ></Route>
                   <Route path="/molecules" element={<MoleculesPage />}></Route>
                   <Route path="/results" element={<ScoreboardsPage />}></Route>

@@ -26,6 +26,7 @@ const TrainingContext = React.createContext({
   resetContext: () => {},
   stopTraining: () => {},
   finishedAccuracy: 0,
+  selectExampleTrainingParameters: () => {},
 })
 
 export const TrainingProvider = ({ children }) => {
@@ -58,12 +59,24 @@ export const TrainingProvider = ({ children }) => {
     })
     api.registerSocketListener('done', (response) => {
       setTrainingStatus(false)
-      setTrainingFinished(true)
-      setTrainingID(response.fittingID)
-      setSelectedEpochs(response.epochs)
-      setFinishedAccuracy(response.accuracy)
+      if (selectedLabels.length !== 0) {
+        setTrainingFinished(true)
+        setTrainingID(response.fittingID)
+        setSelectedEpochs(response.epochs)
+        setFinishedAccuracy(response.accuracy)
+      }
     })
   }, [])
+
+  function selectExampleTrainingParameters() {
+    api.getModelList().then((response) => {
+      setSelectedModel(response[0])
+    })
+    api.getDatasets().then((response) => {
+      setSelectedDataset(response[0])
+      setSelectedLabels([response[0].labelDescriptors[0]])
+    })
+  }
 
   function updateTrainingData(trainingData, action) {
     switch (action.type) {
@@ -136,6 +149,7 @@ export const TrainingProvider = ({ children }) => {
         resetContext,
         stopTraining,
         finishedAccuracy,
+        selectExampleTrainingParameters,
       }}
     >
       {children}

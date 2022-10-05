@@ -148,6 +148,7 @@ export default function MoleculesPage() {
           item
           md={9}
           key="molecule-view"
+          className="molecule-view"
           onMouseOver={(e) => {
             handleHelpPopperOpen(
               e,
@@ -157,6 +158,7 @@ export default function MoleculesPage() {
           onMouseLeave={handleHelpPopperClose}
         >
           <MoleculeView
+            className="molecule-view"
             selectedMolecule={selectedMolecule}
             onSave={saveMolecule}
           />
@@ -268,6 +270,7 @@ function MoleculeView({ selectedMolecule, onSave }) {
         <Button
           size="large"
           variant="outlined"
+          className="analyze-button"
           onClick={() =>
             navigate('/trained-models', {
               state: { selectedSmiles: selectedMolecule.smiles },

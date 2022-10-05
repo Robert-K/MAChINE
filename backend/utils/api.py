@@ -159,6 +159,42 @@ class User(Resource):
             return None, 409
         handler = sh.add_user_handler(user_id, args['username'])
         if handler:
+            # Add example molecules & models
+            # Hardcoded basemodel & dataset ID, change if breaks
+            sh.add_molecule(user_id,
+                            'O',
+                            '<cml xmlns="http://www.xml-cml.org/schema"><molecule '
+                            'id="m1"><atomArray><atom id="a1" elementType="H" x2="14.266666666666667" '
+                            'y2="54.4"/><atom id="a2" elementType="O" x2="15.132692070451107" '
+                            'y2="54.9"/><atom id="a4" elementType="H" x2="15.998717474235546" '
+                            'y2="54.4"/></atomArray><bondArray><bond id="b1" order="S" atomRefs2="a1 '
+                            'a2"/><bond id="b3" order="S" atomRefs2="a2 '
+                            'a4"/></bondArray></molecule></cml>',
+                            'Water')
+
+            example_model_id = sh.add_model(user_id, 'Example Model',
+                                            {'layers': [
+                                                {
+                                                    'type': 'dense',
+                                                    'units': 5,
+                                                    'activation': 'relu',
+                                                },
+                                                {
+                                                    'type': 'dense',
+                                                    'units': 2,
+                                                    'activation': 'linear',
+                                                },
+                                                {
+                                                    'type': 'dense',
+                                                    'units': 12,
+                                                    'activation': 'relu',
+                                                }],
+                                                'lossFunction': 'Huber Loss',
+                                                'optimizer': 'Stochastic Gradient Descent'}, '1')
+            sio.start_background_task(
+                ml.train,
+                user_id, '1', example_model_id, ['HIV_active'], 0, 128
+            )
             return {'userID': user_id}, 201
         return 404
 
@@ -211,7 +247,7 @@ class BaseModels(Resource):
                 if current.get('type') == 'sequential':
                     layers = current.get('layers')
                     if layers:
-                        #TODO: this does not work aaaaaaaaaah oh no oh oh nonono cri cri
+                        # TODO: this does not work aaaaaaaaaah oh no oh oh nonono cri cri
                         processed_model['taskType'] = 'regression' if layers[len(layers) - 1].get(
                             'units') == 1 else 'classification'
 

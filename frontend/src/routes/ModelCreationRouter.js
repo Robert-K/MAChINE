@@ -5,8 +5,9 @@ import ModelConfigPage from './ModelConfigPage'
 import ModelsPage from './ModelsPage'
 import api from '../api'
 import UserContext from '../context/UserContext'
+import PropTypes from 'prop-types'
 
-export default function ModelCreationRouter() {
+export default function ModelCreationRouter({ initSelectedIndex }) {
   const [modelList, setModelList] = React.useState([])
   const user = React.useContext(UserContext)
 
@@ -36,7 +37,15 @@ export default function ModelCreationRouter() {
 
   return (
     <Routes>
-      <Route path="" element={<ModelsPage modelList={modelList} />} />
+      <Route
+        path=""
+        element={
+          <ModelsPage
+            modelList={modelList}
+            initSelectedIndex={initSelectedIndex}
+          />
+        }
+      />
       <Route path="base-models" element={<BaseModelsPage />} />
       <Route
         path="model-config"
@@ -44,4 +53,8 @@ export default function ModelCreationRouter() {
       />
     </Routes>
   )
+}
+
+ModelCreationRouter.propTypes = {
+  initSelectedIndex: PropTypes.number,
 }
