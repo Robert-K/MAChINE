@@ -104,9 +104,11 @@ export default function FittingsPage() {
     async function updateThings() {
       setChartConfigs(newCharts)
       setHighlightedIndices(newIndices)
-      setLoading(false)
     }
-    updateThings().then(handleClickOpenDialog)
+    updateThings().then(() => {
+      setLoading(false)
+      handleClickOpenDialog()
+    })
   }
 
   const handlePopper = (target, content, show) => {
