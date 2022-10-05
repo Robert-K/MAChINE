@@ -34,7 +34,7 @@ export default function BaseModelCard({
           onClick={() => clickFunc(baseModel)}
           onMouseOver={(e) => hoverFunc(e)}
           onMouseLeave={() => leaveFunc()}
-          className={'base-model-card id-' + baseModel.id}
+          className={`base-model-card id-${baseModel.id}`}
         >
           <Box position="relative">
             <Box
