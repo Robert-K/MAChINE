@@ -17,7 +17,7 @@ export default function ScoreboardsPage() {
   const fittingColumns = [
     {
       field: 'id',
-      headerName: 'Model ID',
+      headerName: 'Trained Model ID',
       headerAlign: 'center',
       align: 'center',
       sortable: false,

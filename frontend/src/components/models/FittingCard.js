@@ -34,7 +34,7 @@ export default function FittingCard({
             />
             <Box paddingX={2}>
               <Typography variant="subtitle1" component="h4">
-                Training dataset: {fitting.datasetName}
+                Dataset: {fitting.datasetName} #{fitting.datasetID}
               </Typography>
               <Typography variant="subtitle1" component="h4">
                 Epochs: {fitting.epochs}

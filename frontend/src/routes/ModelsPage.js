@@ -188,7 +188,7 @@ function ModelDescription({
       <Card>
         <CardContent sx={{ p: 3 }}>
           <Typography variant="h5" align="center" color="lightgrey">
-            Select a Model from the list to view details.
+            Select a model from the list to view details.
           </Typography>
         </CardContent>
       </Card>
@@ -318,7 +318,7 @@ function RenderFitting({
         <ListItemButton onClick={() => toggleOpen()}>
           {open[index] ? <ExpandLess /> : <ExpandMore />}
           <ListItemText
-            primary={`Dataset: ${fitting.datasetName}`}
+            primary={`Dataset: ${fitting.datasetName} #${fitting.datasetID}`}
             secondary={`Trained model ID: ${fitting.id}`}
             sx={{ color: theme.palette.primary.main }}
           ></ListItemText>
