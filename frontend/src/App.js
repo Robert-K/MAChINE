@@ -4,7 +4,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import SwaggerPage from './routes/SwaggerPage'
 import '@fontsource/roboto'
 import Navbar from './components/misc/Navbar'
-import { createTheme, CssBaseline, ThemeProvider } from '@mui/material'
+import { CssBaseline, ThemeProvider } from '@mui/material'
 import HomePage from './routes/HomePage'
 import MoleculesPage from './routes/MoleculesPage'
 import StartPage from './routes/StartPage'
@@ -17,7 +17,6 @@ import { UserProvider } from './context/UserContext'
 import { TrainingProvider } from './context/TrainingContext'
 import Particles from 'react-tsparticles'
 import { loadFull } from 'tsparticles'
-import { deepmerge } from '@mui/utils'
 import HelpModeButton from './components/misc/HelpModeButton'
 import { HelpProvider } from './context/HelpContext'
 import { handleErrors } from './utils'
@@ -25,118 +24,7 @@ import '@fontsource/poppins'
 import ModelCreationRouter from './routes/ModelCreationRouter'
 import { STATUS } from 'react-joyride'
 import Onboarding from './components/onboarding/Onboarding'
-
-const themeBase = {
-  palette: {
-    connected: {
-      main: '#6dcd00',
-    },
-  },
-  components: {
-    MuiDataGrid: {
-      styleOverrides: {
-        columnHeaderTitle: {
-          fontWeight: 600,
-          fontSize: 'large',
-        },
-      },
-    },
-    MuiLinearProgress: {
-      styleOverrides: {
-        bar: {
-          transition: 'transform 0.05s linear',
-        },
-      },
-    },
-  },
-  typography: {
-    fontFamily: `"Poppins", "Helvetica", "Arial", sans-serif`,
-    fontSize: 14,
-    fontWeightLight: 300,
-    fontWeightRegular: 400,
-    fontWeightMedium: 400,
-  },
-}
-
-const themeLight = createTheme(
-  deepmerge(themeBase, {
-    palette: {
-      primary: {
-        main: '#137C83',
-        overlay: '#0f6267',
-      },
-      contrastbackground: {
-        main: '#137C83',
-      },
-    },
-    components: {
-      MuiCard: {
-        styleOverrides: {
-          root: {
-            backgroundColor: 'rgba(255, 255, 255, .2)',
-            backdropFilter: 'blur(5px)',
-            boxShadow:
-              '0px 7px 8px -4px rgb(0 0 0 / 10%), 0px 12px 17px 2px rgb(0 0 0 / 8%), 0px 5px 22px 4px rgb(0 0 0 / 6%)',
-          },
-        },
-      },
-    },
-    apexcharts: {
-      shade: 'light',
-    },
-    modelVisual: {
-      borderColor: '#c4c4c4',
-      fontColor: '#212121',
-      backgroundColor: '#ffffff',
-    },
-    home: {
-      mascot: '/molele.svg',
-    },
-    darkTheme: false,
-  })
-)
-
-const themeDark = createTheme(
-  deepmerge(themeBase, {
-    palette: {
-      primary: {
-        main: '#dc3984',
-        overlay: '#7E2E54',
-      },
-      mode: 'dark',
-    },
-    components: {
-      MuiAppBar: {
-        styleOverrides: {
-          colorPrimary: {
-            backgroundColor: '#7E2E54',
-            backgroundImage: 'none',
-          },
-        },
-      },
-      MuiCard: {
-        styleOverrides: {
-          root: {
-            backgroundColor: 'rgba(30, 30, 30, .5)',
-            backdropFilter: 'blur(5px)',
-          },
-        },
-      },
-    },
-    apexcharts: {
-      shade: 'dark',
-    },
-    modelVisual: {
-      borderColor: '#707070',
-      fontColor: 'white',
-      backgroundColor: '#2b2b2b',
-    },
-    home: {
-      mascot: '/molele-dark.svg',
-    },
-    darkMode: true,
-  })
-)
+import { themeDark, themeLight } from './Theme'
 
 export default function App() {
   const [darkMode, setDarkMode] = React.useState(
