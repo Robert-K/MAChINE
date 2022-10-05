@@ -39,11 +39,12 @@ class Models(Resource):
     def get(self, user_id):
         models = sh.get_model_summaries(user_id)
         model_configs = []
-
+        # Goes through every model_config for a user and converts it to the frontend format
         for key in models.keys():
             current_model = models[key]
             current_base_model = sh.get_base_model(current_model['baseModelID'])
             model_fittings = []
+            # Goes through every fitting associated with the model_config and adds that to the sent data
             for fitting_id in current_model['fittingIDs']:
                 fitting = sh.get_fitting_summary(user_id, fitting_id)
                 if fitting:  # convert fitting
@@ -114,6 +115,7 @@ class Molecules(Resource):
     def patch(self, user_id):
         args = parser.parse_args()
         smiles = args['smiles']
+        # Only actually add molecules if Chem can handle the smiles code. Prevents errors further down the line
         if mf.is_valid_molecule(smiles):
             return sh.add_molecule(user_id, args['smiles'], args['cml'], args['name']), 201
         return None, 422
@@ -121,6 +123,7 @@ class Molecules(Resource):
 
 class Fittings(Resource):
     def get(self, user_id):
+        # Converts every fitting a user has to the frontend format and sends it over
         fittings = sh.get_fitting_summaries(user_id)
         processed_fittings = []
         for fitting_id in fittings.keys():
@@ -151,6 +154,7 @@ class Scoreboard(Resource):
         return list(sh.get_scoreboard_summaries().values())
 
     def delete(self, fitting_id=None):
+        # call so /scoreboards deletes everything to /scoreboards/<id> deletes a single fitting
         if fitting_id is None:
             return sh.delete_scoreboard_fittings()
         else:
@@ -160,6 +164,7 @@ class Scoreboard(Resource):
 class User(Resource):
     def post(self):
         args = parser.parse_args()
+        # Create the user_id
         user_id = str(hashlib.sha1(args['username'].encode('utf-8'), usedforsecurity=False).hexdigest())
         # This line means that if a user forgets to log out that username is blocked from there on
         if sh.get_user_handler(user_id) and not __debug__:
@@ -213,11 +218,13 @@ class User(Resource):
 
 
 class Datasets(Resource):
-    """
-    :returns array of json objects containing dataset information
-    """
 
     def get(self):
+        """
+        Converts the stored Dataset summaries to the frontend format
+
+        :return: converted array containing datasets & their properties
+        """
         datasets = sh.get_dataset_summaries()
         processed_datasets = []
         for dataset_id in datasets.keys():
@@ -282,8 +289,10 @@ class Train(Resource):
     def post(self, user_id):
         if ml.is_training_running(user_id):
             return False, 503
+        # Axios can't send arrays for some reason, => array converted to json string in frontend, back to array in here
         args = parser.parse_args()
         labels = json.loads(args['labels'])
+        # Starts the training as a background task to allow the server to respond to other requests while training
         sio.start_background_task(target=ml.train,
                                   user_id=user_id,
                                   dataset_id=args['datasetID'],
@@ -299,6 +308,7 @@ class Train(Resource):
         if ml.is_training_running(user_id):
             return 0, 503
 
+        # Continues training if fitting with that ID exists
         fitting_summary = sh.get_fitting_summary(user_id, args['fittingID'])
         if not bool(fitting_summary):
             return 0, 404
@@ -330,10 +340,13 @@ api.add_resource(BaseModels, '/baseModels')
 
 # SocketIO event listeners/senders
 def update_training_logs(user_id, logs):
+    # Schedules updates 0.3 secs apart at least
     scheduler.enter(0.3 * (len(scheduler.queue) + 1),
                     2,
                     sio.emit,
                     ('update', {user_id: logs}))
+    # blocking is required to schedule messages correctly, but can't block main process
+    # Starts the scheduler as a blocking background task
     sio.start_background_task(scheduler.run, blocking=True)
 
 

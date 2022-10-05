@@ -37,8 +37,23 @@ _dataset_version = 5
 
 
 class UserDataStorageHandler:
+    """
+    Class that holds data for a specific user and methods on how to store & retrieve it
+    """
 
     def __init__(self, user_id, username):
+        """
+        Creates a new UserDataStorageHandler.
+
+        Creates the folders necessary for proper data storage.
+
+        Retrieves possible stored data from summary files within the user_path.
+
+        Deletes all Data on Handler deletion.
+
+        :param user_id: ID of the user
+        :param username: Name of the user
+        """
         self.user_path = _user_data_path / user_id
         self.user_fittings_path = self.user_path / 'fittings'
         self.__build_folder_structure()

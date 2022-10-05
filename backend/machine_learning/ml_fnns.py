@@ -31,13 +31,16 @@ def create_fnn_with_dataset(parameters, dataset, labels, loss, optimizer, metric
 
     model.build(input_shape=x.get_shape())
 
+    # Builds the dataset for our model
     ds = tf.data.Dataset.from_tensor_slices((x, y)).batch(int(batch_size))
 
     return model, ds
 
 
 def smiles_to_fnn_input(smiles):
+    # Converts our molecule to a fingerprint vector
     converted_molecule = smiles_to_fingerprint(smiles, fingerprint_size=_fingerprint_size)
+    # Converts the fingerprint vector to tensorflow input
     if converted_molecule is not None:
         converted_molecule = tf.constant(converted_molecule, shape=(1, _fingerprint_size))
     return converted_molecule

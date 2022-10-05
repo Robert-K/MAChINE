@@ -9,6 +9,11 @@ live_trainings = dict()
 
 
 class Training:
+    """
+        Class for an active Training process.
+        Holds all the information required to train a model and later save it in the storage_handler.
+
+    """
     def __init__(self, user_id, dataset_id, model_id, labels, epochs, batch_size, fitting_id=None):
         model_summary = sh.get_model_summary(user_id, model_id)
         base_model = sh.get_base_model(model_summary.get('baseModelID'))
@@ -145,11 +150,14 @@ class LiveStats(keras.callbacks.Callback):
     def on_epoch_end(self, epoch, logs=None):
         if logs is None:
             logs = {}
+        # Increment our trained epochs counter
         self.epochs_trained = epoch + 1
         logs |= {"epoch": epoch}
+        # Sends an update with the current training data (metric evaluation)
         api.update_training_logs(self.user_id, logs)
 
     def on_train_begin(self, logs=None):
+        # Sends the api how many epochs the model is going to have been trained for
         epochs = live_trainings.get(self.user_id).epochs
         api.notify_training_start(self.user_id, epochs)
 
@@ -159,6 +167,7 @@ class LiveStats(keras.callbacks.Callback):
             accuracy = finished_training.evaluate_model()
             fitting_id = finished_training.fitting_id
             # Saves the trained model
+            # if we're continuing training on an existing fitting, just update accuracy, epochs and the model itself
             if sh.get_user_handler(self.user_id):
                 if finished_training.fitting_id:
                     fitting_id = sh.update_fitting(self.user_id, finished_training.fitting_id, self.epochs_trained,
