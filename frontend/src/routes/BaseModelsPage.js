@@ -6,9 +6,8 @@
  */
 
 import React from 'react'
-import { Container } from '@mui/material'
+import { Box } from '@mui/material'
 import BaseModelCard from '../components/models/BaseModelCard'
-import Grid from '@mui/material/Grid'
 import api from '../api'
 import HelpPopper from '../components/shared/HelpPopper'
 import HelpContext from '../context/HelpContext'
@@ -44,8 +43,14 @@ export default function BaseModelsPage() {
     navigate('/models/model-config', { state: { baseModel } })
   }
   return (
-    <Container>
-      <Grid container spacing={4} marginTop={1} marginBottom={5}>
+    <Box sx={{ m: 5 }}>
+      <Box
+        sx={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(4,1fr)',
+          gap: 5,
+        }}
+      >
         {modelArray.map((baseModel) => (
           <BaseModelCard
             baseModel={baseModel}
@@ -60,7 +65,7 @@ export default function BaseModelsPage() {
             leaveFunc={handleHelpPopperClose}
           />
         ))}
-      </Grid>
+      </Box>
       <HelpPopper
         id="helpPopper"
         helpPopperContent={helpPopperContent}
@@ -68,6 +73,6 @@ export default function BaseModelsPage() {
         anchorEl={helpAnchorEl}
         onClose={handleHelpPopperClose}
       />
-    </Container>
+    </Box>
   )
 }
