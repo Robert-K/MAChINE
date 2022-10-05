@@ -1,5 +1,13 @@
 import * as React from 'react'
-import { Box, Button, Card, IconButton, Stack, Typography } from '@mui/material'
+import {
+  Box,
+  Button,
+  Card,
+  IconButton,
+  Stack,
+  Typography,
+  useTheme,
+} from '@mui/material'
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings'
 import DeleteSweepIcon from '@mui/icons-material/DeleteSweep'
 import DeleteIcon from '@mui/icons-material/Delete'
@@ -14,7 +22,27 @@ export default function ScoreboardsPage() {
 
   const { adminMode, setAdminMode } = React.useContext(UserContext)
 
+  const theme = useTheme()
+
   const fittingColumns = [
+    {
+      field: 'userName',
+      headerName: 'Username',
+      headerAlign: 'center',
+      align: 'center',
+      flex: 4,
+      minWidth: 150,
+    },
+
+    {
+      field: 'modelName',
+      headerName: 'Modelname',
+      headerAlign: 'center',
+      align: 'center',
+      sortable: false,
+      flex: 3,
+      minWidth: 140,
+    },
     {
       field: 'id',
       headerName: 'Trained Model ID',
@@ -41,23 +69,6 @@ export default function ScoreboardsPage() {
       },
       flex: 4,
       minWidth: 200,
-    },
-    {
-      field: 'userName',
-      headerName: 'Username',
-      headerAlign: 'center',
-      align: 'center',
-      flex: 4,
-      minWidth: 150,
-    },
-    {
-      field: 'modelName',
-      headerName: 'Model Name',
-      headerAlign: 'center',
-      align: 'center',
-      sortable: false,
-      flex: 3,
-      minWidth: 140,
     },
     {
       field: 'datasetID',
@@ -132,10 +143,7 @@ export default function ScoreboardsPage() {
           mb: 4,
           mt: 1,
           '& .table-theme': {
-            bgcolor: 'primary.light',
-            '&:hover': {
-              bgcolor: 'primary.dark',
-            },
+            fontWeight: 'bold',
           },
         }}
       >
