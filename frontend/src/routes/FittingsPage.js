@@ -80,7 +80,6 @@ export default function FittingsPage() {
         for (let i = 0; i < hist.buckets.length; i++) {
           if (analysis[label] <= hist.binEdges[i]) {
             newChart.highlightedIndex = i
-            console.log(i)
           }
           newChart.data.push({
             x: `[${hist.binEdges[i].toFixed(2)} , ${hist.binEdges[
@@ -256,7 +255,7 @@ export default function FittingsPage() {
                 sx={{
                   display: 'flex',
                   justifyContent: 'center',
-                  width: '85%',
+                  width: '90%',
                 }}
               >
                 {chartConfigs.map((chart, index) => {

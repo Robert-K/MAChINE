@@ -32,9 +32,6 @@ export default function Histogram({ seriesObject, highlightedIndex }) {
         },
         xaxis: {
           type: 'category',
-          title: {
-            text: chartConfig.name,
-          },
           tickAmount: chartConfig.data.length > 30 ? 25 : 10,
         },
         colors: [
