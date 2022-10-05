@@ -33,7 +33,7 @@ _storage_path = Path.cwd() / 'storage'
 _user_data_path = _storage_path / 'user_data'
 _datasets_path = _storage_path / 'data'
 _base_models_path = _storage_path / 'models'
-_dataset_version = 4
+_dataset_version = 5
 
 
 class UserDataStorageHandler:

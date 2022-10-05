@@ -46,6 +46,9 @@ export default function FittingsPage() {
     empty: { data: [] },
   })
   const [loading, setLoading] = React.useState(false)
+  const [helpAnchorEl, setHelpAnchorEl] = React.useState(null)
+  const [helpPopperContent, setHelpPopperContent] = React.useState('')
+  const help = React.useContext(HelpContext)
   const { state } = useLocation()
   const { selectedSmiles } = state
   const user = React.useContext(UserContext)
@@ -56,9 +59,6 @@ export default function FittingsPage() {
     api.getFittings().then((fittings) => setFittingArray(fittings))
   }, [user])
 
-  const [helpAnchorEl, setHelpAnchorEl] = React.useState(null)
-  const [helpPopperContent, setHelpPopperContent] = React.useState('')
-  const help = React.useContext(HelpContext)
   React.useEffect(() => {
     if (Object.keys(selectedFitting).length !== 0) {
       api
@@ -153,8 +153,8 @@ export default function FittingsPage() {
   }
   const helpOpen = Boolean(helpAnchorEl)
 
-  const handleClick = () => {
-    navigate('/models/base-models')
+  const handleEmptyPageClick = () => {
+    navigate('/models')
   }
 
   if (fittingArray.length === 0) {
@@ -163,7 +163,7 @@ export default function FittingsPage() {
         <Grid container spacing={5}>
           <Grid item xs={3}>
             <Card>
-              <CardActionArea onClick={handleClick}>
+              <CardActionArea onClick={handleEmptyPageClick}>
                 <Typography sx={{ m: 5, textAlign: 'center' }}>
                   You have no trained models to display! Train one of your
                   models to use it to analyze a molecule.
@@ -199,51 +199,49 @@ export default function FittingsPage() {
           }}
         >
           {fittingArray.map((fitting) => (
-            <React.Fragment key={fitting.id}>
-              <FittingCard
-                fitting={fitting}
-                key={fitting.id}
-                sx={{ width: 500 }}
-                clickFunc={(event) => {
-                  handlePopper(
-                    event.currentTarget,
-                    <>
-                      <Button
-                        fullWidth
-                        variant="contained"
-                        sx={{ mb: 2 }}
-                        onClick={handleFittingSelection}
-                      >
-                        Choose this model
-                        {loading ? (
-                          <CircularProgress
-                            size="16px"
-                            color="secondary"
-                            sx={{ ml: 1 }}
-                          />
-                        ) : null}
-                      </Button>
-                      Labels:
-                      {fitting.labels.map((label) => {
-                        return (
-                          <ListItem key={label}>
-                            <ListItemText primary={`${label}`} />
-                          </ListItem>
-                        )
-                      })}
-                    </>,
-                    event.currentTarget !== anchor || !open
-                  )
-                }}
-                hoverFunc={(e) => {
-                  handleHelpPopperOpen(
-                    e,
-                    'Click to analyze your molecule with this model!'
-                  )
-                }}
-                leaveFunc={handleHelpPopperClose}
-              />
-            </React.Fragment>
+            <FittingCard
+              fitting={fitting}
+              key={fitting.id}
+              sx={{ width: 500 }}
+              clickFunc={(event) => {
+                handlePopper(
+                  event.currentTarget,
+                  <>
+                    <Button
+                      fullWidth
+                      variant="contained"
+                      sx={{ mb: 2 }}
+                      onClick={() => handleFittingSelection(fitting)}
+                    >
+                      Choose this model
+                      {loading ? (
+                        <CircularProgress
+                          size="16px"
+                          color="secondary"
+                          sx={{ ml: 1 }}
+                        />
+                      ) : null}
+                    </Button>
+                    Labels:
+                    {fitting.labels.map((label) => {
+                      return (
+                        <ListItem key={label}>
+                          <ListItemText primary={`${label}`} />
+                        </ListItem>
+                      )
+                    })}
+                  </>,
+                  event.currentTarget !== anchor || !open
+                )
+              }}
+              hoverFunc={(e) => {
+                handleHelpPopperOpen(
+                  e,
+                  'Click to analyze your molecule with this model!'
+                )
+              }}
+              leaveFunc={handleHelpPopperClose}
+            />
           ))}
 
           <Dialog
