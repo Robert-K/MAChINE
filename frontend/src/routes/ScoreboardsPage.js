@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Box, Button, Card, IconButton, Typography } from '@mui/material'
+import { Box, Button, Card, IconButton, Stack, Typography } from '@mui/material'
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings'
 import DeleteSweepIcon from '@mui/icons-material/DeleteSweep'
 import DeleteIcon from '@mui/icons-material/Delete'
@@ -206,6 +206,15 @@ function DataTable({ columns, rows, highlightedRows }) {
         return highlightedRows.some(({ id }) => id === params.row.id)
           ? 'table-theme'
           : null
+      }}
+      components={{
+        NoRowsOverlay: () => (
+          <Stack height="100%" alignItems="center" justifyContent="center">
+            No trained models yet.
+            <br />
+            Be the first!
+          </Stack>
+        ),
       }}
     />
   )
