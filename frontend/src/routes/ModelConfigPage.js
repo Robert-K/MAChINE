@@ -22,6 +22,7 @@ import { camelToNaturalString } from '../utils'
 import { useLocation, useNavigate } from 'react-router-dom'
 import HelpContext from '../context/HelpContext'
 import HelpPopper from '../components/shared/HelpPopper'
+import SaveIcon from '@mui/icons-material/Save'
 
 export const standardParameters = {
   optimizer: {
@@ -168,7 +169,7 @@ export default function ModelConfigPage({ addFunc }) {
         </Card>
       </Grid>
       <Grid item xs={4} sx={{ height: '100%' }}>
-        <Card sx={{ height: '100%', ml: 2 }}>
+        <Card sx={{ height: '100%', ml: 2, overflow: 'auto' }}>
           <CardContent>
             {Object.entries(standardParameters).map(([param, value], i) => {
               return (
@@ -212,7 +213,14 @@ export default function ModelConfigPage({ addFunc }) {
             </FormControl>
           </CardContent>
           <CardActions>
-            <Button disabled={isInvalidConfig || !name} onClick={saveModel}>
+            <Button
+              size="large"
+              variant="outlined"
+              sx={{ mx: 3, mb: 2 }}
+              endIcon={<SaveIcon />}
+              disabled={isInvalidConfig || !name}
+              onClick={saveModel}
+            >
               Save
             </Button>
           </CardActions>
