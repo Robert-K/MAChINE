@@ -39,10 +39,12 @@ export default function FittingsPage() {
   const [openDialog, setOpenDialog] = React.useState(false)
   const [analysis, setAnalysis] = React.useState({})
   const [selectedFitting, setSelectedFitting] = React.useState({})
-  const [chartConfigs, setChartConfigs] = React.useState([
-    { name: '', data: [], highlightedIndex: -1 },
-  ])
-  const [histograms, setHistograms] = React.useState({})
+  const [highlightedIndices, setHighlightedIndices] = React.useState({
+    empty: -1,
+  })
+  const [chartConfigs, setChartConfigs] = React.useState({
+    empty: { data: [] },
+  })
   const [loading, setLoading] = React.useState(false)
   const { state } = useLocation()
   const { selectedSmiles } = state
@@ -61,39 +63,51 @@ export default function FittingsPage() {
     if (Object.keys(selectedFitting).length !== 0) {
       api
         .getHistograms(selectedFitting.datasetID, selectedFitting.labels)
-        .then((histograms) => {
-          if (histograms !== null) setHistograms(histograms)
+        .then((hists) => {
+          if (hists !== null) {
+            createChart(hists)
+          }
         })
     }
   }, [selectedFitting])
 
-  React.useEffect(() => {
-    if (Object.keys(selectedFitting).length !== 0) {
-      const newCharts = []
-      selectedFitting.labels.forEach((label) => {
-        const hist = histograms[label]
-        const newChart = {
-          name: camelToNaturalString(label),
-          data: [],
-          highlightedIndex: -1,
-        }
-        for (let i = 0; i < hist.buckets.length; i++) {
-          if (analysis[label] <= hist.binEdges[i]) {
-            newChart.highlightedIndex = i
-          }
-          newChart.data.push({
-            x: `[${hist.binEdges[i].toFixed(2)} , ${hist.binEdges[
-              i + 1
-            ].toFixed(2)}]`,
-            y: hist.buckets[i],
-          })
-        }
-        newCharts.push(newChart)
-      })
-      setLoading(false)
+  function createChart(hists) {
+    const newCharts = {}
+    const newIndices = {}
+    selectedFitting.labels.forEach((label) => {
+      const hist = hists[label]
+      const newChart = {
+        name: 'amount: ',
+        data: [],
+      }
+      // create chart data from histogram
+      for (let i = 0; i < hist.buckets.length; i++) {
+        newChart.data.push({
+          x: `[${hist.binEdges[i].toFixed(2)} , ${hist.binEdges[i + 1].toFixed(
+            2
+          )}]`,
+          y: hist.buckets[i],
+        })
+      }
+      newCharts[label] = newChart
+
+      // determine index of analysis in chart
+      newIndices[label] = -1
+      for (
+        let i = 0;
+        i < hist.binEdges.length && analysis[label] > hist.binEdges[i];
+        i++
+      ) {
+        newIndices[label] = i
+      }
+    })
+    async function updateThings() {
       setChartConfigs(newCharts)
+      setHighlightedIndices(newIndices)
+      setLoading(false)
     }
-  }, [histograms, analysis])
+    updateThings().then(handleClickOpenDialog)
+  }
 
   const handlePopper = (target, content, show) => {
     setContent(content)
@@ -125,18 +139,16 @@ export default function FittingsPage() {
     }
   }
   function handleFittingSelection(fitting) {
-    setSelectedFitting(fitting)
     setLoading(true)
     api.analyzeMolecule(fitting.id, selectedSmiles).then((response) => {
       handleAnalysis(response)
-      handleClickOpenDialog()
+      setSelectedFitting(fitting)
     })
   }
 
   const handleHelpPopperClose = () => {
     setHelpAnchorEl(null)
   }
-
   const helpOpen = Boolean(helpAnchorEl)
 
   const handleClick = () => {
@@ -248,7 +260,7 @@ export default function FittingsPage() {
                 <b>Result:</b>
                 <br />
                 {Object.entries(analysis).map(
-                  ([label, value]) => `${label}: ${value}`
+                  ([label, value]) => `${camelToNaturalString(label)}: ${value}`
                 )}
               </DialogContentText>
               <Box
@@ -258,11 +270,11 @@ export default function FittingsPage() {
                   width: '90%',
                 }}
               >
-                {chartConfigs.map((chart, index) => {
+                {Object.entries(chartConfigs).map(([label, chart], index) => {
                   return (
                     <Histogram
                       seriesObject={chart}
-                      highlightedIndex={chart.highlightedIndex}
+                      highlightedIndex={highlightedIndices[label]}
                       key={index}
                     />
                   )

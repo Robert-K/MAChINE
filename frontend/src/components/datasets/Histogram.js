@@ -6,7 +6,6 @@ import { useTheme } from '@mui/material'
 export default function Histogram({ seriesObject, highlightedIndex }) {
   const theme = useTheme()
   const chartConfig = seriesObject || {
-    name: '',
     data: [],
   }
   return (
@@ -35,8 +34,8 @@ export default function Histogram({ seriesObject, highlightedIndex }) {
           tickAmount: chartConfig.data.length > 30 ? 25 : 10,
         },
         colors: [
-          function ({ value, seriesIndex, w }) {
-            if (seriesIndex === highlightedIndex) {
+          function ({ value, dataPointIndex }) {
+            if (dataPointIndex === highlightedIndex) {
               return '#FEB019'
             } else {
               return theme.palette.primary.main
