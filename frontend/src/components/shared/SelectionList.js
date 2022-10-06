@@ -37,7 +37,6 @@ export default function SelectionList({
   addFunc,
   height,
   forcedSelectedIndex,
-  pageName,
 }) {
   const [selectedIndex, setSelectedIndex] = React.useState(forcedSelectedIndex)
   const [open, setOpen] = React.useState(false)

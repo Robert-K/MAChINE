@@ -6,8 +6,13 @@ import { Badge, IconButton, badgeClasses } from '@mui/material'
 import api from '../../api'
 import UserContext from '../../context/UserContext'
 
+/**
+ * Button to monitor server connectivity
+ * @returns {JSX.Element}
+ */
 export default function ServerStatusButton() {
   const [anchorEl, setAnchorEl] = React.useState(null)
+  const [color, setColor] = React.useState('error')
   const { adminMode } = React.useContext(UserContext)
 
   const handleClick = (event) => {
@@ -18,8 +23,7 @@ export default function ServerStatusButton() {
     setAnchorEl(null)
   }
 
-  const [color, setColor] = React.useState('error')
-
+  // TODO: should open not be a state? or rather, why do you need the id?
   const open = Boolean(anchorEl && adminMode)
   const id = open ? 'simple-popover' : undefined
 

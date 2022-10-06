@@ -10,7 +10,7 @@ const Popper = styled(MuiPopper, {
     prop !== 'arrowWidth' &&
     prop !== 'arrowHeight' &&
     prop !== 'extraArrowLength',
-})(({ theme, popperWidth, arrowWidth, arrowHeight, extraArrowLength }) => ({
+})(({ popperWidth, arrowWidth, arrowHeight, extraArrowLength }) => ({
   zIndex: 2,
   '& .popper-anim': {
     transition: 'transform 150ms ease-out',

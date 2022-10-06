@@ -3,7 +3,7 @@ import { Card, CardContent, Popper, Typography, useTheme } from '@mui/material'
 import PropTypes from 'prop-types'
 
 /**
- *
+ * Popper component used for Help Mode
  * @param helpPopperContent The text that will be displayed in the help popper
  * @param open Whether the popper is open or not
  * @param anchorEl Where the popper will be placed

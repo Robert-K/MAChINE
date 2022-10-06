@@ -34,6 +34,13 @@ const links = {
   },
 }
 
+/**
+ * Navigation and utility bar
+ * @param logoutFunction callback for logout
+ * @param darkModeButton button to toggle theme
+ * @param helpModeButton button to toggle Help Mode
+ * @returns {JSX.Element}
+ */
 export default function Navbar({
   logoutFunction,
   darkModeButton,
@@ -63,6 +70,7 @@ export default function Navbar({
       <Toolbar>
         <img
           src={logo}
+          alt="MAChINE"
           height="30px"
           style={{
             marginRight: 10,
