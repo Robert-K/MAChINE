@@ -16,6 +16,12 @@ import RadioButtonCheckedIcon from '@mui/icons-material/RadioButtonChecked'
 import TrainingContext from '../../context/TrainingContext'
 import { camelToNaturalString } from '../../utils'
 
+/**
+ * label selection component for given dataset
+ * sets the selected dataset and labels in the TrainingContext
+ * @param dataset given dataset
+ * @returns {JSX.Element}
+ */
 export default function DatasetInfo({ dataset }) {
   const [labelArray, setLabelArray] = React.useState([])
   const [disabledButton, setDisabledButton] = React.useState(true)
@@ -33,6 +39,12 @@ export default function DatasetInfo({ dataset }) {
     }
   }
 
+  const handleStartTrainingClick = () => {
+    training.setSelectedDataset(dataset)
+    training.setSelectedLabels(labelArray)
+    navigate('/training')
+  }
+
   return (
     <Box>
       <Button
@@ -40,11 +52,7 @@ export default function DatasetInfo({ dataset }) {
         variant="contained"
         sx={{ mb: 2 }}
         disabled={disabledButton}
-        onClick={() => {
-          training.setSelectedDataset(dataset)
-          training.setSelectedLabels(labelArray)
-          navigate('/training')
-        }}
+        onClick={handleStartTrainingClick}
       >
         {`${disabledButton ? 'Choose a label' : 'Start Training!'}`}
       </Button>

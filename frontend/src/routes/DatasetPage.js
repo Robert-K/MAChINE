@@ -8,6 +8,10 @@ import DetailsPopper from '../components/shared/DetailsPopper'
 import HelpContext from '../context/HelpContext'
 import PropTypes from 'prop-types'
 
+/**
+ * Selection component for datasets
+ * @returns {JSX.Element}
+ */
 export default function DatasetPage() {
   const [datasets, setDatasets] = React.useState([])
   const [open, setOpen] = React.useState(false)
@@ -40,6 +44,14 @@ export default function DatasetPage() {
     setHelpAnchorEl(null)
   }
 
+  const datasetCardClick = (event, dataset) => {
+    handlePopper(
+      event.currentTarget,
+      <DatasetInfo dataset={dataset} key={dataset.datasetID} />,
+      event.currentTarget !== anchor || !open
+    )
+  }
+
   return (
     <Box sx={{ m: 5 }}>
       <Box
@@ -53,16 +65,7 @@ export default function DatasetPage() {
           <DatasetCard
             dataset={dataset}
             key={dataset.datasetID}
-            clickFunc={(event) => {
-              handlePopper(
-                event.currentTarget,
-                <DatasetInfo
-                  dataset={dataset}
-                  key={dataset.datasetID}
-                ></DatasetInfo>,
-                event.currentTarget !== anchor || !open
-              )
-            }}
+            clickFunc={(event) => datasetCardClick(event, dataset)}
             hoverFunc={(e) => {
               handleHelpPopperOpen(
                 e,
