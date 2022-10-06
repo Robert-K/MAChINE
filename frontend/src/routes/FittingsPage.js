@@ -8,6 +8,7 @@ import {
   Button,
   Card,
   CardActionArea,
+  CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
@@ -15,7 +16,6 @@ import {
   Grid,
   ListItem,
   ListItemText,
-  CircularProgress,
   Typography,
   useTheme,
 } from '@mui/material'
@@ -29,7 +29,6 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import Histogram from '../components/datasets/Histogram'
 import { camelToNaturalString } from '../utils'
 import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined'
-import { camelToNaturalString } from '../utils'
 
 export default function FittingsPage() {
   const [fittingArray, setFittingArray] = React.useState([])
@@ -212,13 +211,16 @@ export default function FittingsPage() {
                           size="16px"
                           color="secondary"
                           sx={{ ml: 1 }}
+                        />
                       ) : null}
                     </Button>
                     Labels:
                     {fitting.labels.map((label) => {
                       return (
                         <ListItem key={label}>
-                          <ListItemText primary={`${label}`} />
+                          <ListItemText
+                            primary={`${camelToNaturalString(label)}`}
+                          />
                         </ListItem>
                       )
                     })}
@@ -254,7 +256,6 @@ export default function FittingsPage() {
                   flexDirection: 'column',
                   margin: 'auto',
                   width: '90%',
-                        />
                 }}
               >
                 {Object.entries(chartData).map(([label, data], index) => {
