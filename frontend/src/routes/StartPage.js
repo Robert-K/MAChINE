@@ -12,15 +12,24 @@ import {
 import PropTypes from 'prop-types'
 import { useNavigate } from 'react-router-dom'
 
+/**
+ * Login Page, queries username and initiates login
+ * on successful login, navigates to HomePage
+ * @param onLogin
+ * @returns {JSX.Element}
+ * @constructor
+ */
 export default function StartPage({ onLogin }) {
   const [enteredName, setEnteredName] = React.useState('')
   const [connecting, setConnecting] = React.useState(false)
   const [connectionFailed, setConnectionFailed] = React.useState(false)
-
+  const theme = useTheme()
   const navigate = useNavigate()
+
   const updateName = (text) => {
     setEnteredName(text)
   }
+
   const submitName = () => {
     setConnecting(true)
     setConnectionFailed(false)
@@ -34,7 +43,6 @@ export default function StartPage({ onLogin }) {
     })
   }
 
-  const theme = useTheme()
   return (
     <Box sx={{ m: 5 }}>
       <main>

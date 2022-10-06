@@ -14,6 +14,13 @@ import { NavLink } from 'react-router-dom'
 import HelpOutlineOutlinedIcon from '@mui/icons-material/HelpOutlineOutlined'
 import PropTypes from 'prop-types'
 
+/**
+ * Introductory page including credits, hints, links to core components
+ * contains button to start onboarding
+ * @param startOnboarding callback to initiate onboarding
+ * @returns {JSX.Element}
+ * @constructor
+ */
 export default function HomePage({ startOnboarding }) {
   const theme = useTheme()
   return (

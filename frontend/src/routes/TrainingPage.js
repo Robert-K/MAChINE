@@ -137,7 +137,7 @@ export default function TrainingPage() {
     // Change this to exclude more data
     const excludedPoints = ['Epoch']
     const newData = []
-    Object.entries(data).forEach(([dataName, values], index) => {
+    Object.entries(data).forEach(([dataName, values]) => {
       if (excludedPoints.indexOf(dataName) === -1) {
         if (values.length === 1) {
           values = [...values, ...values]
@@ -159,7 +159,6 @@ export default function TrainingPage() {
     setHelpAnchorEl(null)
   }
 
-  const helpOpen = Boolean(helpAnchorEl)
   return (
     <Grid container>
       <Grid item xs={6}>
@@ -315,7 +314,7 @@ export default function TrainingPage() {
       <HelpPopper
         id="helpPopper"
         helpPopperContent={helpPopperContent}
-        open={helpOpen}
+        open={Boolean(helpAnchorEl)}
         anchorEl={helpAnchorEl}
         onClose={handleHelpPopperClose}
       />
