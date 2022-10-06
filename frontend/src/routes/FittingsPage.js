@@ -10,7 +10,6 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
-  DialogContentText,
   DialogTitle,
   Grid,
   ListItem,
@@ -38,12 +37,11 @@ export default function FittingsPage() {
   const [anchor, setAnchor] = React.useState(null)
   const [openDialog, setOpenDialog] = React.useState(false)
   const [analysis, setAnalysis] = React.useState({})
-  const [selectedFitting, setSelectedFitting] = React.useState({})
   const [highlightedIndices, setHighlightedIndices] = React.useState({
     empty: -1,
   })
-  const [chartConfigs, setChartConfigs] = React.useState({
-    empty: { data: [] },
+  const [chartData, setChartData] = React.useState({
+    empty: [],
   })
   const [loading, setLoading] = React.useState(false)
   const [helpAnchorEl, setHelpAnchorEl] = React.useState(null)
@@ -59,34 +57,31 @@ export default function FittingsPage() {
     api.getFittings().then((fittings) => setFittingArray(fittings))
   }, [user])
 
-  function fetchHistograms(fitting) {
+  function fetchHistograms(fitting, analysis) {
     if (Object.keys(fitting).length !== 0) {
       api.getHistograms(fitting.datasetID, fitting.labels).then((hists) => {
         if (hists !== null) {
-          createChart(hists)
+          createChart(hists, analysis)
         }
       })
     }
   }
 
-  function createChart(hists) {
+  function createChart(hists, analysis) {
     const newCharts = {}
     const newIndices = {}
     Object.entries(hists).forEach(([label, hist]) => {
-      const newChart = {
-        name: 'amount: ',
-        data: [],
-      }
+      const newChartData = []
       // create chart data from histogram
       for (let i = 0; i < hist.buckets.length; i++) {
-        newChart.data.push({
+        newChartData.push({
           x: `[${hist.binEdges[i].toFixed(2)} , ${hist.binEdges[i + 1].toFixed(
             2
           )}]`,
           y: hist.buckets[i],
         })
       }
-      newCharts[label] = newChart
+      newCharts[label] = newChartData
 
       // determine index of analysis in chart
       newIndices[label] = -1
@@ -99,7 +94,8 @@ export default function FittingsPage() {
       }
     })
     async function updateThings() {
-      setChartConfigs(newCharts)
+      setChartData(newCharts)
+      handleAnalysis(analysis)
       setHighlightedIndices(newIndices)
     }
     updateThings().then(() => {
@@ -140,9 +136,7 @@ export default function FittingsPage() {
   function handleFittingSelection(fitting) {
     setLoading(true)
     api.analyzeMolecule(fitting.id, selectedSmiles).then((response) => {
-      handleAnalysis(response)
-      fetchHistograms(fitting)
-      setSelectedFitting(fitting)
+      fetchHistograms(fitting, response)
     })
   }
 
@@ -254,26 +248,22 @@ export default function FittingsPage() {
               {'You successfully analyzed your molecule!'}
             </DialogTitle>
             <DialogContent>
-              <DialogContentText id="alert-dialog-description">
-                <b>Result:</b>
-                <br />
-                {Object.entries(analysis).map(
-                  ([label, value]) => `${camelToNaturalString(label)}: ${value}`
-                )}
-              </DialogContentText>
               <Box
                 sx={{
                   display: 'flex',
                   flexDirection: 'column',
-                  justifyContent: 'center',
+                  margin: 'auto',
                   width: '90%',
                 }}
               >
-                {Object.entries(chartConfigs).map(([label, chart], index) => {
+                {Object.entries(chartData).map(([label, data], index) => {
                   return (
                     <Histogram
-                      seriesObject={chart}
+                      data={data}
                       highlightedIndex={highlightedIndices[label]}
+                      title={`${camelToNaturalString(label)}: ${
+                        analysis[label]
+                      }`}
                       key={index}
                     />
                   )
