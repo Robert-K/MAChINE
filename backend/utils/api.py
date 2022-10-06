@@ -221,9 +221,18 @@ class Datasets(Resource):
                     'datasetID': dataset_id,
                     'size': current_dataset['size'],
                     'labelDescriptors': current_dataset['labelDescriptors'],
-                    'image': current_dataset['image'],
                 })
         return processed_datasets
+
+
+class Histograms(Resource):
+    def get(self, dataset_id, labels):
+        separated_labels = labels.split(',')
+        histograms = sh.get_dataset_histograms(dataset_id, separated_labels)
+        for hist in histograms.values():
+            hist['binEdges'] = list(hist.get('bin_edges'))
+            del hist['bin_edges']
+        return histograms
 
 
 class BaseModels(Resource):
@@ -234,18 +243,16 @@ class BaseModels(Resource):
             if current:
                 processed_model = dict(current)
                 processed_model['id'] = model_id
-                del processed_model['image']
                 del processed_model['metrics']
 
                 # add model type object
                 processed_model_type = dict()
                 processed_model_type['name'] = current.get('type')
-                processed_model_type['image'] = current.get('image')
                 processed_model['type'] = processed_model_type
 
                 # add task type
                 if current.get('type') == 'sequential':
-                    layers = current.get('layers')
+                    layers = current.get('parameters').get('layers')
                     if layers:
                         # TODO: this does not work aaaaaaaaaah oh no oh oh nonono cri cri
                         processed_model['taskType'] = 'regression' if layers[len(layers) - 1].get(
@@ -310,6 +317,7 @@ api.add_resource(Train, '/users/<user_id>/train')
 # Non-user-specific resources
 api.add_resource(Scoreboard, '/scoreboard/<fitting_id>', '/scoreboard')
 api.add_resource(Datasets, '/datasets')
+api.add_resource(Histograms, '/histograms/<dataset_id>/<labels>')
 api.add_resource(BaseModels, '/baseModels')
 
 

@@ -1,10 +1,12 @@
+import math
 from multiprocessing import Pool, cpu_count
 import pandas as pd
 from pathlib import Path
 import pickle
 from backend.utils.molecule_formats import *
+import numpy as np
 
-_version = 3
+_version = 5
 
 
 def smiles_to_fingerprints(smiles, sizes, radius=2):
@@ -103,66 +105,97 @@ def create_dataset(path: str,
     return dataset
 
 
-def add_dataset_descriptor(dataset, name, image_file, parameters):
+def add_dataset_descriptor(dataset, name, histograms, parameters):
     """
     Takes a Dataset and adds it to a dictionary containing various fields
 
     :param dataset: The dataset. Presumably created using 'create_dataset'
     :param name: The name of the Dataset
-    :param image_file: name of the image file in storage/data/images
+    :param histograms: histogram of the dataset
     :param parameters: parameters that were used to create the dataset
-    :return: A dictionary with the fields 'name', 'size', 'labels', 'image_file', 'dataset'
+    :return: A dictionary with the fields 'name', 'size', 'labels', 'dataset'
     """
     size = len(dataset)
     labels = list(dataset[0].get('y').keys())
     print(f'adding descriptor with size {size}, labels {labels}')
-    return {'name': name, 'size': size, 'labels': labels,
-            'image_file': image_file, 'dataset': dataset,
-            'version': _version, 'parameters': parameters}
+    return {'name': name, 'size': size, 'labels': labels, 'dataset': dataset,
+            'version': _version, 'histograms': histograms, 'parameters': parameters}
 
 
 def create_complete_dataset(path, max_size, data_offset, smiles_fingerprint_sizes, smiles_fingerprint_radius, labels,
-                            name, image_file):
+                            name):
     raw_dataset = create_dataset(path,
                                  max_size,
                                  data_offset,
                                  labels,
                                  smiles_fingerprint_sizes,
                                  smiles_fingerprint_radius)
+    histograms = create_histograms(raw_dataset, labels)
     return add_dataset_descriptor(raw_dataset,
                                   name,
-                                  image_file,
+                                  histograms,
                                   [path, max_size, data_offset, smiles_fingerprint_sizes, smiles_fingerprint_radius,
-                                   labels, name, image_file])
+                                   labels, name])
 
 
 def update_dataset(path):
-    old_set_file = (Path.cwd() / path).open('rb')
-    old_set = pickle.load(old_set_file)
-    if old_set.get('version') == _version:
+    path = (Path.cwd() / path)
+    with path.open('rb') as old_set_file_read:
+        old_set = pickle.load(old_set_file_read)
+
+    if old_set.get('version') == _version + 1:
         return old_set
-    elif old_set.get('parameters'):
-        try:
-            return create_complete_dataset(*old_set.get('parameters'))
-        except ValueError:
-            print('Dataset too old to automatically upgrade')
-    else:
+
+    try:
+        new_set = create_complete_dataset(*old_set.get('parameters'))
+        with path.open('wb') as old_set_file_write:
+            pickle.dump(new_set, old_set_file_write)
+
+        return old_set
+
+    except ValueError:
         print('Dataset too old to automatically upgrade')
+
+
+def create_histograms(dataset, labels):
+    histograms = dict()
+
+    # prep: separate data by label
+    columns_by_label = dict()
+    for label in labels:
+        columns_by_label[label] = list()
+
+    for entry in dataset:
+        for [label, value] in entry['y'].items():
+            columns_by_label[label].append(value)
+
+    # create histogram for each label
+    for [label, data] in columns_by_label.items():
+        # 10 is an arbitrary value, change corresponding to degree of detail required
+        hist, bin_edges = np.histogram(data, 2)
+        histograms[label] = dict({
+            'buckets': hist.tolist(),
+            'bin_edges': bin_edges.tolist()
+        })
+
+    return histograms
 
 
 # HOW TO USE:
 # Look at examples below
 if __name__ == '__main__':
-    # Example for creating a new dataset
+    update_dataset('../../storage/data/med_hiv.pkl')
+    '''
+    Example for creating a new dataset
     new_set = create_complete_dataset(path="../../storage/csv_data/solubility.csv",
-                                      max_size=10000,
+                                      max_size=100,
                                       data_offset=0,
                                       smiles_fingerprint_sizes=[128, 512, 1024],
                                       smiles_fingerprint_radius=2,
                                       labels=['Solubility'],
-                                      name='Medium Solubility Set',
-                                      image_file='solubility.png')
+                                      name='Medium Solubility Set')
 
     file = (Path.cwd() / 'output.pkl').open('wb')
     pickle.dump(new_set, file)
     file.close()
+    '''
