@@ -59,23 +59,20 @@ export default function FittingsPage() {
     api.getFittings().then((fittings) => setFittingArray(fittings))
   }, [user])
 
-  React.useEffect(() => {
-    if (Object.keys(selectedFitting).length !== 0) {
-      api
-        .getHistograms(selectedFitting.datasetID, selectedFitting.labels)
-        .then((hists) => {
-          if (hists !== null) {
-            createChart(hists)
-          }
-        })
+  function fetchHistograms(fitting) {
+    if (Object.keys(fitting).length !== 0) {
+      api.getHistograms(fitting.datasetID, fitting.labels).then((hists) => {
+        if (hists !== null) {
+          createChart(hists)
+        }
+      })
     }
-  }, [selectedFitting])
+  }
 
   function createChart(hists) {
     const newCharts = {}
     const newIndices = {}
-    selectedFitting.labels.forEach((label) => {
-      const hist = hists[label]
+    Object.entries(hists).forEach(([label, hist]) => {
       const newChart = {
         name: 'amount: ',
         data: [],
@@ -144,6 +141,7 @@ export default function FittingsPage() {
     setLoading(true)
     api.analyzeMolecule(fitting.id, selectedSmiles).then((response) => {
       handleAnalysis(response)
+      fetchHistograms(fitting)
       setSelectedFitting(fitting)
     })
   }
