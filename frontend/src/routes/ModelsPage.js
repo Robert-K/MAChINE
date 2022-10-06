@@ -34,16 +34,17 @@ import { camelToNaturalString } from '../utils'
 const gridHeight = '80vh'
 /**
  * Depicts a list of saved models and shows a description of the selected model on click
+ * @param modelList list of models depicted
+ * @param initSelectedIndex initially selected index of modelList
  */
 export default function ModelsPage({ modelList, initSelectedIndex }) {
   const [selectedIndex, setSelectedIndex] = React.useState(initSelectedIndex)
   const [showDialog, setShowDialog] = React.useState(false)
   const [helpAnchorEl, setHelpAnchorEl] = React.useState(null)
-  const training = React.useContext(TrainingContext)
-  const navigate = useNavigate()
   const [helpPopperContent, setHelpPopperContent] = React.useState('')
-
+  const training = React.useContext(TrainingContext)
   const help = React.useContext(HelpContext)
+  const navigate = useNavigate()
 
   const handleHelpPopperOpen = (event, content) => {
     if (help.helpMode) {
@@ -152,18 +153,26 @@ export default function ModelsPage({ modelList, initSelectedIndex }) {
   )
 }
 
+/**
+ * Description of selectedModel, including previous trainings
+ * @param selectedModel described model
+ * @param onActiveTraining callback for attempting to initialize new training while another is still running
+ * @param hoverFunc callback for hovering over description
+ * @param leaveFunc callback for mouse pointer leaving description
+ * @returns {JSX.Element}
+ */
 function ModelDescription({
   selectedModel,
   onActiveTraining,
   hoverFunc,
   leaveFunc,
 }) {
+  const [open, setOpen] = React.useState([])
+  const [globalOpen, setGlobalOpen] = React.useState(false)
   const { setSelectedModel, trainingStatus, resetContext } =
     React.useContext(TrainingContext)
   const navigate = useNavigate()
   const theme = useTheme()
-  const [open, setOpen] = React.useState([])
-  const [globalOpen, setGlobalOpen] = React.useState(false)
 
   React.useEffect(() => {
     selectedModel !== undefined
@@ -267,8 +276,8 @@ function ModelDescription({
 }
 
 ModelDescription.propTypes = {
-  selectedModel: PropTypes.any,
-  onActiveTraining: PropTypes.any,
+  selectedModel: PropTypes.object,
+  onActiveTraining: PropTypes.func,
   hoverFunc: PropTypes.func,
   leaveFunc: PropTypes.func,
   fittingsLength: PropTypes.number,
@@ -279,9 +288,9 @@ ModelDescription.propTypes = {
  * @param fitting the fitting to be rendered
  * @param hoverFunc Function that gets called when the mouse hovers over the component
  * @param leaveFunc Function that gets called when the mouse no longer hovers over the component
- * @param index todo upd javadoc
- * @param open
- * @param setOpen
+ * @param index index of fitting
+ * @param open array of boolean values representing which fittings are open
+ * @param setOpen callback to signal change of open array
  * @returns {JSX.Element}
  */
 function RenderFitting({
@@ -368,7 +377,7 @@ RenderFitting.propTypes = {
   leaveFunc: PropTypes.func,
   index: PropTypes.number,
   open: PropTypes.array,
-  setOpen: PropTypes.any,
+  setOpen: PropTypes.func,
 }
 
 ModelsPage.propTypes = {

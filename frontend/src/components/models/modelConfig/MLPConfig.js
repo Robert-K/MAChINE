@@ -1,8 +1,16 @@
 import React from 'react'
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material'
 import PropTypes from 'prop-types'
-import { activationFuncs } from './LayerConfigPopup'
+import { activationFuncs } from '../../../utils'
 
+/**
+ * Configures MLP-specific parameters
+ * enables setting of a default selected activation function
+ * @param updateDefaultActivation update callback when configuration is changed
+ * @param hoverFunc callback for hovering
+ * @param leaveFunc callback for mouse pointer leaving component
+ * @returns {JSX.Element}
+ */
 export default function MLPConfig({
   updateDefaultActivation,
   hoverFunc,

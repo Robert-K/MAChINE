@@ -3,9 +3,10 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import * as vis from 'vis-data'
 import * as v from 'vis-network'
-import LayerConfigPopup, { activationFuncs } from './LayerConfigPopup'
+import LayerConfigPopup from './LayerConfigPopup'
 import Layer from '../../../internal/Layer'
 import LayerDeletionPopup from './LayerDeletionPopup'
+import { activationFuncs } from '../../../utils'
 
 /**
  * Draws a rounded rectangle using the current state of the canvas.
@@ -62,6 +63,16 @@ function roundRect(
   ctx.shadowColor = 'rgba(0, 0, 0, 0)'
 }
 
+/**
+ * Visualisation of a multi-layer perceptron (MLP) with vis-network
+ * Interactive adding and deleting of layers
+ * @param modelLayers initially present layers
+ * @param defaultActivation default activation function for new layers
+ * @param updateFunc callback to update layers after edit
+ * @param hoverFunc callback for hovering over the visualisation
+ * @param leaveFunc callback for mouse pointer leaving visualisation
+ * @returns {JSX.Element}
+ */
 export default function MLPModelVisual({
   modelLayers,
   defaultActivation,
@@ -174,6 +185,11 @@ export default function MLPModelVisual({
     setOpen(true)
   }
 
+  /**
+   * draws round rectangles around node groups
+   * @param ctx canvas context
+   * @param network to draw
+   */
   function beforeDraw(ctx, network) {
     ctx.font = '18px Poppins'
     ctx.textAlign = 'center'
@@ -206,6 +222,11 @@ export default function MLPModelVisual({
     })
   }
 
+  /**
+   * draws plus-signs between layers
+   * @param ctx canvas context
+   * @param network drawn network
+   */
   function afterDraw(ctx, network) {
     for (let i = 0; i < visualizedLayers.length - 1; i++) {
       ctx.strokeStyle = theme.modelVisual.borderColor
@@ -221,6 +242,11 @@ export default function MLPModelVisual({
     }
   }
 
+  /**
+   * generates vis-network graph with nodes and edges from visualisedLayers
+   * @returns {{nodes: DataSet<PartItem<"id">, "id">, edges: DataSet<PartItem<"id">, "id">}}
+   *          a graph object containing vis-datasets for nodes and edges
+   */
   function fillGraph() {
     const graph = {
       nodes: new vis.DataSet({}),
@@ -265,6 +291,7 @@ export default function MLPModelVisual({
         })
       }
       nodesByLayer.push(graphLayer)
+      // add edges from previous to this layer
       if (index > 0) {
         nodesByLayer[index - 1].forEach((sourceNode) => {
           nodesByLayer[index].forEach((targetNode) => {

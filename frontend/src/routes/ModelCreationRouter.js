@@ -7,6 +7,13 @@ import api from '../api'
 import UserContext from '../context/UserContext'
 import PropTypes from 'prop-types'
 
+/**
+ * Handles model creation process
+ * routes to appropriate pages and manages model list
+ * @param initSelectedIndex initially selected index when navigating to ModelsPage
+ * @returns {JSX.Element}
+ * @constructor
+ */
 export default function ModelCreationRouter({ initSelectedIndex }) {
   const [modelList, setModelList] = React.useState([])
   const user = React.useContext(UserContext)

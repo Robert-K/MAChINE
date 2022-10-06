@@ -3,6 +3,12 @@ import { Box, Card, CardActions, CardContent, Typography } from '@mui/material'
 import Button from '@mui/material/Button'
 import PropTypes from 'prop-types'
 
+/**
+ * Deletion menu
+ * @param deleteFunc callback for confirmed deletion
+ * @param cancelFunc callback for aborted deletion
+ * @returns {JSX.Element}
+ */
 export default function LayerDeletionPopup({ deleteFunc, cancelFunc }) {
   return (
     <Card sx={{ width: '185px' }}>

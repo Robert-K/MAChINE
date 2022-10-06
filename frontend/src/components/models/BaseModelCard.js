@@ -15,7 +15,6 @@ import CardContent from '@mui/material/CardContent'
  * @returns {JSX.Element} The the element for the website.
  * @constructor
  */
-
 export default function BaseModelCard({
   baseModel,
   clickFunc,

@@ -81,3 +81,20 @@ function capitalizeWordsAfterSpaces(text) {
   }
   return words.join(' ')
 }
+
+/**
+ * settable activation functions, correctly capitalized
+ * @type {string[]}
+ */
+export const activationFuncs = [
+  'Linear',
+  'ReLU',
+  'Sigmoid',
+  'Softmax',
+  'Softplus',
+  'Softsign',
+  'Tanh',
+  'SELU',
+  'ELU',
+  'Exponential',
+]

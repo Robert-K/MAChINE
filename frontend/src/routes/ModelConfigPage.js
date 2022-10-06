@@ -24,6 +24,10 @@ import HelpContext from '../context/HelpContext'
 import HelpPopper from '../components/shared/HelpPopper'
 import SaveIcon from '@mui/icons-material/Save'
 
+/**
+ * collection of optimizers and loss functions settable in the ModelConfigPage
+ * @type {{optimizer: {options: string[], explanation: string}, lossFunction: {options: string[], explanation: string}}}
+ */
 export const standardParameters = {
   optimizer: {
     options: [
@@ -51,6 +55,12 @@ export const standardParameters = {
   },
 }
 
+/**
+ * configures non-model-type-specific parameters and renders the corresponding type-specific components
+ * keeps configured parameters and creates the ModelConfig to be saved
+ * @param addFunc callback to add a new model
+ * @returns {JSX.Element}
+ */
 export default function ModelConfigPage({ addFunc }) {
   const { state } = useLocation()
   const [parameters, setParameters] = React.useState(state.baseModel.parameters)
@@ -75,8 +85,17 @@ export default function ModelConfigPage({ addFunc }) {
     setHelpAnchorEl(null)
   }
 
-  const helpOpen = Boolean(helpAnchorEl)
-
+  /**
+   * Contains the visualisation and configuration components for the different model types
+   * TO ADD A MODEL TYPE:
+   *    1. add an entry with the model type as key and an object as value
+   *    2. add entries with visual and config as keys and with JSX elements as values
+   *    3. pass the updateParameters function to the components which configure parameters
+   *    4. pass initial values/configurations taken from the base model parameters
+   *    5. help mode: pass handleHelpPopperOpen and handleHelpPopperClose as hover and leave callbacks
+   *
+   * @type {{schnet: {visual: JSX.Element, config: JSX.Element}, sequential: {visual: JSX.Element, config: JSX.Element}}}
+   */
   const modelTypeSpecificComponents = {
     sequential: {
       visual: (
@@ -241,7 +260,7 @@ export default function ModelConfigPage({ addFunc }) {
         <HelpPopper
           id="helpPopper"
           helpPopperContent={helpPopperContent}
-          open={helpOpen}
+          open={Boolean(helpAnchorEl)}
           anchorEl={helpAnchorEl}
           onClose={handleHelpPopperClose}
         />
