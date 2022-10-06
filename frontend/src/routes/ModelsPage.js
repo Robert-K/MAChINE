@@ -164,7 +164,6 @@ function ModelDescription({
   const theme = useTheme()
   const [open, setOpen] = React.useState([])
   const [globalOpen, setGlobalOpen] = React.useState(false)
-  let newOpen
 
   React.useEffect(() => {
     selectedModel !== undefined
@@ -175,11 +174,7 @@ function ModelDescription({
 
   const toggleAll = () => {
     setGlobalOpen(!globalOpen)
-    newOpen = [...open]
-    for (let i = 0; i < newOpen.length; i++) {
-      newOpen[i] = !globalOpen
-    }
-    setOpen(newOpen)
+    setOpen(new Array(open.length).fill(!globalOpen))
   }
 
   if (!selectedModel) {
