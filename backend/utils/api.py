@@ -1,6 +1,8 @@
 import hashlib
 import json
-import sched, time
+import sched
+import time
+
 from flask import Flask
 from flask_cors import CORS
 from flask_restful import reqparse, Api, Resource
@@ -203,10 +205,7 @@ class User(Resource):
                                                 }],
                                                 'lossFunction': 'Huber Loss',
                                                 'optimizer': 'Stochastic Gradient Descent'}, '1')
-            sio.start_background_task(
-                ml.train,
-                user_id, '1', example_model_id, ['HIV_active'], 0, 128
-            )
+        
             return {'userID': user_id}, 201
         return 404
 
