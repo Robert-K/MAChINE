@@ -2,22 +2,28 @@
 	"testA": {
 		"name": "Test A",
 		"type": "sequential",
-		"lossFunction": "MeanSquaredError",
-		"optimizer": "Adam",
-		"metrics": ["MeanAbsoluteError", "R2"],
-		"layers": [
+		"parameters": {
+			"lossFunction": "Mean Squared Error",
+			"optimizer": "Adam",
+			"layers": [
 			{
 				"type": "Dense",
-				"units": 2,
-				"activation": "relu"
+				"units": 1
 			}
-			]
+		]
+		},
+		"metrics": ["MeanAbsoluteError", "R2"]
 	},
 	"testB": {
 		"name": "Test B",
 		"type": "schnet",
-		"lossFunction": "MeanSquaredError",
-		"optimizer": "Adam",
+		"parameters": {
+			"lossFunction": "Mean Squared Error",
+			"optimizer": "Nadam",
+			"depth": 3,
+			"embeddingDimension": 128,
+			"readoutSize": 1
+		},
 		"metrics": ["MeanAbsoluteError", "R2"]
 	}
 }

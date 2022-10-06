@@ -291,8 +291,6 @@ def test_dataset_reading():
     assert len(dataset) == set_summary.get('size')
     assert set_summary.get('name') == 'Test Solubility Set'
     assert set_summary.get('labelDescriptors') == ['Solubility']
-    assert set_summary.get('imageFile') is None
-
 
 def test_base_model_reading():
     summaries = sh.get_base_models()
@@ -303,5 +301,3 @@ def test_base_model_reading():
     assert base_a.get('type') == 'sequential'
     assert base_b.get('type') == 'schnet'
     # We will now assume that it read everything else correctly
-    assert base_a.get('image') is not None
-    assert base_b.get('image') is None

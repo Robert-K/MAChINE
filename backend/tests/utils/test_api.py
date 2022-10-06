@@ -251,7 +251,6 @@ class TestUserRequestGroup:
         mocker.patch('backend.utils.api.sh.add_user_handler', return_value={'This represents a handler'})
         sh_mol_mock = mocker.patch('backend.utils.api.sh.add_molecule')
         sh_model_mock = mocker.patch('backend.utils.api.sh.add_model')
-        sio_background_mock = mocker.patch('backend.utils.api.sio.start_background_task')
         response = client.post(f'/users', json={'username': test_username})
         user_id = str(hashlib.sha1(test_username.encode('utf-8'), usedforsecurity=False).hexdigest())
         assert response.status_code == 201, 'Request should have worked'
@@ -259,7 +258,6 @@ class TestUserRequestGroup:
         assert response.json == {'userID': user_id}, 'json should contain the user id'
         sh_mol_mock.assert_called_once()
         sh_model_mock.assert_called_once()
-        sio_background_mock.assert_called_once()
 
     def test_add_user_error(self, client, mocker):
         mocker.patch('backend.utils.api.sh.add_user_handler', return_value=None)
@@ -301,8 +299,7 @@ class TestDatasetRequestGroup:
             ({'dataset_id': {'name': 'dataset_name',
                              'size': 12515,
                              'labelDescriptors': ['label', 'label2', 'label3'],
-                             'datasetPath': 'X',
-                             'image': None,
+                             'datasetPath': 'X'
                              }})
         ]
     )
@@ -317,7 +314,6 @@ class TestDatasetRequestGroup:
             converted_set |= {'datasetID': dataset_id}
             converted_set |= {'size': dataset.get('size')}
             converted_set |= {'labelDescriptors': dataset.get('labelDescriptors')}
-            converted_set |= {'image': dataset.get('image')}
             assert converted_set in response_json, 'Dataset to be in Response'
 
 
@@ -334,66 +330,48 @@ class TestBaseModelRequestGroup:
     @pytest.mark.parametrize(
         'sh_base_models',
         [
-            ({"id2": {
-                "name": "Test Schnet",
-                "type": "schnet",
-                "lossFunction": "Mean Squared Error",
-                "optimizer": "NAdam",
-                "metrics": [
-                    "MeanAbsoluteError",
-                    "R2"
-                ],
-                "image": "None"
-            }}),
-            ({
-                "test id": {
-                    "name": "Test A",
-                    "type": "sequential",
+            ({"1": {
+                "name": "SequentialA",
+                "type": "sequential",
+                "parameters": {
                     "lossFunction": "Mean Squared Error",
                     "optimizer": "Adam",
-                    "metrics": [
-                        "MeanAbsoluteError",
-                        "R2"
-                    ],
                     "layers": [
                         {
                             "type": "Dense",
-                            "units": 5,
-                            "activation": "relu"
-                        },
-                    ],
-                    "image": "X"
+                            "units": 6
+                        }
+                    ]
                 },
-                "id2": {
-                    "name": "Test Schnet",
+                "metrics": ["MeanAbsoluteError", "R2"]
+            },
+                "2": {
+                    "name": "SCHNET A",
                     "type": "schnet",
-                    "lossFunction": "Mean Squared Error",
-                    "optimizer": "NAdam",
-                    "metrics": [
-                        "MeanAbsoluteError",
-                        "R2"
-                    ],
-                    "image": "None"
-                }
-            }),
+                    "parameters": {
+                        "lossFunction": "Mean Squared Error",
+                        "optimizer": "Nadam",
+                        "depth": 3,
+                        "embeddingDimension": 128,
+                        "readoutSize": 1
+                    },
+                    "metrics": ["MeanAbsoluteError", "R2"]
+                }}),
         ]
     )
     def test_base_model_get_response(self, sh_base_models, client, mocker):
         mocker.patch('backend.utils.api.sh.get_base_models', return_value=sh_base_models)
         response = client.get(f'/baseModels')
         for model_id, model in sh_base_models.items():
-            layers = model.get('layers')
+            layers = model.get('parameters').get('layers')
             if model and layers:
                 comparative_model = dict()
                 comparative_model |= {'name': model.get('name')}
+                comparative_model |= {'type': {'name': model.get('type')}}
+                comparative_model |= {'parameters': model.get('parameters')}
                 comparative_model |= {'id': model_id}
-                comparative_model |= {'type': {'name': model.get('type'), 'image': model.get('image')}}
                 comparative_model |= {
                     'taskType': ('regression' if layers[len(layers) - 1].get('units') == 1 else 'classification')}
-                comparative_model |= {'lossFunction': model.get('lossFunction')}
-                comparative_model |= {'lossFunction': model.get('lossFunction')}
-                comparative_model |= {'optimizer': model.get('optimizer')}
-                comparative_model |= {'layers': model.get('layers')}
                 response_list = response.json
                 assert comparative_model in response_list, 'Basemodel in SH should bee in response, formatted like this'
 
@@ -491,6 +469,7 @@ class TestTrainRequestGroup:
         assert response.status_code == expected_response_code, 'Expecting status code to match'
         assert response.json == expected_response, 'Expecting response to match'
 
+
 class TestScoreboardRequestGroup:
 
     @pytest.mark.parametrize(
@@ -516,7 +495,7 @@ class TestScoreboardRequestGroup:
         assert response.json == list(sh_scoreboards.values())
 
     def test_scoreboard_delete(self, client, mocker):
-        delete_mock = mocker.patch('backend.utils.api.sh.delete_scoreboard_fittings')
+        delete_mock = mocker.patch('backend.utils.api.sh.delete_scoreboard_fittings', return_value=None)
         response = client.delete(f'/scoreboard')
         assert response.status_code == 200, 'Request should have worked'
         assert response.json is None, 'No response json expected'
@@ -529,7 +508,7 @@ class TestScoreboardRequestGroup:
         ]
     )
     def test_scoreboard_delete_single(self, scoreboard_id, client, mocker):
-        delete_mock = mocker.patch('backend.utils.api.sh.delete_scoreboard_fitting')
+        delete_mock = mocker.patch('backend.utils.api.sh.delete_scoreboard_fitting', return_value=None)
         response = client.delete(f'/scoreboard/{scoreboard_id}')
         assert response.status_code == 200, 'Request should have worked'
         assert response.json is None, 'No response json expected'
