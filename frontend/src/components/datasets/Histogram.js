@@ -3,6 +3,14 @@ import Chart from 'react-apexcharts'
 import PropTypes from 'prop-types'
 import { useTheme } from '@mui/material'
 
+/**
+ * Histogram with react-apexcharts
+ * potentially with highlighted element
+ * @param data array of string, amount pair objects( [{x: str, y: int}] )
+ * @param highlightedIndex index of highlighted column
+ * @param title title of the histogram
+ * @returns {JSX.Element}
+ */
 export default function Histogram({ data, highlightedIndex, title }) {
   const theme = useTheme()
   const displayedData = data || []
@@ -40,7 +48,7 @@ export default function Histogram({ data, highlightedIndex, title }) {
           tickAmount: data.length > 30 ? 25 : 10,
         },
         colors: [
-          function ({ value, dataPointIndex }) {
+          function ({ dataPointIndex }) {
             if (dataPointIndex === highlightedIndex) {
               return '#FEB019'
             } else {

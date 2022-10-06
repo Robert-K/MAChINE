@@ -1,7 +1,3 @@
-/**
- * This page is reached when clicking 'analyze' on a molecule.
- */
-
 import React from 'react'
 import {
   Box,
@@ -30,11 +26,18 @@ import Histogram from '../components/datasets/Histogram'
 import { camelToNaturalString } from '../utils'
 import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined'
 
+/**
+ * Selection component for fittings to analyze molecule in react-router location
+ * Displays analysis results through a histogram in a dialog
+ * @returns {JSX.Element}
+ */
 export default function FittingsPage() {
   const [fittingArray, setFittingArray] = React.useState([])
-  const [open, setOpen] = React.useState(false)
-  const [content, setContent] = React.useState(<h1>Placeholder</h1>)
-  const [anchor, setAnchor] = React.useState(null)
+  const [openDetails, setOpenDetails] = React.useState(false)
+  const [fittingDetails, setFittingDetails] = React.useState(
+    <h1>Placeholder</h1>
+  )
+  const [detailsAnchor, setDetailsAnchor] = React.useState(null)
   const [openDialog, setOpenDialog] = React.useState(false)
   const [analysis, setAnalysis] = React.useState({})
   const [highlightedIndices, setHighlightedIndices] = React.useState({
@@ -56,6 +59,13 @@ export default function FittingsPage() {
   React.useEffect(() => {
     api.getFittings().then((fittings) => setFittingArray(fittings))
   }, [user])
+
+  function handleFittingSelection(fitting) {
+    setLoading(true)
+    api.analyzeMolecule(fitting.id, selectedSmiles).then((response) => {
+      fetchHistograms(fitting, response)
+    })
+  }
 
   function fetchHistograms(fitting, analysis) {
     if (Object.keys(fitting).length !== 0) {
@@ -104,10 +114,10 @@ export default function FittingsPage() {
     })
   }
 
-  const handlePopper = (target, content, show) => {
-    setContent(content)
-    setAnchor(target)
-    setOpen(show)
+  const handleDetailsPopper = (target, content, show) => {
+    setFittingDetails(content)
+    setDetailsAnchor(target)
+    setOpenDetails(show)
   }
 
   const handleClickOpenDialog = () => {
@@ -133,17 +143,10 @@ export default function FittingsPage() {
       setHelpPopperContent(content)
     }
   }
-  function handleFittingSelection(fitting) {
-    setLoading(true)
-    api.analyzeMolecule(fitting.id, selectedSmiles).then((response) => {
-      fetchHistograms(fitting, response)
-    })
-  }
 
   const handleHelpPopperClose = () => {
     setHelpAnchorEl(null)
   }
-  const helpOpen = Boolean(helpAnchorEl)
 
   const handleEmptyPageClick = () => {
     navigate('/models')
@@ -196,7 +199,7 @@ export default function FittingsPage() {
               key={fitting.id}
               sx={{ width: 500 }}
               clickFunc={(event) => {
-                handlePopper(
+                handleDetailsPopper(
                   event.currentTarget,
                   <>
                     <Button
@@ -225,7 +228,7 @@ export default function FittingsPage() {
                       )
                     })}
                   </>,
-                  event.currentTarget !== anchor || !open
+                  event.currentTarget !== detailsAnchor || !openDetails
                 )
               }}
               hoverFunc={(e) => {
@@ -279,11 +282,15 @@ export default function FittingsPage() {
               </Button>
             </DialogActions>
           </Dialog>
-          <DetailsPopper anchor={anchor} open={open} content={content} />
+          <DetailsPopper
+            anchor={detailsAnchor}
+            open={openDetails}
+            content={fittingDetails}
+          />
           <HelpPopper
             id="helpPopper"
             helpPopperContent={helpPopperContent}
-            open={helpOpen}
+            open={Boolean(helpAnchorEl)}
             anchorEl={helpAnchorEl}
             onClose={handleHelpPopperClose}
           />

@@ -10,6 +10,14 @@ import {
 } from '@mui/material'
 import PropTypes from 'prop-types'
 
+/**
+ * Card displaying information for given fitting
+ * @param fitting displayed fitting
+ * @param clickFunc callback to handle a click on the card
+ * @param hoverFunc callback for hovering
+ * @param leaveFunc callback for mouse pointer leaving the card
+ * @returns {JSX.Element}
+ */
 export default function FittingCard({
   fitting,
   clickFunc,
