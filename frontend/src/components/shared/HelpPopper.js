@@ -8,7 +8,7 @@ import PropTypes from 'prop-types'
  * @param open Whether the popper is open or not
  * @param anchorEl Where the popper will be placed
  * @returns {JSX.Element} The MUI card with helpful text inside
- * @constructor The constructor of the popper.
+ * @constructor
  */
 export default function HelpPopper({ helpPopperContent, open, anchorEl }) {
   const theme = useTheme()
