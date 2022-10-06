@@ -11,7 +11,6 @@ import PropTypes from 'prop-types'
 
 export default function DatasetCard({
   dataset,
-  doubleClickFunc,
   clickFunc,
   hoverFunc,
   leaveFunc,
@@ -20,7 +19,6 @@ export default function DatasetCard({
   return (
     <Card>
       <CardActionArea
-        onDoubleClick={(e) => doubleClickFunc(e)}
         onClick={(e) => {
           clickFunc(e)
         }}
@@ -69,7 +67,6 @@ export default function DatasetCard({
 
 DatasetCard.propTypes = {
   dataset: PropTypes.object.isRequired,
-  doubleClickFunc: PropTypes.func.isRequired,
   clickFunc: PropTypes.func.isRequired,
   hoverFunc: PropTypes.func,
   leaveFunc: PropTypes.func,

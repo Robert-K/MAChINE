@@ -1,7 +1,7 @@
 import React from 'react'
 import { Box } from '@mui/material'
-import BaseModelCard from '../components/models/BaseModelCard'
 import api from '../api'
+import BaseModelCard from '../components/models/BaseModelCard'
 import HelpPopper from '../components/shared/HelpPopper'
 import HelpContext from '../context/HelpContext'
 import { useNavigate } from 'react-router-dom'
