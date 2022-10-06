@@ -143,7 +143,7 @@ def update_dataset(path):
     with path.open('rb') as old_set_file_read:
         old_set = pickle.load(old_set_file_read)
 
-    if old_set.get('version') == _version + 1:
+    if old_set.get('version') == _version:
         return old_set
 
     try:
@@ -171,8 +171,8 @@ def create_histograms(dataset, labels):
 
     # create histogram for each label
     for [label, data] in columns_by_label.items():
-        # 10 is an arbitrary value, change corresponding to degree of detail required
-        hist, bin_edges = np.histogram(data, 2)
+        # bucket count is an arbitrary value, change corresponding to degree of detail required
+        hist, bin_edges = np.histogram(data, math.floor(len(data) / 100))
         histograms[label] = dict({
             'buckets': hist.tolist(),
             'bin_edges': bin_edges.tolist()
