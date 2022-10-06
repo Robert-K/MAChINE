@@ -15,6 +15,7 @@ import { DataGrid } from '@mui/x-data-grid'
 import api from '../api'
 import UserContext from '../context/UserContext'
 import PropTypes from 'prop-types'
+import { camelToNaturalString } from '../utils'
 
 export default function ScoreboardsPage() {
   const [fittingRows, setFittingRows] = React.useState([])
@@ -88,12 +89,7 @@ export default function ScoreboardsPage() {
       flex: 2,
       minWidth: 90,
       renderCell: (params) => {
-        const result = []
-        for (let i = 0; i < params.value.length; i++) {
-          result[i] =
-            params.value[i].charAt(0).toUpperCase() + params.value[i].slice(1)
-        }
-        return <div>{result.join(', ')}</div>
+        return <div>{camelToNaturalString(params.value.join(', '))}</div>
       },
     },
     {
