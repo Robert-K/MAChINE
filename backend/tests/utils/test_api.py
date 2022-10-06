@@ -7,6 +7,7 @@ import pytest
 import pytest_mock
 
 _test_user_id = 'test_user'
+_test_user_name = 'test_user_name'
 
 
 @pytest.fixture
@@ -53,15 +54,15 @@ class TestModelRequestGroup:
                      'modelID': 'test_model_id',
                  }
              }, {
-                'dataset_id': {
-                    'name': 'test',
-                }
-            },
+                 'dataset_id': {
+                     'name': 'test',
+                 }
+             },
 
              {'Test A': {
-                     'name': 'test AAA'
-                 }},
-             )
+                 'name': 'test AAA'
+             }},
+            )
         ]
     )
     def test_model_get_response(self, sh_models, sh_fittings, sh_datasets, base_models, client, mocker):
@@ -211,7 +212,7 @@ class TestFittingRequestGroup:
             ({}, {}, {})
         ]
     )
-    def test_fitting_get_response(self, sh_models, sh_fittings, sh_datasets,client, mocker):
+    def test_fitting_get_response(self, sh_models, sh_fittings, sh_datasets, client, mocker):
         mock_sh = backend.tests.mocks.mock_sh.MockSH(fittings=sh_fittings, models=sh_models)
         mocker.patch('backend.utils.api.sh.get_fitting_summaries', mock_sh.get_fitting_summaries)
         mocker.patch('backend.utils.api.sh.get_model_summary', mock_sh.get_model_summary)
@@ -489,3 +490,47 @@ class TestTrainRequestGroup:
         response = client.delete(f'/users/{_test_user_id}/train', json={})
         assert response.status_code == expected_response_code, 'Expecting status code to match'
         assert response.json == expected_response, 'Expecting response to match'
+
+class TestScoreboardRequestGroup:
+
+    @pytest.mark.parametrize(
+        'sh_scoreboards',
+        [
+            ({'fitting_id':
+                  {'id': 'fitting_id',
+                   'userName': _test_user_name,
+                   'modelID': 'model_id',
+                   'modelName': 'modelName',
+                   'datasetID': 'dataset_id',
+                   'labels': ['labels'],
+                   'epochs': 5,
+                   'batchSize': 12,
+                   'accuracy': 0.05}
+              })
+        ]
+    )
+    def test_scoreboard_get(self, sh_scoreboards, client, mocker):
+        mocker.patch('backend.utils.api.sh.get_scoreboard_summaries', return_value=sh_scoreboards)
+        response = client.get(f'/scoreboard')
+        assert response.status_code == 200, 'Request should have worked'
+        assert response.json == list(sh_scoreboards.values())
+
+    def test_scoreboard_delete(self, client, mocker):
+        delete_mock = mocker.patch('backend.utils.api.sh.delete_scoreboard_fittings')
+        response = client.delete(f'/scoreboard')
+        assert response.status_code == 200, 'Request should have worked'
+        assert response.json is None, 'No response json expected'
+        delete_mock.assert_called_once()
+
+    @pytest.mark.parametrize(
+        'scoreboard_id',
+        [
+            ('id1')
+        ]
+    )
+    def test_scoreboard_delete_single(self, scoreboard_id, client, mocker):
+        delete_mock = mocker.patch('backend.utils.api.sh.delete_scoreboard_fitting')
+        response = client.delete(f'/scoreboard/{scoreboard_id}')
+        assert response.status_code == 200, 'Request should have worked'
+        assert response.json is None, 'No response json expected'
+        delete_mock.assert_called_once_with(scoreboard_id)
