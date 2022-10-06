@@ -266,6 +266,7 @@ export default function FittingsPage() {
               <Box
                 sx={{
                   display: 'flex',
+                  flexDirection: 'column',
                   justifyContent: 'center',
                   width: '90%',
                 }}
