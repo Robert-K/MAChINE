@@ -4,6 +4,15 @@ import Dataset from '../../internal/Dataset'
 import PropTypes from 'prop-types'
 import { camelToNaturalString } from '../../utils'
 
+/**
+ * The card shown on the trainings page, detailing a dataset.
+ * @param selectedDataset The respective dataset
+ * @param selectedLabels The labels from the dataset the model will be trained on
+ * @param hoverFunc Callback function for onMouseOver
+ * @param leaveFunc Callback function for onMouseLeave
+ * @returns {JSX.Element} A card listing this training's name, ID, size, and label.
+ * @constructor
+ */
 export default function DatasetDetailsCard({
   selectedDataset,
   selectedLabels,
