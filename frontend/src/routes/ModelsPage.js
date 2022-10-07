@@ -1,6 +1,7 @@
 import React from 'react'
 import {
   Box,
+  Button,
   Card,
   CardActions,
   CardContent,
@@ -20,15 +21,14 @@ import {
   Typography,
   useTheme,
 } from '@mui/material'
-import Button from '@mui/material/Button'
-import SelectionList from '../components/shared/SelectionList'
 import ExpandLess from '@mui/icons-material/ExpandLess'
 import ExpandMore from '@mui/icons-material/ExpandMore'
-import PropTypes from 'prop-types'
-import { useNavigate } from 'react-router-dom'
-import TrainingContext from '../context/TrainingContext'
+import SelectionList from '../components/shared/SelectionList'
 import HelpPopper from '../components/shared/HelpPopper'
 import HelpContext from '../context/HelpContext'
+import TrainingContext from '../context/TrainingContext'
+import { useNavigate } from 'react-router-dom'
+import PropTypes from 'prop-types'
 import { camelToNaturalString } from '../utils'
 
 const gridHeight = '80vh'
@@ -56,8 +56,6 @@ export default function ModelsPage({ modelList, initSelectedIndex }) {
   const handleHelpPopperClose = () => {
     setHelpAnchorEl(null)
   }
-
-  const helpOpen = Boolean(helpAnchorEl)
 
   const updateSelection = (index) => {
     setSelectedIndex(index)
@@ -146,11 +144,20 @@ export default function ModelsPage({ modelList, initSelectedIndex }) {
       <HelpPopper
         id="helpPopper"
         helpPopperContent={helpPopperContent}
-        open={helpOpen}
+        open={Boolean(helpAnchorEl)}
         anchorEl={helpAnchorEl}
       />
     </Box>
   )
+}
+
+ModelsPage.propTypes = {
+  modelList: PropTypes.array.isRequired,
+  initSelectedIndex: PropTypes.number,
+}
+
+ModelsPage.defaultProps = {
+  initSelectedIndex: -1,
 }
 
 /**
@@ -198,6 +205,15 @@ function ModelDescription({
       </Card>
     )
   } else {
+    const handleClickSelectDataset = () => {
+      if (!trainingStatus) {
+        resetContext()
+        setSelectedModel(selectedModel)
+        navigate('/datasets')
+      } else {
+        onActiveTraining()
+      }
+    }
     return (
       <Card sx={{ maxHeight: gridHeight, height: gridHeight }}>
         <CardContent
@@ -254,15 +270,7 @@ function ModelDescription({
           <CardActions>
             <Grid container justifyContent="center">
               <Button
-                onClick={() => {
-                  if (!trainingStatus) {
-                    resetContext()
-                    setSelectedModel(selectedModel)
-                    navigate('/datasets')
-                  } else {
-                    onActiveTraining()
-                  }
-                }}
+                onClick={handleClickSelectDataset}
                 className="select-training-data"
               >
                 Select Training Data
@@ -378,13 +386,4 @@ RenderFitting.propTypes = {
   index: PropTypes.number,
   open: PropTypes.array,
   setOpen: PropTypes.func,
-}
-
-ModelsPage.propTypes = {
-  modelList: PropTypes.array.isRequired,
-  initSelectedIndex: PropTypes.number,
-}
-
-ModelsPage.defaultProps = {
-  initSelectedIndex: -1,
 }

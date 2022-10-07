@@ -203,6 +203,18 @@ function MoleculeView({ selectedMolecule, onSave }) {
     setMoleculeDoc(chemDocument)
   }, [selectedMolecule])
 
+  function saveMol(event) {
+    event.preventDefault()
+    try {
+      const molecule = moleculeDoc.getChildAt(0)
+      const smiles = Kekule.IO.saveFormatData(molecule, 'smi')
+      const cml = Kekule.IO.saveFormatData(molecule, 'cml')
+      onSave(molName, smiles, cml)
+    } catch (e) {
+      onSave('', '', '')
+    }
+  }
+
   return (
     <Card sx={{ maxHeight: gridHeight, height: gridHeight, overflow: 'auto' }}>
       <CardContent>
@@ -270,7 +282,9 @@ function MoleculeView({ selectedMolecule, onSave }) {
           onClick={() => setShow3D(!show3D)}
           endIcon={<VisibilityIcon />}
           sx={{ ml: 12 }}
-        >{`Switch to ${show3D ? '2D-Editor' : '3D-Viewer'}`}</Button>
+        >
+          Switch to {show3D ? '2D-Editor' : '3D-Viewer'}
+        </Button>
         <Box sx={{ flexGrow: 1 }}></Box>
         <Button
           size="large"
@@ -288,18 +302,6 @@ function MoleculeView({ selectedMolecule, onSave }) {
       </CardActions>
     </Card>
   )
-
-  function saveMol(event) {
-    event.preventDefault()
-    try {
-      const molecule = moleculeDoc.getChildAt(0)
-      const smiles = Kekule.IO.saveFormatData(molecule, 'smi')
-      const cml = Kekule.IO.saveFormatData(molecule, 'cml')
-      onSave(molName, smiles, cml)
-    } catch (e) {
-      onSave('', '', '')
-    }
-  }
 }
 
 MoleculeView.propTypes = {
