@@ -213,9 +213,7 @@ export default function FittingsPage() {
                     {fitting.labels.map((label) => {
                       return (
                         <ListItem key={label}>
-                          <ListItemText
-                            primary={`${camelToNaturalString(label)}`}
-                          />
+                          <ListItemText primary={camelToNaturalString(label)} />
                         </ListItem>
                       )
                     })}

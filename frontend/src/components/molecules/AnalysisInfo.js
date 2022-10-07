@@ -21,8 +21,8 @@ export default function AnalysisInfo({ analysis }) {
     <>
       <ListItemButton onClick={() => toggleExpand()}>
         <ListItemText
-          primary={`${analysis.modelName}`}
-          secondary={`Analyzing Model ID: ${analysis.fittingID}`}
+          primary={analysis.modelName}
+          secondary={`Trained Model ID: ${analysis.fittingID}`}
         ></ListItemText>
         {expand ? <ExpandLess /> : <ExpandMore />}{' '}
       </ListItemButton>

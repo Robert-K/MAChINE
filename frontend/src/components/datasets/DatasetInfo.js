@@ -53,7 +53,7 @@ export default function DatasetInfo({ dataset }) {
         disabled={disabledButton}
         onClick={handleStartTrainingClick}
       >
-        {`${disabledButton ? 'Choose a label' : 'Start Training!'}`}
+        {disabledButton ? 'Choose a label' : 'Start Training!'}
       </Button>
       <FormLabel sx={{ ml: 0.5 }}>Label</FormLabel>
       <List sx={{ py: 0, maxHeight: 400, overflow: 'auto' }}>
