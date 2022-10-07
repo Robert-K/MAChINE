@@ -106,7 +106,7 @@ export default function MoleculesPage() {
         })
         .catch(() =>
           showSnackMessage(
-            `Can't save invalid Molecule. Check for Errors in the Editor`,
+            `Can't save invalid molecule. Check for errors in the editor`,
             'error'
           )
         )
@@ -122,6 +122,7 @@ export default function MoleculesPage() {
         alignItems="stretch"
         columnSpacing={2}
       >
+        {/** Shows all created molecules (on the left) **/}
         <Grid
           item
           md={3}
@@ -144,6 +145,7 @@ export default function MoleculesPage() {
             pageName={'molecules'}
           ></SelectionList>
         </Grid>
+        {/** The molecule creator (using kekule) on the right of the page **/}
         <Grid
           item
           md={9}
@@ -190,6 +192,8 @@ function MoleculeView({ selectedMolecule, onSave }) {
   const theme = useTheme()
 
   React.useEffect(() => {
+    // Every time a molecule is supposed to be drawn, a new ChemDocument is created. (Easiest solution for handling kekule molecules)
+    // Onto the new canvas, the selected molecule is drawn.
     const chemDocument = new Kekule.ChemDocument()
     if (selectedMolecule && selectedMolecule.cml) {
       chemDocument.appendChild(
@@ -217,6 +221,8 @@ function MoleculeView({ selectedMolecule, onSave }) {
           ) : (
             <Box
               sx={{
+                // Kekule has no inherent darkmode. If the user has darkmode activated,
+                // we invert the colors of the molecule editor by hand.
                 filter: theme.darkMode ? 'invert(.86)' : false,
               }}
             >
