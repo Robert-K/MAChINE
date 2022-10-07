@@ -1,15 +1,15 @@
+import React from 'react'
 import { AppBar, Box, Button, IconButton, Toolbar } from '@mui/material'
-import { NavLink, useLocation, useNavigate } from 'react-router-dom'
-import * as React from 'react'
-import logo from '../../logo.svg'
-import PropTypes from 'prop-types'
-import ServerStatusButton from './ServerStatusButton'
-import UserContext from '../../context/UserContext'
-import TrainingContext from '../../context/TrainingContext'
 import LogoutIcon from '@mui/icons-material/Logout'
-import ProgressBar from '../training/ProgressBar'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings'
+import ServerStatusButton from './ServerStatusButton'
+import ProgressBar from '../training/ProgressBar'
+import UserContext from '../../context/UserContext'
+import TrainingContext from '../../context/TrainingContext'
+import { NavLink, useLocation, useNavigate } from 'react-router-dom'
+import logo from '../../logo.svg'
+import PropTypes from 'prop-types'
 
 const links = {
   home: {
@@ -50,9 +50,9 @@ export default function Navbar({
   const user = React.useContext(UserContext)
   const training = React.useContext(TrainingContext)
   const [hideTraining, setHideTraining] = React.useState(true)
+  const navigate = useNavigate()
 
   // Navigates the user to the start page on page reload
-  const navigate = useNavigate()
   React.useEffect(() => {
     navigate('/')
   }, [])

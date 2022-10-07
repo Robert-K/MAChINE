@@ -1,6 +1,6 @@
 import React from 'react'
-import PropTypes from 'prop-types'
 import api from '../api'
+import PropTypes from 'prop-types'
 import { camelToNaturalString } from '../utils'
 
 const TrainingContext = React.createContext({

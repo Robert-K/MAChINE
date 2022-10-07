@@ -9,11 +9,11 @@ import {
   List,
   ListItem,
 } from '@mui/material'
-import PropTypes from 'prop-types'
-import { useNavigate } from 'react-router-dom'
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked'
 import RadioButtonCheckedIcon from '@mui/icons-material/RadioButtonChecked'
 import TrainingContext from '../../context/TrainingContext'
+import { useNavigate } from 'react-router-dom'
+import PropTypes from 'prop-types'
 import { camelToNaturalString } from '../../utils'
 
 /**
@@ -26,7 +26,6 @@ export default function DatasetInfo({ dataset }) {
   const [labelArray, setLabelArray] = React.useState([])
   const [disabledButton, setDisabledButton] = React.useState(true)
   const training = React.useContext(TrainingContext)
-
   const navigate = useNavigate()
 
   const handleChecked = (event) => {

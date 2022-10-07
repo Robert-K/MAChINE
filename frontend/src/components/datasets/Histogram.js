@@ -1,7 +1,7 @@
 import React from 'react'
-import Chart from 'react-apexcharts'
-import PropTypes from 'prop-types'
 import { useTheme } from '@mui/material'
+import PropTypes from 'prop-types'
+import Chart from 'react-apexcharts'
 
 /**
  * Histogram with react-apexcharts

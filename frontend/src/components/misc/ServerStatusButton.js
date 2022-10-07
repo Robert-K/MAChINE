@@ -1,9 +1,8 @@
-import * as React from 'react'
-import Popover from '@mui/material/Popover'
+import React from 'react'
+import { Badge, badgeClasses, IconButton, Popover } from '@mui/material'
 import LanIcon from '@mui/icons-material/Lan'
-import ServerConfigForm from './ServerConfigForm'
-import { Badge, IconButton, badgeClasses } from '@mui/material'
 import api from '../../api'
+import ServerConfigForm from './ServerConfigForm'
 import UserContext from '../../context/UserContext'
 
 /**

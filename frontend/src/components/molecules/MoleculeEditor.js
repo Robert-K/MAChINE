@@ -1,7 +1,8 @@
-import { Kekule } from 'kekule'
-import React, { useEffect } from 'react'
-import PropTypes from 'prop-types'
+import React from 'react'
 import { Box } from '@mui/material'
+import PropTypes from 'prop-types'
+import { Kekule } from 'kekule'
+
 const C = Kekule.Editor.ObjModifier.Category
 const composer = new Kekule.Editor.Composer(document)
 composer
@@ -23,15 +24,15 @@ composer.getRenderConfigs().colorConfigs.useAtomSpecifiedColor = true
 composer.getEditorConfigs().hotKeyConfigs.setHotKeys([])
 
 export default function MoleculeEditor({ moleculeDoc, width, height }) {
-  useEffect(() => {
+  React.useEffect(() => {
     composer.appendToElem(document.getElementById('editor'))
   }, [])
 
-  useEffect(() => {
+  React.useEffect(() => {
     composer.setChemObj(moleculeDoc)
   }, [moleculeDoc])
 
-  useEffect(() => {
+  React.useEffect(() => {
     composer.setDimension(width, height)
   }, [width, height])
 

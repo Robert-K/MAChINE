@@ -1,8 +1,8 @@
-import React, { useEffect } from 'react'
-import { Kekule } from 'kekule'
+import React from 'react'
 import PropTypes from 'prop-types'
-import * as THREE from 'three'
 import { Box } from '@mui/material'
+import { Kekule } from 'kekule'
+import * as THREE from 'three'
 
 Kekule.externalResourceManager.register('three.js', THREE)
 const chemViewer = new Kekule.ChemWidget.Viewer(document)
@@ -23,11 +23,11 @@ chemViewer
   ])
 
 export default function MoleculeRenderer({ moleculeDoc, width, height }) {
-  useEffect(() => {
+  React.useEffect(() => {
     chemViewer.appendToElem(document.getElementById('renderer'))
   }, [])
 
-  useEffect(() => {
+  React.useEffect(() => {
     chemViewer.setChemObj(moleculeDoc)
   }, [moleculeDoc])
 

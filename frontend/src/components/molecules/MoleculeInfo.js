@@ -1,7 +1,7 @@
-import { List, ListItemText, ListItem, Divider } from '@mui/material'
 import React from 'react'
-import PropTypes from 'prop-types'
+import { Divider, List, ListItem, ListItemText } from '@mui/material'
 import AnalysisInfo from './AnalysisInfo'
+import PropTypes from 'prop-types'
 
 // TODO: Check .map keys again at the end
 export default function MoleculeInfo({ molecule }) {
