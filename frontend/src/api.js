@@ -211,12 +211,4 @@ export default {
       }
     })
   },
-
-  unregisterSocketListener(action) {
-    return socket.off(action)
-  },
-
-  sendSocketMessage(action, args) {
-    return socket.emit(action, userID, args)
-  },
 }
