@@ -6,7 +6,10 @@ import pickle
 from backend.utils.molecule_formats import *
 import numpy as np
 
-# current version, raise when altering dataset content
+"""
+current dataset version, raise when altering dataset content
+keep in sync with storage_handler dataset_version
+"""
 _version = 5
 
 

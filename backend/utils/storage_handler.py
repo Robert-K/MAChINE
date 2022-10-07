@@ -6,6 +6,7 @@ import pickle
 import tensorflow as tf
 import shortuuid
 
+# registry of storage_handler functions
 __all__ = ['add_analysis',
            'add_fitting',
            'add_model',
@@ -33,12 +34,13 @@ _storage_path = Path.cwd() / 'storage'
 _user_data_path = _storage_path / 'user_data'
 _datasets_path = _storage_path / 'data'
 _base_models_path = _storage_path / 'models'
+# keep dataset_version in sync with create_dataset version
 _dataset_version = 5
 
 
 class UserDataStorageHandler:
     """
-    Class that holds data for a specific user and methods on how to store & retrieve it
+    Class which holds data for a specific user and methods to store and retrieve it
     """
 
     def __init__(self, user_id, username):
@@ -184,9 +186,15 @@ class UserDataStorageHandler:
         self.user_fittings_path.mkdir(parents=True, exist_ok=True)
 
 
-# Goal: Never use file.open outside of storage handler
-# TODO: Test this boi
 class StorageHandler:
+    """
+    Handler for all storage access requests
+    Holds user data storage handlers and delegates to them based on given user id from outside request
+    Holds sole access to datasets, base models and the scoreboard
+
+    Bundles all file accesses
+    Singleton based on class Random in random.py
+    """
 
     def __init__(self):
         self.user_storage_handler = dict()
@@ -322,7 +330,8 @@ class StorageHandler:
             if dataset_path.exists():
                 self.dataset_summaries[str(idx)] = self.__summarize_dataset(dataset_path)
 
-    def __summarize_dataset(self, dataset_path):
+    @staticmethod
+    def __summarize_dataset(dataset_path):
         file = dataset_path.open('rb')
         content = pickle.load(file)
         file.close()
