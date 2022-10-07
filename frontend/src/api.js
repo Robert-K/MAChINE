@@ -1,17 +1,20 @@
 import axios from 'axios'
 import io from 'socket.io-client'
 
-const defaultAddress = '127.0.0.1' // TODO: insert correct URL
+// Localhost by default
+const defaultAddress = '127.0.0.1'
 const defaultPort = '5000'
 
 let serverAddress = defaultAddress
 let serverPort = defaultPort
 
+// Create http API and socket instance
 const api = axios.create({ baseURL: `http://${serverAddress}:${serverPort}` })
 let socket = io(`ws://${serverAddress}:${serverPort}`, { timeout: 60000 })
 
 let userID = ''
 
+// Update base URL of API, reconnect socket
 function updateBaseURL() {
   api.defaults.baseURL = `http://${serverAddress}:${serverPort}`
   const newSocket = io(`ws://${serverAddress}:${serverPort}`, {
@@ -27,6 +30,7 @@ function updateBaseURL() {
   socket = newSocket
 }
 
+// Accessible frontend API functions
 export default {
   getConnectionStatus() {
     return socket.connected
