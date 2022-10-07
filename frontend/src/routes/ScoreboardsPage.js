@@ -25,8 +25,8 @@ export default function ScoreboardsPage() {
       headerName: 'Username',
       headerAlign: 'center',
       align: 'center',
-      flex: 4, // flex is for scaling, a flex 4 column will be twice as wide as an flex 2 columns
-      minWidth: 150,
+      flex: 40, // flex is for scaling, a flex 4 column will be twice as wide as an flex 2 columns
+      minWidth: 100,
     },
 
     {
@@ -35,7 +35,7 @@ export default function ScoreboardsPage() {
       headerAlign: 'center',
       align: 'center',
       sortable: false,
-      flex: 3,
+      flex: 40,
       minWidth: 140,
     },
     {
@@ -81,17 +81,24 @@ export default function ScoreboardsPage() {
           </Box>
         )
       },
-      flex: 4,
-      minWidth: 200,
+      flex: 42,
+      minWidth: 160,
+    },
+    {
+      field: 'datasetName',
+      headerName: 'Dataset Name',
+      headerAlign: 'center',
+      align: 'center',
+      type: 'number',
+      flex: 40,
+      minWidth: 225,
+      renderCell: (params) => {
+        return <div>{`${params.row.datasetName} #${params.row.datasetID}`}</div>
+      },
     },
     {
       field: 'datasetID',
       headerName: 'Dataset ID',
-      headerAlign: 'center',
-      align: 'center',
-      type: 'number',
-      flex: 2,
-      minWidth: 90,
     },
     {
       field: 'labels',
@@ -99,7 +106,7 @@ export default function ScoreboardsPage() {
       headerAlign: 'center',
       align: 'center',
       sortable: false,
-      flex: 2,
+      flex: 10,
       minWidth: 90,
       // capitalize the first letter of each label
       renderCell: (params) => {
@@ -111,24 +118,24 @@ export default function ScoreboardsPage() {
       headerName: 'Epochs',
       headerAlign: 'center',
       align: 'center',
-      flex: 2,
-      minWidth: 70,
+      flex: 9,
+      minWidth: 90,
     },
     {
       field: 'batchSize',
       headerName: 'Batch Size',
       headerAlign: 'center',
       align: 'center',
-      flex: 2,
-      minWidth: 85,
+      flex: 23,
+      minWidth: 100,
     },
     {
       field: 'accuracy',
-      headerName: 'Accuracy(R Squared)',
+      headerName: 'Accuracy(R²)',
       headerAlign: 'center',
       align: 'center',
-      flex: 2,
-      minWidth: 70,
+      flex: 28,
+      minWidth: 100,
     },
   ]
 
@@ -165,7 +172,7 @@ export default function ScoreboardsPage() {
           Best Models
         </Typography>
         {adminMode ? <AdminPanel refreshFunc={refresh} /> : null}
-        <Card sx={{ maxWidth: '80vw', m: 4 }}>
+        <Card sx={{ maxWidth: '90vw', m: 4 }}>
           <DataTable
             columns={fittingColumns}
             rows={fittingRows}
@@ -225,12 +232,19 @@ function DataTable({ columns, rows, highlightedRows }) {
       columns={columns}
       disableColumnMenu={true}
       hideFooter={true}
-      pageSize={10}
+      // pageSize={10} // Uncomment to limit visible entries
       // check for each fitting if it's been created by the current user
       getRowClassName={(params) => {
         return highlightedRows.some(({ id }) => id === params.row.id)
           ? 'table-theme'
           : null
+      }}
+      initialState={{
+        columns: {
+          columnVisibilityModel: {
+            datasetID: false,
+          },
+        },
       }}
       // what is shown when there are no fittings
       components={{

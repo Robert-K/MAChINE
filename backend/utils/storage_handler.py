@@ -288,6 +288,7 @@ class StorageHandler:
                                                      model_id).get(
                                                      'name'),
                                                  'datasetID': dataset_id,
+                                                 'datasetName': self.get_dataset_summaries().get(dataset_id).get('name'),
                                                  'labels': labels,
                                                  'epochs': epochs,
                                                  'batchSize': batch_size,
