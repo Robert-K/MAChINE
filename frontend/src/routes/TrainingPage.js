@@ -11,23 +11,23 @@ import {
   Typography,
   useTheme,
 } from '@mui/material'
+import api from '../api'
 import ModelDetailsCard from '../components/training/ModelDetailsCard'
 import DatasetDetailsCard from '../components/training/DatasetDetailsCard'
-import { useNavigate } from 'react-router-dom'
-import TrainingContext from '../context/TrainingContext'
-import api from '../api'
 import PrettyChart from '../components/training/PrettyChart'
 import SnackBarAlert from '../components/misc/SnackBarAlert'
-import HelpContext from '../context/HelpContext'
 import HelpPopper from '../components/shared/HelpPopper'
+import HelpContext from '../context/HelpContext'
+import TrainingContext from '../context/TrainingContext'
+import { useNavigate } from 'react-router-dom'
 
 export default function TrainingPage() {
   const training = React.useContext(TrainingContext)
-  const [localEpochs, setLocalEpochs] = React.useState(training.selectedEpochs)
+  const help = React.useContext(HelpContext)
   const [showDialog, setShowDialog] = React.useState(false)
   const [helpAnchorEl, setHelpAnchorEl] = React.useState(null)
   const [helpPopperContent, setHelpPopperContent] = React.useState('')
-  const help = React.useContext(HelpContext)
+  const [localEpochs, setLocalEpochs] = React.useState(training.selectedEpochs)
   const [epochsError, setEpochsError] = React.useState(false)
   const [batchSizeError, setBatchSizeError] = React.useState(false)
   const [startStopButton, setStartStopButton] = React.useState('Start')
@@ -35,6 +35,8 @@ export default function TrainingPage() {
   const [openSnackError, setOpenSnackError] = React.useState(false)
   const [showFinishDialog, setShowFinishDialog] = React.useState(false)
   const theme = useTheme()
+  const navigate = useNavigate()
+  const initialMount = React.useRef(true)
 
   const checkEpochs = (epochs) => {
     if (epochs > 0) {
@@ -51,8 +53,6 @@ export default function TrainingPage() {
       setBatchSizeError(true)
     }
   }
-
-  const initialMount = React.useRef(true)
 
   React.useEffect(() => {
     checkBatchSize(training.selectedBatchSize)
@@ -84,10 +84,6 @@ export default function TrainingPage() {
     }
   }, [training.trainingStatus])
 
-  React.useEffect(() => {
-    setShowFinishDialog(training.trainingFinished)
-  }, [training.trainingFinished])
-
   const handleStartStop = () => {
     if (training.trainingStatus) {
       setShowDialog(true)
@@ -118,20 +114,14 @@ export default function TrainingPage() {
     })
   }
 
-  const handleCloseDialog = () => {
-    setShowDialog(false)
-  }
-
-  const handleCloseFinishDialog = () => {
-    setShowFinishDialog(false)
-  }
+  React.useEffect(() => {
+    setShowFinishDialog(training.trainingFinished)
+  }, [training.trainingFinished])
 
   const abortTraining = () => {
     training.stopTraining()
     handleCloseDialog()
   }
-
-  const navigate = useNavigate()
 
   function filterData(data) {
     // Change this to exclude more data
@@ -146,6 +136,14 @@ export default function TrainingPage() {
       }
     })
     return newData
+  }
+
+  const handleCloseDialog = () => {
+    setShowDialog(false)
+  }
+
+  const handleCloseFinishDialog = () => {
+    setShowFinishDialog(false)
   }
 
   const handleHelpPopperOpen = (event, content) => {
@@ -293,7 +291,6 @@ export default function TrainingPage() {
         >
           {"Your model's accuracy: " + training.finishedAccuracy + '%'}
         </Typography>
-
         <DialogActions>
           <Button onClick={handleCloseFinishDialog}>Close</Button>
           <Button

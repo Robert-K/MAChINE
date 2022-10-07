@@ -10,22 +10,23 @@ import {
   TextField,
   useTheme,
 } from '@mui/material'
-import SelectionList from '../components/shared/SelectionList'
-import { useNavigate } from 'react-router-dom'
-import { Kekule } from 'kekule'
-import UserContext from '../context/UserContext'
-import api from '../api'
 import SaveIcon from '@mui/icons-material/Save'
 import VisibilityIcon from '@mui/icons-material/Visibility'
-import PropTypes from 'prop-types'
+import api from '../api'
+import Molecule from '../internal/Molecule'
+import SelectionList from '../components/shared/SelectionList'
 import MoleculeEditor from '../components/molecules/MoleculeEditor'
 import MoleculeRenderer from '../components/molecules/MoleculeRenderer'
-import Molecule from '../internal/Molecule'
 import SnackBarAlert from '../components/misc/SnackBarAlert'
 import HelpPopper from '../components/shared/HelpPopper'
 import HelpContext from '../context/HelpContext'
+import UserContext from '../context/UserContext'
+import { useNavigate } from 'react-router-dom'
+import PropTypes from 'prop-types'
+import { Kekule } from 'kekule'
 
 const gridHeight = '85vh'
+
 export default function MoleculesPage() {
   const [molecules, setMolecules] = React.useState([])
   const [selectedIndex, setSelectedIndex] = React.useState(-1)
@@ -48,8 +49,6 @@ export default function MoleculesPage() {
   const handleHelpPopperClose = () => {
     setHelpAnchorEl(null)
   }
-
-  const helpOpen = Boolean(helpAnchorEl)
 
   React.useEffect(() => {
     refreshMolecules()
@@ -167,7 +166,7 @@ export default function MoleculesPage() {
         <HelpPopper
           id="helpPopper"
           helpPopperContent={helpPopperContent}
-          open={helpOpen}
+          open={Boolean(helpAnchorEl)}
           anchorEl={helpAnchorEl}
           onClose={handleHelpPopperClose}
         />
@@ -184,7 +183,6 @@ export default function MoleculesPage() {
 
 function MoleculeView({ selectedMolecule, onSave }) {
   const [editorHeight, editorWidth] = ['70vh', '100%']
-
   const [moleculeDoc, setMoleculeDoc] = React.useState(null)
   const [molName, setMolName] = React.useState('')
   const [show3D, setShow3D] = React.useState(false)

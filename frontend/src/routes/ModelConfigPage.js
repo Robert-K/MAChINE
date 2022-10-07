@@ -1,28 +1,28 @@
 import React from 'react'
-import SchNetConfig from '../components/models/modelConfig/SchNetConfig'
-import MLPConfig from '../components/models/modelConfig/MLPConfig'
-import PropTypes from 'prop-types'
-import Grid from '@mui/material/Grid'
-import MLPModelVisual from '../components/models/modelConfig/MLPModelVisual'
 import {
   Alert,
+  Button,
   Card,
   CardActions,
   CardContent,
   FormControl,
+  Grid,
   InputLabel,
   MenuItem,
   Select,
   Snackbar,
   TextField,
 } from '@mui/material'
-import Button from '@mui/material/Button'
-import SchNetVisual from '../components/models/modelConfig/SchNetVisual'
-import { camelToNaturalString } from '../utils'
-import { useLocation, useNavigate } from 'react-router-dom'
-import HelpContext from '../context/HelpContext'
-import HelpPopper from '../components/shared/HelpPopper'
 import SaveIcon from '@mui/icons-material/Save'
+import SchNetVisual from '../components/models/modelConfig/SchNetVisual'
+import SchNetConfig from '../components/models/modelConfig/SchNetConfig'
+import MLPConfig from '../components/models/modelConfig/MLPConfig'
+import MLPModelVisual from '../components/models/modelConfig/MLPModelVisual'
+import HelpPopper from '../components/shared/HelpPopper'
+import HelpContext from '../context/HelpContext'
+import { useLocation, useNavigate } from 'react-router-dom'
+import PropTypes from 'prop-types'
+import { camelToNaturalString } from '../utils'
 
 /**
  * collection of optimizers and loss functions settable in the ModelConfigPage
@@ -218,9 +218,7 @@ export default function ModelConfigPage({ addFunc }) {
                 </FormControl>
               )
             })}
-
             {modelTypeSpecificComponents[state.baseModel.type.name].config}
-
             <FormControl>
               <TextField
                 label="Model Name"

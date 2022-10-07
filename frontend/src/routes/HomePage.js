@@ -1,7 +1,7 @@
 import React from 'react'
-import Image from 'mui-image'
 import {
   Box,
+  Button,
   Card,
   CardActions,
   CardContent,
@@ -9,9 +9,9 @@ import {
   Typography,
   useTheme,
 } from '@mui/material'
-import Button from '@mui/material/Button'
-import { NavLink } from 'react-router-dom'
 import HelpOutlineOutlinedIcon from '@mui/icons-material/HelpOutlineOutlined'
+import Image from 'mui-image'
+import { NavLink } from 'react-router-dom'
 import PropTypes from 'prop-types'
 
 /**

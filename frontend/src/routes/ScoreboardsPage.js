@@ -1,4 +1,4 @@
-import * as React from 'react'
+import React from 'react'
 import { Box, Button, Card, IconButton, Stack, Typography } from '@mui/material'
 import DeleteSweepIcon from '@mui/icons-material/DeleteSweep'
 import DeleteIcon from '@mui/icons-material/Delete'
@@ -16,7 +16,6 @@ import { camelToNaturalString } from '../utils'
 export default function ScoreboardsPage() {
   const [fittingRows, setFittingRows] = React.useState([])
   const [highlightedRows, setHighlightedRows] = React.useState([])
-
   const { adminMode } = React.useContext(UserContext)
 
   // defining the order and context of the columns
@@ -70,7 +69,7 @@ export default function ScoreboardsPage() {
                 <IconButton
                   sx={{ alignItems: 'center' }}
                   onClick={() => {
-                    api.deleteScoreboardFitting(params.id).then((response) => {
+                    api.deleteScoreboardFitting(params.id).then(() => {
                       refresh()
                     })
                   }}

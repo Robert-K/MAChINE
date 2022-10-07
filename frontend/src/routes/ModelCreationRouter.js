@@ -1,10 +1,10 @@
 import React from 'react'
-import { Routes, Route } from 'react-router-dom'
+import api from '../api'
 import BaseModelsPage from './BaseModelsPage'
 import ModelConfigPage from './ModelConfigPage'
 import ModelsPage from './ModelsPage'
-import api from '../api'
 import UserContext from '../context/UserContext'
+import { Route, Routes } from 'react-router-dom'
 import PropTypes from 'prop-types'
 
 /**

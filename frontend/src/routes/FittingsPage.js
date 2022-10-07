@@ -15,16 +15,16 @@ import {
   Typography,
   useTheme,
 } from '@mui/material'
-import FittingCard from '../components/models/FittingCard'
-import DetailsPopper from '../components/shared/DetailsPopper'
+import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined'
 import api from '../api'
+import FittingCard from '../components/models/FittingCard'
+import Histogram from '../components/datasets/Histogram'
+import DetailsPopper from '../components/shared/DetailsPopper'
+import HelpPopper from '../components/shared/HelpPopper'
 import UserContext from '../context/UserContext'
 import HelpContext from '../context/HelpContext'
-import HelpPopper from '../components/shared/HelpPopper'
 import { useLocation, useNavigate } from 'react-router-dom'
-import Histogram from '../components/datasets/Histogram'
 import { camelToNaturalString } from '../utils'
-import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined'
 
 /**
  * Selection component for fittings to analyze molecule in react-router location
@@ -50,9 +50,9 @@ export default function FittingsPage() {
   const [helpAnchorEl, setHelpAnchorEl] = React.useState(null)
   const [helpPopperContent, setHelpPopperContent] = React.useState('')
   const help = React.useContext(HelpContext)
+  const user = React.useContext(UserContext)
   const { state } = useLocation()
   const { selectedSmiles } = state
-  const user = React.useContext(UserContext)
   const theme = useTheme()
   const navigate = useNavigate()
 
@@ -110,7 +110,7 @@ export default function FittingsPage() {
     }
     updateThings().then(() => {
       setLoading(false)
-      handleClickOpenDialog()
+      setOpenDialog(true)
     })
   }
 
@@ -118,10 +118,6 @@ export default function FittingsPage() {
     setFittingDetails(content)
     setDetailsAnchor(target)
     setOpenDetails(show)
-  }
-
-  const handleClickOpenDialog = () => {
-    setOpenDialog(true)
   }
 
   const handleCloseDialog = () => {
@@ -148,17 +144,13 @@ export default function FittingsPage() {
     setHelpAnchorEl(null)
   }
 
-  const handleEmptyPageClick = () => {
-    navigate('/models')
-  }
-
   if (fittingArray.length === 0) {
     return (
       <Box sx={{ m: 5 }}>
         <Grid container spacing={5}>
           <Grid item xs={3}>
             <Card>
-              <CardActionArea onClick={handleEmptyPageClick}>
+              <CardActionArea onClick={() => navigate('/models')}>
                 <Typography sx={{ m: 5, textAlign: 'center' }}>
                   You have no trained models to display! Train one of your
                   models to use it to analyze a molecule.
