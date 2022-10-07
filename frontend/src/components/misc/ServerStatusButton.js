@@ -7,6 +7,7 @@ import UserContext from '../../context/UserContext'
 
 /**
  * Button to monitor server connectivity
+ * only visible in Admin Mode
  * @returns {JSX.Element}
  */
 export default function ServerStatusButton() {
@@ -22,10 +23,6 @@ export default function ServerStatusButton() {
     setAnchorEl(null)
   }
 
-  // TODO: should open not be a state? or rather, why do you need the id?
-  const open = Boolean(anchorEl && adminMode)
-  const id = open ? 'simple-popover' : undefined
-
   function updateColor() {
     setColor(api.getConnectionStatus() ? 'connected' : 'error')
   }
@@ -36,7 +33,6 @@ export default function ServerStatusButton() {
     <div>
       <IconButton
         sx={{ color: 'white' }}
-        aria-describedby={id}
         variant="contained"
         onClick={handleClick}
       >
@@ -56,8 +52,7 @@ export default function ServerStatusButton() {
         </Badge>
       </IconButton>
       <Popover
-        id={id}
-        open={open}
+        open={Boolean(anchorEl && adminMode)}
         anchorEl={anchorEl}
         onClose={handleClose}
         anchorOrigin={{
@@ -67,7 +62,7 @@ export default function ServerStatusButton() {
         transformOrigin={{ vertical: 'top', horizontal: 'right' }}
       >
         <ServerConfigForm
-          onChangeSubmit={() => {
+          onSubmitChange={() => {
             updateColor()
             setAnchorEl(null)
           }}
