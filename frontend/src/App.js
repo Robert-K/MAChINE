@@ -94,8 +94,7 @@ export default function App() {
 
   // Reset runOnboarding so onboarding can be run again
   const onboardingCallback = (data) => {
-    const { action, index, status, type } = data
-    if ([STATUS.FINISHED, STATUS.SKIPPED].includes(status)) {
+    if ([STATUS.FINISHED, STATUS.SKIPPED].includes(data.status)) {
       setRunOnboarding(false)
     }
   }

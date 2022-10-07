@@ -17,7 +17,7 @@ export default function Onboarding({ run, callback }) {
 
   // Callback runs for every Joyride event
   const internalCallback = (data) => {
-    const { action, index, status, type } = data
+    const { action, index, type } = data
     // Reset the step index, so the tour starts from the beginning every time
     if (
       [ACTIONS.START, ACTIONS.RESTART, ACTIONS.CLOSE, ACTIONS.SKIP].includes(
