@@ -1,5 +1,7 @@
+import React from 'react'
 import {
   Box,
+  Button,
   Card,
   CardContent,
   FormControl,
@@ -8,8 +10,6 @@ import {
   Select,
   TextField,
 } from '@mui/material'
-import React from 'react'
-import Button from '@mui/material/Button'
 import PropTypes from 'prop-types'
 import { activationFuncs } from '../../../utils'
 

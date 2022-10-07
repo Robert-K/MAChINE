@@ -1,6 +1,12 @@
 import React from 'react'
-import { Box, Card, CardActions, CardContent, Typography } from '@mui/material'
-import Button from '@mui/material/Button'
+import {
+  Box,
+  Button,
+  Card,
+  CardActions,
+  CardContent,
+  Typography,
+} from '@mui/material'
 import PropTypes from 'prop-types'
 
 /**

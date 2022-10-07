@@ -1,30 +1,30 @@
-import React, { useCallback, useEffect } from 'react'
-import ScoreboardsPage from './routes/ScoreboardsPage.js'
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
-import SwaggerPage from './routes/SwaggerPage'
-import '@fontsource/roboto'
-import Navbar from './components/misc/Navbar'
+import React from 'react'
 import { CssBaseline, ThemeProvider } from '@mui/material'
+import api from './api'
+import ScoreboardsPage from './routes/ScoreboardsPage'
+import SwaggerPage from './routes/SwaggerPage'
 import HomePage from './routes/HomePage'
 import MoleculesPage from './routes/MoleculesPage'
 import StartPage from './routes/StartPage'
 import TrainingPage from './routes/TrainingPage'
-import DarkModeButton from './components/misc/DarkModeButton'
 import DatasetPage from './routes/DatasetPage'
 import FittingsPage from './routes/FittingsPage'
-import api from './api'
-import { UserProvider } from './context/UserContext'
-import { TrainingProvider } from './context/TrainingContext'
-import Particles from 'react-tsparticles'
-import { loadFull } from 'tsparticles'
+import ModelCreationRouter from './routes/ModelCreationRouter'
+import Onboarding from './components/onboarding/Onboarding'
+import Navbar from './components/misc/Navbar'
+import DarkModeButton from './components/misc/DarkModeButton'
 import HelpModeButton from './components/misc/HelpModeButton'
 import { HelpProvider } from './context/HelpContext'
-import { handleErrors } from './utils'
-import '@fontsource/poppins'
-import ModelCreationRouter from './routes/ModelCreationRouter'
-import { STATUS } from 'react-joyride'
-import Onboarding from './components/onboarding/Onboarding'
+import { UserProvider } from './context/UserContext'
+import { TrainingProvider } from './context/TrainingContext'
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { themeDark, themeLight } from './Theme'
+import '@fontsource/roboto'
+import '@fontsource/poppins'
+import Particles from 'react-tsparticles'
+import { STATUS } from 'react-joyride'
+import { loadFull } from 'tsparticles'
+import { handleErrors } from './utils'
 
 // The main app component
 export default function App() {
@@ -47,7 +47,7 @@ export default function App() {
     })
 
   // Initialize the particles background
-  const particlesInit = useCallback(async (engine) => {
+  const particlesInit = React.useCallback(async (engine) => {
     await loadFull(engine)
   }, [])
 
@@ -105,7 +105,7 @@ export default function App() {
   let current = 0
 
   // Register adminMode pattern listener
-  useEffect(() => {
+  React.useEffect(() => {
     const keyHandler = function (event) {
       if (pattern.indexOf(event.key) < 0 || event.key !== pattern[current]) {
         current = 0

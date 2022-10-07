@@ -1,11 +1,11 @@
-import { Popper, useTheme } from '@mui/material'
 import React from 'react'
-import PropTypes from 'prop-types'
-import * as vis from 'vis-data'
-import * as v from 'vis-network'
+import { Popper, useTheme } from '@mui/material'
 import LayerConfigPopup from './LayerConfigPopup'
 import Layer from '../../../internal/Layer'
 import LayerDeletionPopup from './LayerDeletionPopup'
+import PropTypes from 'prop-types'
+import * as vis from 'vis-data'
+import * as v from 'vis-network'
 import { activationFuncs } from '../../../utils'
 
 /**

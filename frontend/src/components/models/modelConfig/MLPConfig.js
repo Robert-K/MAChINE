@@ -18,6 +18,11 @@ export default function MLPConfig({
 }) {
   const [activation, setActivation] = React.useState('ReLU')
 
+  const handleChange = (value) => {
+    updateDefaultActivation(value)
+    setActivation(value)
+  }
+
   return (
     <FormControl fullWidth>
       <InputLabel sx={{ m: 2 }}>Activation Function</InputLabel>
@@ -25,8 +30,7 @@ export default function MLPConfig({
         value={activation}
         label="Default Activation Function"
         onChange={(e) => {
-          updateDefaultActivation(e.target.value)
-          setActivation(e.target.value)
+          handleChange(e.target.value)
         }}
         sx={{ m: 2 }}
         onMouseOver={(e) => {

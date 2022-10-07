@@ -1,11 +1,11 @@
 import React from 'react'
-import Grid from '@mui/material/Grid'
-import Card from '@mui/material/Card'
 import {
   Box,
+  Card,
   CardActionArea,
   CardContent,
   CardHeader,
+  Grid,
   Typography,
 } from '@mui/material'
 import PropTypes from 'prop-types'
