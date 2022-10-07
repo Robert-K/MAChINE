@@ -57,7 +57,7 @@ ModelDetailsCard.propTypes = {
 }
 
 ModelDetailsCard.defaultProps = {
-  selectedModel: new ModelConfig('ERROR', 'ERROR', 'ERROR', {}, []),
+  selectedModel: new ModelConfig('ERROR', 'ERROR', 'ERROR', 'ERROR', {}, []),
 }
 
 /**
