@@ -15,16 +15,20 @@ export default function Onboarding({ run, callback }) {
   const [stepIndex, setStepIndex] = React.useState(0)
   const training = React.useContext(TrainingContext)
 
+  // Callback runs for every Joyride event
   const internalCallback = (data) => {
     const { action, index, status, type } = data
+    // Reset the step index, so the tour starts from the beginning every time
     if (
       [ACTIONS.START, ACTIONS.RESTART, ACTIONS.CLOSE, ACTIONS.SKIP].includes(
         action
       )
     ) {
       setStepIndex(0)
+      // Select example training parameters, so the training page can be shown during tour
       training.selectExampleTrainingParameters()
     }
+    // Skip the step if it's skipLocation matches the current location
     if (EVENTS.STEP_BEFORE === type) {
       if (
         steps[index].skipLocations &&
@@ -32,6 +36,7 @@ export default function Onboarding({ run, callback }) {
       ) {
         setStepIndex(index + (action === ACTIONS.PREV ? -1 : 1))
       }
+      // If the step requires a certain location, navigate to it
       if (steps[index].location) {
         navigate(
           steps[stepIndex].location,
@@ -39,13 +44,20 @@ export default function Onboarding({ run, callback }) {
         )
       }
     }
+    // Advance (or go back) to the next step
+    // Also do this if the target is not found, so the tour can continue
     if ([EVENTS.STEP_AFTER, EVENTS.TARGET_NOT_FOUND].includes(type)) {
       setStepIndex(index + (action === ACTIONS.PREV ? -1 : 1))
     }
 
+    // Call external callback
     callback(data)
   }
 
+  // The steps of the tour
+  // steps with skipLocations will be skipped if the current location matches one of the skipLocations
+  // steps with location will navigate to the specified location
+  // params can be passed to the location
   const steps = [
     {
       content: (

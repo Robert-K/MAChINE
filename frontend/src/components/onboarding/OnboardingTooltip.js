@@ -26,6 +26,7 @@ export default function OnboardingTooltip({
     }
   }
 
+  // Fix the floater on every render
   React.useEffect(() => {
     fixFloater()
   }, [index, size, step, tooltipProps, primaryProps, backProps, skipProps])
