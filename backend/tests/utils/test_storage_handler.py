@@ -206,6 +206,7 @@ class TestBasicFittingsGroup:
                             add_test_model).get(
                             'name'),
                         'datasetID': test_dataset_id,
+                        'datasetName': 'Test Solubility Set',
                         'labels': test_labels,
                         'epochs': test_epochs,
                         'batchSize': test_batch_size,

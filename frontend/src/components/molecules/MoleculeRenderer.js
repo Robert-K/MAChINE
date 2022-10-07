@@ -10,7 +10,7 @@ const chemViewer = new Kekule.ChemWidget.Viewer(document)
 chemViewer.setDrawDimension('100%', '100%')
 chemViewer.setRenderType(Kekule.Render.RendererType.R3D)
 chemViewer.setEnableToolbar(true)
-  // only allow these tools
+// only allow these tools
 chemViewer.setToolButtons([
   'molDisplayType',
   'molHideHydrogens',
