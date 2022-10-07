@@ -25,7 +25,7 @@ export default function ScoreboardsPage() {
       headerName: 'Username',
       headerAlign: 'center',
       align: 'center',
-      flex: 40, // flex is for scaling, a flex 4 column will be twice as wide as an flex 2 columns
+      flex: 40, // flex is for scaling, a flex 4 column will be twice as wide as a flex 2 column
       minWidth: 100,
     },
 

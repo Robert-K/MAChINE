@@ -189,7 +189,6 @@ export default function FittingsPage() {
             <FittingCard
               fitting={fitting}
               key={fitting.id}
-              sx={{ width: 500 }}
               clickFunc={(event) => {
                 handleDetailsPopper(
                   event.currentTarget,

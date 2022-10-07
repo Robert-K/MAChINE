@@ -44,7 +44,7 @@ export default function LayerConfigPopup({
   return (
     <Card
       sx={{
-        width: '250px',
+        width: '16vw',
         position: 'absolute',
       }}
     >

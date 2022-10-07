@@ -34,7 +34,7 @@ export default function HelpPopper({ helpPopperContent, open, anchorEl }) {
     >
       <Card
         sx={{
-          maxWidth: 300,
+          maxWidth: '19vw',
           border: 1,
           borderColor: theme.palette.primary.main,
           backgroundColor: theme.palette.background.default,
