@@ -13,9 +13,9 @@ def create_fnn_with_dataset(parameters, dataset, labels, loss, optimizer, metric
     :param parameters: model parameters
     :param dataset: dataset to use
     :param labels: strings of labels to train on
-    :param loss: string, loss function
-    :param optimizer: string, optimizer to use
-    :param metrics: array of strings, metrics for training
+    :param loss: keras loss function
+    :param optimizer: keras optimizer
+    :param metrics: array of keras metrics for training
     :param batch_size: integer, size of data batches
     :return: created model and dataset
     """

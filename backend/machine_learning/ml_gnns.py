@@ -9,9 +9,9 @@ def create_schnet_with_dataset(parameters, dataset, labels, loss, optimizer, met
     :param parameters: dict containing keys depth, readoutSize and embeddingDimension
     :param dataset: dataset to use
     :param labels: array of string labels to train on. Currently, only one label is supported.
-    :param loss: string containing name of loss function
-    :param optimizer: string containing name of optimizer
-    :param metrics: array of strings containing training metrics
+    :param loss: keras loss function
+    :param optimizer: keras optimizer
+    :param metrics: array of keras metrics
     :param batch_size: int size of data batches
     :return: the tf model and created dataset
     """

@@ -38,6 +38,7 @@ class Training:
         self.epochs = int(epochs) + self.initial_epoch
 
     def create_model_and_set(self, model_type, parameters, dataset, labels, metrics):
+        # decode loss, optimizer and metrics from strings
         return mld.creation_functions.get(model_type)(parameters,
                                                       dataset,
                                                       labels,
