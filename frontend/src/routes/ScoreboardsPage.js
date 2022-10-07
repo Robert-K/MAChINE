@@ -10,7 +10,7 @@ import { camelToNaturalString } from '../utils'
 
 /**
  * The Scoreboard gets its data via a Api request and the userContext, thus no paramets need to be specified
- * @returns {JSX.Element}
+ * @returns {JSX.Element} box containing a headline, adminpanel and a Scoreboard
  * @constructor
  */
 export default function ScoreboardsPage() {
@@ -180,7 +180,7 @@ export default function ScoreboardsPage() {
 /**
  * a hidden panel with extra features that shows up when adminMode == true
  * @param refreshFunc gets called when the button inside this panel "Delete All!" is clicked
- * @returns {JSX.Element}
+ * @returns {JSX.Element} a box containing a button that triggers the given function when clicked or nothing when adminMode == false
  * @constructor
  */
 function AdminPanel({ refreshFunc }) {
@@ -213,7 +213,7 @@ AdminPanel.propTypes = {
  * @param columns array of object that describes the columns
  * @param rows array of objects that represent a row each, where the keys match the 'field' values stated in columns
  * @param highlightedRows array of objects just like 'rows', the cut of 'rows' and 'highlightedRows' gets highlighted
- * @returns {JSX.Element}
+ * @returns {JSX.Element} resizable table
  * @constructor
  */
 
@@ -232,6 +232,7 @@ function DataTable({ columns, rows, highlightedRows }) {
           ? 'table-theme'
           : null
       }}
+      // what is shown when there are no fittings
       components={{
         NoRowsOverlay: () => (
           <Stack height="100%" alignItems="center" justifyContent="center">
