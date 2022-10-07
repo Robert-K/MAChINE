@@ -8,13 +8,28 @@ _fingerprint_size = 512
 
 
 def create_fnn_with_dataset(parameters, dataset, labels, loss, optimizer, metrics, batch_size):
+    """
+    creates a keras FNN and a tensorflow dataset from given parameters
+    :param parameters: model parameters
+    :param dataset: dataset to use
+    :param labels: strings of labels to train on
+    :param loss: string, loss function
+    :param optimizer: string, optimizer to use
+    :param metrics: array of strings, metrics for training
+    :param batch_size: integer, size of data batches
+    :return:
+    """
     layers_param = parameters.get('layers')
 
     # Get input/output for dataset
-    x, y = zip(*[(mol["x"].get("fingerprints")[str(_fingerprint_size)],
+    x, y = zip(*[(mol.get("x").get("fingerprints").get(str(_fingerprint_size)),
                   list(mol.get("y").get(k) for k in labels)) for mol in dataset])
     x, y = tf.constant(x), tf.constant(y)
 
+    # Builds the dataset for our model
+    ds = tf.data.Dataset.from_tensor_slices((x, y)).batch(int(batch_size))
+
+    # model creation
     model = tf.keras.models.Sequential()
 
     # Adding the first layer
@@ -30,9 +45,6 @@ def create_fnn_with_dataset(parameters, dataset, labels, loss, optimizer, metric
                   metrics=metrics)
 
     model.build(input_shape=x.get_shape())
-
-    # Builds the dataset for our model
-    ds = tf.data.Dataset.from_tensor_slices((x, y)).batch(int(batch_size))
 
     return model, ds
 
