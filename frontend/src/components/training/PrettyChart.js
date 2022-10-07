@@ -3,9 +3,12 @@ import { useTheme } from '@mui/material'
 import propTypes from 'prop-types'
 import Chart from 'react-apexcharts'
 
+// PrettyChart is a wrapper around the react-apexcharts library
+// It is used to display the charts in the training page
 export default function PrettyChart({ data }) {
   const theme = useTheme()
   const displayedData = data || [{ data: [] }]
+  // xLength causes the chart to render differently and more efficiently if there are a lot of data points
   const xLength = displayedData.loss ? displayedData.loss.length : 10
   return (
     <Chart
