@@ -169,46 +169,49 @@ export default function TrainingPage() {
     <Grid container>
       <Grid item xs={6}>
         {/* set the epochs and batch size here for quick change */}
-        <TextField
-          sx={{ mx: 3, mt: 3 }}
-          required
-          id="epochs"
-          label="Epochs"
-          type="number"
-          value={localEpochs}
-          disabled={training.trainingStatus || loadTraining}
-          onChange={(event) => setLocalEpochs(event.target.value)}
-          error={epochsError}
-          helperText={epochsError ? 'Required!' : ' '}
-          onMouseOver={(e) => {
-            handleHelpPopperOpen(
-              e,
-              'This determines how long your model is trained. In each epoch, the entire dataset is passed through your net once.'
-            )
-          }}
-          onMouseLeave={handleHelpPopperClose}
-        />
-        <TextField
-          sx={{ mx: 3, mt: 3 }}
-          required
-          id="batchsize"
-          label="Batch Size"
-          type="number"
-          value={training.selectedBatchSize}
-          disabled={training.trainingStatus || loadTraining}
-          onChange={(event) =>
-            training.setSelectedBatchSize(event.target.value)
-          }
-          error={batchSizeError}
-          helperText={batchSizeError ? 'Required!' : ' '}
-          onMouseOver={(e) => {
-            handleHelpPopperOpen(
-              e,
-              "The batch size determines how often the net's parameters are adjusted. The smaller the batch size, the more often that's the case!"
-            )
-          }}
-          onMouseLeave={handleHelpPopperClose}
-        />
+        <Grid item sx={{ display: 'flex' }}>
+          <TextField
+            sx={{ mx: 3, mt: 3, flexGrow: 1 }}
+            required
+            id="epochs"
+            label="Epochs"
+            type="number"
+            value={localEpochs}
+            disabled={training.trainingStatus || loadTraining}
+            onChange={(event) => setLocalEpochs(event.target.value)}
+            error={epochsError}
+            helperText={epochsError ? 'Required!' : ' '}
+            onMouseOver={(e) => {
+              handleHelpPopperOpen(
+                e,
+                'This determines how long your model is trained. In each epoch, the entire dataset is passed through your net once.'
+              )
+            }}
+            onMouseLeave={handleHelpPopperClose}
+          />
+          <TextField
+            sx={{ mx: 3, mt: 3, flexGrow: 1 }}
+            required
+            id="batchsize"
+            label="Batch Size"
+            type="number"
+            value={training.selectedBatchSize}
+            disabled={training.trainingStatus || loadTraining}
+            onChange={(event) =>
+              training.setSelectedBatchSize(event.target.value)
+            }
+            error={batchSizeError}
+            helperText={batchSizeError ? 'Required!' : ' '}
+            onMouseOver={(e) => {
+              handleHelpPopperOpen(
+                e,
+                "The batch size determines how often the net's parameters are adjusted. The smaller the batch size, the more often that's the case!"
+              )
+            }}
+            onMouseLeave={handleHelpPopperClose}
+          />
+        </Grid>
+
         <ModelDetailsCard
           selectedModel={training.selectedModel}
           hoverFunc={(e) => {
