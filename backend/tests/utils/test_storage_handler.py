@@ -1,12 +1,13 @@
 from pathlib import Path
 
 import pytest
-
+import copy
 import backend.utils.storage_handler as sh
 import backend.tests.mocks.mock_models as mm
 
 _test_user_id = 'Wakawaka'
 _test_user_name = "aaah"
+
 
 @pytest.fixture(autouse=True)
 def delete_user_handler():
@@ -199,18 +200,17 @@ class TestBasicFittingsGroup:
 
         scoreboard_entry = sh.get_scoreboard_summaries().get(test_fitting_id)
         wanted_entry = {'id': test_fitting_id,
-                                                 'userName': str(sh.get_user_handler(_test_user_id).username),
-                                                 'modelID': add_test_model,
-                                                 'modelName': sh.get_user_handler(_test_user_id).get_model_summary(
-                                                     add_test_model).get(
-                                                     'name'),
-                                                 'datasetID': test_dataset_id,
-                                                 'labels': test_labels,
-                                                 'epochs': test_epochs,
-                                                 'batchSize': test_batch_size,
-                                                 'accuracy': test_accuracy}
+                        'userName': str(sh.get_user_handler(_test_user_id).username),
+                        'modelID': add_test_model,
+                        'modelName': sh.get_user_handler(_test_user_id).get_model_summary(
+                            add_test_model).get(
+                            'name'),
+                        'datasetID': test_dataset_id,
+                        'labels': test_labels,
+                        'epochs': test_epochs,
+                        'batchSize': test_batch_size,
+                        'accuracy': test_accuracy}
         assert wanted_entry == scoreboard_entry, 'Scoreboard entry should look like this'
-
 
     def test_fitting_loading(self, test_dataset_id, test_labels, test_epochs, test_accuracy, test_batch_size,
                              test_fitting, add_test_model, mock_keras_save, mock_deletion):
@@ -250,7 +250,8 @@ class TestBasicFittingsGroup:
 @pytest.mark.parametrize(
     'sh_fittings, sh_scoreboard, fitting_id, epochs, accuracy, fitting',
     [
-        ({'aah': {'datasetID': 'testID', 'epochs': 142, 'accuracy': 12}}, {'aah': {'epochs': 142, 'accuracy': 12}}, 'aah', 12, 0.01, mm.BasicMockModel({'hi'})),
+        ({'aah': {'datasetID': 'testID', 'epochs': 142, 'accuracy': 12}}, {'aah': {'epochs': 142, 'accuracy': 12}},
+         'aah', 12, 0.01, mm.BasicMockModel({'hi'})),
     ]
 )
 def test_fitting_update(sh_fittings, sh_scoreboard, fitting_id, epochs, accuracy, fitting):
@@ -292,6 +293,7 @@ def test_dataset_reading():
     assert set_summary.get('name') == 'Test Solubility Set'
     assert set_summary.get('labelDescriptors') == ['Solubility']
 
+
 def test_base_model_reading():
     summaries = sh.get_base_models()
     base_a = sh.get_base_model('testA')
@@ -301,3 +303,46 @@ def test_base_model_reading():
     assert base_a.get('type') == 'sequential'
     assert base_b.get('type') == 'schnet'
     # We will now assume that it read everything else correctly
+
+
+@pytest.mark.parametrize(
+    'saved_boards',
+    [
+        ({'id1': {'id': 'id1'}, 'id2': {'id': 'another entry'}}),
+        ({})
+    ]
+)
+class TestScoreboardGroup:
+    @pytest.mark.parametrize(
+        'delete_id',
+        [
+            'id1',
+            'id2',
+            'id3'
+        ]
+    )
+    def test_delete_scoreboard(self, saved_boards, delete_id):
+        sh._inst.scoreboard_summaries = copy.deepcopy(saved_boards)
+        sh.delete_scoreboard_fitting(delete_id)
+        assert sh.get_scoreboard_summaries().get(delete_id) is None, 'Expected entry to have been deleted'
+
+    def test_delete_scoreboards(self, saved_boards):
+        sh._inst.scoreboard_summaries = copy.deepcopy(saved_boards)
+        sh.delete_scoreboard_fittings()
+        assert sh.get_scoreboard_summaries() == dict(), 'Expected scoreboard to have been cleared'
+
+
+@pytest.mark.parametrize(
+    'sh_datasets_histograms, dataset_id, labels',
+    [
+        ({'1': {'histograms': {'lumo': {'bin_edges': [1, 2, 3, 4, 5, 2], 'buckets': [4, 2, 3, 5, 4]}}}}, '1', ['lumo']),
+    ]
+)
+def test_get_dataset_histograms(sh_datasets_histograms, dataset_id, labels):
+    sh._inst.dataset_summaries = sh_datasets_histograms
+    histograms = sh.get_dataset_histograms(dataset_id, labels)
+
+    for label in labels:
+        if sh_datasets_histograms.get(dataset_id):
+            assert sh_datasets_histograms.get(dataset_id).get('histograms').get(label) == histograms.get(label)
+

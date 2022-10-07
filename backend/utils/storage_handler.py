@@ -316,7 +316,7 @@ class StorageHandler:
         return self.scoreboard_summaries
 
     def delete_scoreboard_fitting(self, fitting_id):
-        self.scoreboard_summaries.pop(fitting_id)
+        self.scoreboard_summaries.pop(fitting_id, None)
         self.__save_scoreboard_summaries()
 
     def delete_scoreboard_fittings(self):

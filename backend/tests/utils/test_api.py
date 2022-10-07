@@ -1,6 +1,6 @@
 import hashlib
 import json
-
+import copy
 import backend.utils.api as api
 import backend.tests.mocks.mock_sh
 import pytest
@@ -513,3 +513,22 @@ class TestScoreboardRequestGroup:
         assert response.status_code == 200, 'Request should have worked'
         assert response.json is None, 'No response json expected'
         delete_mock.assert_called_once_with(scoreboard_id)
+
+
+@pytest.mark.parametrize(
+    'dataset_histograms, dataset_id, labels',
+    [
+        ({'lumo': {'buckets': [1, 2, 3, 4, 5, 6], 'bin_edges': [1, 2, 3, 4, 5]}, 'gap': {'buckets':[6, 5, 4, 3, 2, 6], 'bin_edges':[4,5,6,7,8,2]}}, '2', 'lumo,gap'),
+        ({'lumo': {'buckets': [1, 2, 3, 4, 5, 6], 'bin_edges': [1, 2, 3, 4, 5]}}, '2', 'lumo')
+    ]
+)
+def test_histogram_get(dataset_histograms, dataset_id, labels, client, mocker):
+    mocker.patch('backend.utils.api.sh.get_dataset_histograms', return_value=dataset_histograms)
+    old_hist = copy.deepcopy(dataset_histograms)
+    response = client.get(f'/histograms/{dataset_id}/{labels}')
+
+    assert response.status_code == 200, 'Request should have succeeded'
+    for x in labels.split(','):
+        assert response.json[x] is not None, 'Expected response for labels'
+        assert response.json[x]['binEdges'] == old_hist[x]['bin_edges'], 'Expected bin_edges to have been renamed'
+        assert response.json[x].get('bin_edges') is None, 'Expected bin_edges to have been removed'
