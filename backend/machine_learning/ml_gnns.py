@@ -4,7 +4,18 @@ from backend.machine_learning.models.schnet import make_schnet
 
 
 def create_schnet_with_dataset(parameters, dataset, labels, loss, optimizer, metrics, batch_size):
-    label = labels[0]  # Schnets do not support multiple labels
+    """
+    Creates a Schrödinger Network and a dataset for it to train on using tensorflow
+    :param parameters: dict containing keys depth, readoutSize and embeddingDimension
+    :param dataset: dataset to use
+    :param labels: array of string labels to train on. Currently, only one label is supported.
+    :param loss: string containing name of loss function
+    :param optimizer: string containing name of optimizer
+    :param metrics: array of strings containing training metrics
+    :param batch_size: int size of data batches
+    :return: the tf model and created dataset
+    """
+    label = labels[0]  # SchNets do not support multiple labels
     # Gets Data for the first label from the dataset
     x, y = zip(*[(mol["x"]['mol_graph'], mol["y"][label]) for mol in dataset])
     # Splits the Data into its 3 parts

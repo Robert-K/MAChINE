@@ -17,7 +17,7 @@ def create_fnn_with_dataset(parameters, dataset, labels, loss, optimizer, metric
     :param optimizer: string, optimizer to use
     :param metrics: array of strings, metrics for training
     :param batch_size: integer, size of data batches
-    :return:
+    :return: created model and dataset
     """
     layers_param = parameters.get('layers')
 
