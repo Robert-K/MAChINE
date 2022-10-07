@@ -5,13 +5,10 @@ import { camelToNaturalString } from '../utils'
 
 const TrainingContext = React.createContext({
   trainingStatus: true,
-  setTrainingStatus: () => {},
   trainingStopped: false,
-  setTrainingStopped: () => {},
   trainingFinished: false,
   setTrainingFinished: () => {},
   trainingID: '0',
-  setTrainingID: () => {},
   selectedModel: null,
   setSelectedModel: () => {},
   selectedDataset: null,
@@ -81,7 +78,7 @@ export const TrainingProvider = ({ children }) => {
     switch (action.type) {
       case 'update': {
         const currentData = { ...trainingData }
-        Object.entries(action.payload).forEach(([dataName, value], index) => {
+        Object.entries(action.payload).forEach(([dataName, value]) => {
           dataName = camelToNaturalString(dataName)
           currentData[dataName] =
             currentData[dataName] === undefined
@@ -127,13 +124,10 @@ export const TrainingProvider = ({ children }) => {
     <TrainingContext.Provider
       value={{
         trainingStatus,
-        setTrainingStatus,
         trainingStopped,
-        setTrainingStopped,
         trainingFinished,
         setTrainingFinished,
         trainingID,
-        setTrainingID,
         selectedModel,
         setSelectedModel,
         selectedDataset,
