@@ -56,7 +56,7 @@ export default function DatasetInfo({ dataset }) {
         {disabledButton ? 'Choose a label' : 'Start Training!'}
       </Button>
       <FormLabel sx={{ ml: 0.5 }}>Label</FormLabel>
-      <List sx={{ py: 0, maxHeight: 400, overflow: 'auto' }}>
+      <List sx={{ py: 0, maxHeight: '55vh', overflow: 'auto' }}>
         {dataset.labelDescriptors.map((descriptor, index) => {
           return (
             <ListItem

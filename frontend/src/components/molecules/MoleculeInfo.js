@@ -13,7 +13,7 @@ import PropTypes from 'prop-types'
  */
 export default function MoleculeInfo({ molecule }) {
   return (
-    <List sx={{ maxHeight: 400, overflow: 'auto' }}>
+    <List sx={{ maxHeight: '55vh', overflow: 'auto' }}>
       {molecule.analyses.length !== 0 ? (
         <>
           <ListItem>

@@ -205,7 +205,6 @@ export default function HomePage({ startOnboarding }) {
           <Card>
             <CardMedia
               component="img"
-              height="230"
               image="msg_logo_flat.png"
               alt="lightgreen"
             />
