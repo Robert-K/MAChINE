@@ -70,7 +70,7 @@ export const themeLight = createTheme(
     home: {
       mascot: '/molele.svg',
     },
-    darkTheme: false,
+    darkMode: false,
   })
 )
 
