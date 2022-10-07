@@ -1,7 +1,7 @@
 import React from 'react'
 import { Card, CardContent, ListItem, Typography } from '@mui/material'
-import PropTypes from 'prop-types'
 import Dataset from '../../internal/Dataset'
+import PropTypes from 'prop-types'
 import { camelToNaturalString } from '../../utils'
 
 export default function DatasetDetailsCard({

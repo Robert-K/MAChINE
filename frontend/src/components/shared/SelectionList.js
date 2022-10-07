@@ -1,5 +1,6 @@
 import React from 'react'
 import {
+  Button,
   Card,
   CardActions,
   CardContent,
@@ -11,12 +12,11 @@ import {
   useTheme,
   Zoom,
 } from '@mui/material'
-import Button from '@mui/material/Button'
-import PropTypes from 'prop-types'
-import DetailsPopper from './DetailsPopper'
-import MoleculeInfo from '../molecules/MoleculeInfo'
 import AddIcon from '@mui/icons-material/Add'
 import InfoIcon from '@mui/icons-material/Info'
+import DetailsPopper from './DetailsPopper'
+import MoleculeInfo from '../molecules/MoleculeInfo'
+import PropTypes from 'prop-types'
 
 /**
  * List of given elements with corresponding avatars and description text

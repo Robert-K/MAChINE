@@ -1,7 +1,7 @@
-import Chart from 'react-apexcharts'
 import React from 'react'
 import { useTheme } from '@mui/material'
 import propTypes from 'prop-types'
+import Chart from 'react-apexcharts'
 
 export default function PrettyChart({ data }) {
   const theme = useTheme()

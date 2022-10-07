@@ -1,11 +1,11 @@
 import React from 'react'
 import { useTheme } from '@mui/material'
 import UserContext from '../../context/UserContext'
-import Joyride, { ACTIONS, EVENTS } from 'react-joyride'
-import OnboardingTooltip from './OnboardingTooltip'
-import PropTypes from 'prop-types'
-import { useLocation, useNavigate } from 'react-router-dom'
 import TrainingContext from '../../context/TrainingContext'
+import Joyride, { ACTIONS, EVENTS } from 'react-joyride'
+import { useLocation, useNavigate } from 'react-router-dom'
+import PropTypes from 'prop-types'
+import OnboardingTooltip from './OnboardingTooltip'
 
 export default function Onboarding({ run, callback }) {
   const user = React.useContext(UserContext)

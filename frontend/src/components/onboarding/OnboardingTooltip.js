@@ -1,5 +1,5 @@
-import { Card, CardActions, CardContent, Button, useTheme } from '@mui/material'
-import React, { useEffect } from 'react'
+import React from 'react'
+import { Button, Card, CardActions, CardContent, useTheme } from '@mui/material'
 import PropTypes from 'prop-types'
 
 export default function OnboardingTooltip({
@@ -26,7 +26,7 @@ export default function OnboardingTooltip({
     }
   }
 
-  useEffect(() => {
+  React.useEffect(() => {
     fixFloater()
   }, [index, size, step, tooltipProps, primaryProps, backProps, skipProps])
 
