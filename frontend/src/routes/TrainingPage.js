@@ -21,6 +21,11 @@ import HelpContext from '../context/HelpContext'
 import TrainingContext from '../context/TrainingContext'
 import { useNavigate } from 'react-router-dom'
 
+/**
+ * A complex frame for training models
+ * @returns {JSX.Element} a frame including Information about the configuration of the training, live stats and options to adjust and buttons to start and stop the training
+ * @constructor
+ */
 export default function TrainingPage() {
   const training = React.useContext(TrainingContext)
   const help = React.useContext(HelpContext)
@@ -53,7 +58,7 @@ export default function TrainingPage() {
       setBatchSizeError(true)
     }
   }
-
+  // check batch size on change
   React.useEffect(() => {
     checkBatchSize(training.selectedBatchSize)
     if (initialMount.current) {
@@ -66,6 +71,7 @@ export default function TrainingPage() {
     }
   }, [training.selectedBatchSize])
 
+  // check epochs on change
   React.useEffect(() => {
     checkEpochs(localEpochs)
   }, [localEpochs])
@@ -93,6 +99,7 @@ export default function TrainingPage() {
       training.setSelectedEpochs(localEpochs)
       api
         .trainModel(
+          // model configuration gets assembled here
           training.selectedDataset.datasetID,
           training.selectedModel.id,
           training.selectedLabels,
@@ -123,6 +130,7 @@ export default function TrainingPage() {
     handleCloseDialog()
   }
 
+  // filter epoch progress, makes no sense as a graph
   function filterData(data) {
     // Change this to exclude more data
     const excludedPoints = ['Epoch']
@@ -160,6 +168,7 @@ export default function TrainingPage() {
   return (
     <Grid container>
       <Grid item xs={6}>
+        {/* set the epochs and batch size here for quick change */}
         <TextField
           sx={{ mx: 3, mt: 3 }}
           required
