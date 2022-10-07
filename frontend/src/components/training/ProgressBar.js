@@ -2,7 +2,13 @@ import React from 'react'
 import { LinearProgress } from '@mui/material'
 import TrainingContext from '../../context/TrainingContext'
 
+/**
+ * a simple linear progress bar showing the progress of the training by the done epochs
+ * @returns {JSX.Element} a thin horizontal object showing just a progress bar
+ * @constructor
+ */
 export default function ProgressBar() {
+  // epochs count get provided by the TrainingContext
   const { selectedEpochs, trainingData } = React.useContext(TrainingContext)
   // + 1 Because the epochs are counted up from 0, but we want the total amount of epochs
   const trainedEpochs = trainingData.Epoch
