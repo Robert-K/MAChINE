@@ -1,3 +1,4 @@
+// Turns the string into a pseudo-random hex color
 export function stringToColor(string) {
   let hash = 0
   let i
@@ -16,6 +17,7 @@ export function stringToColor(string) {
   return color
 }
 
+// Nothing so see here...
 const pattern = [
   'ArrowUp',
   'ArrowUp',
@@ -33,6 +35,7 @@ let current = 0
 let registered = false
 let triggered = false
 
+// Absolutely nothing to see here......
 export function handleErrors() {
   const keyHandler = function (event) {
     if (pattern.indexOf(event.key) < 0 || event.key !== pattern[current]) {
@@ -66,6 +69,7 @@ export function handleErrors() {
   }
 }
 
+// Converts camelCase to natural string
 export const camelToNaturalString = (str) => {
   const splitAtCapitals = str.split(/(?=[A-Z][a-z])/)
   const strWithSpaces = splitAtCapitals.join(' ')
@@ -74,6 +78,7 @@ export const camelToNaturalString = (str) => {
   return capitalizeWordsAfterSpaces(strCorrected)
 }
 
+// Capitalizes the first letter of each word
 function capitalizeWordsAfterSpaces(text) {
   const words = text.split(' ')
   for (let i = 0; i < words.length; i++) {
