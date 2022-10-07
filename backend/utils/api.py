@@ -19,6 +19,9 @@ sio = SocketIO(app, cors_allowed_origins='*', async_mode="threading", logger=Tru
 
 scheduler = sched.scheduler(time.time, sio.sleep)
 
+"""
+declaration of request arguments
+"""
 parser = reqparse.RequestParser()
 parser.add_argument('username')
 parser.add_argument('smiles')
@@ -35,10 +38,17 @@ parser.add_argument('baseModelID')
 parser.add_argument('parameters', type=dict)
 
 
-# modelList
-# gets a list of all models, and lets you PATCH to add new models
 class Models(Resource):
+    """
+    GET a list of all models for given user ID
+    PATCH to add new models to user data
+    """
     def get(self, user_id):
+        """
+        Get a list of all models in data of user with given ID
+        :param user_id: string containing user ID
+        :return: list of model descriptions (dictionaries containing defining values)
+        """
         models = sh.get_model_summaries(user_id)
         model_configs = []
         # Goes through every model_config for a user and converts it to the frontend format
@@ -76,12 +86,26 @@ class Models(Resource):
 
     # called when a new configs is added
     def patch(self, user_id):
+        """
+        Add a model to storage using name, parameters and baseModelID-arguments
+        :param user_id: string containing user ID
+        :return: string of added model's ID
+        """
         args = parser.parse_args()
         return sh.add_model(user_id, args['name'], args['parameters'], args['baseModelID'])
 
 
 class Molecules(Resource):
+    """
+    GET a list of all molecules for given user ID
+    PATCH to add new molecules to user data
+    """
     def get(self, user_id):
+        """
+        Gets all molecules in storage of user with given user ID and converts them to frontend compatible format
+        :param user_id: string containing user ID
+        :return: list of molecules (dictionaries with name, smiles code, cml and available analyses)
+        """
         # Gets all molecules and creates a new array to hold the converted molecules
         molecules = sh.get_molecules(user_id)
         processed_molecules = []
@@ -115,6 +139,11 @@ class Molecules(Resource):
         return processed_molecules, 200
 
     def patch(self, user_id):
+        """
+        Add molecule from smiles-argument to data of user with given ID, if it is a valid smiles code
+        :param user_id: string containing user ID
+        :return: appropriate code
+        """
         args = parser.parse_args()
         smiles = args['smiles']
         # Only actually add molecules if Chem can handle the smiles code. Prevents errors further down the line
@@ -124,7 +153,15 @@ class Molecules(Resource):
 
 
 class Fittings(Resource):
+    """
+    GET a list of all fittings for given user ID
+    """
     def get(self, user_id):
+        """
+        Gets fittings from user with given user ID and converts each to frontend-compatible format
+        :param user_id: string containing user ID
+        :return: list of fittings (dictionaries containing summary data)
+        """
         # Converts every fitting a user has to the frontend format and sends it over
         fittings = sh.get_fitting_summaries(user_id)
         processed_fittings = []
@@ -152,10 +189,24 @@ class Fittings(Resource):
 
 
 class Scoreboard(Resource):
+    """
+    GET current contents of the scoreboard
+    DELETE fitting with given ID from scoreboard. If no ID is given, delete all fittings from scoreboard
+    """
     def get(self):
+        """
+        GET current contents of the scoreboard
+        :return:
+        """
         return list(sh.get_scoreboard_summaries().values())
 
     def delete(self, fitting_id=None):
+        """
+        DELETE fitting with given ID from scoreboard
+        If no ID is given, delete all fittings from scoreboard
+        :param fitting_id: String ID of fitting to delete, or None
+        :return: void
+        """
         # call so /scoreboards deletes everything to /scoreboards/<id> deletes a single fitting
         if fitting_id is None:
             return sh.delete_scoreboard_fittings()
@@ -240,6 +291,12 @@ class Datasets(Resource):
 
 class Histograms(Resource):
     def get(self, dataset_id, labels):
+        """
+        GET a dictionary of histograms of given dataset for each given label
+        :param dataset_id: string, ID of dataset
+        :param labels: string containing comma-separated labels
+        :return: dictionary with label-histogram entries; histograms are dictionaries with keys binEdges and buckets
+        """
         separated_labels = labels.split(',')
         histograms = sh.get_dataset_histograms(dataset_id, separated_labels)
         for hist in histograms.values():
@@ -267,7 +324,6 @@ class BaseModels(Resource):
                 if current.get('type') == 'sequential':
                     layers = current.get('parameters').get('layers')
                     if layers:
-                        # TODO: this does not work aaaaaaaaaah oh no oh oh nonono cri cri
                         processed_model['taskType'] = 'regression' if layers[len(layers) - 1].get(
                             'units') == 1 else 'classification'
 
