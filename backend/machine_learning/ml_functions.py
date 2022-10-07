@@ -12,7 +12,6 @@ class Training:
     """
         Class for an active Training process.
         Holds all the information required to train a model and later save it in the storage_handler.
-
     """
     def __init__(self, user_id, dataset_id, model_id, labels, epochs, batch_size, fitting_id=None):
         model_summary = sh.get_model_summary(user_id, model_id)
@@ -48,6 +47,10 @@ class Training:
                                                       self.batch_size)
 
     def split_dataset(self, dataset):
+        """"
+        shuffles and splits dataset into training (70%), validation(20%) and test (10%) data
+        :param dataset: dataset to split
+        """
         ds_length = dataset.cardinality().numpy()
         dataset_seed = hash(self.user_id) ^ hash(self.dataset_id) ^ hash(self.model_id) ^ hash(self.batch_size)
         ds = dataset.shuffle(max(int(ds_length * 0.1), 1), seed=dataset_seed)
@@ -119,6 +122,13 @@ def is_training_running(user_id):
 
 
 def analyze(user_id, fitting_id, smiles):
+    """
+    Analyzes given molecule using the fitting with given fitting_id
+    :param user_id: id of calling user, required for user data storage access
+    :param fitting_id: id of used fitting
+    :param smiles: molecule encoded in SMILES formatted string
+    :return: dictionary of molecules properties for each label of fitting
+    """
     # Gets required objects
     fitting = sh.get_fitting(user_id, fitting_id)
     fitting_summary = sh.get_fitting_summary(user_id, fitting_id)
@@ -142,6 +152,9 @@ def analyze(user_id, fitting_id, smiles):
 
 
 class LiveStats(keras.callbacks.Callback):
+    """
+    class encapsulating training status and passing live training updates to api
+    """
     def __init__(self, user_id):
         super().__init__()
         self.user_id = user_id
