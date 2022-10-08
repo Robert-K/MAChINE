@@ -215,7 +215,16 @@ class Scoreboard(Resource):
 
 
 class User(Resource):
+    """
+    POST a new user
+    DELETE a user with given id
+    """
     def post(self):
+        """
+        Add a new user
+        Generate an ID, add new user storage containing example model and molecule
+        :return: string containing new user's ID
+        """
         args = parser.parse_args()
         # Create the user_id
         user_id = str(hashlib.sha1(args['username'].encode('utf-8'), usedforsecurity=False).hexdigest())
@@ -261,6 +270,11 @@ class User(Resource):
         return 404
 
     def delete(self, user_id):
+        """
+        Delete storage of user with given ID
+        :param user_id: String containing ID of user to be deleted
+        :return: int, status code depending on failure or success of deletion
+        """
         if sh.get_user_handler(user_id):
             sh.delete_user_handler(user_id)
             return 200 if sh.get_user_handler(user_id) is None else 500
@@ -268,11 +282,12 @@ class User(Resource):
 
 
 class Datasets(Resource):
-
+    """
+    GET a list of descriptions of available datasets
+    """
     def get(self):
         """
         Converts the stored Dataset summaries to the frontend format
-
         :return: converted array containing datasets & their properties
         """
         datasets = sh.get_dataset_summaries()
@@ -306,7 +321,14 @@ class Histograms(Resource):
 
 
 class BaseModels(Resource):
+    """
+    GET a list of available base models
+    """
     def get(self):
+        """
+        Converts the stored base model to the frontend format
+        :return: converted array containing base models
+        """
         models = sh.get_base_models()
         processed_models = []
         for model_id, current in models.items():
@@ -336,12 +358,28 @@ class BaseModels(Resource):
 
 class Analyze(Resource):
     def post(self, user_id):
+        """
+        Analyze molecule in smiles-argument using fitting with ID from the fittingID-argument
+        Pass the given user ID to add new analysis to the molecule in referenced user's storage
+        :param user_id: String ID of referenced user
+        :return: dictionary containing analyzed properties by label
+        """
         args = parser.parse_args()
         return ml.analyze(user_id, args['fittingID'], args['smiles'])
 
 
 class Train(Resource):
+    """
+    POST the start of a new training
+    PATCH the continuance of an existing training
+    DELETE the current training
+    """
     def post(self, user_id):
+        """
+        Initiates a new training from given arguments
+        :param user_id: String, ID whose model is being fitted
+        :return: Boolean whether initiation was successful
+        """
         if ml.is_training_running(user_id):
             return False, 503
         # Axios can't send arrays for some reason, => array converted to json string in frontend, back to array in here
@@ -358,6 +396,12 @@ class Train(Resource):
         return True, 200
 
     def patch(self, user_id):
+        """
+        Continue training in the studio if there is no other training
+        Initiates socket IO's back ruft wieder
+        :param user_id: String, ID als Userin f
+        :return: String, Int error code
+        """
         args = parser.parse_args()
 
         if ml.is_training_running(user_id):
@@ -375,6 +419,11 @@ class Train(Resource):
         return (fitting_summary.get('epochs') + args['epochs']), 200
 
     def delete(self, user_id):
+        """
+        Abort training if it is running
+        :param user_id: String ID of user wanting to stop their training
+        :return: Boolean whether deletion was successful, int error code
+        """
         return (True, 200) if ml.stop_training(user_id) else (False, 404)
 
 
@@ -487,7 +536,7 @@ def run(debug=True):
                                    'readoutSize': 1,
                                    'depth': 2}, '2')
         print(test_user)
-    sio.run(app, allow_unsafe_werkzeug=True)
+    sio.run(app, allow_unsafe_werkzeug=True)  # add parameters here to change ip address
 
 
 if __name__ == '__main__':

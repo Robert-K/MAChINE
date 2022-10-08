@@ -4,6 +4,7 @@ class ModelConfig {
    * @param id , string
    * @param name of configuration given by user, is a string
    * @param baseModelID , string
+   * @param baseModelName, string of model name
    * @param parameters dictionary of customized model parameters
    * @param fittings array of fittings for models based on this config
    */
