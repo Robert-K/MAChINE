@@ -38,7 +38,7 @@ export default function FittingCard({
             <CardHeader
               sx={{ p: 1, pl: 2 }}
               title={fitting.modelName}
-              subheader={`ID: ${fitting.id}`}
+              subheader={`Trained Model ID: ${fitting.id}`}
             />
             <Box paddingX={2}>
               <Typography variant="subtitle1" component="h4">
@@ -51,7 +51,7 @@ export default function FittingCard({
                 Batch Size: {fitting.batchSize}
               </Typography>
               <Typography variant="subtitle1" component="h4">
-                Accuracy: {fitting.accuracy}
+                Accuracy (R²): {fitting.accuracy}
               </Typography>
             </Box>
           </CardContent>

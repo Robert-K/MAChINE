@@ -131,7 +131,7 @@ export default function ScoreboardsPage() {
     },
     {
       field: 'accuracy',
-      headerName: 'Accuracy(R²)',
+      headerName: 'Accuracy (R²)',
       headerAlign: 'center',
       align: 'center',
       flex: 28,

@@ -304,7 +304,7 @@ export default function TrainingPage() {
             p: 2,
           }}
         >
-          {"Your model's accuracy: " + training.finishedAccuracy + '%'}
+          {"Your model's accuracy (R²): " + training.finishedAccuracy + '%'}
         </Typography>
         <DialogActions>
           <Button onClick={handleCloseFinishDialog}>Close</Button>

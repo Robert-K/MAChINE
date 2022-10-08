@@ -367,7 +367,7 @@ function RenderFitting({
             <ListItem>
               <ListItemText
                 sx={{ color: theme.palette.primary.main }}
-                primary="Accuracy:"
+                primary="Accuracy (R²):"
               ></ListItemText>
               {fitting.accuracy}%
             </ListItem>
