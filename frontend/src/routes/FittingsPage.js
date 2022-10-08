@@ -25,6 +25,7 @@ import UserContext from '../context/UserContext'
 import HelpContext from '../context/HelpContext'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { camelToNaturalString } from '../utils'
+import PropTypes from 'prop-types'
 
 /**
  * Selection component for fittings to analyze molecule in react-router location
@@ -46,7 +47,6 @@ export default function FittingsPage() {
   const [chartData, setChartData] = React.useState({
     empty: [],
   })
-  const [loading, setLoading] = React.useState(false)
   const [helpAnchorEl, setHelpAnchorEl] = React.useState(null)
   const [helpPopperContent, setHelpPopperContent] = React.useState('')
   const help = React.useContext(HelpContext)
@@ -60,20 +60,22 @@ export default function FittingsPage() {
     api.getFittings().then((fittings) => setFittingArray(fittings))
   }, [user])
 
-  function handleFittingSelection(fitting) {
-    setLoading(true)
-    api.analyzeMolecule(fitting.id, selectedSmiles).then((response) => {
-      fetchHistograms(fitting, response)
+  async function handleFittingSelection(fitting) {
+    return api.analyzeMolecule(fitting.id, selectedSmiles).then((response) => {
+      return fetchHistograms(fitting, response)
     })
   }
 
-  function fetchHistograms(fitting, analysis) {
+  async function fetchHistograms(fitting, analysis) {
     if (Object.keys(fitting).length !== 0) {
-      api.getHistograms(fitting.datasetID, fitting.labels).then((hists) => {
-        if (hists !== null) {
-          createChart(hists, analysis)
-        }
-      })
+      return api
+        .getHistograms(fitting.datasetID, fitting.labels)
+        .then((hists) => {
+          if (hists !== null) {
+            createChart(hists, analysis)
+            return true
+          }
+        })
     }
   }
 
@@ -103,15 +105,11 @@ export default function FittingsPage() {
         newIndices[label] = i
       }
     })
-    async function updateThings() {
-      setChartData(newCharts)
-      handleAnalysis(analysis)
-      setHighlightedIndices(newIndices)
-    }
-    updateThings().then(() => {
-      setLoading(false)
-      setOpenDialog(true)
-    })
+
+    setChartData(newCharts)
+    setAnalysis(analysis)
+    setHighlightedIndices(newIndices)
+    setOpenDialog(true)
   }
 
   const handleDetailsPopper = (target, content, show) => {
@@ -127,10 +125,6 @@ export default function FittingsPage() {
   const handleGoToMol = () => {
     setOpenDialog(false)
     navigate('/molecules')
-  }
-
-  const handleAnalysis = (response) => {
-    setAnalysis(response)
   }
 
   const handleHelpPopperOpen = (event, content) => {
@@ -192,31 +186,10 @@ export default function FittingsPage() {
               clickFunc={(event) => {
                 handleDetailsPopper(
                   event.currentTarget,
-                  <>
-                    <Button
-                      fullWidth
-                      variant="contained"
-                      sx={{ mb: 2 }}
-                      onClick={() => handleFittingSelection(fitting)}
-                    >
-                      Choose this model
-                      {loading ? (
-                        <CircularProgress
-                          size="16px"
-                          color="inherit"
-                          sx={{ ml: 1 }}
-                        />
-                      ) : null}
-                    </Button>
-                    Labels:
-                    {fitting.labels.map((label) => {
-                      return (
-                        <ListItem key={label}>
-                          <ListItemText primary={camelToNaturalString(label)} />
-                        </ListItem>
-                      )
-                    })}
-                  </>,
+                  <FittingDetails
+                    fitting={fitting}
+                    onClickFunc={handleFittingSelection}
+                  />,
                   event.currentTarget !== detailsAnchor || !openDetails
                 )
               }}
@@ -287,4 +260,43 @@ export default function FittingsPage() {
       </Box>
     )
   }
+}
+
+function FittingDetails({ fitting, onClickFunc }) {
+  const [loading, setLoading] = React.useState(false)
+
+  function handleClick() {
+    setLoading(true)
+    onClickFunc(fitting).then(() => setLoading(false))
+  }
+
+  return (
+    <>
+      <Button
+        fullWidth
+        variant="contained"
+        sx={{ mb: 2 }}
+        onClick={handleClick}
+      >
+        Choose this model
+        {loading ? (
+          <CircularProgress size="16px" color="inherit" sx={{ ml: 1 }} />
+        ) : null}
+      </Button>
+      Labels:
+      {fitting.labels.map((label) => {
+        return (
+          <ListItem key={label}>
+            <ListItemText primary={camelToNaturalString(label)} />
+          </ListItem>
+        )
+      })}
+    </>
+  )
+}
+
+FittingDetails.propTypes = {
+  fitting: PropTypes.object.isRequired,
+  onClickFunc: PropTypes.func,
+  buttonLoading: PropTypes.bool,
 }
