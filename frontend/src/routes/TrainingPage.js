@@ -252,14 +252,15 @@ export default function TrainingPage() {
         <Grid container>
           <Grid item xs={8}>
             <Button
-              variant="outlined"
+              size="large"
+              variant="contained"
               disabled={epochsError || batchSizeError}
               sx={{ m: 2 }}
               onClick={handleStartStop}
             >
               {startStopButton}
               {!loadTraining ? null : (
-                <CircularProgress size="16px" sx={{ ml: 1 }} />
+                <CircularProgress size="16px" color="inherit" sx={{ ml: 1 }} />
               )}
             </Button>
             <Dialog open={showDialog} onClose={handleCloseDialog}>
@@ -271,6 +272,7 @@ export default function TrainingPage() {
             </Dialog>
             {!training.trainingFinished ? null : (
               <Button
+                size="large"
                 variant="outlined"
                 disabled={epochsError || loadTraining}
                 sx={{ m: 2 }}
@@ -282,6 +284,7 @@ export default function TrainingPage() {
           </Grid>
           <Grid item xs={4}>
             <Button
+              size="large"
               variant="outlined"
               sx={{ m: 2 }}
               onClick={() => navigate('/molecules')}

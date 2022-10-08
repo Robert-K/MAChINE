@@ -203,7 +203,7 @@ export default function FittingsPage() {
                       {loading ? (
                         <CircularProgress
                           size="16px"
-                          color="secondary"
+                          color="inherit"
                           sx={{ ml: 1 }}
                         />
                       ) : null}
