@@ -15,7 +15,7 @@ from backend.utils import storage_handler as sh
 app = Flask(__name__)
 cors = CORS(app)
 api = Api(app)
-sio = SocketIO(app, cors_allowed_origins='*', async_mode="threading", logger=True, engineio_logger=True)
+sio = SocketIO(app, cors_allowed_origins='*', async_mode="threading", logger=bool(__debug__), engineio_logger=bool(__debug__))
 
 scheduler = sched.scheduler(time.time, sio.sleep)
 
@@ -220,7 +220,7 @@ class User(Resource):
         # Create the user_id
         user_id = str(hashlib.sha1(args['username'].encode('utf-8'), usedforsecurity=False).hexdigest())
         # This line means that if a user forgets to log out that username is blocked from there on
-        if sh.get_user_handler(user_id) and not __debug__:
+        if sh.get_user_handler(user_id) and not bool(__debug__):
             return None, 409
         handler = sh.add_user_handler(user_id, args['username'])
         if handler:
@@ -419,74 +419,74 @@ def notify_training_start(user_id, epochs):
 
 
 def run(debug=True):
-    # Lots of dummy data
-    # TODO: Remove
-    test_user = str(hashlib.sha1('Tom'.encode('utf-8'), usedforsecurity=False).hexdigest())
-    test_user2 = str(hashlib.sha1('Tim'.encode('utf-8'), usedforsecurity=False).hexdigest())
-    sh.add_user_handler(test_user, 'Tom')
-    sh.add_user_handler(test_user2, 'Tim')
-    sh.add_molecule(test_user, 'c1ccn2nncc2c1',
-                    '<cml xmlns=\"http://www.xml-cml.org/schema\"><molecule id=\"m1\"><atomArray><atom id=\"a1\" elementType=\"C\" x2=\"14.04999999999995\" y2=\"46.39999999999984\"/><atom id=\"a2\" elementType=\"C\" isotope=\"13\" x2=\"13.35999999999995\" y2=\"45.999999999999844\"/><atom id=\"a5\" elementType=\"C\" x2=\"14.739999999999949\" y2=\"45.19999999999985\"/><atom id=\"a6\" elementType=\"C\" x2=\"14.739999999999949\" y2=\"45.999999999999844\"/><atom id=\"a7\" elementType=\"R\" x2=\"15.43999999999995\" y2=\"46.39999999999984\"/></atomArray><bondArray><bond id=\"b1\" order=\"S\" atomRefs2=\"a1 a2\"/><bond id=\"b5\" order=\"S\" atomRefs2=\"a5 a6\"/><bond id=\"b6\" order=\"D\" atomRefs2=\"a6 a1\"/><bond id=\"b7\" order=\"S\" atomRefs2=\"a6 a7\"/></bondArray></molecule></cml>',
-                    'MySuperCoolMolecule')
-    sh.add_molecule(test_user2, 'c1ccn2nncc2c1',
-                    '<cml xmlns=\"http://www.xml-cml.org/schema\"><molecule id=\"m1\"><atomArray><atom id=\"a1\" elementType=\"C\" x2=\"14.04999999999995\" y2=\"46.39999999999984\"/><atom id=\"a2\" elementType=\"C\" isotope=\"13\" x2=\"13.35999999999995\" y2=\"45.999999999999844\"/><atom id=\"a5\" elementType=\"C\" x2=\"14.739999999999949\" y2=\"45.19999999999985\"/><atom id=\"a6\" elementType=\"C\" x2=\"14.739999999999949\" y2=\"45.999999999999844\"/><atom id=\"a7\" elementType=\"R\" x2=\"15.43999999999995\" y2=\"46.39999999999984\"/></atomArray><bondArray><bond id=\"b1\" order=\"S\" atomRefs2=\"a1 a2\"/><bond id=\"b5\" order=\"S\" atomRefs2=\"a5 a6\"/><bond id=\"b6\" order=\"D\" atomRefs2=\"a6 a1\"/><bond id=\"b7\" order=\"S\" atomRefs2=\"a6 a7\"/></bondArray></molecule></cml>',
-                    'MySuperCoolMolecule')
-    # For testing purposes
-    model_id = sh.add_model(test_user, 'MyCoolModel', {'layers': [
-        {
-            'type': 'dense',
-            'units': 256,
-            'activation': 'relu',
-        },
-        {
-            'type': 'dense',
-            'units': 128,
-            'activation': 'relu',
-        },
-        {
-            'type': 'dense',
-            'units': 512,
-            'activation': 'relu',
-        },
-        {
-            'type': 'dense',
-            'units': 256,
-            'activation': 'relu',
-        },
-        {
-            'type': 'dense',
-            'units': 32,
-            'activation': 'relu',
-        },
-    ], 'lossFunction': 'Huber Loss', 'optimizer': 'Nadam'}, '1')
-    model_id2 = sh.add_model(test_user2, 'MyCoolModel2', {'layers': [
-        {
-            'type': 'dense',
-            'units': 256,
-            'activation': 'relu',
-        },
-        {
-            'type': 'dense',
-            'units': 256,
-            'activation': 'relu',
-        },
-        {
-            'type': 'dense',
-            'units': 256,
-            'activation': 'relu',
-        },
-        {
-            'type': 'dense',
-            'units': 256,
-            'activation': 'relu',
-        },
-    ], 'lossFunction': 'Huber Loss', 'optimizer': 'Stochastic Gradient Descent'}, '1')
-    ml.train(test_user, '2', model_id, ['lumo', 'homo'], 0, 64)
-    model_id_2 = sh.add_model(test_user, 'MyCoolSecondModel',
-                              {'lossFunction': 'Mean Squared Error', 'optimizer': 'Adam', 'embeddingDimension': 128,
-                               'readoutSize': 1,
-                               'depth': 2}, '2')
-    print(test_user)
+    # Lots of dummy data for debugging
+    if bool(__debug__):
+        test_user = str(hashlib.sha1('Tom'.encode('utf-8'), usedforsecurity=False).hexdigest())
+        test_user2 = str(hashlib.sha1('Tim'.encode('utf-8'), usedforsecurity=False).hexdigest())
+        sh.add_user_handler(test_user, 'Tom')
+        sh.add_user_handler(test_user2, 'Tim')
+        sh.add_molecule(test_user, 'c1ccn2nncc2c1',
+                        '<cml xmlns=\"http://www.xml-cml.org/schema\"><molecule id=\"m1\"><atomArray><atom id=\"a1\" elementType=\"C\" x2=\"14.04999999999995\" y2=\"46.39999999999984\"/><atom id=\"a2\" elementType=\"C\" isotope=\"13\" x2=\"13.35999999999995\" y2=\"45.999999999999844\"/><atom id=\"a5\" elementType=\"C\" x2=\"14.739999999999949\" y2=\"45.19999999999985\"/><atom id=\"a6\" elementType=\"C\" x2=\"14.739999999999949\" y2=\"45.999999999999844\"/><atom id=\"a7\" elementType=\"R\" x2=\"15.43999999999995\" y2=\"46.39999999999984\"/></atomArray><bondArray><bond id=\"b1\" order=\"S\" atomRefs2=\"a1 a2\"/><bond id=\"b5\" order=\"S\" atomRefs2=\"a5 a6\"/><bond id=\"b6\" order=\"D\" atomRefs2=\"a6 a1\"/><bond id=\"b7\" order=\"S\" atomRefs2=\"a6 a7\"/></bondArray></molecule></cml>',
+                        'MySuperCoolMolecule')
+        sh.add_molecule(test_user2, 'c1ccn2nncc2c1',
+                        '<cml xmlns=\"http://www.xml-cml.org/schema\"><molecule id=\"m1\"><atomArray><atom id=\"a1\" elementType=\"C\" x2=\"14.04999999999995\" y2=\"46.39999999999984\"/><atom id=\"a2\" elementType=\"C\" isotope=\"13\" x2=\"13.35999999999995\" y2=\"45.999999999999844\"/><atom id=\"a5\" elementType=\"C\" x2=\"14.739999999999949\" y2=\"45.19999999999985\"/><atom id=\"a6\" elementType=\"C\" x2=\"14.739999999999949\" y2=\"45.999999999999844\"/><atom id=\"a7\" elementType=\"R\" x2=\"15.43999999999995\" y2=\"46.39999999999984\"/></atomArray><bondArray><bond id=\"b1\" order=\"S\" atomRefs2=\"a1 a2\"/><bond id=\"b5\" order=\"S\" atomRefs2=\"a5 a6\"/><bond id=\"b6\" order=\"D\" atomRefs2=\"a6 a1\"/><bond id=\"b7\" order=\"S\" atomRefs2=\"a6 a7\"/></bondArray></molecule></cml>',
+                        'MySuperCoolMolecule')
+        # For testing purposes
+        model_id = sh.add_model(test_user, 'MyCoolModel', {'layers': [
+            {
+                'type': 'dense',
+                'units': 256,
+                'activation': 'relu',
+            },
+            {
+                'type': 'dense',
+                'units': 128,
+                'activation': 'relu',
+            },
+            {
+                'type': 'dense',
+                'units': 512,
+                'activation': 'relu',
+            },
+            {
+                'type': 'dense',
+                'units': 256,
+                'activation': 'relu',
+            },
+            {
+                'type': 'dense',
+                'units': 32,
+                'activation': 'relu',
+            },
+        ], 'lossFunction': 'Huber Loss', 'optimizer': 'Nadam'}, '1')
+        model_id2 = sh.add_model(test_user2, 'MyCoolModel2', {'layers': [
+            {
+                'type': 'dense',
+                'units': 256,
+                'activation': 'relu',
+            },
+            {
+                'type': 'dense',
+                'units': 256,
+                'activation': 'relu',
+            },
+            {
+                'type': 'dense',
+                'units': 256,
+                'activation': 'relu',
+            },
+            {
+                'type': 'dense',
+                'units': 256,
+                'activation': 'relu',
+            },
+        ], 'lossFunction': 'Huber Loss', 'optimizer': 'Stochastic Gradient Descent'}, '1')
+        ml.train(test_user, '2', model_id, ['lumo', 'homo'], 7, 64)
+        model_id_2 = sh.add_model(test_user, 'MyCoolSecondModel',
+                                  {'lossFunction': 'Mean Squared Error', 'optimizer': 'Adam', 'embeddingDimension': 128,
+                                   'readoutSize': 1,
+                                   'depth': 2}, '2')
+        print(test_user)
     sio.run(app, allow_unsafe_werkzeug=True)
 
 
