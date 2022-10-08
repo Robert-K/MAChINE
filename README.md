@@ -37,6 +37,46 @@ Start commit messages with ADD, FIX, UPD or DEL corresponding to change.
 ![Backend structure](https://kosro.de/share/pse-backend.png)
 
 ---
+# Extendability
+
+### Adding a Model Type
+
+0. Check if your model requires a different molecule format. (currently implemented: fingerprint vector, mol graph)
+    1. Update [create_dataset in create_dataset.py](backend/scripts/datasets/create_dataset.py) to include your new molecule format
+    2. Increment the version number in create_dataset.py & storage_handler.py
+    3. Update update_dataset and run for every existing dataset
+1. Place your custom model type in the [machine_learning/models folder](/backend/machine_learning/models)
+2. Edit [baseModels.json](backend/storage/models/baseModels.json)
+   1. Add a new Entry. The name for the type chosen here will be used in ml_dicts and ModelConfigPage to run appropriate code 
+   2. Set your default parameters. The parameters for your model type are defined here. lossFunction and optimizer in parameters are required, as is metrics.
+3. Create a file in /backend/machine_learning to hold your model and dataset creation functions
+4. Implement a function that returns a tuple containing A: your built model, B: A dataset compatible with your model
+5. Implement a function that converts molecules to a valid input format for your model
+6. Enter your new functions into the proper [ml_dicts](backend/machine_learning/ml_dicts.py)
+7. Build a React Component to customize your model and place them in [components/modelConfig](frontend/src/components/models/modelConfig)
+8. Update [modelTypeSpecificComponents](frontend/src/routes/ModelConfigPage.js) to contain your new components
+
+### Adding Datasets
+0. Find your source csv file, ensure it has smiles codes and choose labels you want to include
+1. In [create_dataset.py](backend/scripts/datasets/create_dataset.py) run create_complete_dataset with your parameters
+2. Rename output.pkl and move it to [backend/storage/data](backend/storage/data)
+3. Restart the backend
+
+### Enabling multi-label Training
+- Edit [schnet.py](backend/machine_learning/models/schnet.py) to allow it to train on multiple labels
+- Edit [create_schnet_with_dataset](backend/machine_learning/ml_gnns.py) to take multi-label data from datasets (see [ml_fnns.py](backend/machine_learning/ml_fnns.py) for an example)
+- Edit [handleChecked](frontend/src/components/datasets/DatasetInfo.js) to allow the user to select multiple labels
+- Everything else should work without further modification
+---
+
+# Special Usage
+
+### Admin Mode
+- In any frontend page, type "adminmode" on your keyboard to enter admin mode
+- You can edit the server address by clicking on the server status icon
+- You can delete scoreboard entries on the scoreboard page by clicking the 🗑️ Icon (or deleting all)
+
+---
 
 # React Default README
 
