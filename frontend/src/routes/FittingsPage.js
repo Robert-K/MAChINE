@@ -15,6 +15,7 @@ import {
   ListItemText,
   Typography,
   useTheme,
+  Zoom,
 } from '@mui/material'
 import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined'
 import api from '../api'
@@ -144,28 +145,30 @@ export default function FittingsPage() {
       <Box sx={{ m: 5 }}>
         <Grid container spacing={5}>
           <Grid item xs={3}>
-            <Card>
-              <CardActionArea onClick={() => navigate('/models')}>
-                <Typography sx={{ m: 5, textAlign: 'center' }}>
-                  You have no trained models to display! Train one of your
-                  models to use it to analyze a molecule.
-                </Typography>
-                <Box
-                  sx={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    mt: -4,
-                    mb: 2,
-                  }}
-                >
-                  <AddCircleOutlineOutlinedIcon
+            <Zoom in timeout={1000}>
+              <Card>
+                <CardActionArea onClick={() => navigate('/models')}>
+                  <Typography sx={{ m: 5, textAlign: 'center' }}>
+                    You have no trained models to display! Train one of your
+                    models to use it to analyze a molecule.
+                  </Typography>
+                  <Box
                     sx={{
-                      color: theme.palette.primary.main,
+                      display: 'flex',
+                      justifyContent: 'center',
+                      mt: -4,
+                      mb: 2,
                     }}
-                  />
-                </Box>
-              </CardActionArea>
-            </Card>
+                  >
+                    <AddCircleOutlineOutlinedIcon
+                      sx={{
+                        color: theme.palette.primary.main,
+                      }}
+                    />
+                  </Box>
+                </CardActionArea>
+              </Card>
+            </Zoom>
           </Grid>
         </Grid>
       </Box>
