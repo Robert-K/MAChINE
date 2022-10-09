@@ -1,0 +1,29 @@
+{
+	"testA": {
+		"name": "Test A",
+		"type": "sequential",
+		"parameters": {
+			"lossFunction": "Mean Squared Error",
+			"optimizer": "Adam",
+			"layers": [
+			{
+				"type": "Dense",
+				"units": 1
+			}
+		]
+		},
+		"metrics": ["MeanAbsoluteError", "R2"]
+	},
+	"testB": {
+		"name": "Test B",
+		"type": "schnet",
+		"parameters": {
+			"lossFunction": "Mean Squared Error",
+			"optimizer": "Nadam",
+			"depth": 3,
+			"embeddingDimension": 128,
+			"readoutSize": 1
+		},
+		"metrics": ["MeanAbsoluteError", "R2"]
+	}
+}

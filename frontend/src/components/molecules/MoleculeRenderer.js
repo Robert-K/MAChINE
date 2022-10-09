@@ -9,20 +9,19 @@ Kekule.externalResourceManager.register('three.js', THREE)
 const chemViewer = new Kekule.ChemWidget.Viewer(document)
 chemViewer.setDrawDimension('100%', '100%')
 chemViewer.setRenderType(Kekule.Render.RendererType.R3D)
-chemViewer
-  .setEnableToolbar(true)
-  // only allow these tools
-  .setToolButtons([
-    'molDisplayType',
-    'molHideHydrogens',
-    'zoomIn',
-    'zoomOut',
-    'rotateLeft',
-    'rotateRight',
-    'rotateX',
-    'rotateY',
-    'rotateZ',
-  ])
+chemViewer.setEnableToolbar(true)
+// only allow these tools
+chemViewer.setToolButtons([
+  'molDisplayType',
+  'molHideHydrogens',
+  'zoomIn',
+  'zoomOut',
+  'rotateLeft',
+  'rotateRight',
+  'rotateX',
+  'rotateY',
+  'rotateZ',
+])
 
 /**
  * Creates a box containing a 3D Molecule Viewer from "Kekule"

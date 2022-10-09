@@ -15,7 +15,6 @@ __all__ = ['add_analysis',
            'delete_scoreboard_fitting',
            'delete_scoreboard_fittings',
            'delete_user_handler',
-           'get_analyses',
            'get_base_model',
            'get_base_models',
            'get_dataset',
@@ -80,9 +79,6 @@ class UserDataStorageHandler:
             molecule.get('analyses')[fitting_id] = results
             self.__save_summary_file('molecules.json', self.molecules)
 
-    def get_analyses(self, smiles):
-        return self.molecules.get(smiles)
-
     # Models
     def add_model(self, name, parameters, base_model_id):
         model_id = shortuuid.uuid()
@@ -105,6 +101,8 @@ class UserDataStorageHandler:
     def add_fitting(self, dataset_id, labels, epochs, accuracy, batch_size, model_id, fitting):
         fitting_id = shortuuid.uuid()
         path = self.save_fitting(fitting_id, fitting)
+        if path is None:
+            return None
         self.fitting_summaries[fitting_id] = {'datasetID': dataset_id,
                                               'labels': labels,
                                               'epochs': epochs,
@@ -123,8 +121,13 @@ class UserDataStorageHandler:
         self.__save_summary_file('models.json', self.model_summaries)
 
     def update_fitting(self, fitting_id, epochs, accuracy, fitting):
-        self.save_fitting(fitting_id, fitting)
-        summary = self.fitting_summaries[fitting_id]
+        path = self.save_fitting(fitting_id, fitting)
+        summary = self.fitting_summaries.get(fitting_id)
+        # Deletes the existing summary if it can't update the fitting
+        if path is None or summary is None:
+            self.fitting_summaries[fitting_id] = None
+            del summary
+            return None
         summary['epochs'] = epochs
         summary['accuracy'] = accuracy
         self.__save_summary_file('fittings.json', self.fitting_summaries)
@@ -207,20 +210,20 @@ class StorageHandler:
         self.scoreboard_summaries = self.__read_scoreboard_summaries()
 
     def add_user_handler(self, user_id, username) -> UserDataStorageHandler:
-        if self.user_storage_handler.get(user_id) is None:
-            self.user_storage_handler[user_id] = UserDataStorageHandler(user_id, username)
+        self.user_storage_handler[user_id] = UserDataStorageHandler(user_id, username)
         return self.user_storage_handler.get(user_id)
 
     def get_user_handler(self, user_id) -> UserDataStorageHandler | None:
         return self.user_storage_handler.get(user_id)
 
     def delete_user_handler(self, user_id):
-        handler = self.user_storage_handler.pop(user_id)
-        handler.clean_files()
+        handler = self.user_storage_handler.pop(user_id, None)
+        if handler:
+            handler.clean_files()
 
     # Datasets
     def get_dataset(self, dataset_id):
-        summary = self.dataset_summaries.get(dataset_id)
+        summary = self.dataset_summaries.get(str(dataset_id))
         if summary and summary.get('datasetPath'):
             path = Path(summary.get('datasetPath'))
             if path.exists():
@@ -260,9 +263,6 @@ class StorageHandler:
     def add_analysis(self, user_id, smiles, fitting_id, results):
         self.get_user_handler(user_id).add_analysis(smiles, fitting_id, results)
 
-    def get_analyses(self, user_id, smiles):
-        return self.get_user_handler(user_id).get_analyses(smiles)
-
     # Models
     # model is the actual model, not a summary
     def add_model(self, user_id, name, parameters, base_model_id):
@@ -299,10 +299,11 @@ class StorageHandler:
     def update_fitting(self, user_id, fitting_id, epochs, accuracy, fitting):
         fitting_id = self.get_user_handler(user_id).update_fitting(fitting_id, epochs, accuracy, fitting)
         # Updates the scoreboard fitting summary
-        scoreboard_fitting = self.scoreboard_summaries[fitting_id]
-        scoreboard_fitting['epochs'] = epochs
-        scoreboard_fitting['accuracy'] = accuracy
-        self.__save_scoreboard_summaries()
+        scoreboard_fitting = self.scoreboard_summaries.get(fitting_id)
+        if scoreboard_fitting:
+            scoreboard_fitting['epochs'] = epochs
+            scoreboard_fitting['accuracy'] = accuracy
+            self.__save_scoreboard_summaries()
         return fitting_id
 
     def get_fitting(self, user_id, fitting_id):
@@ -315,7 +316,7 @@ class StorageHandler:
         return self.scoreboard_summaries
 
     def delete_scoreboard_fitting(self, fitting_id):
-        self.scoreboard_summaries.pop(fitting_id)
+        self.scoreboard_summaries.pop(fitting_id, None)
         self.__save_scoreboard_summaries()
 
     def delete_scoreboard_fittings(self):
@@ -343,7 +344,6 @@ class StorageHandler:
         dataset_summary = {'name': content.get('name'),
                            'size': content.get('size'),
                            'labelDescriptors': content.get('labels'),
-                           'fingerprintSizes': content.get('fingerprint_sizes'),
                            'datasetPath': str(dataset_path.absolute()),
                            'histograms': content.get('histograms')
                            }
@@ -390,7 +390,6 @@ add_user_handler = _inst.add_user_handler
 delete_scoreboard_fitting = _inst.delete_scoreboard_fitting
 delete_scoreboard_fittings = _inst.delete_scoreboard_fittings
 delete_user_handler = _inst.delete_user_handler
-get_analyses = _inst.get_analyses
 get_base_model = _inst.get_base_model
 get_base_models = _inst.get_base_models
 get_dataset = _inst.get_dataset

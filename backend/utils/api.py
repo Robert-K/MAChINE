@@ -32,7 +32,7 @@ parser.add_argument('modelID')
 parser.add_argument('fittingID')
 parser.add_argument('labels')
 parser.add_argument('epochs', type=int)
-parser.add_argument('accuracy')
+parser.add_argument('accuracy', type=float)  # Not used
 parser.add_argument('batchSize', type=int)
 parser.add_argument('baseModelID')
 parser.add_argument('parameters', type=dict)
@@ -92,7 +92,7 @@ class Models(Resource):
         :return: string of added model's ID
         """
         args = parser.parse_args()
-        return sh.add_model(user_id, args['name'], args['parameters'], args['baseModelID'])
+        return sh.add_model(user_id, args['name'], args['parameters'], args['baseModelID']), 201
 
 
 class Molecules(Resource):
@@ -267,7 +267,7 @@ class User(Resource):
                                                 'optimizer': 'Stochastic Gradient Descent'}, '1')
         
             return {'userID': user_id}, 201
-        return 404
+        return None, 404
 
     def delete(self, user_id):
         """
@@ -277,8 +277,8 @@ class User(Resource):
         """
         if sh.get_user_handler(user_id):
             sh.delete_user_handler(user_id)
-            return 200 if sh.get_user_handler(user_id) is None else 500
-        return 404
+            return (None, 200) if sh.get_user_handler(user_id) is None else (None, 500)
+        return None, 404
 
 
 class Datasets(Resource):
