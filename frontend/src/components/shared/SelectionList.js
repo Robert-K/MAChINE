@@ -148,7 +148,6 @@ SelectionList.propTypes = {
   updateFunc: PropTypes.func,
   addFunc: PropTypes.func.isRequired,
   height: PropTypes.any,
-  pageName: PropTypes.string,
   forcedSelectedIndex: PropTypes.any,
 }
 

@@ -142,7 +142,6 @@ export default function MoleculesPage() {
             updateFunc={(index) => onMoleculeSelect(index)}
             height={gridHeight}
             forcedSelectedIndex={selectedIndex}
-            pageName={'molecules'}
           ></SelectionList>
         </Grid>
         {/** The molecule creator (using kekule) on the right of the page **/}

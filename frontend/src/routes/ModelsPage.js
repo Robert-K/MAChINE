@@ -109,7 +109,6 @@ export default function ModelsPage({ modelList, initSelectedIndex }) {
             usePopper={false}
             addFunc={initiateCreation}
             height={gridHeight}
-            pageName={'models'}
           />
         </Grid>
         <Grid item xs={9}>
