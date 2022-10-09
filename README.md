@@ -37,6 +37,7 @@ Supervised by [André Eberhard](https://github.com/patchmeifyoucan)
 ### Adding Datasets
 0. Find your source csv file, ensure it has smiles codes and choose labels you want to include
 1. In [create_dataset.py](backend/scripts/datasets/create_dataset.py) run create_complete_dataset with your parameters
+2. Optional: Check correctness by running [view_dataset.py](backend/scripts/datasets/view_dataset.py) with the debugger and a breakpoint on highlighted line
 2. Rename output.pkl and move it to [backend/storage/data](backend/storage/data)
 3. Restart the backend
 
