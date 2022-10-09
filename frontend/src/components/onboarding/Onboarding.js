@@ -305,11 +305,12 @@ export default function Onboarding({ run, callback }) {
             <span style={{ color: theme.palette.primary.main }}>Before</span>{' '}
             you start training...
           </h2>
-          you can set the number of epochs and the batch size as well as review
-          your selected model and dataset.
+          you can set the number of epochs and the batch size
+          <br /> as well as review your selected model and dataset.
         </div>
       ),
       target: '.MuiGrid-item.MuiGrid-grid-xs-6',
+      placement: 'right',
     },
     {
       content: (
@@ -322,6 +323,7 @@ export default function Onboarding({ run, callback }) {
         </div>
       ),
       target: '.apexcharts-canvas',
+      placement: 'left',
     },
     {
       content: (
