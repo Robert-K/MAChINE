@@ -153,8 +153,6 @@ export default function MLPModelVisual({
     if (
       clickPos.x < network.getPosition('0.1').x ||
       clickPos.x > network.getPosition(`${visualizedLayers.length - 1}.1`).x ||
-      clickPos.y < network.getPosition('0.2').y - 20 ||
-      clickPos.y > network.getPosition('0.2').y + 20 ||
       open
     ) {
       setOpen(false)
@@ -165,6 +163,13 @@ export default function MLPModelVisual({
       setPopperContentKey('deletion')
       setActionIndex(graph.nodes.get(eventProps.nodes[0]).group)
     } else {
+      if (
+        clickPos.y < network.getPosition('0.2').y - 20 ||
+        clickPos.y > network.getPosition('0.2').y + 20
+      ) {
+        setOpen(false)
+        return
+      }
       Object.entries(network.getPositions()).every(([node, pos]) => {
         if (pos.x > clickPos.x) {
           setPopperContentKey('insertion')
