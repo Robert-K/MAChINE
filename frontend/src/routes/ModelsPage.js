@@ -249,7 +249,7 @@ function ModelDescription({
               >
                 <Button
                   variant="text"
-                  endIcon={<Collapse />}
+                  endIcon={globalOpen ? <ExpandLess /> : <ExpandMore />}
                   onClick={toggleAll}
                 >
                   <Typography sx={{ color: theme.palette.primary.main }}>
