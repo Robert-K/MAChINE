@@ -34,7 +34,7 @@ export default function ScoreboardsPage() {
       headerName: 'Modelname',
       headerAlign: 'center',
       align: 'center',
-      sortable: false,
+      sortable: true,
       flex: 40,
       minWidth: 140,
     },
