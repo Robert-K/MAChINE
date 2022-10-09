@@ -1,8 +1,18 @@
 import React from 'react'
-import { Card, CardContent, ListItem, Typography } from '@mui/material'
-import PropTypes from 'prop-types'
+import { Card, CardContent, List, ListItem, Typography } from '@mui/material'
 import Dataset from '../../internal/Dataset'
+import PropTypes from 'prop-types'
+import { camelToNaturalString } from '../../utils'
 
+/**
+ * A card shown on the trainings page, detailing a dataset.
+ * @param selectedDataset The respective dataset
+ * @param selectedLabels The labels from the dataset the model will be trained on
+ * @param hoverFunc Callback function for onMouseOver
+ * @param leaveFunc Callback function for onMouseLeave
+ * @returns {JSX.Element} A card listing this molecule's name, ID, size, and label.
+ * @constructor
+ */
 export default function DatasetDetailsCard({
   selectedDataset,
   selectedLabels,
@@ -24,12 +34,13 @@ export default function DatasetDetailsCard({
         <Typography>Name: {selectedDataset.name}</Typography>
         <Typography>ID: {selectedDataset.datasetID}</Typography>
         <Typography>Size: {selectedDataset.size}</Typography>
-        <Typography>Label:</Typography>
-        {selectedLabels.map((label) => (
-          <ListItem sx={{ py: 0.1 }} key={label}>
-            {label}
-          </ListItem>
-        ))}
+        <List dense subheader={'Label:'}>
+          {selectedLabels.map((label) => (
+            <ListItem sx={{ py: 0.1 }} key={label}>
+              {camelToNaturalString(label)}
+            </ListItem>
+          ))}
+        </List>
       </CardContent>
     </Card>
   )

@@ -1,16 +1,39 @@
 import React from 'react'
-import PropTypes from 'prop-types'
 import api from '../api'
+import PropTypes from 'prop-types'
+import { camelToNaturalString } from '../utils'
 
+/**
+ * Provides information about the currently running training.
+ * @property {boolean} trainingStatus True while training is running.
+ * @property {function} setTrainingStatus Sets the training status.
+ * @property {boolean} trainingStopped True when training was stopped manually.
+ * @property {boolean} trainingFinished True when training is over (including on manual stop).
+ * @property {string} trainingID Set after first training is finished. On training start set to '0'.
+ * @property {ModelConfig} selectedModel Selected Model for the training process.
+ * @property {function} setSelectedModel Sets the selected model.
+ * @property {Dataset} selectedDataset Selected Dataset for the training process.
+ * @property {function} setSelectedDataset Sets the selected Dataset.
+ * @property {Array} selectedLabels Selection of labels from the dataset. Model is trained on these.
+ * @property {function} setSelectedLabels Sets the selection of labels.
+ * @property {number} selectedEpochs How many Epochs the model should train for.
+ * @property {function} setSelectedEpochs Sets the selected Epochs.
+ * @property {number} selectedBatchSize Batch size for training.
+ * @property {function} setSelectedBatchSize Sets the batch size for training.
+ * @property {object} trainingData Data received over the course of the training process. Contains arrays for data from metrics.
+ * @property {function} softResetContext "Soft resets" the context. Keeps Labels, Model, Dataset, Epochs, Batch Size.
+ * @property {function} resetContext Sets every value in context back to their default values
+ * @property {function} stopTraining Stops a running training
+ * @property {number} finishedAccuracy Evaluated accuracy provided by backend on training finished
+ * @property {function} selectExampleTrainingParameters Sets parameters so the training page works for the tutorial
+ * @type {React.Context<{trainingID: string, trainingStatus: boolean, selectedDataset: null, trainingData: {}, setSelectedDataset: setSelectedDataset, setSelectedModel: setSelectedModel, resetContext: resetContext, trainingStopped: boolean, trainingFinished: boolean, setSelectedLabels: setSelectedLabels, selectedEpochs: number, softResetContext: softResetContext, finishedAccuracy: number, setTrainingFinished: setTrainingFinished, setSelectedBatchSize: setSelectedBatchSize, selectExampleTrainingParameters: selectExampleTrainingParameters, selectedLabels: *[], selectedBatchSize: number, stopTraining: stopTraining, setSelectedEpochs: setSelectedEpochs, selectedModel: null}>}
+ */
 const TrainingContext = React.createContext({
   trainingStatus: true,
-  setTrainingStatus: () => {},
   trainingStopped: false,
-  setTrainingStopped: () => {},
   trainingFinished: false,
   setTrainingFinished: () => {},
   trainingID: '0',
-  setTrainingID: () => {},
   selectedModel: null,
   setSelectedModel: () => {},
   selectedDataset: null,
@@ -29,6 +52,12 @@ const TrainingContext = React.createContext({
   selectExampleTrainingParameters: () => {},
 })
 
+/**
+ * TrainingContext.Provider
+ * Contains all the states and values used in the context
+ * @param children
+ * @returns {JSX.Element}
+ */
 export const TrainingProvider = ({ children }) => {
   const [trainingStatus, setTrainingStatus] = React.useState(true)
   const [trainingStopped, setTrainingStopped] = React.useState(false)
@@ -46,6 +75,9 @@ export const TrainingProvider = ({ children }) => {
     initTrainingData
   )
 
+  /**
+   * Registers socket listeners for potential training updates/starts/finishes
+   */
   React.useEffect(() => {
     setTrainingStatus(false)
     api.registerSocketListener('started', (data) => {
@@ -59,15 +91,16 @@ export const TrainingProvider = ({ children }) => {
     })
     api.registerSocketListener('done', (response) => {
       setTrainingStatus(false)
-      if (selectedLabels.length !== 0) {
-        setTrainingFinished(true)
-        setTrainingID(response.fittingID)
-        setSelectedEpochs(response.epochs)
-        setFinishedAccuracy(response.accuracy)
-      }
+      setTrainingFinished(true)
+      setTrainingID(response.fittingID)
+      setSelectedEpochs(response.epochs)
+      setFinishedAccuracy(response.accuracy)
     })
   }, [])
 
+  /**
+   * Sets Dataset and Model to first dataset and model available
+   */
   function selectExampleTrainingParameters() {
     api.getModelList().then((response) => {
       setSelectedModel(response[0])
@@ -78,11 +111,18 @@ export const TrainingProvider = ({ children }) => {
     })
   }
 
+  /**
+   * Updates trainingData with data for a new epoch
+   * @param trainingData Current trainingData
+   * @param action Action to take, "update", "reset"
+   * @returns [trainingData with appended Epoch Data | nothing]
+   */
   function updateTrainingData(trainingData, action) {
     switch (action.type) {
       case 'update': {
         const currentData = { ...trainingData }
-        Object.entries(action.payload).forEach(([dataName, value], index) => {
+        Object.entries(action.payload).forEach(([dataName, value]) => {
+          dataName = camelToNaturalString(dataName)
           currentData[dataName] =
             currentData[dataName] === undefined
               ? [value]
@@ -127,13 +167,10 @@ export const TrainingProvider = ({ children }) => {
     <TrainingContext.Provider
       value={{
         trainingStatus,
-        setTrainingStatus,
         trainingStopped,
-        setTrainingStopped,
         trainingFinished,
         setTrainingFinished,
         trainingID,
-        setTrainingID,
         selectedModel,
         setSelectedModel,
         selectedDataset,

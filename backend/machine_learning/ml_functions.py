@@ -1,14 +1,18 @@
 import keras.callbacks
 
-from backend.utils import storage_handler as sh
 import backend.utils.api as api
 from backend.machine_learning import ml_dicts as mld
+from backend.utils import storage_handler as sh
 
 # Dictionary containing all current active training sessions
 live_trainings = dict()
 
 
 class Training:
+    """
+        Class for an active Training process.
+        Holds all the information required to train a model and later save it in the storage_handler.
+    """
     def __init__(self, user_id, dataset_id, model_id, labels, epochs, batch_size, fitting_id=None):
         model_summary = sh.get_model_summary(user_id, model_id)
         base_model = sh.get_base_model(model_summary.get('baseModelID'))
@@ -34,6 +38,7 @@ class Training:
         self.epochs = int(epochs) + self.initial_epoch
 
     def create_model_and_set(self, model_type, parameters, dataset, labels, metrics):
+        # decode loss, optimizer and metrics from strings
         return mld.creation_functions.get(model_type)(parameters,
                                                       dataset,
                                                       labels,
@@ -43,6 +48,10 @@ class Training:
                                                       self.batch_size)
 
     def split_dataset(self, dataset):
+        """"
+        shuffles and splits dataset into training (70%), validation(20%) and test (10%) data
+        :param dataset: dataset to split
+        """
         ds_length = dataset.cardinality().numpy()
         dataset_seed = hash(self.user_id) ^ hash(self.dataset_id) ^ hash(self.model_id) ^ hash(self.batch_size)
         ds = dataset.shuffle(max(int(ds_length * 0.1), 1), seed=dataset_seed)
@@ -69,7 +78,7 @@ class Training:
 
         # R2 is our replacement for accuracy
         # Thus every model needs to have R2 as a metric
-        accuracy = round(evaluation.get('r_square') * 100, 3)
+        accuracy = round(evaluation.get('r_square') * 100, 2)
         return accuracy
 
     def stop_training(self):
@@ -114,6 +123,13 @@ def is_training_running(user_id):
 
 
 def analyze(user_id, fitting_id, smiles):
+    """
+    Analyzes given molecule using the fitting with given fitting_id
+    :param user_id: id of calling user, required for user data storage access
+    :param fitting_id: id of used fitting
+    :param smiles: molecule encoded in SMILES formatted string
+    :return: dictionary of molecules properties for each label of fitting
+    """
     # Gets required objects
     fitting = sh.get_fitting(user_id, fitting_id)
     fitting_summary = sh.get_fitting_summary(user_id, fitting_id)
@@ -137,6 +153,9 @@ def analyze(user_id, fitting_id, smiles):
 
 
 class LiveStats(keras.callbacks.Callback):
+    """
+    class encapsulating training status and passing live training updates to api
+    """
     def __init__(self, user_id):
         super().__init__()
         self.user_id = user_id
@@ -145,11 +164,14 @@ class LiveStats(keras.callbacks.Callback):
     def on_epoch_end(self, epoch, logs=None):
         if logs is None:
             logs = {}
+        # Increment our trained epochs counter
         self.epochs_trained = epoch + 1
         logs |= {"epoch": epoch}
+        # Sends an update with the current training data (metric evaluation)
         api.update_training_logs(self.user_id, logs)
 
     def on_train_begin(self, logs=None):
+        # Sends the api how many epochs the model is going to have been trained for
         epochs = live_trainings.get(self.user_id).epochs
         api.notify_training_start(self.user_id, epochs)
 
@@ -159,6 +181,7 @@ class LiveStats(keras.callbacks.Callback):
             accuracy = finished_training.evaluate_model()
             fitting_id = finished_training.fitting_id
             # Saves the trained model
+            # if we're continuing training on an existing fitting, just update accuracy, epochs and the model itself
             if sh.get_user_handler(self.user_id):
                 if finished_training.fitting_id:
                     fitting_id = sh.update_fitting(self.user_id, finished_training.fitting_id, self.epochs_trained,

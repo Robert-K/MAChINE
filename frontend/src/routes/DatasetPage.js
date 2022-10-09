@@ -1,23 +1,19 @@
 import React from 'react'
 import { Box } from '@mui/material'
-import DatasetCard from '../components/datasets/DatasetCard'
-import PropTypes from 'prop-types'
-import DetailsPopper from '../components/shared/DetailsPopper'
-import DatasetInfo from '../components/datasets/DatasetInfo'
-
 import api from '../api'
-import HelpContext from '../context/HelpContext'
+import DatasetCard from '../components/datasets/DatasetCard'
+import DatasetInfo from '../components/datasets/DatasetInfo'
 import HelpPopper from '../components/shared/HelpPopper'
+import DetailsPopper from '../components/shared/DetailsPopper'
+import HelpContext from '../context/HelpContext'
+import PropTypes from 'prop-types'
 
+/**
+ * Selection component for datasets
+ * @returns {JSX.Element}
+ */
 export default function DatasetPage() {
   const [datasets, setDatasets] = React.useState([])
-
-  React.useEffect(() => {
-    api.getDatasets().then((datasetList) => {
-      setDatasets(datasetList)
-    })
-  }, [])
-
   const [open, setOpen] = React.useState(false)
   const [content, setContent] = React.useState(<h1>Placeholder</h1>)
   const [anchor, setAnchor] = React.useState(null)
@@ -25,15 +21,16 @@ export default function DatasetPage() {
   const [helpPopperContent, setHelpPopperContent] = React.useState('')
   const help = React.useContext(HelpContext)
 
+  React.useEffect(() => {
+    api.getDatasets().then((datasetList) => {
+      setDatasets(datasetList)
+    })
+  }, [])
+
   const handlePopper = (target, content, show) => {
     setContent(content)
     setAnchor(target)
     setOpen(show)
-  }
-
-  const handleListItemClick = (event, index) => {
-    // setSelectedIndex(index)
-    handlePopper(null, <div />, false)
   }
 
   const handleHelpPopperOpen = (event, content) => {
@@ -47,7 +44,13 @@ export default function DatasetPage() {
     setHelpAnchorEl(null)
   }
 
-  const helpOpen = Boolean(helpAnchorEl)
+  const datasetCardClick = (event, dataset) => {
+    handlePopper(
+      event.currentTarget,
+      <DatasetInfo dataset={dataset} key={dataset.datasetID} />,
+      event.currentTarget !== anchor || !open
+    )
+  }
 
   return (
     <Box sx={{ m: 5 }}>
@@ -62,23 +65,11 @@ export default function DatasetPage() {
           <DatasetCard
             dataset={dataset}
             key={dataset.datasetID}
-            doubleClickFunc={(event) => {
-              handleListItemClick(event, dataset.name)
-            }}
-            clickFunc={(event) => {
-              handlePopper(
-                event.currentTarget,
-                <DatasetInfo
-                  dataset={dataset}
-                  key={dataset.datasetID}
-                ></DatasetInfo>,
-                event.currentTarget !== anchor || !open
-              )
-            }}
+            clickFunc={(event) => datasetCardClick(event, dataset)}
             hoverFunc={(e) => {
               handleHelpPopperOpen(
                 e,
-                "Click to select the dataset you want to train on. \n After confirming your choice, it's time to start training!"
+                "Click to select the dataset you want to train on. \n After choosing your label(s), it's time to start training!"
               )
             }}
             leaveFunc={handleHelpPopperClose}
@@ -94,7 +85,7 @@ export default function DatasetPage() {
         <HelpPopper
           id="helpPopper"
           helpPopperContent={helpPopperContent}
-          open={helpOpen}
+          open={Boolean(helpAnchorEl)}
           anchorEl={helpAnchorEl}
           onClose={handleHelpPopperClose}
         />
@@ -104,5 +95,5 @@ export default function DatasetPage() {
 }
 
 DatasetPage.propTypes = {
-  dataset: PropTypes.array,
+  datasets: PropTypes.array,
 }

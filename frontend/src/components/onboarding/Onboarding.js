@@ -1,11 +1,11 @@
 import React from 'react'
 import { useTheme } from '@mui/material'
 import UserContext from '../../context/UserContext'
-import Joyride, { ACTIONS, EVENTS } from 'react-joyride'
-import OnboardingTooltip from './OnboardingTooltip'
-import PropTypes from 'prop-types'
-import { useLocation, useNavigate } from 'react-router-dom'
 import TrainingContext from '../../context/TrainingContext'
+import Joyride, { ACTIONS, EVENTS } from 'react-joyride'
+import { useLocation, useNavigate } from 'react-router-dom'
+import PropTypes from 'prop-types'
+import OnboardingTooltip from './OnboardingTooltip'
 
 export default function Onboarding({ run, callback }) {
   const user = React.useContext(UserContext)
@@ -15,16 +15,20 @@ export default function Onboarding({ run, callback }) {
   const [stepIndex, setStepIndex] = React.useState(0)
   const training = React.useContext(TrainingContext)
 
+  // Callback runs for every Joyride event
   const internalCallback = (data) => {
-    const { action, index, status, type } = data
+    const { action, index, type } = data
+    // Reset the step index, so the tour starts from the beginning every time
     if (
       [ACTIONS.START, ACTIONS.RESTART, ACTIONS.CLOSE, ACTIONS.SKIP].includes(
         action
       )
     ) {
       setStepIndex(0)
+      // Select example training parameters, so the training page can be shown during tour
       training.selectExampleTrainingParameters()
     }
+    // Skip the step if it's skipLocation matches the current location
     if (EVENTS.STEP_BEFORE === type) {
       if (
         steps[index].skipLocations &&
@@ -32,6 +36,7 @@ export default function Onboarding({ run, callback }) {
       ) {
         setStepIndex(index + (action === ACTIONS.PREV ? -1 : 1))
       }
+      // If the step requires a certain location, navigate to it
       if (steps[index].location) {
         navigate(
           steps[stepIndex].location,
@@ -39,13 +44,20 @@ export default function Onboarding({ run, callback }) {
         )
       }
     }
+    // Advance (or go back) to the next step
+    // Also do this if the target is not found, so the tour can continue
     if ([EVENTS.STEP_AFTER, EVENTS.TARGET_NOT_FOUND].includes(type)) {
       setStepIndex(index + (action === ACTIONS.PREV ? -1 : 1))
     }
 
+    // Call external callback
     callback(data)
   }
 
+  // The steps of the tour
+  // steps with skipLocations will be skipped if the current location matches one of the skipLocations
+  // steps with location will navigate to the specified location
+  // params can be passed to the location
   const steps = [
     {
       content: (
@@ -155,8 +167,8 @@ export default function Onboarding({ run, callback }) {
             base model
           </h2>
           SchNet is short for Schrödinger Network. Consisting of a graph neural
-          network and an MLP component, it&apos; more complex than the
-          Sequential model, but also more powerful.
+          network and a multilayer-perceptron (MLP) component, it&apos; more
+          complex than the Sequential model, but also more powerful.
         </div>
       ),
       target: '.base-model-card.id-2',
@@ -293,11 +305,12 @@ export default function Onboarding({ run, callback }) {
             <span style={{ color: theme.palette.primary.main }}>Before</span>{' '}
             you start training...
           </h2>
-          you can set the number of epochs and the batch size as well as review
-          your selected model and dataset.
+          you can set the number of epochs and the batch size
+          <br /> as well as review your selected model and dataset.
         </div>
       ),
       target: '.MuiGrid-item.MuiGrid-grid-xs-6',
+      placement: 'right',
     },
     {
       content: (
@@ -310,6 +323,7 @@ export default function Onboarding({ run, callback }) {
         </div>
       ),
       target: '.apexcharts-canvas',
+      placement: 'left',
     },
     {
       content: (

@@ -3,12 +3,12 @@ import { Card, CardContent, Popper, Typography, useTheme } from '@mui/material'
 import PropTypes from 'prop-types'
 
 /**
- *
+ * Popper component used for Help Mode
  * @param helpPopperContent The text that will be displayed in the help popper
  * @param open Whether the popper is open or not
  * @param anchorEl Where the popper will be placed
  * @returns {JSX.Element} The MUI card with helpful text inside
- * @constructor The constructor of the popper.
+ * @constructor
  */
 export default function HelpPopper({ helpPopperContent, open, anchorEl }) {
   const theme = useTheme()
@@ -34,7 +34,7 @@ export default function HelpPopper({ helpPopperContent, open, anchorEl }) {
     >
       <Card
         sx={{
-          maxWidth: 300,
+          maxWidth: '19vw',
           border: 1,
           borderColor: theme.palette.primary.main,
           backgroundColor: theme.palette.background.default,

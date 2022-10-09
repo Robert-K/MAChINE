@@ -1,28 +1,33 @@
 import React from 'react'
-import SchNetConfig from '../components/models/modelConfig/SchNetConfig'
-import MLPConfig from '../components/models/modelConfig/MLPConfig'
-import PropTypes from 'prop-types'
-import Grid from '@mui/material/Grid'
-import MLPModelVisual from '../components/models/modelConfig/MLPModelVisual'
 import {
   Alert,
+  Button,
   Card,
   CardActions,
   CardContent,
   FormControl,
+  Grid,
   InputLabel,
   MenuItem,
   Select,
   Snackbar,
   TextField,
 } from '@mui/material'
-import Button from '@mui/material/Button'
+import SaveIcon from '@mui/icons-material/Save'
 import SchNetVisual from '../components/models/modelConfig/SchNetVisual'
-import { camelToNaturalString } from '../utils'
-import { useLocation, useNavigate } from 'react-router-dom'
-import HelpContext from '../context/HelpContext'
+import SchNetConfig from '../components/models/modelConfig/SchNetConfig'
+import MLPConfig from '../components/models/modelConfig/MLPConfig'
+import MLPModelVisual from '../components/models/modelConfig/MLPModelVisual'
 import HelpPopper from '../components/shared/HelpPopper'
+import HelpContext from '../context/HelpContext'
+import { useLocation, useNavigate } from 'react-router-dom'
+import PropTypes from 'prop-types'
+import { camelToNaturalString } from '../utils'
 
+/**
+ * collection of optimizers and loss functions settable in the ModelConfigPage
+ * @type {{optimizer: {options: string[], explanation: string}, lossFunction: {options: string[], explanation: string}}}
+ */
 export const standardParameters = {
   optimizer: {
     options: [
@@ -50,6 +55,12 @@ export const standardParameters = {
   },
 }
 
+/**
+ * configures non-model-type-specific parameters and renders the corresponding type-specific components
+ * keeps configured parameters and creates the ModelConfig to be saved
+ * @param addFunc callback to add a new model
+ * @returns {JSX.Element}
+ */
 export default function ModelConfigPage({ addFunc }) {
   const { state } = useLocation()
   const [parameters, setParameters] = React.useState(state.baseModel.parameters)
@@ -74,8 +85,17 @@ export default function ModelConfigPage({ addFunc }) {
     setHelpAnchorEl(null)
   }
 
-  const helpOpen = Boolean(helpAnchorEl)
-
+  /**
+   * Contains the visualisation and configuration components for the different model types
+   * TO ADD A MODEL TYPE:
+   *    1. add an entry with the model type as key and an object as value
+   *    2. add entries with visual and config as keys and with JSX elements as values
+   *    3. pass the updateParameters function to the components which configure parameters
+   *    4. pass initial values/configurations taken from the base model parameters
+   *    5. help mode: pass handleHelpPopperOpen and handleHelpPopperClose as hover and leave callbacks
+   *
+   * @type {{schnet: {visual: JSX.Element, config: JSX.Element}, sequential: {visual: JSX.Element, config: JSX.Element}}}
+   */
   const modelTypeSpecificComponents = {
     sequential: {
       visual: (
@@ -168,7 +188,7 @@ export default function ModelConfigPage({ addFunc }) {
         </Card>
       </Grid>
       <Grid item xs={4} sx={{ height: '100%' }}>
-        <Card sx={{ height: '100%', ml: 2 }}>
+        <Card sx={{ height: '100%', ml: 2, overflow: 'auto' }}>
           <CardContent>
             {Object.entries(standardParameters).map(([param, value], i) => {
               return (
@@ -198,9 +218,7 @@ export default function ModelConfigPage({ addFunc }) {
                 </FormControl>
               )
             })}
-
             {modelTypeSpecificComponents[state.baseModel.type.name].config}
-
             <FormControl>
               <TextField
                 label="Model Name"
@@ -212,7 +230,14 @@ export default function ModelConfigPage({ addFunc }) {
             </FormControl>
           </CardContent>
           <CardActions>
-            <Button disabled={isInvalidConfig || !name} onClick={saveModel}>
+            <Button
+              size="large"
+              variant="outlined"
+              sx={{ mx: 3, mb: 2 }}
+              endIcon={<SaveIcon />}
+              disabled={isInvalidConfig || !name}
+              onClick={saveModel}
+            >
               Save
             </Button>
           </CardActions>
@@ -233,7 +258,7 @@ export default function ModelConfigPage({ addFunc }) {
         <HelpPopper
           id="helpPopper"
           helpPopperContent={helpPopperContent}
-          open={helpOpen}
+          open={Boolean(helpAnchorEl)}
           anchorEl={helpAnchorEl}
           onClose={handleHelpPopperClose}
         />

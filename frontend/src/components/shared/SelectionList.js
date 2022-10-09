@@ -1,5 +1,6 @@
 import React from 'react'
 import {
+  Button,
   Card,
   CardActions,
   CardContent,
@@ -7,13 +8,15 @@ import {
   List,
   ListItemButton,
   ListItemText,
+  Typography,
+  useTheme,
+  Zoom,
 } from '@mui/material'
-import Button from '@mui/material/Button'
-import PropTypes from 'prop-types'
-import DetailsPopper from './DetailsPopper'
-import MoleculeInfo from '../molecules/MoleculeInfo'
 import AddIcon from '@mui/icons-material/Add'
 import InfoIcon from '@mui/icons-material/Info'
+import DetailsPopper from './DetailsPopper'
+import MoleculeInfo from '../molecules/MoleculeInfo'
+import PropTypes from 'prop-types'
 
 /**
  * List of given elements with corresponding avatars and description text
@@ -39,6 +42,7 @@ export default function SelectionList({
   const [open, setOpen] = React.useState(false)
   const [content, setContent] = React.useState(<h1>Placeholder</h1>)
   const [anchor, setAnchor] = React.useState(null)
+  const theme = useTheme()
 
   /**
    * popper configuration
@@ -50,32 +54,6 @@ export default function SelectionList({
     setContent(content)
     setAnchor(target)
     setOpen(show)
-  }
-
-  /**
-   * popper button
-   * shows popper button if usePopper is true
-   * @param element
-   */
-  function popperButton(element) {
-    if (usePopper)
-      return (
-        <IconButton
-          aria-label="info"
-          color="primary"
-          onClick={(event) => {
-            handlePopper(
-              event.currentTarget,
-              <MoleculeInfo molecule={element}></MoleculeInfo>,
-              event.currentTarget !== anchor || !open
-            )
-            event.stopPropagation()
-            event.preventDefault()
-          }}
-        >
-          <InfoIcon />
-        </IconButton>
-      )
   }
 
   React.useEffect(() => {
@@ -114,20 +92,44 @@ export default function SelectionList({
             <AddIcon sx={{ mr: 1 }} /> Add a {elementType}
           </Button>
         </CardActions>
-        <List sx={{ flexGrow: 1, overflow: 'auto' }}>
-          {elements.map((element, index) => (
-            <ListItemButton
-              key={index + element.name}
-              onClick={() => {
-                handleIndexChange(index)
+        {elements.length === 0 ? (
+          <Zoom in timeout={1000}>
+            <Typography
+              display="flex"
+              justifyContent="center"
+              sx={{
+                color: theme.palette.text.secondary,
+                m: 2,
+                mt: 3,
+                whiteSpace: 'pre-line',
+                textAlign: 'center',
               }}
-              selected={selectedIndex === index}
             >
-              <ListItemText primary={element.name} />
-              {popperButton(element)}
-            </ListItemButton>
-          ))}
-        </List>
+              {`You have created no ${elementType}s yet.\nClick on the button above to configure one!`}
+            </Typography>
+          </Zoom>
+        ) : (
+          <List sx={{ flexGrow: 1, overflow: 'auto' }}>
+            {elements.map((element, index) => (
+              <ListItemButton
+                key={index + element.name}
+                onClick={() => {
+                  handleIndexChange(index)
+                }}
+                selected={selectedIndex === index}
+              >
+                <ListItemText primary={element.name} />
+                {usePopper ? (
+                  <PopperButton
+                    element={element}
+                    onClickFunc={handlePopper}
+                    anchor={anchor}
+                  />
+                ) : null}
+              </ListItemButton>
+            ))}
+          </List>
+        )}
         <DetailsPopper
           anchor={anchor}
           open={open}
@@ -152,4 +154,36 @@ SelectionList.propTypes = {
 SelectionList.defaultProps = {
   height: '7vh',
   forcedSelectedIndex: -1,
+}
+
+/**
+ * popper button
+ * @param element Object the list entry represents (i.e. a specific molecule)
+ * @param onClickFunc Function that's called when the Button is clicked
+ * @param anchor Anchor Element for the popper
+ */
+function PopperButton({ element, onClickFunc, anchor }) {
+  return (
+    <IconButton
+      aria-label="info"
+      color="primary"
+      onClick={(event) => {
+        onClickFunc(
+          event.currentTarget,
+          <MoleculeInfo molecule={element}></MoleculeInfo>,
+          event.currentTarget !== anchor || !open
+        )
+        event.stopPropagation()
+        event.preventDefault()
+      }}
+    >
+      <InfoIcon />
+    </IconButton>
+  )
+}
+
+PopperButton.propTypes = {
+  element: PropTypes.any,
+  onClickFunc: PropTypes.func,
+  anchor: PropTypes.any,
 }

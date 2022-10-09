@@ -1,144 +1,34 @@
-import React, { useCallback, useEffect } from 'react'
-import ScoreboardsPage from './routes/ScoreboardsPage.js'
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import React from 'react'
+import { CssBaseline, ThemeProvider } from '@mui/material'
+import api from './api'
+import ScoreboardsPage from './routes/ScoreboardsPage'
 import SwaggerPage from './routes/SwaggerPage'
-import '@fontsource/roboto'
-import Navbar from './components/misc/Navbar'
-import { createTheme, CssBaseline, ThemeProvider } from '@mui/material'
 import HomePage from './routes/HomePage'
 import MoleculesPage from './routes/MoleculesPage'
 import StartPage from './routes/StartPage'
 import TrainingPage from './routes/TrainingPage'
-import DarkModeButton from './components/misc/DarkModeButton'
 import DatasetPage from './routes/DatasetPage'
 import FittingsPage from './routes/FittingsPage'
-import api from './api'
-import { UserProvider } from './context/UserContext'
-import { TrainingProvider } from './context/TrainingContext'
-import Particles from 'react-tsparticles'
-import { loadFull } from 'tsparticles'
-import { deepmerge } from '@mui/utils'
+import ModelCreationRouter from './routes/ModelCreationRouter'
+import Onboarding from './components/onboarding/Onboarding'
+import Navbar from './components/misc/Navbar'
+import DarkModeButton from './components/misc/DarkModeButton'
 import HelpModeButton from './components/misc/HelpModeButton'
 import { HelpProvider } from './context/HelpContext'
-import { handleErrors } from './utils'
+import { UserProvider } from './context/UserContext'
+import { TrainingProvider } from './context/TrainingContext'
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { themeDark, themeLight } from './Theme'
+import '@fontsource/roboto'
 import '@fontsource/poppins'
-import ModelCreationRouter from './routes/ModelCreationRouter'
+import Particles from 'react-tsparticles'
 import { STATUS } from 'react-joyride'
-import Onboarding from './components/onboarding/Onboarding'
+import { loadFull } from 'tsparticles'
+import { handleErrors } from './utils'
 
-const themeBase = {
-  palette: {
-    connected: {
-      main: '#6dcd00',
-    },
-  },
-  components: {
-    MuiDataGrid: {
-      styleOverrides: {
-        columnHeaderTitle: {
-          fontWeight: 600,
-          fontSize: 'large',
-        },
-      },
-    },
-    MuiLinearProgress: {
-      styleOverrides: {
-        bar: {
-          transition: 'transform 0.05s linear',
-        },
-      },
-    },
-  },
-  typography: {
-    fontFamily: `"Poppins", "Helvetica", "Arial", sans-serif`,
-    fontSize: 14,
-    fontWeightLight: 300,
-    fontWeightRegular: 400,
-    fontWeightMedium: 400,
-  },
-}
-
-const themeLight = createTheme(
-  deepmerge(themeBase, {
-    palette: {
-      primary: {
-        main: '#137C83',
-        overlay: '#0f6267',
-      },
-      contrastbackground: {
-        main: '#137C83',
-      },
-    },
-    components: {
-      MuiCard: {
-        styleOverrides: {
-          root: {
-            backgroundColor: 'rgba(255, 255, 255, .2)',
-            backdropFilter: 'blur(5px)',
-            boxShadow:
-              '0px 7px 8px -4px rgb(0 0 0 / 10%), 0px 12px 17px 2px rgb(0 0 0 / 8%), 0px 5px 22px 4px rgb(0 0 0 / 6%)',
-          },
-        },
-      },
-    },
-    apexcharts: {
-      shade: 'light',
-    },
-    modelVisual: {
-      borderColor: '#c4c4c4',
-      fontColor: '#212121',
-      backgroundColor: '#ffffff',
-    },
-    home: {
-      mascot: '/molele.svg',
-    },
-    darkTheme: false,
-  })
-)
-
-const themeDark = createTheme(
-  deepmerge(themeBase, {
-    palette: {
-      primary: {
-        main: '#dc3984',
-        overlay: '#7E2E54',
-      },
-      mode: 'dark',
-    },
-    components: {
-      MuiAppBar: {
-        styleOverrides: {
-          colorPrimary: {
-            backgroundColor: '#7E2E54',
-            backgroundImage: 'none',
-          },
-        },
-      },
-      MuiCard: {
-        styleOverrides: {
-          root: {
-            backgroundColor: 'rgba(30, 30, 30, .5)',
-            backdropFilter: 'blur(5px)',
-          },
-        },
-      },
-    },
-    apexcharts: {
-      shade: 'dark',
-    },
-    modelVisual: {
-      borderColor: '#707070',
-      fontColor: 'white',
-      backgroundColor: '#2b2b2b',
-    },
-    home: {
-      mascot: '/molele-dark.svg',
-    },
-    darkMode: true,
-  })
-)
-
+// The main app component
 export default function App() {
+  // Set the theme based on the user's system preference
   const [darkMode, setDarkMode] = React.useState(
     window.matchMedia &&
       window.matchMedia('(prefers-color-scheme: dark)').matches
@@ -149,19 +39,19 @@ export default function App() {
   const [adminMode, setAdminMode] = React.useState(false)
   const [runOnboarding, setRunOnboarding] = React.useState(false)
 
+  // Set the theme when the user changes their system preference
   window
     .matchMedia('(prefers-color-scheme: dark)')
     .addEventListener('change', (event) => {
       setDarkMode(event.matches ? 'dark' : 'light')
     })
 
-  const particlesInit = useCallback(async (engine) => {
-    // you can initiate the tsParticles instance (engine) here, adding custom shapes or presets
-    // this loads the tsparticles package bundle, it's the easiest method for getting everything ready
-    // starting from v2 you can add only the features you need reducing the bundle size
+  // Initialize the particles background
+  const particlesInit = React.useCallback(async (engine) => {
     await loadFull(engine)
   }, [])
 
+  // Log the user in (or register if you will)
   async function login(newUserName) {
     if (userName !== null) logout()
     // setRunOnboarding(true) // Uncomment to run onboarding on login
@@ -180,15 +70,14 @@ export default function App() {
       })
   }
 
+  // Log the user out, stop onboarding, training and disable adminMode
   const logout = () => {
     setRunOnboarding(false)
+    setAdminMode(false)
     api.stopTraining()
     api.logout().catch((e) => console.log(e))
     setUserName(null)
-    // TrainingsContext is reset in Navbar
-    /* TODO: Delete all Data */
-    /* TODO: Delete trained models */
-    /* TODO: Delete molecules */
+    // TrainingContext is reset in Navbar
   }
 
   const changeDarkMode = (value) => {
@@ -200,19 +89,22 @@ export default function App() {
     setHelpMode(value)
   }
 
+  // Error handling for production
   handleErrors()
 
+  // Reset runOnboarding so onboarding can be run again
   const onboardingCallback = (data) => {
-    const { action, index, status, type } = data
-    if ([STATUS.FINISHED, STATUS.SKIPPED].includes(status)) {
+    if ([STATUS.FINISHED, STATUS.SKIPPED].includes(data.status)) {
       setRunOnboarding(false)
     }
   }
 
+  // Secret adminMode pattern, you can input this anywhere to enable adminMode
   const pattern = ['a', 'd', 'm', 'i', 'n', 'm', 'o', 'd', 'e']
   let current = 0
 
-  useEffect(() => {
+  // Register adminMode pattern listener
+  React.useEffect(() => {
     const keyHandler = function (event) {
       if (pattern.indexOf(event.key) < 0 || event.key !== pattern[current]) {
         current = 0

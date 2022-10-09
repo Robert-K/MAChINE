@@ -1,6 +1,7 @@
 import React from 'react'
 import {
   Box,
+  Button,
   Card,
   CardActions,
   CardContent,
@@ -20,29 +21,30 @@ import {
   Typography,
   useTheme,
 } from '@mui/material'
-import Button from '@mui/material/Button'
-import SelectionList from '../components/shared/SelectionList'
 import ExpandLess from '@mui/icons-material/ExpandLess'
 import ExpandMore from '@mui/icons-material/ExpandMore'
-import PropTypes from 'prop-types'
-import { useNavigate } from 'react-router-dom'
-import TrainingContext from '../context/TrainingContext'
+import SelectionList from '../components/shared/SelectionList'
 import HelpPopper from '../components/shared/HelpPopper'
 import HelpContext from '../context/HelpContext'
+import TrainingContext from '../context/TrainingContext'
+import { useNavigate } from 'react-router-dom'
+import PropTypes from 'prop-types'
+import { camelToNaturalString } from '../utils'
 
 const gridHeight = '80vh'
 /**
  * Depicts a list of saved models and shows a description of the selected model on click
+ * @param modelList list of models depicted
+ * @param initSelectedIndex initially selected index of modelList
  */
 export default function ModelsPage({ modelList, initSelectedIndex }) {
   const [selectedIndex, setSelectedIndex] = React.useState(initSelectedIndex)
   const [showDialog, setShowDialog] = React.useState(false)
   const [helpAnchorEl, setHelpAnchorEl] = React.useState(null)
-  const training = React.useContext(TrainingContext)
-  const navigate = useNavigate()
   const [helpPopperContent, setHelpPopperContent] = React.useState('')
-
+  const training = React.useContext(TrainingContext)
   const help = React.useContext(HelpContext)
+  const navigate = useNavigate()
 
   const handleHelpPopperOpen = (event, content) => {
     if (help.helpMode) {
@@ -54,8 +56,6 @@ export default function ModelsPage({ modelList, initSelectedIndex }) {
   const handleHelpPopperClose = () => {
     setHelpAnchorEl(null)
   }
-
-  const helpOpen = Boolean(helpAnchorEl)
 
   const updateSelection = (index) => {
     setSelectedIndex(index)
@@ -143,26 +143,42 @@ export default function ModelsPage({ modelList, initSelectedIndex }) {
       <HelpPopper
         id="helpPopper"
         helpPopperContent={helpPopperContent}
-        open={helpOpen}
+        open={Boolean(helpAnchorEl)}
         anchorEl={helpAnchorEl}
       />
     </Box>
   )
 }
 
+ModelsPage.propTypes = {
+  modelList: PropTypes.array.isRequired,
+  initSelectedIndex: PropTypes.number,
+}
+
+ModelsPage.defaultProps = {
+  initSelectedIndex: -1,
+}
+
+/**
+ * Description of selectedModel, including previous trainings
+ * @param selectedModel described model
+ * @param onActiveTraining callback for attempting to initialize new training while another is still running
+ * @param hoverFunc callback for hovering over description
+ * @param leaveFunc callback for mouse pointer leaving description
+ * @returns {JSX.Element}
+ */
 function ModelDescription({
   selectedModel,
   onActiveTraining,
   hoverFunc,
   leaveFunc,
 }) {
+  const [open, setOpen] = React.useState([])
+  const [globalOpen, setGlobalOpen] = React.useState(false)
   const { setSelectedModel, trainingStatus, resetContext } =
     React.useContext(TrainingContext)
   const navigate = useNavigate()
   const theme = useTheme()
-  const [open, setOpen] = React.useState([])
-  const [globalOpen, setGlobalOpen] = React.useState(false)
-  let newOpen
 
   React.useEffect(() => {
     selectedModel !== undefined
@@ -173,11 +189,7 @@ function ModelDescription({
 
   const toggleAll = () => {
     setGlobalOpen(!globalOpen)
-    newOpen = [...open]
-    for (let i = 0; i < newOpen.length; i++) {
-      newOpen[i] = !globalOpen
-    }
-    setOpen(newOpen)
+    setOpen(new Array(open.length).fill(!globalOpen))
   }
 
   if (!selectedModel) {
@@ -186,12 +198,21 @@ function ModelDescription({
       <Card>
         <CardContent sx={{ p: 3 }}>
           <Typography variant="h5" align="center" color="lightgrey">
-            Select a Model from the list to view details.
+            Select a model from the list to view details.
           </Typography>
         </CardContent>
       </Card>
     )
   } else {
+    const handleClickSelectDataset = () => {
+      if (!trainingStatus) {
+        resetContext()
+        setSelectedModel(selectedModel)
+        navigate('/datasets')
+      } else {
+        onActiveTraining()
+      }
+    }
     return (
       <Card sx={{ maxHeight: gridHeight, height: gridHeight }}>
         <CardContent
@@ -199,7 +220,7 @@ function ModelDescription({
         >
           <CardHeader
             title={selectedModel.name}
-            subheader={`Base Model: ${selectedModel.baseModelID}`}
+            subheader={`Base Model: ${selectedModel.baseModelName}`}
             onMouseOver={(e) => {
               hoverFunc(
                 e,
@@ -215,48 +236,60 @@ function ModelDescription({
                 Trained models:
               </Typography>
             </Grid>
-            <Grid
-              item
-              xs={6}
-              display="flex"
+            {selectedModel.fittings.length === 0 ? null : (
+              <Grid
+                item
+                xs={6}
+                display="flex"
+                sx={{
+                  pt: 2,
+                  justifyContent: 'flex-end',
+                }}
+              >
+                <Button
+                  variant="text"
+                  endIcon={globalOpen ? <ExpandLess /> : <ExpandMore />}
+                  onClick={toggleAll}
+                >
+                  <Typography sx={{ color: theme.palette.primary.main }}>
+                    {globalOpen ? 'Collapse all' : 'Expand all'}
+                  </Typography>
+                </Button>
+              </Grid>
+            )}
+          </Grid>
+          {selectedModel.fittings.length === 0 ? (
+            <Typography
               sx={{
-                pt: 2,
-                justifyContent: 'flex-end',
+                flexGrow: 1,
+                color: theme.palette.text.secondary,
+                m: 2,
+                mt: 3,
+                textAlign: 'center',
               }}
             >
-              <Button variant="text" endIcon={<Collapse />} onClick={toggleAll}>
-                <Typography sx={{ color: theme.palette.primary.main }}>
-                  {globalOpen ? 'Collapse all' : 'Expand all'}
-                </Typography>
-              </Button>
-            </Grid>
-          </Grid>
-          {/* Adds a fitting for each fitting saved in the model */}
-          <List sx={{ flexGrow: 1, overflow: 'auto' }}>
-            {selectedModel.fittings.map((fitting, index) => (
-              <RenderFitting
-                fitting={fitting}
-                key={`${fitting.id}-${index}`}
-                hoverFunc={hoverFunc}
-                leaveFunc={leaveFunc}
-                index={index}
-                open={open}
-                setOpen={setOpen}
-              ></RenderFitting>
-            ))}
-          </List>
+              No trained models yet. Start a new training to create one!
+            </Typography>
+          ) : (
+            <List sx={{ flexGrow: 1, overflow: 'auto' }}>
+              {/* Adds a fitting for each fitting saved in the model */}
+              {selectedModel.fittings.map((fitting, index) => (
+                <RenderFitting
+                  fitting={fitting}
+                  key={`${fitting.id}-${index}`}
+                  hoverFunc={hoverFunc}
+                  leaveFunc={leaveFunc}
+                  index={index}
+                  open={open}
+                  setOpen={setOpen}
+                ></RenderFitting>
+              ))}
+            </List>
+          )}
           <CardActions>
             <Grid container justifyContent="center">
               <Button
-                onClick={() => {
-                  if (!trainingStatus) {
-                    resetContext()
-                    setSelectedModel(selectedModel)
-                    navigate('/datasets')
-                  } else {
-                    onActiveTraining()
-                  }
-                }}
+                onClick={handleClickSelectDataset}
                 className="select-training-data"
               >
                 Select Training Data
@@ -270,8 +303,8 @@ function ModelDescription({
 }
 
 ModelDescription.propTypes = {
-  selectedModel: PropTypes.any,
-  onActiveTraining: PropTypes.any,
+  selectedModel: PropTypes.object,
+  onActiveTraining: PropTypes.func,
   hoverFunc: PropTypes.func,
   leaveFunc: PropTypes.func,
   fittingsLength: PropTypes.number,
@@ -282,9 +315,9 @@ ModelDescription.propTypes = {
  * @param fitting the fitting to be rendered
  * @param hoverFunc Function that gets called when the mouse hovers over the component
  * @param leaveFunc Function that gets called when the mouse no longer hovers over the component
- * @param index todo upd javadoc
- * @param open
- * @param setOpen
+ * @param index index of fitting
+ * @param open array of boolean values representing which fittings are open
+ * @param setOpen callback to signal change of open array
  * @returns {JSX.Element}
  */
 function RenderFitting({
@@ -316,7 +349,7 @@ function RenderFitting({
         <ListItemButton onClick={() => toggleOpen()}>
           {open[index] ? <ExpandLess /> : <ExpandMore />}
           <ListItemText
-            primary={`Dataset ID: ${fitting.datasetID}`}
+            primary={`Dataset: ${fitting.datasetName} #${fitting.datasetID}`}
             secondary={`Trained model ID: ${fitting.id}`}
             sx={{ color: theme.palette.primary.main }}
           ></ListItemText>
@@ -329,6 +362,13 @@ function RenderFitting({
           orientation="vertical"
         >
           <List sx={{ pl: 4 }}>
+            <ListItem>
+              <ListItemText
+                sx={{ color: theme.palette.primary.main }}
+                primary="Label: "
+              ></ListItemText>
+              {camelToNaturalString(fitting.labels.join(', '))}
+            </ListItem>
             <ListItem>
               <ListItemText
                 sx={{ color: theme.palette.primary.main }}
@@ -346,7 +386,7 @@ function RenderFitting({
             <ListItem>
               <ListItemText
                 sx={{ color: theme.palette.primary.main }}
-                primary="Accuracy:"
+                primary="Accuracy (R²):"
               ></ListItemText>
               {fitting.accuracy}%
             </ListItem>
@@ -364,14 +404,5 @@ RenderFitting.propTypes = {
   leaveFunc: PropTypes.func,
   index: PropTypes.number,
   open: PropTypes.array,
-  setOpen: PropTypes.any,
-}
-
-ModelsPage.propTypes = {
-  modelList: PropTypes.array.isRequired,
-  initSelectedIndex: PropTypes.number,
-}
-
-ModelsPage.defaultProps = {
-  initSelectedIndex: -1,
+  setOpen: PropTypes.func,
 }

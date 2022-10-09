@@ -10,22 +10,23 @@ import {
   TextField,
   useTheme,
 } from '@mui/material'
-import SelectionList from '../components/shared/SelectionList'
-import { useNavigate } from 'react-router-dom'
-import { Kekule } from 'kekule'
-import UserContext from '../context/UserContext'
-import api from '../api'
 import SaveIcon from '@mui/icons-material/Save'
 import VisibilityIcon from '@mui/icons-material/Visibility'
-import PropTypes from 'prop-types'
+import api from '../api'
+import Molecule from '../internal/Molecule'
+import SelectionList from '../components/shared/SelectionList'
 import MoleculeEditor from '../components/molecules/MoleculeEditor'
 import MoleculeRenderer from '../components/molecules/MoleculeRenderer'
-import Molecule from '../internal/Molecule'
 import SnackBarAlert from '../components/misc/SnackBarAlert'
 import HelpPopper from '../components/shared/HelpPopper'
 import HelpContext from '../context/HelpContext'
+import UserContext from '../context/UserContext'
+import { useNavigate } from 'react-router-dom'
+import PropTypes from 'prop-types'
+import { Kekule } from 'kekule'
 
 const gridHeight = '85vh'
+
 export default function MoleculesPage() {
   const [molecules, setMolecules] = React.useState([])
   const [selectedIndex, setSelectedIndex] = React.useState(-1)
@@ -48,8 +49,6 @@ export default function MoleculesPage() {
   const handleHelpPopperClose = () => {
     setHelpAnchorEl(null)
   }
-
-  const helpOpen = Boolean(helpAnchorEl)
 
   React.useEffect(() => {
     refreshMolecules()
@@ -107,7 +106,7 @@ export default function MoleculesPage() {
         })
         .catch(() =>
           showSnackMessage(
-            `Can't save invalid Molecule. Check for Errors in the Editor`,
+            `Can't save invalid molecule. Check for errors in the editor`,
             'error'
           )
         )
@@ -123,6 +122,7 @@ export default function MoleculesPage() {
         alignItems="stretch"
         columnSpacing={2}
       >
+        {/** Shows all created molecules (on the left) **/}
         <Grid
           item
           md={3}
@@ -144,6 +144,7 @@ export default function MoleculesPage() {
             forcedSelectedIndex={selectedIndex}
           ></SelectionList>
         </Grid>
+        {/** The molecule creator (using kekule) on the right of the page **/}
         <Grid
           item
           md={9}
@@ -166,7 +167,7 @@ export default function MoleculesPage() {
         <HelpPopper
           id="helpPopper"
           helpPopperContent={helpPopperContent}
-          open={helpOpen}
+          open={Boolean(helpAnchorEl)}
           anchorEl={helpAnchorEl}
           onClose={handleHelpPopperClose}
         />
@@ -181,9 +182,14 @@ export default function MoleculesPage() {
   )
 }
 
+/**
+ * Component Card displaying the 2D-Editor or 3D-Viewer and buttons
+ * @param selectedMolecule {Molecule} Molecule displayed in the View
+ * @param onSave {function} Function called when the "Save" Button is pressed
+ * @returns {JSX.Element} Card displaying the 2D-Editor or 3D-Viewer and buttons
+ */
 function MoleculeView({ selectedMolecule, onSave }) {
   const [editorHeight, editorWidth] = ['70vh', '100%']
-
   const [moleculeDoc, setMoleculeDoc] = React.useState(null)
   const [molName, setMolName] = React.useState('')
   const [show3D, setShow3D] = React.useState(false)
@@ -191,6 +197,8 @@ function MoleculeView({ selectedMolecule, onSave }) {
   const theme = useTheme()
 
   React.useEffect(() => {
+    // Every time a molecule is supposed to be drawn, a new ChemDocument is created. (Easiest solution for handling kekule molecules)
+    // Onto the new canvas, the selected molecule is drawn.
     const chemDocument = new Kekule.ChemDocument()
     if (selectedMolecule && selectedMolecule.cml) {
       chemDocument.appendChild(
@@ -199,6 +207,23 @@ function MoleculeView({ selectedMolecule, onSave }) {
     }
     setMoleculeDoc(chemDocument)
   }, [selectedMolecule])
+
+  /**
+   * Saves a molecule by extracting the first child from the Kekule ChemDocument and converting it to SMILES & CML codes
+   * @param event submit HTML event
+   */
+  function saveMol(event) {
+    event.preventDefault()
+    try {
+      const molecule = moleculeDoc.getChildAt(0)
+      const smiles = Kekule.IO.saveFormatData(molecule, 'smi')
+      const cml = Kekule.IO.saveFormatData(molecule, 'cml')
+      onSave(molName, smiles, cml)
+      setMolName('')
+    } catch (e) {
+      onSave('', '', '')
+    }
+  }
 
   return (
     <Card sx={{ maxHeight: gridHeight, height: gridHeight, overflow: 'auto' }}>
@@ -218,6 +243,8 @@ function MoleculeView({ selectedMolecule, onSave }) {
           ) : (
             <Box
               sx={{
+                // Kekule has no inherent darkmode. If the user has darkmode activated,
+                // we invert the colors of the molecule editor by hand.
                 filter: theme.darkMode ? 'invert(.86)' : false,
               }}
             >
@@ -245,6 +272,7 @@ function MoleculeView({ selectedMolecule, onSave }) {
           <TextField
             label="Molecule Name"
             variant="standard"
+            value={molName}
             onChange={(e) => setMolName(e.target.value)}
             inputProps={{ maxLength: 21 }}
           />
@@ -265,7 +293,9 @@ function MoleculeView({ selectedMolecule, onSave }) {
           onClick={() => setShow3D(!show3D)}
           endIcon={<VisibilityIcon />}
           sx={{ ml: 12 }}
-        >{`Switch to ${show3D ? '2D-Editor' : '3D-Viewer'}`}</Button>
+        >
+          Switch to {show3D ? '2D-Editor' : '3D-Viewer'}
+        </Button>
         <Box sx={{ flexGrow: 1 }}></Box>
         <Button
           size="large"
@@ -283,18 +313,6 @@ function MoleculeView({ selectedMolecule, onSave }) {
       </CardActions>
     </Card>
   )
-
-  function saveMol(event) {
-    event.preventDefault()
-    try {
-      const molecule = moleculeDoc.getChildAt(0)
-      const smiles = Kekule.IO.saveFormatData(molecule, 'smi')
-      const cml = Kekule.IO.saveFormatData(molecule, 'cml')
-      onSave(molName, smiles, cml)
-    } catch (e) {
-      onSave('', '', '')
-    }
-  }
 }
 
 MoleculeView.propTypes = {

@@ -9,9 +9,16 @@ import {
 } from '@mui/material'
 import PropTypes from 'prop-types'
 
+/**
+ * Card depicting given dataset's details
+ * @param dataset depicted dataset
+ * @param clickFunc callback for click on the card
+ * @param hoverFunc callback for hovering over card
+ * @param leaveFunc callback for mouse pointer leaving the card
+ * @returns {JSX.Element}
+ */
 export default function DatasetCard({
   dataset,
-  doubleClickFunc,
   clickFunc,
   hoverFunc,
   leaveFunc,
@@ -20,7 +27,6 @@ export default function DatasetCard({
   return (
     <Card>
       <CardActionArea
-        onDoubleClick={(e) => doubleClickFunc(e)}
         onClick={(e) => {
           clickFunc(e)
         }}
@@ -69,7 +75,6 @@ export default function DatasetCard({
 
 DatasetCard.propTypes = {
   dataset: PropTypes.object.isRequired,
-  doubleClickFunc: PropTypes.func.isRequired,
   clickFunc: PropTypes.func.isRequired,
   hoverFunc: PropTypes.func,
   leaveFunc: PropTypes.func,

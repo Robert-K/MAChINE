@@ -1,9 +1,14 @@
 import React from 'react'
-import Grid from '@mui/material/Grid'
-import { Typography, Box, CardActionArea, useTheme } from '@mui/material'
+import {
+  Box,
+  Card,
+  CardActionArea,
+  CardContent,
+  Grid,
+  Typography,
+  useTheme,
+} from '@mui/material'
 import PropTypes from 'prop-types'
-import Card from '@mui/material/Card'
-import CardContent from '@mui/material/CardContent'
 
 /**
  * A base model card is utilized in the process of the user creating a model.
@@ -15,7 +20,6 @@ import CardContent from '@mui/material/CardContent'
  * @returns {JSX.Element} The the element for the website.
  * @constructor
  */
-
 export default function BaseModelCard({
   baseModel,
   clickFunc,

@@ -1,24 +1,22 @@
-/**
- * This page is reached when creating a new model (by pressing the "add a model"
- * button on the page "models"). It shows the selectable base models in a grid-like
- * pattern, showing a name, image and base information for each base model.
- * Clicking on a base model leads the user to the model configuration.
- */
-
 import React from 'react'
-import { Container } from '@mui/material'
-import BaseModelCard from '../components/models/BaseModelCard'
-import Grid from '@mui/material/Grid'
+import { Box } from '@mui/material'
 import api from '../api'
+import BaseModelCard from '../components/models/BaseModelCard'
 import HelpPopper from '../components/shared/HelpPopper'
 import HelpContext from '../context/HelpContext'
 import { useNavigate } from 'react-router-dom'
 
+/**
+ * Selection component for base models
+ * Navigates to /models/model-config on selection
+ * @returns {JSX.Element}
+ */
 export default function BaseModelsPage() {
   const [modelArray, setModelArray] = React.useState([])
   const [helpAnchorEl, setHelpAnchorEl] = React.useState(null)
   const [helpPopperContent, setHelpPopperContent] = React.useState('')
   const help = React.useContext(HelpContext)
+  const navigate = useNavigate()
 
   React.useEffect(() => {
     api.getBaseModels().then((sentModels) => {
@@ -37,15 +35,18 @@ export default function BaseModelsPage() {
     setHelpAnchorEl(null)
   }
 
-  const helpOpen = Boolean(helpAnchorEl)
-  const navigate = useNavigate()
-
   const handleClick = (baseModel) => {
     navigate('/models/model-config', { state: { baseModel } })
   }
   return (
-    <Container>
-      <Grid container spacing={4} marginTop={1} marginBottom={5}>
+    <Box sx={{ m: 5 }}>
+      <Box
+        sx={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(4,1fr)',
+          gap: 5,
+        }}
+      >
         {modelArray.map((baseModel) => (
           <BaseModelCard
             baseModel={baseModel}
@@ -60,14 +61,14 @@ export default function BaseModelsPage() {
             leaveFunc={handleHelpPopperClose}
           />
         ))}
-      </Grid>
+      </Box>
       <HelpPopper
         id="helpPopper"
         helpPopperContent={helpPopperContent}
-        open={helpOpen}
+        open={Boolean(helpAnchorEl)}
         anchorEl={helpAnchorEl}
         onClose={handleHelpPopperClose}
       />
-    </Container>
+    </Box>
   )
 }

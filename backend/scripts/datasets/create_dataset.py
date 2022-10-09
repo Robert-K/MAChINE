@@ -6,6 +6,10 @@ import pickle
 from backend.utils.molecule_formats import *
 import numpy as np
 
+"""
+current dataset version, raise when altering dataset content
+keep in sync with storage_handler dataset_version
+"""
 _version = 5
 
 
@@ -26,7 +30,7 @@ def smiles_list_to_fingerprint_input(smiles_list, sizes, radius=2):
 
 
 def make_data_label_pairs(data, label):
-    result_list = []
+    result_list = list()
     for x in data:
         result_list.append({str(label): x})
     return result_list
@@ -44,10 +48,10 @@ def create_dataset(path: str,
 
     :param path: Path to the .csv file, from this file
     :param max_size: How many entries the dataset should have at most (sometimes it has fewer actual entries)
-    :param data_offset: At what point do we take data from the .csv file (ex: 5 means we start at the 6th entry)
-    :param labels: List of strings of labels that we have data for
-    :param smiles_fingerprint_sizes: Array of integers (powers of 2, probably), unknown what fingerprints are specifically
-    :param smiles_fingerprint_radius: Just leave this at 2. No idea what it does
+    :param data_offset: At what point to start taking data from the .csv file (ex: 5 means starting at the 6th entry)
+    :param labels: List of strings of labels included in the dataset
+    :param smiles_fingerprint_sizes: Array of integers (usually powers of 2)
+    :param smiles_fingerprint_radius: numeric value, usually left at 2
     :return: A list of dictionaries containing inputs and outputs. Pickle & save or add a descriptor
     """
     csv = pd.read_csv(path)
@@ -124,6 +128,17 @@ def add_dataset_descriptor(dataset, name, histograms, parameters):
 
 def create_complete_dataset(path, max_size, data_offset, smiles_fingerprint_sizes, smiles_fingerprint_radius, labels,
                             name):
+    """
+    Creates dataset, histograms and descriptor according to given parameters
+    :param path: path string to csv file
+    :param max_size: int, maximum size of dataset
+    :param data_offset: offset from which to start taking data from the .csv file
+    :param smiles_fingerprint_sizes: Array of integers (usually powers of 2)
+    :param smiles_fingerprint_radius: numeric value, usually left at 2
+    :param labels: List of strings of labels included in the dataset
+    :param name: string name of dataset
+    :return: the dataset descriptor
+    """
     raw_dataset = create_dataset(path,
                                  max_size,
                                  data_offset,
@@ -139,6 +154,13 @@ def create_complete_dataset(path, max_size, data_offset, smiles_fingerprint_size
 
 
 def update_dataset(path):
+    """
+    if necessary,
+    updates the referenced dataset to the current version by creating it anew with create_complete_dataset and
+    writes changes to the pkl file
+    :param path: string path to dataset pickle (pkl) file
+    :return: the latest version of the dataset
+    """
     path = (Path.cwd() / path)
     with path.open('rb') as old_set_file_read:
         old_set = pickle.load(old_set_file_read)
@@ -158,6 +180,13 @@ def update_dataset(path):
 
 
 def create_histograms(dataset, labels):
+    """
+    Creates a histogram of the dataset for each label
+    Its granularity can be customized according to required degree of detail
+    :param dataset: dataset to create a histogram of
+    :param labels: for which to create histograms
+    :return: dictionary containing histogram (dictionary containing lists for buckets and interval edges) for each label
+    """
     histograms = dict()
 
     # prep: separate data by label
@@ -171,7 +200,7 @@ def create_histograms(dataset, labels):
 
     # create histogram for each label
     for [label, data] in columns_by_label.items():
-        # bucket count is an arbitrary value, change corresponding to degree of detail required
+        # bucket count is currently an arbitrary value, change corresponding to degree of detail required
         hist, bin_edges = np.histogram(data, math.floor(len(data) / 100))
         histograms[label] = dict({
             'buckets': hist.tolist(),
@@ -184,9 +213,8 @@ def create_histograms(dataset, labels):
 # HOW TO USE:
 # Look at examples below
 if __name__ == '__main__':
-    update_dataset('../../storage/data/med_hiv.pkl')
     '''
-    Example for creating a new dataset
+    Example for creating a new dataset:
     new_set = create_complete_dataset(path="../../storage/csv_data/solubility.csv",
                                       max_size=100,
                                       data_offset=0,
@@ -198,4 +226,7 @@ if __name__ == '__main__':
     file = (Path.cwd() / 'output.pkl').open('wb')
     pickle.dump(new_set, file)
     file.close()
+    
+    Example for updating dataset:
+    updated_set = update_dataset('../../storage/data/solubility.pkl')
     '''

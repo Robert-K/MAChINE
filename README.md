@@ -1,48 +1,63 @@
 ![MAChINE Logo](https://kosro.de/share/machine.svg)
+<img align="right" src="frontend/public/molele.svg" height=150 />
 
 A [PSE](https://pp.ipd.kit.edu/lehre/SS2022/pse) project by [13thWitch](https://github.com/13thWitch), [AnoukSommer](https://github.com/AnoukSommer), [CSCMe](https://github.com/CSCMe), [EliteStudent420](https://github.com/EliteStudent420), [Viola2345](https://github.com/Viola2345) & [Robert-K](https://github.com/Robert-K)
 
 Supervised by [André Eberhard](https://github.com/patchmeifyoucan)
 
-# Commit Message Etiquette
+---
 
-Start commit messages with ADD, FIX, UPD or DEL corresponding to change.
+## <img src="frontend/public/molele.svg" height=18 /> With MAChINE you can:
+- Draw any molecule imaginable and preview it in 3D
+- Configure and train machine learning models to predict properties of molecules
+- Analyze your molecules for various properties with the models you trained
+- Compare your molecules and models to other users&apos; creations
 
 ---
 
-# Setup steps:
+# Extendability
 
-## Prettier (code auto formatter)
+### Adding a Model Type
 
-- Install Prettier plugin in PyCharm
+0. Check if your model requires a different molecule format. (currently implemented: fingerprint vector, mol graph)
+    1. Update [create_dataset in create_dataset.py](backend/scripts/datasets/create_dataset.py) to include your new molecule format
+    2. Increment the version number in create_dataset.py & storage_handler.py
+    3. Update update_dataset and run for every existing dataset
+1. Place your custom model type in the [machine_learning/models folder](/backend/machine_learning/models)
+2. Edit [baseModels.json](backend/storage/models/baseModels.json)
+   1. Add a new Entry. The name for the type chosen here will be used in ml_dicts and ModelConfigPage to run appropriate code 
+   2. Set your default parameters. The parameters for your model type are defined here. lossFunction and optimizer in parameters are required, as is metrics.
+3. Create a file in /backend/machine_learning to hold your model and dataset creation functions
+4. Implement a function that returns a tuple containing A: your built model, B: A dataset compatible with your model
+5. Implement a function that converts molecules to a valid input format for your model
+6. Enter your new functions into the proper [ml_dicts](backend/machine_learning/ml_dicts.py)
+7. Build a React Component to customize your model and place them in [components/modelConfig](frontend/src/components/models/modelConfig)
+8. Update [modelTypeSpecificComponents](frontend/src/routes/ModelConfigPage.js) to contain your new components
 
-![Setup Screenshot](https://kosro.de/share/pycharm64_E1pXeQIHlS.png)
+### Adding Datasets
+0. Find your source csv file, ensure it has smiles codes and choose labels you want to include
+1. In [create_dataset.py](backend/scripts/datasets/create_dataset.py) run create_complete_dataset with your parameters
+2. Optional: Check correctness by running [view_dataset.py](backend/scripts/datasets/view_dataset.py) with the debugger and a breakpoint on highlighted line
+2. Rename output.pkl and move it to [backend/storage/data](backend/storage/data)
+3. Restart the backend
 
-- be on the latest commit
-- select prettier package in IDE settings
+### Enabling multi-label Training
+- Edit [schnet.py](backend/machine_learning/models/schnet.py) to allow it to train on multiple labels
+- Edit [create_schnet_with_dataset](backend/machine_learning/ml_gnns.py) to take multi-label data from datasets (see [ml_fnns.py](backend/machine_learning/ml_fnns.py) for an example)
+- Edit [handleChecked](frontend/src/components/datasets/DatasetInfo.js) to allow the user to select multiple labels
+- Everything else should work without further modification
+---
 
-![Setup Screenshot](https://kosro.de/share/pycharm64_22kMqdUPaq.png)
+# Special Usage
 
-- ?
-- profit.
-
-## Quotes instead of curly brackets in JSX
-
-![Setup Screenshot](https://kosro.de/share/pycharm64_a4RaM450ss.png)
+### Admin Mode
+- In any frontend page, type "adminmode" on your keyboard to enter admin mode
+- You can edit the server address by clicking on the server status icon
+- You can delete scoreboard entries on the scoreboard page by clicking the 🗑️ Icon (or deleting all)
 
 ---
 
-# Backend structure
-
-![Backend structure](https://kosro.de/share/pse-backend.png)
-
----
-
-# React Default README
-
-# Getting Started with Create React App
-
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Bootstrapped with [Create React App](https://github.com/facebook/create-react-app)
 
 ## Available Scripts
 
@@ -87,30 +102,11 @@ You can learn more in the [Create React App documentation](https://facebook.gith
 
 To learn React, check out the [React documentation](https://reactjs.org/).
 
-### Code Splitting
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+## Commit Message Etiquette
 
-### Analyzing the Bundle Size
+Start commit messages with `ADD:`, `UPD:`, `FIX:` or `DEL:` corresponding to change.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
-
-![Important Infographic](https://kosro.de/share/rickroll-roll.gif)
 
 [![forthebadge](https://forthebadge.com/images/badges/powered-by-energy-drinks.svg)](https://forthebadge.com) [![forthebadge](https://forthebadge.com/images/badges/designed-in-ms-paint.svg)](https://forthebadge.com) [![forthebadge](https://forthebadge.com/images/badges/uses-badges.svg)](https://forthebadge.com)

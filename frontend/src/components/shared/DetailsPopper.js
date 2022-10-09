@@ -1,8 +1,8 @@
 import React from 'react'
 import { Box, Card, useTheme } from '@mui/material'
-import PropTypes from 'prop-types'
 import { styled } from '@mui/material/styles'
 import MuiPopper from '@mui/material/Popper'
+import PropTypes from 'prop-types'
 
 const Popper = styled(MuiPopper, {
   shouldForwardProp: (prop) =>
@@ -10,7 +10,7 @@ const Popper = styled(MuiPopper, {
     prop !== 'arrowWidth' &&
     prop !== 'arrowHeight' &&
     prop !== 'extraArrowLength',
-})(({ theme, popperWidth, arrowWidth, arrowHeight, extraArrowLength }) => ({
+})(({ popperWidth, arrowWidth, arrowHeight, extraArrowLength }) => ({
   zIndex: 2,
   '& .popper-anim': {
     transition: 'transform 150ms ease-out',
@@ -110,8 +110,8 @@ export default function DetailsPopper({
   const [, forceUpdate] = React.useReducer((x) => x + 1, 0)
   const [animate, setAnimate] = React.useState(false)
   const [timeoutID, setTimeoutID] = React.useState(-1)
-
   const theme = useTheme()
+
   function handleClick() {
     forceUpdate()
   }

@@ -1,8 +1,12 @@
 import React from 'react'
-import PropTypes from 'prop-types'
 import { TextField } from '@mui/material'
+import PropTypes from 'prop-types'
 import { camelToNaturalString } from '../../../utils'
 
+/**
+ * SchNet-specific configurable parameters
+ * @type {{readoutSize: {min: number, explanation: string}, depth: {min: number, explanation: string}, embeddingDimension: {min: number, explanation: string}}}
+ */
 const settableSizes = {
   depth: {
     min: 1,
@@ -14,10 +18,20 @@ const settableSizes = {
   },
   readoutSize: {
     min: 1,
-    explanation: 'Number of nodes in the regressional part of the network',
+    explanation:
+      'Number of nodes in the regressional multilayer perceptron part of the network',
   },
 }
 
+/**
+ * Configuration of SchNet-specific parameters
+ * @param schnetParams initial values
+ * @param updateFunc callback to update a parameter
+ * @param errorSignal callback whether current configuration is invalid
+ * @param hoverFunc callback for hovering
+ * @param leaveFunc callback for mouse pointer leaving component
+ * @returns {JSX.Element}
+ */
 export default function SchNetConfig({
   schnetParams,
   updateFunc,
@@ -36,6 +50,13 @@ export default function SchNetConfig({
     errorSignal(sizesError.includes(true))
   }, [sizesError])
 
+  /**
+   * called when a value is changed
+   * @param event the event which triggered
+   * @param i index of configured parameter in sizes
+   * @param key of parameter
+   * @param min lower bound for permitted values of the field
+   */
   const handleChange = (event, i, key, min) => {
     const sizesErrorClone = [...sizesError]
     sizesErrorClone[i] = event.target.value < min

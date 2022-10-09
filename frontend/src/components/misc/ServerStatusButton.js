@@ -1,13 +1,18 @@
-import * as React from 'react'
-import Popover from '@mui/material/Popover'
+import React from 'react'
+import { Badge, badgeClasses, IconButton, Popover } from '@mui/material'
 import LanIcon from '@mui/icons-material/Lan'
-import ServerConfigForm from './ServerConfigForm'
-import { Badge, IconButton, badgeClasses } from '@mui/material'
 import api from '../../api'
+import ServerConfigForm from './ServerConfigForm'
 import UserContext from '../../context/UserContext'
 
+/**
+ * Button to monitor server connectivity
+ * only visible in Admin Mode
+ * @returns {JSX.Element}
+ */
 export default function ServerStatusButton() {
   const [anchorEl, setAnchorEl] = React.useState(null)
+  const [color, setColor] = React.useState('error')
   const { adminMode } = React.useContext(UserContext)
 
   const handleClick = (event) => {
@@ -17,11 +22,6 @@ export default function ServerStatusButton() {
   const handleClose = () => {
     setAnchorEl(null)
   }
-
-  const [color, setColor] = React.useState('error')
-
-  const open = Boolean(anchorEl && adminMode)
-  const id = open ? 'simple-popover' : undefined
 
   function updateColor() {
     setColor(api.getConnectionStatus() ? 'connected' : 'error')
@@ -33,7 +33,6 @@ export default function ServerStatusButton() {
     <div>
       <IconButton
         sx={{ color: 'white' }}
-        aria-describedby={id}
         variant="contained"
         onClick={handleClick}
       >
@@ -53,8 +52,7 @@ export default function ServerStatusButton() {
         </Badge>
       </IconButton>
       <Popover
-        id={id}
-        open={open}
+        open={Boolean(anchorEl && adminMode)}
         anchorEl={anchorEl}
         onClose={handleClose}
         anchorOrigin={{
@@ -64,7 +62,7 @@ export default function ServerStatusButton() {
         transformOrigin={{ vertical: 'top', horizontal: 'right' }}
       >
         <ServerConfigForm
-          onChangeSubmit={() => {
+          onSubmitChange={() => {
             updateColor()
             setAnchorEl(null)
           }}

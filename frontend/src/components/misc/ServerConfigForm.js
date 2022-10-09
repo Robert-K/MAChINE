@@ -1,15 +1,33 @@
-import { Box, IconButton, TextField } from '@mui/material'
-import RestoreIcon from '@mui/icons-material/Restore'
 import React from 'react'
-import Button from '@mui/material/Button'
+import { Box, Button, IconButton, TextField } from '@mui/material'
+import RestoreIcon from '@mui/icons-material/Restore'
 import api from '../../api'
 import PropTypes from 'prop-types'
 
-export default function ServerConfigForm({ onChangeSubmit }) {
+/**
+ * Configures used IP-Address and port of connected server
+ * @param onChangeSubmit
+ * @returns {JSX.Element}
+ */
+export default function ServerConfigForm({ onSubmitChange }) {
   const [address, setAddress] = React.useState(api.getServerAddress())
   const [port, setPort] = React.useState(api.getServerPort)
   const [validIP, setValidIP] = React.useState(true)
   const [validPort, setValidPort] = React.useState(true)
+
+  function getDefaults() {
+    setAddress(api.getDefaultAddress())
+    setPort(api.getDefaultPort())
+  }
+
+  function setValues(event) {
+    event.preventDefault()
+    if (validIP && validPort) {
+      api.setServerAddress(address)
+      api.setServerPort(port)
+      onSubmitChange()
+    }
+  }
 
   const handleAddressChange = (event) => {
     setAddress(event.target.value)
@@ -72,22 +90,8 @@ export default function ServerConfigForm({ onChangeSubmit }) {
       </Button>
     </Box>
   )
-
-  function getDefaults() {
-    setAddress(api.getDefaultAddress())
-    setPort(api.getDefaultPort())
-  }
-
-  function setValues(event) {
-    event.preventDefault()
-    if (validIP && validPort) {
-      api.setServerAddress(address)
-      api.setServerPort(port)
-      onChangeSubmit()
-    }
-  }
 }
 
 ServerConfigForm.propTypes = {
-  onChangeSubmit: PropTypes.func,
+  onSubmitChange: PropTypes.func,
 }

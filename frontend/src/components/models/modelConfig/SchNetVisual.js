@@ -1,6 +1,10 @@
 import React from 'react'
 import { Box, useTheme } from '@mui/material'
 
+/**
+ * Visualisation of a SchNet
+ * @returns {JSX.Element}
+ */
 export default function SchNetVisual() {
   const theme = useTheme()
   return (

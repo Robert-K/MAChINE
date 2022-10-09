@@ -11,23 +11,27 @@ import {
   Typography,
   useTheme,
 } from '@mui/material'
+import api from '../api'
 import ModelDetailsCard from '../components/training/ModelDetailsCard'
 import DatasetDetailsCard from '../components/training/DatasetDetailsCard'
-import { useNavigate } from 'react-router-dom'
-import TrainingContext from '../context/TrainingContext'
-import api from '../api'
 import PrettyChart from '../components/training/PrettyChart'
 import SnackBarAlert from '../components/misc/SnackBarAlert'
-import HelpContext from '../context/HelpContext'
 import HelpPopper from '../components/shared/HelpPopper'
+import HelpContext from '../context/HelpContext'
+import TrainingContext from '../context/TrainingContext'
+import { useNavigate } from 'react-router-dom'
 
+/**
+ * Holds epoch and batch size configuration, as well as selected model and dataset details
+ * @returns {JSX.Element} jsx including information about the configuration of the training, live updated chart and start/stop/continue buttons
+ */
 export default function TrainingPage() {
   const training = React.useContext(TrainingContext)
-  const [localEpochs, setLocalEpochs] = React.useState(training.selectedEpochs)
+  const help = React.useContext(HelpContext)
   const [showDialog, setShowDialog] = React.useState(false)
   const [helpAnchorEl, setHelpAnchorEl] = React.useState(null)
   const [helpPopperContent, setHelpPopperContent] = React.useState('')
-  const help = React.useContext(HelpContext)
+  const [localEpochs, setLocalEpochs] = React.useState(training.selectedEpochs)
   const [epochsError, setEpochsError] = React.useState(false)
   const [batchSizeError, setBatchSizeError] = React.useState(false)
   const [startStopButton, setStartStopButton] = React.useState('Start')
@@ -35,6 +39,8 @@ export default function TrainingPage() {
   const [openSnackError, setOpenSnackError] = React.useState(false)
   const [showFinishDialog, setShowFinishDialog] = React.useState(false)
   const theme = useTheme()
+  const navigate = useNavigate()
+  const initialMount = React.useRef(true)
 
   const checkEpochs = (epochs) => {
     if (epochs > 0) {
@@ -51,9 +57,7 @@ export default function TrainingPage() {
       setBatchSizeError(true)
     }
   }
-
-  const initialMount = React.useRef(true)
-
+  // check batch size on change
   React.useEffect(() => {
     checkBatchSize(training.selectedBatchSize)
     if (initialMount.current) {
@@ -66,6 +70,7 @@ export default function TrainingPage() {
     }
   }, [training.selectedBatchSize])
 
+  // check epochs on change
   React.useEffect(() => {
     checkEpochs(localEpochs)
   }, [localEpochs])
@@ -84,10 +89,6 @@ export default function TrainingPage() {
     }
   }, [training.trainingStatus])
 
-  React.useEffect(() => {
-    setShowFinishDialog(training.trainingFinished)
-  }, [training.trainingFinished])
-
   const handleStartStop = () => {
     if (training.trainingStatus) {
       setShowDialog(true)
@@ -97,6 +98,7 @@ export default function TrainingPage() {
       training.setSelectedEpochs(localEpochs)
       api
         .trainModel(
+          // model configuration gets assembled here
           training.selectedDataset.datasetID,
           training.selectedModel.id,
           training.selectedLabels,
@@ -118,26 +120,21 @@ export default function TrainingPage() {
     })
   }
 
-  const handleCloseDialog = () => {
-    setShowDialog(false)
-  }
-
-  const handleCloseFinishDialog = () => {
-    setShowFinishDialog(false)
-  }
+  React.useEffect(() => {
+    setShowFinishDialog(training.trainingFinished)
+  }, [training.trainingFinished])
 
   const abortTraining = () => {
     training.stopTraining()
     handleCloseDialog()
   }
 
-  const navigate = useNavigate()
-
+  // filter epoch progress, makes no sense as a graph
   function filterData(data) {
     // Change this to exclude more data
-    const excludedPoints = ['epoch']
+    const excludedPoints = ['Epoch']
     const newData = []
-    Object.entries(data).forEach(([dataName, values], index) => {
+    Object.entries(data).forEach(([dataName, values]) => {
       if (excludedPoints.indexOf(dataName) === -1) {
         if (values.length === 1) {
           values = [...values, ...values]
@@ -146,6 +143,14 @@ export default function TrainingPage() {
       }
     })
     return newData
+  }
+
+  const handleCloseDialog = () => {
+    setShowDialog(false)
+  }
+
+  const handleCloseFinishDialog = () => {
+    setShowFinishDialog(false)
   }
 
   const handleHelpPopperOpen = (event, content) => {
@@ -159,50 +164,53 @@ export default function TrainingPage() {
     setHelpAnchorEl(null)
   }
 
-  const helpOpen = Boolean(helpAnchorEl)
   return (
     <Grid container>
       <Grid item xs={6}>
-        <TextField
-          sx={{ mx: 3, mt: 3 }}
-          required
-          id="epochs"
-          label="Epochs"
-          type="number"
-          value={localEpochs}
-          disabled={training.trainingStatus || loadTraining}
-          onChange={(event) => setLocalEpochs(event.target.value)}
-          error={epochsError}
-          helperText={epochsError ? 'Required!' : ' '}
-          onMouseOver={(e) => {
-            handleHelpPopperOpen(
-              e,
-              'This determines how long your model is trained. In each epoch, the entire dataset is passed through your net once.'
-            )
-          }}
-          onMouseLeave={handleHelpPopperClose}
-        />
-        <TextField
-          sx={{ mx: 3, mt: 3 }}
-          required
-          id="batchsize"
-          label="Batch Size"
-          type="number"
-          value={training.selectedBatchSize}
-          disabled={training.trainingStatus || loadTraining}
-          onChange={(event) =>
-            training.setSelectedBatchSize(event.target.value)
-          }
-          error={batchSizeError}
-          helperText={batchSizeError ? 'Required!' : ' '}
-          onMouseOver={(e) => {
-            handleHelpPopperOpen(
-              e,
-              "The batch size determines how often the net's parameters are adjusted. The smaller the batch size, the more often that's the case!"
-            )
-          }}
-          onMouseLeave={handleHelpPopperClose}
-        />
+        {/* set the epochs and batch size here for quick change */}
+        <Grid item sx={{ display: 'flex' }}>
+          <TextField
+            sx={{ mx: 3, mt: 3, flexGrow: 1 }}
+            required
+            id="epochs"
+            label="Epochs"
+            type="number"
+            value={localEpochs}
+            disabled={training.trainingStatus || loadTraining}
+            onChange={(event) => setLocalEpochs(event.target.value)}
+            error={epochsError}
+            helperText={epochsError ? 'Must be a number > 0!' : ' '}
+            onMouseOver={(e) => {
+              handleHelpPopperOpen(
+                e,
+                'This determines how long your model is trained. In each epoch, the entire dataset is passed through your net once.'
+              )
+            }}
+            onMouseLeave={handleHelpPopperClose}
+          />
+          <TextField
+            sx={{ mx: 3, mt: 3, flexGrow: 1 }}
+            required
+            id="batchsize"
+            label="Batch Size"
+            type="number"
+            value={training.selectedBatchSize}
+            disabled={training.trainingStatus || loadTraining}
+            onChange={(event) =>
+              training.setSelectedBatchSize(event.target.value)
+            }
+            error={batchSizeError}
+            helperText={batchSizeError ? 'Must be a number > 0!' : ' '}
+            onMouseOver={(e) => {
+              handleHelpPopperOpen(
+                e,
+                "The batch size determines how often the net's parameters are adjusted. The smaller the batch size, the more often that's the case!"
+              )
+            }}
+            onMouseLeave={handleHelpPopperClose}
+          />
+        </Grid>
+
         <ModelDetailsCard
           selectedModel={training.selectedModel}
           hoverFunc={(e) => {
@@ -243,14 +251,15 @@ export default function TrainingPage() {
         <Grid container>
           <Grid item xs={8}>
             <Button
-              variant="outlined"
+              size="large"
+              variant="contained"
               disabled={epochsError || batchSizeError}
               sx={{ m: 2 }}
               onClick={handleStartStop}
             >
               {startStopButton}
               {!loadTraining ? null : (
-                <CircularProgress size="16px" sx={{ ml: 1 }} />
+                <CircularProgress size="16px" color="inherit" sx={{ ml: 1 }} />
               )}
             </Button>
             <Dialog open={showDialog} onClose={handleCloseDialog}>
@@ -262,6 +271,7 @@ export default function TrainingPage() {
             </Dialog>
             {!training.trainingFinished ? null : (
               <Button
+                size="large"
                 variant="outlined"
                 disabled={epochsError || loadTraining}
                 sx={{ m: 2 }}
@@ -273,6 +283,7 @@ export default function TrainingPage() {
           </Grid>
           <Grid item xs={4}>
             <Button
+              size="large"
               variant="outlined"
               sx={{ m: 2 }}
               onClick={() => navigate('/molecules')}
@@ -292,9 +303,8 @@ export default function TrainingPage() {
             p: 2,
           }}
         >
-          {"Your model's accuracy: " + training.finishedAccuracy + '%'}
+          {"Your model's accuracy (R²): " + training.finishedAccuracy + '%'}
         </Typography>
-
         <DialogActions>
           <Button onClick={handleCloseFinishDialog}>Close</Button>
           <Button
@@ -315,7 +325,7 @@ export default function TrainingPage() {
       <HelpPopper
         id="helpPopper"
         helpPopperContent={helpPopperContent}
-        open={helpOpen}
+        open={Boolean(helpAnchorEl)}
         anchorEl={helpAnchorEl}
         onClose={handleHelpPopperClose}
       />
