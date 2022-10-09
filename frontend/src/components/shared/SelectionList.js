@@ -93,7 +93,7 @@ export default function SelectionList({
           </Button>
         </CardActions>
         {elements.length === 0 ? (
-          <Zoom in>
+          <Zoom in timeout={1000}>
             <Typography
               display="flex"
               justifyContent="center"
@@ -103,7 +103,6 @@ export default function SelectionList({
                 mt: 3,
                 whiteSpace: 'pre-line',
                 textAlign: 'center',
-                transition: 'all 1s linear',
               }}
             >
               {`You have created no ${elementType}s yet.\nClick on the button above to configure one!`}
