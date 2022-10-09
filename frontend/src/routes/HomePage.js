@@ -45,33 +45,22 @@ export default function HomePage({ startOnboarding }) {
         <Box>
           <Typography variant="h2">Hi! I&apos;m Molele!</Typography>
           <Typography variant="h6" color="text.secondary">
-            I will teach you how to use this app!
+            Don&apos;t know how to get started?{' '}
+            <Button
+              variant="outlined"
+              style={{
+                fontSize: theme.typography.h6.fontSize,
+                display: 'inline-block',
+                textTransform: 'none',
+              }}
+              onClick={() => {
+                startOnboarding()
+              }}
+            >
+              Let me show you!
+            </Button>
           </Typography>
         </Box>
-      </Box>
-
-      <Box sx={{ mb: 8, textAlign: 'center' }}>
-        <Typography
-          variant="h4"
-          lineHeight="150%"
-          color="text.primary"
-          paragraph
-          component="div"
-        >
-          Don&apos;t know how to get started?{' '}
-          <Button
-            variant="outlined"
-            style={{
-              fontSize: theme.typography.h4.fontSize,
-              display: 'inline-block',
-            }}
-            onClick={() => {
-              startOnboarding()
-            }}
-          >
-            Take a quick tour!
-          </Button>
-        </Typography>
       </Box>
 
       <Box sx={{ textAlign: 'left', mb: 8 }}>
