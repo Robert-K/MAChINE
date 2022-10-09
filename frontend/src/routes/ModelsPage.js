@@ -237,21 +237,27 @@ function ModelDescription({
                 Trained models:
               </Typography>
             </Grid>
-            <Grid
-              item
-              xs={6}
-              display="flex"
-              sx={{
-                pt: 2,
-                justifyContent: 'flex-end',
-              }}
-            >
-              <Button variant="text" endIcon={<Collapse />} onClick={toggleAll}>
-                <Typography sx={{ color: theme.palette.primary.main }}>
-                  {globalOpen ? 'Collapse all' : 'Expand all'}
-                </Typography>
-              </Button>
-            </Grid>
+            {selectedModel.fittings.length === 0 ? null : (
+              <Grid
+                item
+                xs={6}
+                display="flex"
+                sx={{
+                  pt: 2,
+                  justifyContent: 'flex-end',
+                }}
+              >
+                <Button
+                  variant="text"
+                  endIcon={<Collapse />}
+                  onClick={toggleAll}
+                >
+                  <Typography sx={{ color: theme.palette.primary.main }}>
+                    {globalOpen ? 'Collapse all' : 'Expand all'}
+                  </Typography>
+                </Button>
+              </Grid>
+            )}
           </Grid>
           {selectedModel.fittings.length === 0 ? (
             <Typography
