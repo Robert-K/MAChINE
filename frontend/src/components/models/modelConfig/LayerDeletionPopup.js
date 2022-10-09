@@ -17,7 +17,7 @@ import PropTypes from 'prop-types'
  */
 export default function LayerDeletionPopup({ deleteFunc, cancelFunc }) {
   return (
-    <Card sx={{ width: '24vw' }}>
+    <Card sx={{ width: '185px' }}>
       <CardContent sx={{ textAlign: 'center' }}>
         <Typography>Delete this layer?</Typography>
       </CardContent>

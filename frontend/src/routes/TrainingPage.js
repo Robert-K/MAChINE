@@ -22,9 +22,8 @@ import TrainingContext from '../context/TrainingContext'
 import { useNavigate } from 'react-router-dom'
 
 /**
- * A complex frame for training models
- * @returns {JSX.Element} a frame including Information about the configuration of the training, live stats and options to adjust and buttons to start and stop the training
- * @constructor
+ * Holds epoch and batch size configuration, as well as selected model and dataset details
+ * @returns {JSX.Element} jsx including information about the configuration of the training, live updated chart and start/stop/continue buttons
  */
 export default function TrainingPage() {
   const training = React.useContext(TrainingContext)

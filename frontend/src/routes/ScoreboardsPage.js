@@ -184,10 +184,9 @@ export default function ScoreboardsPage() {
 }
 
 /**
- * a hidden panel with extra features that shows up when adminMode == true
+ * a hidden panel with extra features which shows up when  in adminMode
  * @param refreshFunc gets called when the button inside this panel "Delete All!" is clicked
  * @returns {JSX.Element} a box containing a button that triggers the given function when clicked or nothing when adminMode == false
- * @constructor
  */
 function AdminPanel({ refreshFunc }) {
   return (
