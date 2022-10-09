@@ -167,8 +167,8 @@ export default function Onboarding({ run, callback }) {
             base model
           </h2>
           SchNet is short for Schrödinger Network. Consisting of a graph neural
-          network and an MLP component, it&apos; more complex than the
-          Sequential model, but also more powerful.
+          network and a multilayer-perceptron (MLP) component, it&apos; more
+          complex than the Sequential model, but also more powerful.
         </div>
       ),
       target: '.base-model-card.id-2',

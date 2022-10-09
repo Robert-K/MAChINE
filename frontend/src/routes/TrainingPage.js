@@ -201,7 +201,7 @@ export default function TrainingPage() {
               training.setSelectedBatchSize(event.target.value)
             }
             error={batchSizeError}
-            helperText={batchSizeError ? 'Required!' : ' '}
+            helperText={batchSizeError ? 'Must be a number > 0!' : ' '}
             onMouseOver={(e) => {
               handleHelpPopperOpen(
                 e,

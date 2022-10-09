@@ -18,7 +18,8 @@ const settableSizes = {
   },
   readoutSize: {
     min: 1,
-    explanation: 'Number of nodes in the regressional part of the network',
+    explanation:
+      'Number of nodes in the regressional multilayer perceptron part of the network',
   },
 }
 
