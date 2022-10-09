@@ -67,10 +67,10 @@ class Training:
                        batch_size=self.batch_size,
                        callbacks=[LiveStats(self.user_id)],
                        initial_epoch=self.initial_epoch,
-                       verbose=1)
+                       verbose=0)
 
     def evaluate_model(self):
-        results = self.model.evaluate(self.test_set)
+        results = self.model.evaluate(self.test_set, verbose=0)
         names = self.model.metrics_names
 
         # Evaluates the model, saves result with metric names
@@ -140,7 +140,7 @@ def analyze(user_id, fitting_id, smiles):
     converted_molecule = mld.molecule_conversion_functions.get(base_model.get('type'))(smiles)
 
     # Analyses the molecule
-    analysis_results = fitting.predict(converted_molecule).flatten().tolist()
+    analysis_results = fitting.predict(converted_molecule, verbose=0).flatten().tolist()
 
     # Converts the analysis to a dictionary
     formatted_analysis = dict()
