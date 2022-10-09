@@ -25,6 +25,7 @@ import DetailsPopper from '../components/shared/DetailsPopper'
 import HelpPopper from '../components/shared/HelpPopper'
 import UserContext from '../context/UserContext'
 import HelpContext from '../context/HelpContext'
+import TrainingContext from '../context/TrainingContext'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { camelToNaturalString } from '../utils'
 import PropTypes from 'prop-types'
@@ -53,6 +54,7 @@ export default function FittingsPage() {
   const [helpPopperContent, setHelpPopperContent] = React.useState('')
   const help = React.useContext(HelpContext)
   const user = React.useContext(UserContext)
+  const training = React.useContext(TrainingContext)
   const { state } = useLocation()
   const { selectedSmiles } = state
   const theme = useTheme()
@@ -60,7 +62,7 @@ export default function FittingsPage() {
 
   React.useEffect(() => {
     api.getFittings().then((fittings) => setFittingArray(fittings))
-  }, [user])
+  }, [user, training.trainingStatus])
 
   async function handleFittingSelection(fitting) {
     return api.analyzeMolecule(fitting.id, selectedSmiles).then((response) => {

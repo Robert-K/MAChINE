@@ -4,6 +4,7 @@ import BaseModelsPage from './BaseModelsPage'
 import ModelConfigPage from './ModelConfigPage'
 import ModelsPage from './ModelsPage'
 import UserContext from '../context/UserContext'
+import TrainingContext from '../context/TrainingContext'
 import { Route, Routes } from 'react-router-dom'
 import PropTypes from 'prop-types'
 
@@ -17,10 +18,11 @@ import PropTypes from 'prop-types'
 export default function ModelCreationRouter({ initSelectedIndex }) {
   const [modelList, setModelList] = React.useState([])
   const user = React.useContext(UserContext)
+  const training = React.useContext(TrainingContext)
 
   React.useEffect(() => {
     refreshModels()
-  }, [user])
+  }, [user, training.trainingStatus])
 
   function refreshModels() {
     api.getModelList().then((models) => setModelList(models))

@@ -5,6 +5,7 @@ import DeleteIcon from '@mui/icons-material/Delete'
 import { DataGrid } from '@mui/x-data-grid'
 import api from '../api'
 import UserContext from '../context/UserContext'
+import TrainingContext from '../context/TrainingContext'
 import PropTypes from 'prop-types'
 import { camelToNaturalString } from '../utils'
 
@@ -17,6 +18,7 @@ export default function ScoreboardsPage() {
   const [fittingRows, setFittingRows] = React.useState([])
   const [highlightedRows, setHighlightedRows] = React.useState([])
   const { adminMode } = React.useContext(UserContext)
+  const training = React.useContext(TrainingContext)
 
   // defining the order and context of the columns
   const fittingColumns = [
@@ -140,7 +142,7 @@ export default function ScoreboardsPage() {
 
   React.useEffect(() => {
     refresh()
-  }, [])
+  }, [training.trainingStatus])
 
   /**
    * gets the required info from the backend: all the fittings to be displayed in the Scoreboard and
