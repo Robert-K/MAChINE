@@ -271,6 +271,15 @@ export default {
       })
   },
 
+  /**
+   * Train referenced model with given dataset on given labels for given epochs with given batch size
+   * @param datasetID {string} ID of dataset to train on
+   * @param modelID {string} ID of model to train
+   * @param labels {string} List of labels to train on
+   * @param epochs {number} Number of epochs to train for
+   * @param batchSize {number} Batch size to train with
+   * @returns {Promise<AxiosResponse<any>>} Promise of Tuple of Boolean indicating success and HTTP response code
+   */
   async trainModel(datasetID, modelID, labels, epochs, batchSize) {
     return api
       .post(`/users/${userID}/train`, {
@@ -285,6 +294,12 @@ export default {
       })
   },
 
+  /**
+   * Continues the training of referenced fitting for the specified number of epochs
+   * @param fittingID {string} ID of fitting to continue training
+   * @param epochs {number} Number of epochs to train for
+   * @returns {Promise<AxiosResponse<any>>} Promise of tuple of Boolean indicating success and HTTP response code
+   */
   async continueTraining(fittingID, epochs) {
     return api
       .patch(`/users/${userID}/train`, { fittingID, epochs })
@@ -296,12 +311,22 @@ export default {
       })
   },
 
+  /**
+   * Stops the currently running training
+   * @returns {Promise<AxiosResponse<any>>} Promise of tuple Boolean indicating success and HTTP response code
+   */
   async stopTraining() {
     return api.delete(`users/${userID}/train`).then((response) => {
       return response.data
     })
   },
 
+  /**
+   * Registers a callback function to be called when the socket emits the given event.
+   * @param action {string} The event name
+   * @param onAction {function} The callback function
+   * @returns {Socket<DefaultEventsMap, ListenEvents>} void
+   */
   registerSocketListener(action, onAction) {
     return socket.on(action, (res) => {
       if (res[userID]) {
