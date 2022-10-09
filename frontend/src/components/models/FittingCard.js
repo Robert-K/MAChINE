@@ -51,7 +51,7 @@ export default function FittingCard({
                 Batch Size: {fitting.batchSize}
               </Typography>
               <Typography variant="subtitle1" component="h4">
-                Accuracy (R²): {fitting.accuracy}
+                Accuracy (R²): {fitting.accuracy}%
               </Typography>
             </Box>
           </CardContent>
