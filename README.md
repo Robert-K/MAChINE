@@ -1,42 +1,20 @@
 ![MAChINE Logo](https://kosro.de/share/machine.svg)
+<img align="right" src="frontend/public/molele.svg" height=150 />
 
 A [PSE](https://pp.ipd.kit.edu/lehre/SS2022/pse) project by [13thWitch](https://github.com/13thWitch), [AnoukSommer](https://github.com/AnoukSommer), [CSCMe](https://github.com/CSCMe), [EliteStudent420](https://github.com/EliteStudent420), [Viola2345](https://github.com/Viola2345) & [Robert-K](https://github.com/Robert-K)
 
 Supervised by [André Eberhard](https://github.com/patchmeifyoucan)
 
-# Commit Message Etiquette
+---
 
-Start commit messages with ADD, FIX, UPD or DEL corresponding to change.
+## <img src="frontend/public/molele.svg" height=18 /> With MAChINE you can:
+- Draw any molecule imaginable and preview it in 3D
+- Configure and train machine learning models to predict properties of molecules
+- Analyze your molecules for various properties with the models you trained
+- Compare your molecules and models to other users&apos; creations
 
 ---
 
-# Setup steps:
-
-## Prettier (code auto formatter)
-
-- Install Prettier plugin in PyCharm
-
-![Setup Screenshot](https://kosro.de/share/pycharm64_E1pXeQIHlS.png)
-
-- be on the latest commit
-- select prettier package in IDE settings
-
-![Setup Screenshot](https://kosro.de/share/pycharm64_22kMqdUPaq.png)
-
-- ?
-- profit.
-
-## Quotes instead of curly brackets in JSX
-
-![Setup Screenshot](https://kosro.de/share/pycharm64_a4RaM450ss.png)
-
----
-
-# Backend structure
-
-![Backend structure](https://kosro.de/share/pse-backend.png)
-
----
 # Extendability
 
 ### Adding a Model Type
@@ -78,11 +56,7 @@ Start commit messages with ADD, FIX, UPD or DEL corresponding to change.
 
 ---
 
-# React Default README
-
-# Getting Started with Create React App
-
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Bootstrapped with [Create React App](https://github.com/facebook/create-react-app)
 
 ## Available Scripts
 
@@ -127,30 +101,11 @@ You can learn more in the [Create React App documentation](https://facebook.gith
 
 To learn React, check out the [React documentation](https://reactjs.org/).
 
-### Code Splitting
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+## Commit Message Etiquette
 
-### Analyzing the Bundle Size
+Start commit messages with `ADD:`, `UPD:`, `FIX:` or `DEL:` corresponding to change.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
-
-![Important Infographic](https://kosro.de/share/rickroll-roll.gif)
 
 [![forthebadge](https://forthebadge.com/images/badges/powered-by-energy-drinks.svg)](https://forthebadge.com) [![forthebadge](https://forthebadge.com/images/badges/designed-in-ms-paint.svg)](https://forthebadge.com) [![forthebadge](https://forthebadge.com/images/badges/uses-badges.svg)](https://forthebadge.com)
