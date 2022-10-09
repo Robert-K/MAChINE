@@ -89,7 +89,6 @@ export default function ScoreboardsPage() {
       headerName: 'Dataset Name',
       headerAlign: 'center',
       align: 'center',
-      type: 'number',
       flex: 40,
       minWidth: 225,
       renderCell: (params) => {
