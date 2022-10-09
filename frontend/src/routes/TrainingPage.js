@@ -180,7 +180,7 @@ export default function TrainingPage() {
             disabled={training.trainingStatus || loadTraining}
             onChange={(event) => setLocalEpochs(event.target.value)}
             error={epochsError}
-            helperText={epochsError ? 'Required!' : ' '}
+            helperText={epochsError ? 'Must be a number > 0!' : ' '}
             onMouseOver={(e) => {
               handleHelpPopperOpen(
                 e,
