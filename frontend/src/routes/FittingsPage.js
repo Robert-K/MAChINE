@@ -10,6 +10,7 @@ import {
   DialogContent,
   DialogTitle,
   Grid,
+  List,
   ListItem,
   ListItemText,
   Typography,
@@ -271,7 +272,7 @@ function FittingDetails({ fitting, onClickFunc }) {
   }
 
   return (
-    <>
+    <Box>
       <Button
         fullWidth
         variant="contained"
@@ -283,15 +284,19 @@ function FittingDetails({ fitting, onClickFunc }) {
           <CircularProgress size="16px" color="inherit" sx={{ ml: 1 }} />
         ) : null}
       </Button>
-      Labels:
-      {fitting.labels.map((label) => {
-        return (
-          <ListItem key={label}>
-            <ListItemText primary={camelToNaturalString(label)} />
-          </ListItem>
-        )
-      })}
-    </>
+      <List
+        sx={{ py: 0, maxHeight: '55vh', overflow: 'auto' }}
+        subheader="Labels:"
+      >
+        {fitting.labels.map((label) => {
+          return (
+            <ListItem key={label}>
+              <ListItemText primary={camelToNaturalString(label)} />
+            </ListItem>
+          )
+        })}
+      </List>
+    </Box>
   )
 }
 

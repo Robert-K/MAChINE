@@ -1,5 +1,12 @@
 import React from 'react'
-import { Box, Card, CardContent, ListItem, Typography } from '@mui/material'
+import {
+  Box,
+  Card,
+  CardContent,
+  List,
+  ListItem,
+  Typography,
+} from '@mui/material'
 import ModelConfig from '../../internal/ModelConfig'
 import PropTypes from 'prop-types'
 import { camelToNaturalString } from '../../utils'
@@ -31,20 +38,23 @@ export default function ModelDetailsCard({
         </Typography>
         <Typography>Name: {selectedModel.name}</Typography>
         <Typography>Base Model: {selectedModel.baseModelName}</Typography>
-        <Typography>Parameters: </Typography>
-        {Object.entries(selectedModel.parameters).map(
-          ([valueName, value], index) => {
-            return (
-              <ListItem key={index} sx={{ py: 0.1, display: 'inline-block' }}>
-                {valueName === 'layers' ? (
-                  <SmallLayerVisual layers={value} />
-                ) : (
-                  `${camelToNaturalString(valueName)}: ${JSON.stringify(value)}`
-                )}
-              </ListItem>
-            )
-          }
-        )}
+        <List subheader="Parameters: ">
+          {Object.entries(selectedModel.parameters).map(
+            ([valueName, value], index) => {
+              return (
+                <ListItem key={index} sx={{ py: 0.1, display: 'inline-block' }}>
+                  {valueName === 'layers' ? (
+                    <SmallLayerVisual layers={value} />
+                  ) : (
+                    `${camelToNaturalString(valueName)}: ${JSON.stringify(
+                      value
+                    )}`
+                  )}
+                </ListItem>
+              )
+            }
+          )}
+        </List>
       </CardContent>
     </Card>
   )

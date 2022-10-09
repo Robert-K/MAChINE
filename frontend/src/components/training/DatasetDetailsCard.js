@@ -1,5 +1,5 @@
 import React from 'react'
-import { Card, CardContent, ListItem, Typography } from '@mui/material'
+import { Card, CardContent, List, ListItem, Typography } from '@mui/material'
 import Dataset from '../../internal/Dataset'
 import PropTypes from 'prop-types'
 import { camelToNaturalString } from '../../utils'
@@ -34,12 +34,13 @@ export default function DatasetDetailsCard({
         <Typography>Name: {selectedDataset.name}</Typography>
         <Typography>ID: {selectedDataset.datasetID}</Typography>
         <Typography>Size: {selectedDataset.size}</Typography>
-        <Typography>Label:</Typography>
-        {selectedLabels.map((label) => (
-          <ListItem sx={{ py: 0.1 }} key={label}>
-            {camelToNaturalString(label)}
-          </ListItem>
-        ))}
+        <List dense subheader={'Label:'}>
+          {selectedLabels.map((label) => (
+            <ListItem sx={{ py: 0.1 }} key={label}>
+              {camelToNaturalString(label)}
+            </ListItem>
+          ))}
+        </List>
       </CardContent>
     </Card>
   )
