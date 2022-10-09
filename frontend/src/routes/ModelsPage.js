@@ -253,20 +253,34 @@ function ModelDescription({
               </Button>
             </Grid>
           </Grid>
-          {/* Adds a fitting for each fitting saved in the model */}
-          <List sx={{ flexGrow: 1, overflow: 'auto' }}>
-            {selectedModel.fittings.map((fitting, index) => (
-              <RenderFitting
-                fitting={fitting}
-                key={`${fitting.id}-${index}`}
-                hoverFunc={hoverFunc}
-                leaveFunc={leaveFunc}
-                index={index}
-                open={open}
-                setOpen={setOpen}
-              ></RenderFitting>
-            ))}
-          </List>
+          {selectedModel.fittings.length === 0 ? (
+            <Typography
+              sx={{
+                flexGrow: 1,
+                color: theme.palette.text.secondary,
+                m: 2,
+                mt: 3,
+                textAlign: 'center',
+              }}
+            >
+              No trained models yet. Start a new training to create one!
+            </Typography>
+          ) : (
+            <List sx={{ flexGrow: 1, overflow: 'auto' }}>
+              {/* Adds a fitting for each fitting saved in the model */}
+              {selectedModel.fittings.map((fitting, index) => (
+                <RenderFitting
+                  fitting={fitting}
+                  key={`${fitting.id}-${index}`}
+                  hoverFunc={hoverFunc}
+                  leaveFunc={leaveFunc}
+                  index={index}
+                  open={open}
+                  setOpen={setOpen}
+                ></RenderFitting>
+              ))}
+            </List>
+          )}
           <CardActions>
             <Grid container justifyContent="center">
               <Button
