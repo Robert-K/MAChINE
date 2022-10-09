@@ -182,6 +182,12 @@ export default function MoleculesPage() {
   )
 }
 
+/**
+ * Component Card displaying the 2D-Editor or 3D-Viewer and buttons
+ * @param selectedMolecule {Molecule} Molecule displayed in the View
+ * @param onSave {function} Function called when the "Save" Button is pressed
+ * @returns {JSX.Element} Card displaying the 2D-Editor or 3D-Viewer and buttons
+ */
 function MoleculeView({ selectedMolecule, onSave }) {
   const [editorHeight, editorWidth] = ['70vh', '100%']
   const [moleculeDoc, setMoleculeDoc] = React.useState(null)
@@ -202,6 +208,10 @@ function MoleculeView({ selectedMolecule, onSave }) {
     setMoleculeDoc(chemDocument)
   }, [selectedMolecule])
 
+  /**
+   * Saves a molecule by extracting the first child from the Kekule ChemDocument and converting it to SMILES & CML codes
+   * @param event submit HTML event
+   */
   function saveMol(event) {
     event.preventDefault()
     try {

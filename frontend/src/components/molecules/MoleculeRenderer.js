@@ -25,7 +25,7 @@ chemViewer
   ])
 
 /**
- * creats a box containing a 3D Molecule Viewer from "Kekule"
+ * Creates a box containing a 3D Molecule Viewer from "Kekule"
  * @param moleculeDoc a "Kekule" molecule object used for inputting the molecule info
  * @param width the width of the viewer, this should be static
  * @param height the hieght of the viewer, this should be static too

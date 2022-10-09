@@ -28,7 +28,7 @@ composer.getRenderConfigs().colorConfigs.useAtomSpecifiedColor = true
 composer.getEditorConfigs().hotKeyConfigs.setHotKeys([])
 
 /**
- * creats a box containing a Molecule Editor from "Kekule"
+ * Creates a box containing a Molecule Editor from "Kekule"
  * @param moleculeDoc a "Kekule" molecule object that can be used for in- and output of molecule information
  * @param width the width of the editor, this should be static
  * @param height the height of the editor, this should be static too
