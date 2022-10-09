@@ -3,8 +3,6 @@ import { Divider, List, ListItem, ListItemText } from '@mui/material'
 import AnalysisInfo from './AnalysisInfo'
 import PropTypes from 'prop-types'
 
-// TODO: Check .map keys again at the end
-
 /**
  * a simple list of the trained models attached to the given molecule
  * @param molecule a molecule object containing molecule and trainend model info
