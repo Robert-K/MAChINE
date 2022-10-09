@@ -210,6 +210,7 @@ function MoleculeView({ selectedMolecule, onSave }) {
       const smiles = Kekule.IO.saveFormatData(molecule, 'smi')
       const cml = Kekule.IO.saveFormatData(molecule, 'cml')
       onSave(molName, smiles, cml)
+      setMolName('')
     } catch (e) {
       onSave('', '', '')
     }
@@ -262,6 +263,7 @@ function MoleculeView({ selectedMolecule, onSave }) {
           <TextField
             label="Molecule Name"
             variant="standard"
+            value={molName}
             onChange={(e) => setMolName(e.target.value)}
             inputProps={{ maxLength: 21 }}
           />
