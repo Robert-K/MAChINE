@@ -1,14 +1,15 @@
 class Fitting {
   /**
    * A Fitting models a training result and consists of
-   * @param id string in format of: '{model}{integer}'
-   * @param modelID of used ModelConfig, string
-   * @param modelName of used ModelConfig, string
-   * @param datasetID of used dataset, string
-   * @param labels the labels this fitting was trained with
-   * @param epochs , integer
-   * @param batchSize , integer
-   * @param accuracy , float between 0 and 100
+   * @param id {string} in format of: '{model}{integer}'
+   * @param modelID {string} of used ModelConfig, string
+   * @param modelName {string} of used ModelConfig, string
+   * @param datasetID {string} of used dataset, string
+   * @param datasetName {string} Name of used dataset
+   * @param labels {array} the labels this fitting was trained with
+   * @param epochs {number} how many epochs the fitting was trained for
+   * @param batchSize {number} size of data batches between each weight update
+   * @param accuracy {number} accuracy of the fitting
    */
   constructor(
     id,
