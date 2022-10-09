@@ -298,7 +298,7 @@ export default {
    * Continues the training of referenced fitting for the specified number of epochs
    * @param fittingID {string} ID of fitting to continue training
    * @param epochs {number} Number of epochs to train for
-   * @returns {Promise<AxiosResponse<any>>} Promise of tuple of Boolean indicating success and HTTP response code
+   * @returns {Promise<AxiosResponse<any>>} Promise returning a number indicating the number of epochs to be trained, 0 when failed
    */
   async continueTraining(fittingID, epochs) {
     return api

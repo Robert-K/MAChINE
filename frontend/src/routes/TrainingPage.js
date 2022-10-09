@@ -115,8 +115,8 @@ export default function TrainingPage() {
   const handleAdditionalTraining = () => {
     setLoadTraining(true)
     api.continueTraining(training.trainingID, localEpochs).then((response) => {
-      setOpenSnackError(!response)
-      setLoadTraining(response)
+      setOpenSnackError(Boolean(response))
+      setLoadTraining(Boolean(response))
     })
   }
 
