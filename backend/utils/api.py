@@ -536,7 +536,10 @@ def run(debug=True):
                                    'readoutSize': 1,
                                    'depth': 2}, '2')
         print(test_user)
-    sio.run(app, allow_unsafe_werkzeug=True)  # add parameters here to change ip address
+    try:
+        sio.run(app, allow_unsafe_werkzeug=True)  # add parameters here to change ip address
+    except TypeError:
+        sio.run(app) # run without allow_unsafe_werkzeug for production
 
 
 if __name__ == '__main__':

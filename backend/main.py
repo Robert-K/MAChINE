@@ -1,4 +1,9 @@
 from backend.utils import api
 
-if __name__ == '__main__':
+
+def run():
     api.run()
+
+
+if __name__ == '__main__':
+    run()
