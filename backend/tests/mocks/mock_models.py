@@ -26,7 +26,7 @@ class TrainMockModel(BasicMockModel):
     def fit(self, *args, **kwargs):
         return 'a'
 
-    def predict(self, predicted_thing):
+    def predict(self, predicted_thing, *args, **kwargs):
         return self.prediction
 
 
