@@ -213,7 +213,7 @@ class StorageHandler:
         self.user_storage_handler[user_id] = UserDataStorageHandler(user_id, username)
         return self.user_storage_handler.get(user_id)
 
-    def get_user_handler(self, user_id) -> UserDataStorageHandler | None:
+    def get_user_handler(self, user_id) -> UserDataStorageHandler:
         return self.user_storage_handler.get(user_id)
 
     def delete_user_handler(self, user_id):
